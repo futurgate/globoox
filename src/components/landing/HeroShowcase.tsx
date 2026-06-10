@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SectionLabel } from './SectionLabel';
 
 interface HeroShowcaseProps {
@@ -25,9 +25,15 @@ function PlaceholderScreen({ color }: { color: string }) {
 function DeviceFrame({
   type,
   className,
+  isSequential,
+  onEnded,
+  videoRef,
 }: {
   type: 'phone' | 'tablet' | 'laptop';
   className: string;
+  isSequential: boolean;
+  onEnded: () => void;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
 }) {
   const isPhone = type === 'phone';
   const isTablet = type === 'tablet';
@@ -75,12 +81,14 @@ function DeviceFrame({
       >
         {videoSrc ? (
           <video
-            autoPlay
+            ref={videoRef}
+            autoPlay={!isSequential}
             muted
-            loop
+            loop={!isSequential}
             playsInline
             preload="metadata"
             aria-hidden="true"
+            onEnded={onEnded}
             style={{
               width: '100%',
               height: '100%',
@@ -113,6 +121,61 @@ function DeviceFrame({
 
 export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcaseProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isDesktopSequential, setIsDesktopSequential] = useState(false);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const laptopVideoRef = useRef<HTMLVideoElement>(null);
+  const tabletVideoRef = useRef<HTMLVideoElement>(null);
+  const phoneVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1200px)');
+
+    const syncSequentialMode = (matches: boolean) => {
+      setIsDesktopSequential(matches);
+      setActiveVideoIndex(0);
+    };
+
+    syncSequentialMode(mediaQuery.matches);
+    const handleChange = (event: MediaQueryListEvent) => syncSequentialMode(event.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    const videoRefs = [laptopVideoRef, tabletVideoRef, phoneVideoRef];
+
+    videoRefs.forEach((videoRef, index) => {
+      const video = videoRef.current;
+
+      if (!video) {
+        return;
+      }
+
+      if (!isDesktopSequential) {
+        video.currentTime = 0;
+        void video.play().catch(() => {});
+        return;
+      }
+
+      if (index === activeVideoIndex) {
+        video.currentTime = 0;
+        void video.play().catch(() => {});
+        return;
+      }
+
+      video.pause();
+      video.currentTime = 0;
+    });
+  }, [activeVideoIndex, isDesktopSequential]);
+
+  const playNextVideo = () => {
+    if (!isDesktopSequential) {
+      return;
+    }
+
+    setActiveVideoIndex((currentIndex) => (currentIndex + 1) % 3);
+  };
 
   return (
     <>
@@ -231,9 +294,27 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
             }}
           >
             <div className="hero-device-stage">
-              <DeviceFrame type="laptop" className="hero-device hero-device-laptop" />
-              <DeviceFrame type="tablet" className="hero-device hero-device-tablet" />
-              <DeviceFrame type="phone" className="hero-device hero-device-phone" />
+              <DeviceFrame
+                type="laptop"
+                className="hero-device hero-device-laptop"
+                isSequential={isDesktopSequential}
+                onEnded={playNextVideo}
+                videoRef={laptopVideoRef}
+              />
+              <DeviceFrame
+                type="tablet"
+                className="hero-device hero-device-tablet"
+                isSequential={isDesktopSequential}
+                onEnded={playNextVideo}
+                videoRef={tabletVideoRef}
+              />
+              <DeviceFrame
+                type="phone"
+                className="hero-device hero-device-phone"
+                isSequential={isDesktopSequential}
+                onEnded={playNextVideo}
+                videoRef={phoneVideoRef}
+              />
             </div>
           </div>
         </div>
