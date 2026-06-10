@@ -68,7 +68,7 @@ export function UsageAnimation({ label = 'How it works', heading = 'Three simple
   }, []);
 
   return (
-    <section className="threemockups-section" style={{ padding: '120px 0', background: 'var(--ink)' }}>
+    <section className="threemockups-section" style={{ padding: '120px 0', background: 'var(--ink)', overflow: 'hidden' }}>
       <div className="threemockups-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
 
         <div className="threemockups-header" style={{ marginBottom: '80px', textAlign: 'center' }}>

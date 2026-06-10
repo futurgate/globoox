@@ -182,19 +182,16 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
       <section
         className="hero-showcase"
         style={{
-          padding: '42px 40px 84px',
-          width: '100%',
+          padding: '42px 0 84px',
+          width: '100vw',
+          marginLeft: 'calc(50% - 50vw)',
+          marginRight: 'calc(50% - 50vw)',
           background:
             'radial-gradient(circle at top left, rgba(232,184,154,0.24) 0%, rgba(232,184,154,0) 34%), radial-gradient(circle at bottom right, rgba(44,59,45,0.08) 0%, rgba(44,59,45,0) 38%), var(--parchment)',
           overflow: 'clip',
-          ['--hero-copy-width' as string]: '47%',
-          ['--hero-copy-left' as string]: '0%',
-          ['--hero-copy-top' as string]: '52%',
-          ['--hero-media-width' as string]: '53%',
-          ['--hero-media-left' as string]: '50%',
-          ['--hero-media-top' as string]: '47%',
+          ['--hero-copy-width' as string]: '100%',
+          ['--hero-media-width' as string]: '100%',
           ['--hero-stage-width' as string]: '100%',
-          ['--hero-stage-offset-y' as string]: '-24px',
           ['--hero-laptop-width' as string]: '80.4%',
           ['--hero-laptop-left' as string]: '3.9%',
           ['--hero-laptop-bottom' as string]: '4.2%',
@@ -209,10 +206,13 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
         <div
           className="hero-showcase-inner"
           style={{
-            maxWidth: '1200px',
+            width: 'min(1600px, calc(100vw - 128px))',
             margin: '0 auto',
             minHeight: 'calc(100vh - 300px)',
-            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'stretch',
+            gap: '0',
           }}
         >
           <div
@@ -220,13 +220,11 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
             style={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'flex-start',
-              position: 'absolute',
+              alignItems: 'center',
               zIndex: 2,
               width: 'var(--hero-copy-width)',
-              left: 'var(--hero-copy-left)',
-              top: 'var(--hero-copy-top)',
-              transform: 'translateY(-50%)',
+              textAlign: 'center',
+              padding: '0 40px',
             }}
           >
             <SectionLabel>Introducing Globoox</SectionLabel>
@@ -239,7 +237,7 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
                 fontWeight: 500,
                 fontFamily: "'Lora', serif",
                 color: 'var(--ink)',
-                maxWidth: '620px',
+                maxWidth: '820px',
               }}
             >
               {title}
@@ -251,7 +249,7 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
                   fontSize: '20px',
                   color: 'var(--ash)',
                   marginBottom: '36px',
-                  maxWidth: '520px',
+                  maxWidth: '720px',
                 }}
               >
                 {subtitle}
@@ -285,12 +283,9 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
           <div
             className="hero-showcase-devices"
             style={{
-              position: 'absolute',
               zIndex: 1,
               width: 'var(--hero-media-width)',
-              left: 'var(--hero-media-left)',
-              top: 'var(--hero-media-top)',
-              transform: 'translateY(-50%)',
+              margin: 'var(--hero-devices-margin-top) auto 0',
             }}
           >
             <div className="hero-device-stage">
@@ -321,12 +316,18 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
       </section>
 
       <style>{`
+        .hero-showcase {
+          --hero-stage-offset-x: -5%;
+          --hero-stage-offset-y: 0px;
+          --hero-devices-margin-top: -120px;
+        }
+
         .hero-device-stage {
           position: relative;
           width: var(--hero-stage-width);
           aspect-ratio: 920 / 620;
-          margin: 0 auto;
-          transform: translateY(var(--hero-stage-offset-y));
+          margin: 0;
+          transform: translate(var(--hero-stage-offset-x), var(--hero-stage-offset-y));
         }
 
         .hero-device {
@@ -359,65 +360,58 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
 
         @media (max-width: 1199px) {
           .hero-showcase {
-            --hero-copy-width: 100%;
-            --hero-copy-left: 0%;
-            --hero-copy-top: 0%;
             --hero-media-width: 100%;
-            --hero-media-left: 0%;
-            --hero-media-top: auto;
-            --hero-stage-width: min(100%, 760px);
+            --hero-stage-width: 100%;
+            --hero-stage-offset-x: -5%;
             --hero-stage-offset-y: 0px;
+            --hero-devices-margin-top: -96px;
           }
 
           .hero-showcase-inner {
             min-height: auto !important;
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 40px !important;
+            width: 100vw !important;
+            margin: 0 !important;
           }
 
           .hero-showcase-copy {
-            align-items: center !important;
-            text-align: center !important;
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            transform: none !important;
-            width: 100% !important;
-            max-width: none !important;
             padding: 0 40px !important;
-            margin: 0 auto !important;
           }
 
           .hero-showcase-devices {
-            position: relative !important;
-            left: auto !important;
-            top: auto !important;
-            transform: none !important;
             width: 100% !important;
-            max-width: 650px !important;
-            margin: 0 auto !important;
           }
 
           .hero-showcase-title {
             width: 100% !important;
-            max-width: none !important;
             font-size: 48px !important;
             line-height: 1.08 !important;
           }
 
           .hero-showcase-subtitle {
             width: 100% !important;
-            max-width: none !important;
             font-size: 20px !important;
           }
         }
 
         @media (max-width: 767px) {
           .hero-showcase {
-            padding: 24px 20px 56px !important;
-            --hero-stage-width: min(100%, 420px);
+            padding: 24px 0 56px !important;
+            width: 100vw !important;
+            margin-left: calc(50% - 50vw) !important;
+            margin-right: calc(50% - 50vw) !important;
+            --hero-stage-width: 100%;
+            --hero-stage-offset-x: -5%;
             --hero-stage-offset-y: -12px;
+            --hero-devices-margin-top: 24px;
+          }
+
+          .hero-showcase-inner {
+            width: 100vw !important;
+            margin: 0 !important;
+          }
+
+          .hero-device-stage {
+            width: 100% !important;
           }
 
           .hero-showcase-title {
