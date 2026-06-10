@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { Hero } from '@/components/landing/Hero';
+import { HeroShowcase } from '@/components/landing/HeroShowcase';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { PrivacyManifest } from '@/components/landing/PrivacyManifest';
 import { SupportedLanguages } from '@/components/landing/SupportedLanguages';
 import { UsageAnimation } from '@/components/landing/UsageAnimation';
 import { QualityAssuranceV2 } from '@/components/landing/QualityAssuranceV2';
+import { FoundersSection } from '@/components/landing/FoundersSection';
 import { CTA } from '@/components/landing/CTA';
 import { Footer } from '@/components/landing/Footer';
 
@@ -49,9 +50,7 @@ export default async function LandingPage() {
           }
         `}</style>
         <section id="hero" aria-label="Hero">
-          <Hero
-            variant="split"
-            withBooks={true}
+          <HeroShowcase
             title="Globoox — reading app that instantly translates e&#8209;books into your native language"
             subtitle=""
             titleClassName="hero-long-title"
@@ -76,6 +75,10 @@ export default async function LandingPage() {
 
         <section id="privacy" aria-label="Privacy">
           <PrivacyManifest />
+        </section>
+
+        <section id="team" aria-label="Meet the team">
+          <FoundersSection />
         </section>
 
         <section id="start" aria-label="Get started">
