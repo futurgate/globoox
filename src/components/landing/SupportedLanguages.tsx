@@ -243,6 +243,14 @@ export function SupportedLanguages() {
             grid-template-columns: 1fr !important;
             gap: 60px !important;
           }
+          .supported-copy {
+            margin: 0 auto !important;
+            text-align: center !important;
+          }
+          .supported-globe-wrap {
+            display: flex !important;
+            justify-content: center !important;
+          }
           .supported-card {
             min-height: 420px !important;
           }
@@ -254,16 +262,8 @@ export function SupportedLanguages() {
           .supported-section {
             padding: 120px 20px !important;
           }
-          .supported-copy {
-            margin: 0 auto !important;
-            text-align: center !important;
-          }
           .supported-heading {
             font-size: 36px !important;
-          }
-          .supported-globe-wrap {
-            display: flex !important;
-            justify-content: center !important;
           }
           .supported-card {
             min-height: 360px !important;

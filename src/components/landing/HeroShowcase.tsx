@@ -393,6 +393,28 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
           }
         }
 
+        @media (max-width: 999px) {
+          .hero-showcase {
+            --hero-stage-offset-x: 0px;
+          }
+
+          .hero-device-laptop {
+            display: none;
+          }
+
+          .hero-device-tablet {
+            width: 48% !important;
+            left: 31% !important;
+            bottom: 0% !important;
+          }
+
+          .hero-device-phone {
+            width: 26% !important;
+            left: 24% !important;
+            bottom: -3% !important;
+          }
+        }
+
         @media (max-width: 767px) {
           .hero-showcase {
             padding: 24px 0 56px !important;
@@ -400,7 +422,7 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
             margin-left: calc(50% - 50vw) !important;
             margin-right: calc(50% - 50vw) !important;
             --hero-stage-width: 100%;
-            --hero-stage-offset-x: -5%;
+            --hero-stage-offset-x: 0px;
             --hero-stage-offset-y: -12px;
             --hero-devices-margin-top: 24px;
           }
