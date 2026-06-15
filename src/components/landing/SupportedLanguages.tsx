@@ -32,7 +32,7 @@ export function SupportedLanguages({
           margin: '0 auto',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: '80px',
+          gap: '20px',
           alignItems: 'center',
         }}
         className="supported-split"
@@ -65,7 +65,7 @@ export function SupportedLanguages({
           <p
             style={{
               fontSize: '18px',
-              color: 'var(--ash)',
+              color: 'var(--text-dark-muted)',
               lineHeight: 1.7,
               hyphens: 'none',
               WebkitHyphens: 'none',
@@ -253,6 +253,8 @@ export function SupportedLanguages({
             gap: 60px !important;
           }
           .supported-copy {
+            width: 100% !important;
+            max-width: 780px !important;
             margin: 0 auto !important;
             text-align: center !important;
           }

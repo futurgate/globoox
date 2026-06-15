@@ -51,7 +51,7 @@ html {
   --text-body: var(--ash);
   --text-dark-heading: var(--parchment);
   --text-dark-body: var(--parchment);
-  --text-dark-muted: var(--ink-50);
+  --text-dark-muted: #8f9d90;
 
   /* Marketing subsystem semantic roles */
   --marketing-shell-bg: var(--parchment);

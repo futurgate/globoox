@@ -379,7 +379,7 @@ export function Footer({
           padding: '32px 0',
           textAlign: 'center',
           background: 'var(--ink)',
-          color: 'var(--ash)',
+          color: 'var(--text-dark-muted)',
           fontSize: '13.5px',
         }}
       >
@@ -395,7 +395,7 @@ export function Footer({
             <button
               type="button"
               style={{
-                color: 'var(--ash)',
+                color: 'var(--text-dark-muted)',
                 textDecoration: 'none',
                 fontWeight: 500,
                 fontSize: '13.5px',
@@ -412,7 +412,7 @@ export function Footer({
             <button
               type="button"
               style={{
-                color: 'var(--ash)',
+                color: 'var(--text-dark-muted)',
                 textDecoration: 'none',
                 fontWeight: 500,
                 fontSize: '13.5px',
@@ -427,7 +427,7 @@ export function Footer({
               {privacyLabel}
             </button>
           </div>
-          <p style={{ fontSize: '13.5px', color: 'var(--ash)', margin: '20px auto 0', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '13.5px', color: 'var(--text-dark-muted)', margin: '20px auto 0', lineHeight: 1.6 }}>
             {tagline}
             <br />
             <span style={{ fontSize: '24px', lineHeight: 1.6 }}>❧</span>

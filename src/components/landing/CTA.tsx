@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { DeviceShowcase } from './DeviceShowcase';
 
 interface CTAProps {
   heading: string;
@@ -21,7 +22,7 @@ export function CTA({
     <section
       className="cta-section"
       style={{
-        padding: '240px 0 180px 0',
+        padding: '120px 0 0 0',
         textAlign: 'center',
         background: 'var(--ink)',
         position: 'relative',
@@ -72,7 +73,7 @@ export function CTA({
           fontWeight: 400,
           letterSpacing: '-0.01em',
           fontSize: '48px',
-          marginBottom: '24px',
+          marginBottom: '8px',
           color: '#FFFFFF',
         }}
       >
@@ -81,7 +82,7 @@ export function CTA({
       <p
         style={{
           fontSize: '18px',
-          color: 'var(--ash)',
+          color: 'var(--text-dark-muted)',
           lineHeight: 1.7,
           marginBottom: '40px',
           maxWidth: '600px',
@@ -92,7 +93,7 @@ export function CTA({
       </p>
       <button
         style={{
-          display: 'inline-block',
+          display: 'block',
           background: isHovered ? 'var(--dusk)' : 'var(--parchment)',
           color: 'var(--ink)',
           padding: '16px 32px',
@@ -107,6 +108,7 @@ export function CTA({
           boxShadow: isHovered
             ? '0 10px 28px rgba(232, 184, 154, 0.28)'
             : '0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 24px rgba(0,0,0,0.12)',
+          margin: '0 auto',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -114,12 +116,13 @@ export function CTA({
       >
         {buttonText}
       </button>
+      <DeviceShowcase mode="cta-scene" />
       </div>
 
       <style>{`
         @media (max-width: 639px) {
           .cta-section {
-            padding: 160px 0 120px 0 !important;
+            padding: 160px 0 0px 0 !important;
           }
           .cta-heading {
             font-size: 36px !important;
@@ -131,7 +134,7 @@ export function CTA({
         }
         @media (min-width: 640px) and (max-width: 1023px) {
           .cta-section {
-            padding: 120px 0 100px 0 !important;
+            padding: 120px 0 0 0 !important;
           }
           .floating-script {
             font-size: 36px !important;
