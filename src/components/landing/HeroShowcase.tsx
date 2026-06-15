@@ -20,7 +20,7 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
       <section
         className="hero-showcase"
         style={{
-          padding: '42px 0 84px',
+          padding: '134px 0 84px',
           width: '100vw',
           marginLeft: 'calc(50% - 50vw)',
           marginRight: 'calc(50% - 50vw)',
@@ -109,17 +109,24 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
           </div>
 
           <DeviceShowcase mode="hero-tablet" />
+          <div className="hero-showcase-fade" aria-hidden="true" />
         </div>
       </section>
 
       <style>{`
         @media (max-width: 1199px) {
+          .hero-showcase {
+            padding-bottom: 0 !important;
+          }
+
           .hero-showcase-inner {
             min-height: auto !important;
             width: 100vw !important;
             margin: 0 !important;
             grid-template-columns: 1fr !important;
             gap: 24px !important;
+            position: relative !important;
+            overflow: hidden !important;
           }
 
           .hero-showcase-copy {
@@ -140,11 +147,28 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
             font-size: 20px !important;
             max-width: 720px !important;
           }
+
+          .hero-showcase-fade {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 20%;
+            background: linear-gradient(
+              to bottom,
+              rgba(244, 240, 232, 0) 0%,
+              rgba(244, 240, 232, 0.32) 34%,
+              rgba(244, 240, 232, 0.74) 68%,
+              var(--parchment) 100%
+            );
+            pointer-events: none;
+            z-index: 3;
+          }
         }
 
         @media (max-width: 767px) {
           .hero-showcase {
-            padding: 24px 0 56px !important;
+            padding: 116px 0 0 !important;
             width: 100vw !important;
             margin-left: calc(50% - 50vw) !important;
             margin-right: calc(50% - 50vw) !important;
@@ -172,6 +196,10 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
 
           .hero-showcase-copy {
             padding: 0 20px !important;
+          }
+
+          .hero-showcase-fade {
+            height: 22% !important;
           }
         }
       `}</style>

@@ -51,7 +51,7 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
           zIndex: 0,
         }}
       />
-      <div style={{ position: 'relative', zIndex: 1, paddingTop: '92px' }}>
+      <div style={{ position: 'relative', zIndex: 1 }}>
         <LandingHeader
           navItems={messages.header.nav}
           locale={locale}

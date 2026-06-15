@@ -615,14 +615,6 @@ export function LandingHeader({
             transform: scale(1);
           }
         }
-        @media (min-width: 770px) and (max-width: 839px) {
-          .landing-header-logo-full {
-            display: none !important;
-          }
-          .landing-header-logo-compact {
-            display: inline !important;
-          }
-        }
         @media (min-width: 905px) {
           .landing-header-menu-btn {
             display: none !important;

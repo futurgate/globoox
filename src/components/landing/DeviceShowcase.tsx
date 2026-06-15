@@ -190,6 +190,7 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
           @media (max-width: 767px) {
             .device-showcase-tablet-wrap {
               margin-top: 36px !important;
+              margin-bottom: -33% !important;
               justify-content: center !important;
             }
 
@@ -202,6 +203,7 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
           @media (min-width: 768px) and (max-width: 1199px) {
             .device-showcase-tablet-wrap {
               margin-top: 36px !important;
+              margin-bottom: -33% !important;
               justify-content: center !important;
             }
 
