@@ -9,18 +9,25 @@ import { useAdaptiveDropdown } from '@/components/ui/useAdaptiveDropdown';
 
 interface LandingHeaderProps {
   navItems?: Array<{ label: string; href: string }>;
-  locale: LandingLocale;
-  openAppLabel: string;
-  languageLabel: string;
-  languages: Array<{ value: LandingLocale; label: string }>;
+  locale?: LandingLocale;
+  openAppLabel?: string;
+  languageLabel?: string;
+  languages?: Array<{ value: LandingLocale; label: string }>;
 }
+
+const DEFAULT_LANGUAGES: Array<{ value: LandingLocale; label: string }> = [
+  { value: 'en', label: 'English' },
+  { value: 'es', label: 'Español' },
+  { value: 'fr', label: 'Français' },
+  { value: 'ru', label: 'Русский' },
+];
 
 export function LandingHeader({
   navItems = [],
-  locale,
-  openAppLabel,
-  languageLabel,
-  languages,
+  locale = 'en',
+  openAppLabel = 'Open App',
+  languageLabel = 'Language',
+  languages = DEFAULT_LANGUAGES,
 }: LandingHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [desktopLanguageMenuOpen, setDesktopLanguageMenuOpen] = useState(false);

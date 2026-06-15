@@ -491,8 +491,8 @@ const messages: Record<LandingLocale, LandingMessages> = {
   },
 };
 
-export function isLandingLocale(value: string): value is LandingLocale {
-  return landingLocales.includes(value as LandingLocale);
+export function isLandingLocale(value: string | null | undefined): value is LandingLocale {
+  return typeof value === 'string' && landingLocales.includes(value as LandingLocale);
 }
 
 export function getLandingMessages(locale: string): LandingMessages {
