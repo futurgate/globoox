@@ -3,34 +3,26 @@
 import { Linkedin } from 'lucide-react';
 import { SectionLabel } from './SectionLabel';
 
-const founders = [
-  {
-    name: 'Founder One',
-    role: 'Product & vision',
-    note: 'Shapes the reading experience and product direction.',
-    theme: 'light' as const,
-    initials: 'FO',
-    linkedinUrl: 'https://www.linkedin.com/in/founder-one',
-  },
-  {
-    name: 'Founder Two',
-    role: 'Translation systems',
-    note: 'Leads the translation engine and language quality.',
-    theme: 'dark' as const,
-    initials: 'FT',
-    linkedinUrl: 'https://www.linkedin.com/in/founder-two',
-  },
-  {
-    name: 'Founder Three',
-    role: 'Library & platform',
-    note: 'Builds the library, sync, and platform layer.',
-    theme: 'light' as const,
-    initials: 'FH',
-    linkedinUrl: 'https://www.linkedin.com/in/founder-three',
-  },
-];
+interface FoundersSectionProps {
+  label: string;
+  heading: string;
+  linkedinLabel: string;
+  items: Array<{
+    name: string;
+    role: string;
+    note: string;
+    theme: 'light' | 'dark';
+    initials: string;
+    linkedinUrl: string;
+  }>;
+}
 
-export function FoundersSection() {
+export function FoundersSection({
+  label,
+  heading,
+  linkedinLabel,
+  items,
+}: FoundersSectionProps) {
   return (
     <section
       className="founders-section"
@@ -41,7 +33,7 @@ export function FoundersSection() {
     >
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ maxWidth: '720px', marginBottom: '48px' }}>
-          <SectionLabel>Meet the team</SectionLabel>
+          <SectionLabel>{label}</SectionLabel>
           <h2
             className="founders-heading"
             style={{
@@ -53,7 +45,7 @@ export function FoundersSection() {
               fontWeight: 400,
             }}
           >
-            The team behind Globoox.
+            {heading}
           </h2>
         </div>
 
@@ -65,7 +57,7 @@ export function FoundersSection() {
             gap: '28px',
           }}
         >
-          {founders.map((founder) => {
+          {items.map((founder) => {
             const isDark = founder.theme === 'dark';
 
             return (
@@ -164,7 +156,7 @@ export function FoundersSection() {
                     }}
                   >
                     <Linkedin size={14} strokeWidth={2} />
-                    <span>LinkedIn</span>
+                    <span>{linkedinLabel}</span>
                   </a>
                 </div>
               </article>

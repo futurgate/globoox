@@ -6,15 +6,20 @@ import { AnimatedIPhoneMockup } from './AnimatedIPhoneMockup';
 interface UsageAnimationProps {
   label?: string;
   heading?: string;
+  steps?: Array<{ step: string; description: string }>;
 }
 
-const steps = [
+const defaultSteps = [
   { step: 'Step 1', description: 'Upload your ebook' },
   { step: 'Step 2', description: 'Choose your language' },
   { step: 'Step 3', description: 'Enjoy your book!' },
 ];
 
-export function UsageAnimation({ label = 'How it works', heading = 'Three simple steps' }: UsageAnimationProps) {
+export function UsageAnimation({
+  label = 'How it works',
+  heading = 'Three simple steps',
+  steps = defaultSteps,
+}: UsageAnimationProps) {
   const [active, setActive] = useState(0);
   const [jumpTo, setJumpTo] = useState<0 | 1 | 2 | null>(null);
   const jumpKeyRef = useRef(0); // increment to re-trigger same-tab jumps

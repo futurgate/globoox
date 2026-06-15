@@ -1,12 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import { SectionLabel } from './SectionLabel';
 
 interface HeroShowcaseProps {
+  eyebrow: string;
   title: string;
   subtitle?: string;
+  buttonText: string;
   titleClassName?: string;
 }
 
@@ -33,7 +35,7 @@ function DeviceFrame({
   className: string;
   isSequential: boolean;
   onEnded: () => void;
-  videoRef: React.RefObject<HTMLVideoElement | null>;
+  videoRef: MutableRefObject<HTMLVideoElement | null>;
 }) {
   const isPhone = type === 'phone';
   const isTablet = type === 'tablet';
@@ -57,6 +59,23 @@ function DeviceFrame({
       ? { top: '2.7%', right: '7.5%', bottom: '2.7%', left: '7.5%', radius: '0' }
       : { top: '4.1%', right: '5.5%', bottom: '4.1%', left: '5.5%', radius: '0' };
   const aspectRatio = isLaptop ? '2170 / 1430' : isPhone ? '454 / 876' : '788 / 1073';
+  const tryAutoplay = () => {
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('autoplay', '');
+    video.setAttribute('playsinline', 'true');
+    video.setAttribute('webkit-playsinline', 'true');
+    video.removeAttribute('controls');
+    void video.play().catch(() => {});
+  };
 
   return (
     <div
@@ -81,14 +100,33 @@ function DeviceFrame({
       >
         {videoSrc ? (
           <video
-            ref={videoRef}
+            ref={(node) => {
+              videoRef.current = node;
+
+              if (!node) {
+                return;
+              }
+
+              node.muted = true;
+              node.defaultMuted = true;
+              node.playsInline = true;
+              node.setAttribute('muted', '');
+              node.setAttribute('autoplay', '');
+              node.setAttribute('playsinline', 'true');
+              node.setAttribute('webkit-playsinline', 'true');
+              node.removeAttribute('controls');
+            }}
             autoPlay={!isSequential}
             muted
             loop={!isSequential}
             playsInline
-            preload="metadata"
+            controls={false}
+            disablePictureInPicture
+            preload="auto"
             aria-hidden="true"
             onEnded={onEnded}
+            onLoadedMetadata={tryAutoplay}
+            onCanPlay={tryAutoplay}
             style={{
               width: '100%',
               height: '100%',
@@ -119,7 +157,7 @@ function DeviceFrame({
   );
 }
 
-export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcaseProps) {
+export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassName }: HeroShowcaseProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isDesktopSequential, setIsDesktopSequential] = useState(false);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
@@ -153,12 +191,26 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
       }
 
       if (!isDesktopSequential) {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('autoplay', '');
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('webkit-playsinline', 'true');
         video.currentTime = 0;
         void video.play().catch(() => {});
         return;
       }
 
       if (index === activeVideoIndex) {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.playsInline = true;
+        video.setAttribute('muted', '');
+        video.setAttribute('autoplay', '');
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('webkit-playsinline', 'true');
         video.currentTime = 0;
         void video.play().catch(() => {});
         return;
@@ -227,7 +279,7 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
               padding: '0 40px',
             }}
           >
-            <SectionLabel>Introducing Globoox</SectionLabel>
+            <SectionLabel>{eyebrow}</SectionLabel>
             <h1
               className={`hero-showcase-title ${titleClassName || ''}`}
               style={{
@@ -276,7 +328,7 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
                 boxShadow: `0 16px 34px ${isHovered ? 'rgba(163, 77, 50, 0.24)' : 'rgba(192, 90, 58, 0.2)'}`,
               }}
             >
-              Start Reading For Free
+              {buttonText}
             </button>
           </div>
 
@@ -456,6 +508,32 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
 
           .hero-showcase-copy {
             padding: 0 20px !important;
+          }
+        }
+
+        @media (max-width: 419px) {
+          .hero-showcase {
+            --hero-stage-width: min(100vw, 360px);
+            --hero-stage-offset-x: 0px;
+            --hero-stage-offset-y: 0px;
+            --hero-devices-margin-top: 56px;
+          }
+
+          .hero-device-stage {
+            width: min(100vw, 360px) !important;
+            aspect-ratio: 454 / 876 !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+
+          .hero-device-tablet {
+            display: none !important;
+          }
+
+          .hero-device-phone {
+            width: 100% !important;
+            left: 0 !important;
+            bottom: 0 !important;
           }
         }
       `}</style>

@@ -4,14 +4,16 @@ import { useState } from 'react';
 
 interface CTAProps {
   heading: string;
-  description?: string;
+  description: string;
   buttonText: string;
+  floatingScripts: string[];
 }
 
 export function CTA({
   heading,
-  description = 'Upload your EPUB and enjoy it in your language.',
+  description,
   buttonText,
+  floatingScripts,
 }: CTAProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -26,18 +28,40 @@ export function CTA({
         overflow: 'hidden',
       }}
     >
-      {/* Floating multilingual scripts */}
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '52px', pointerEvents: 'none', top: '5%', left: '3%', animation: 'float 8s infinite ease-in-out' }}>Lernen</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '64px', pointerEvents: 'none', top: '18%', right: '5%', animation: 'float 8s infinite ease-in-out', animationDelay: '2s' }}>学ぶ</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '44px', pointerEvents: 'none', bottom: '15%', left: '6%', animation: 'float 8s infinite ease-in-out', animationDelay: '4s' }}>Essai</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '58px', pointerEvents: 'none', bottom: '25%', right: '14%', animation: 'float 8s infinite ease-in-out', animationDelay: '1s' }}>Наука</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '48px', pointerEvents: 'none', top: '40%', left: '2%', animation: 'float 8s infinite ease-in-out', animationDelay: '3s' }}>Arte</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '56px', pointerEvents: 'none', top: '8%', right: '22%', animation: 'float 8s infinite ease-in-out', animationDelay: '5s' }}>علم</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '42px', pointerEvents: 'none', bottom: '8%', right: '30%', animation: 'float 8s infinite ease-in-out', animationDelay: '0.5s' }}>Ler</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '60px', pointerEvents: 'none', top: '55%', right: '2%', animation: 'float 8s infinite ease-in-out', animationDelay: '3.5s' }}>철학</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '46px', pointerEvents: 'none', bottom: '5%', left: '30%', animation: 'float 8s infinite ease-in-out', animationDelay: '6s' }}>Bilim</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '50px', pointerEvents: 'none', top: '3%', left: '35%', animation: 'float 8s infinite ease-in-out', animationDelay: '1.5s' }}>Lära</div>
-      <div className="floating-script" style={{ position: 'absolute', fontFamily: "'Lora', serif", color: 'var(--parchment)', opacity: 0.07, fontSize: '54px', pointerEvents: 'none', top: '65%', left: '18%', animation: 'float 8s infinite ease-in-out', animationDelay: '4.5s' }}>विज्ञान</div>
+      {[
+        { text: floatingScripts[0], top: '5%', left: '3%', fontSize: '52px', delay: '0s' },
+        { text: floatingScripts[1], top: '18%', right: '5%', fontSize: '64px', delay: '2s' },
+        { text: floatingScripts[2], bottom: '15%', left: '6%', fontSize: '44px', delay: '4s' },
+        { text: floatingScripts[3], bottom: '25%', right: '14%', fontSize: '58px', delay: '1s' },
+        { text: floatingScripts[4], top: '40%', left: '2%', fontSize: '48px', delay: '3s' },
+        { text: floatingScripts[5], top: '8%', right: '22%', fontSize: '56px', delay: '5s' },
+        { text: floatingScripts[6], bottom: '8%', right: '30%', fontSize: '42px', delay: '0.5s' },
+        { text: floatingScripts[7], top: '55%', right: '2%', fontSize: '60px', delay: '3.5s' },
+        { text: floatingScripts[8], bottom: '5%', left: '30%', fontSize: '46px', delay: '6s' },
+        { text: floatingScripts[9], top: '3%', left: '35%', fontSize: '50px', delay: '1.5s' },
+        { text: floatingScripts[10], top: '65%', left: '18%', fontSize: '54px', delay: '4.5s' },
+      ].map((item) => (
+        <div
+          key={`${item.text}-${item.delay}`}
+          className="floating-script"
+          style={{
+            position: 'absolute',
+            fontFamily: "'Lora', serif",
+            color: 'var(--parchment)',
+            opacity: 0.07,
+            fontSize: item.fontSize,
+            pointerEvents: 'none',
+            animation: 'float 8s infinite ease-in-out',
+            animationDelay: item.delay,
+            ...(item.top ? { top: item.top } : {}),
+            ...(item.bottom ? { bottom: item.bottom } : {}),
+            ...(item.left ? { left: item.left } : {}),
+            ...(item.right ? { right: item.right } : {}),
+          }}
+        >
+          {item.text}
+        </div>
+      ))}
 
 
       <div className="cta-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px', position: 'relative', zIndex: 1 }}>

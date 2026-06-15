@@ -4,16 +4,25 @@ import Image from 'next/image';
 import { BookOpen } from 'lucide-react';
 import { SectionLabel } from './SectionLabel';
 
-export function SupportedLanguages() {
-  const currentLangs = ['English', 'Spanish', 'Russian', 'French'];
-  const futureLangs = [
-    { label: 'German', soon: true },
-    { label: 'Portuguese', soon: true },
-    { label: 'Italian', soon: true },
-    { label: 'Japanese', soon: true },
-    { label: 'Korean', soon: true },
-    { label: 'and dozens more', soon: false },
-  ];
+interface SupportedLanguagesProps {
+  label: string;
+  heading: string;
+  description: string;
+  currentLangs: string[];
+  futureLangs: Array<{ label: string; soon: boolean }>;
+  soonLabel: string;
+  globeAlt: string;
+}
+
+export function SupportedLanguages({
+  label,
+  heading,
+  description,
+  currentLangs,
+  futureLangs,
+  soonLabel,
+  globeAlt,
+}: SupportedLanguagesProps) {
 
   return (
     <section className="supported-section" style={{ padding: '120px 40px', background: 'var(--ink)' }}>
@@ -32,14 +41,14 @@ export function SupportedLanguages() {
           <div className="supported-globe-wrap" style={{ marginBottom: '24px' }}>
             <Image
               src="/images/globe.png"
-              alt="Globe icon"
+              alt={globeAlt}
               width={64}
               height={79}
               unoptimized
               style={{ width: '64px', height: 'auto' }}
             />
           </div>
-          <SectionLabel>SUPPORTED LANGUAGES</SectionLabel>
+          <SectionLabel>{label}</SectionLabel>
           <h2
             className="supported-heading"
             style={{
@@ -51,7 +60,7 @@ export function SupportedLanguages() {
               fontWeight: 400,
             }}
           >
-            Read in&nbsp;English, Spanish, Russian, or&nbsp;French
+            {heading}
           </h2>
           <p
             style={{
@@ -63,7 +72,7 @@ export function SupportedLanguages() {
               msHyphens: 'none',
             }}
           >
-            These four languages are available now, with more European languages, along with Arabic, Chinese, and&nbsp;Hindi, coming soon. Because every book deserves to&nbsp;reach every reader in their mother tongue.
+            {description}
           </p>
         </div>
 
@@ -227,7 +236,7 @@ export function SupportedLanguages() {
                           boxShadow: '0 2px 6px rgba(44, 59, 45, 0.18)',
                         }}
                       >
-                        soon
+                        {soonLabel}
                       </span>
                     )}
                   </span>

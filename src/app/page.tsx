@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import {
 	createSharedPreviewMetadata,
 	sharedWidgetDescription,
 	siteTitle,
 } from '@/lib/shareMetadata';
+import { isLandingLocale } from '@/lib/landing-i18n';
 import './landing/landing.css';
 
 export const metadata: Metadata = {
@@ -15,4 +18,9 @@ export const metadata: Metadata = {
 	...createSharedPreviewMetadata('/'),
 };
 
-export { default } from './landing/page';
+export default async function HomePage() {
+	const cookieStore = await cookies();
+	const preferredLocale = cookieStore.get('landing_locale')?.value;
+	const locale = isLandingLocale(preferredLocale) ? preferredLocale : 'en';
+	redirect(`/${locale}/landing`);
+}

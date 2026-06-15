@@ -5,17 +5,23 @@ import { createPortal } from 'react-dom';
 
 interface FooterProps {
   tagline: string;
+  legalLabel: string;
+  termsLabel: string;
+  privacyLabel: string;
+  copyright: string;
 }
 
 function LegalModal({
   open,
   onOpenChange,
   title,
+  legalLabel,
   sections,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
+  legalLabel: string;
   sections: Array<{ heading: string; body: string[] }>;
 }) {
   const titleId = useId();
@@ -110,7 +116,7 @@ function LegalModal({
                 marginBottom: '8px',
               }}
             >
-              Legal
+              {legalLabel}
             </div>
             <h2
               id={titleId}
@@ -357,7 +363,13 @@ const PRIVACY_SECTIONS = [
   },
 ];
 
-export function Footer({ tagline }: FooterProps) {
+export function Footer({
+  tagline,
+  legalLabel,
+  termsLabel,
+  privacyLabel,
+  copyright,
+}: FooterProps) {
   const [openModal, setOpenModal] = useState<'terms' | 'privacy' | null>(null);
 
   return (
@@ -395,7 +407,7 @@ export function Footer({ tagline }: FooterProps) {
               }}
               onClick={() => setOpenModal('terms')}
             >
-              Terms
+              {termsLabel}
             </button>
             <button
               type="button"
@@ -412,7 +424,7 @@ export function Footer({ tagline }: FooterProps) {
               }}
               onClick={() => setOpenModal('privacy')}
             >
-              Privacy Policy
+              {privacyLabel}
             </button>
           </div>
           <p style={{ fontSize: '13.5px', color: 'var(--ash)', margin: '20px auto 0', lineHeight: 1.6 }}>
@@ -420,7 +432,7 @@ export function Footer({ tagline }: FooterProps) {
             <br />
             <span style={{ fontSize: '24px', lineHeight: 1.6 }}>❧</span>
             <br />
-            Globoox © 2026
+            {copyright}
           </p>
         </div>
 
@@ -436,13 +448,15 @@ export function Footer({ tagline }: FooterProps) {
       <LegalModal
         open={openModal === 'terms'}
         onOpenChange={(open) => setOpenModal(open ? 'terms' : null)}
-        title="Terms"
+        title={termsLabel}
+        legalLabel={legalLabel}
         sections={TERMS_SECTIONS}
       />
       <LegalModal
         open={openModal === 'privacy'}
         onOpenChange={(open) => setOpenModal(open ? 'privacy' : null)}
-        title="Privacy Policy"
+        title={privacyLabel}
+        legalLabel={legalLabel}
         sections={PRIVACY_SECTIONS}
       />
     </>
