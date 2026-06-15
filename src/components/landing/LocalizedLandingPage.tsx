@@ -117,7 +117,6 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
           <FoundersSection
             label={messages.founders.label}
             heading={messages.founders.heading}
-            linkedinLabel={messages.founders.linkedinLabel}
             items={messages.founders.items}
           />
         </section>

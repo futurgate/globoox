@@ -30,11 +30,14 @@ export function LandingHeader({
   languages = DEFAULT_LANGUAGES,
 }: LandingHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shouldCollapse, setShouldCollapse] = useState(false);
   const [desktopLanguageMenuOpen, setDesktopLanguageMenuOpen] = useState(false);
   const [mobileLanguageMenuOpen, setMobileLanguageMenuOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string>('');
   const router = useRouter();
   const pathname = usePathname();
+  const shellRef = useRef<HTMLDivElement>(null);
+  const desktopMeasureRef = useRef<HTMLDivElement>(null);
   const languageTriggerRef = useRef<HTMLButtonElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
   const sectionIds = useMemo(
@@ -107,6 +110,45 @@ export function LandingHeader({
       window.removeEventListener('resize', updateActiveSection);
     };
   }, [sectionIds]);
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    const desktopMeasure = desktopMeasureRef.current;
+
+    if (!shell || !desktopMeasure) {
+      return;
+    }
+
+    const updateCollapse = () => {
+      const availableWidth = shell.clientWidth - 28;
+      const requiredWidth = desktopMeasure.scrollWidth;
+      setShouldCollapse(requiredWidth > availableWidth);
+    };
+
+    updateCollapse();
+
+    const resizeObserver = new ResizeObserver(() => {
+      window.requestAnimationFrame(updateCollapse);
+    });
+
+    resizeObserver.observe(shell);
+    resizeObserver.observe(desktopMeasure);
+    window.addEventListener('resize', updateCollapse);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateCollapse);
+    };
+  }, [activeLanguageLabel, navItems, openAppLabel]);
+
+  useEffect(() => {
+    if (!shouldCollapse) {
+      setMenuOpen(false);
+      setMobileLanguageMenuOpen(false);
+    } else {
+      setDesktopLanguageMenuOpen(false);
+    }
+  }, [shouldCollapse]);
 
   const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const hero = document.getElementById('hero');
@@ -203,6 +245,7 @@ export function LandingHeader({
         }}
       >
         <div
+          ref={shellRef}
           style={{
             maxWidth: '1200px',
             margin: '0 auto',
@@ -239,7 +282,7 @@ export function LandingHeader({
             <span className="landing-header-logo-compact" style={{ display: 'none' }}>G</span>
           </Link>
 
-          <nav className="landing-header-links" style={{ display: 'flex', alignItems: 'center', gap: '0' }}>
+          <nav className="landing-header-links" style={{ display: shouldCollapse ? 'none' : 'flex', alignItems: 'center', gap: '0', whiteSpace: 'nowrap' }}>
             {navItems.map((item) => (
               <div key={item.href} className="landing-header-nav-item" style={{ display: 'flex', alignItems: 'center' }}>
                 <a
@@ -263,7 +306,7 @@ export function LandingHeader({
             <div
               className="landing-header-language"
               style={{
-                display: 'flex',
+                display: shouldCollapse ? 'none' : 'flex',
                 alignItems: 'center',
                 marginLeft: '16px',
                 position: 'relative',
@@ -330,16 +373,19 @@ export function LandingHeader({
             href="/my-books"
             className="landing-header-open-app"
             style={{
+              display: shouldCollapse ? 'inline-flex' : 'inline-flex',
               color: 'var(--marketing-text)',
               textDecoration: 'none',
               fontSize: '14px',
               fontWeight: 600,
-              marginLeft: '20px',
+              marginLeft: shouldCollapse ? 'auto' : '20px',
+              marginRight: shouldCollapse ? '12px' : '0',
               padding: '10px 16px',
               borderRadius: '999px',
               background: 'var(--marketing-accent-soft)',
               textAlign: 'center',
               flexShrink: 0,
+              whiteSpace: 'nowrap',
             }}
           >
             {openAppLabel}
@@ -355,7 +401,7 @@ export function LandingHeader({
             }}
             aria-label="Toggle navigation"
             style={{
-              display: 'none',
+              display: shouldCollapse ? 'inline-flex' : 'none',
               alignItems: 'center',
               justifyContent: 'center',
               width: '44px',
@@ -419,6 +465,84 @@ export function LandingHeader({
               />
             </span>
           </button>
+
+          <div
+            ref={desktopMeasureRef}
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              visibility: 'hidden',
+              pointerEvents: 'none',
+              inset: 'auto',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0',
+              padding: '8px 8px 8px 20px',
+              height: 0,
+              overflow: 'hidden',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "'Lora', serif",
+                fontSize: '22px',
+                fontWeight: 500,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.18,
+                display: 'inline-flex',
+                alignItems: 'center',
+                paddingBottom: '2px',
+              }}
+            >
+              Globoox
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+              {navItems.map((item) => (
+                <span
+                  key={item.href}
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    padding: '0 18px',
+                    color: 'transparent',
+                  }}
+                >
+                  {item.label}
+                </span>
+              ))}
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: 1,
+                  padding: '10px 14px 10px 16px',
+                  minHeight: '40px',
+                  marginLeft: '16px',
+                  color: 'transparent',
+                }}
+              >
+                <span>{activeLanguageLabel}</span>
+                <ChevronDown size={16} />
+              </span>
+              <span
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  marginLeft: '20px',
+                  padding: '10px 16px',
+                  borderRadius: '999px',
+                  whiteSpace: 'nowrap',
+                  color: 'transparent',
+                }}
+              >
+                {openAppLabel}
+              </span>
+            </div>
+          </div>
         </div>
 
         {menuOpen && navItems.length > 0 && (
@@ -429,7 +553,7 @@ export function LandingHeader({
               top: 'calc(100% + 12px)',
               left: '8px',
               right: '8px',
-              display: 'none',
+              display: shouldCollapse ? 'flex' : 'none',
               flexDirection: 'column',
               gap: '0',
               padding: '22px 20px 24px',
@@ -551,30 +675,6 @@ export function LandingHeader({
       </header>
 
       <style>{`
-        @media (max-width: 904px) {
-          .landing-header-nav-item {
-            display: none !important;
-          }
-          .landing-header-language {
-            display: none !important;
-          }
-          .landing-header-menu-btn {
-            display: inline-flex !important;
-          }
-          .landing-header-mobile-menu {
-            display: flex !important;
-          }
-          .landing-header-open-app {
-            margin-left: auto !important;
-            margin-right: 12px !important;
-          }
-          .landing-header-logo-full {
-            display: inline !important;
-          }
-          .landing-header-logo-compact {
-            display: none !important;
-          }
-        }
         .landing-header-language-dropdown,
         .landing-header-language-dropdown-mobile {
           animation: landing-header-dropdown-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -615,27 +715,11 @@ export function LandingHeader({
             transform: scale(1);
           }
         }
-        @media (min-width: 905px) {
-          .landing-header-menu-btn {
-            display: none !important;
-          }
-          .landing-header-nav-item {
-            display: flex !important;
-          }
-          .landing-header-language {
-            display: flex !important;
-          }
-        }
         @media (min-width: 840px) {
           .landing-header-logo-full {
             display: inline !important;
           }
           .landing-header-logo-compact {
-            display: none !important;
-          }
-        }
-        @media (min-width: 905px) {
-          .landing-header-mobile-menu {
             display: none !important;
           }
         }

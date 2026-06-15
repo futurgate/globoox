@@ -1,16 +1,16 @@
 'use client';
 
-import { Linkedin } from 'lucide-react';
+import Image from 'next/image';
 import { SectionLabel } from './SectionLabel';
 
 interface FoundersSectionProps {
   label: string;
   heading: string;
-  linkedinLabel: string;
   items: Array<{
     name: string;
     role: string;
     note: string;
+    linkedinText: string;
     theme: 'light' | 'dark';
     initials: string;
     linkedinUrl: string;
@@ -20,7 +20,6 @@ interface FoundersSectionProps {
 export function FoundersSection({
   label,
   heading,
-  linkedinLabel,
   items,
 }: FoundersSectionProps) {
   return (
@@ -63,6 +62,7 @@ export function FoundersSection({
             return (
               <article
                 key={founder.name}
+                className="founders-card"
                 style={{
                   minHeight: '460px',
                   borderRadius: '8px',
@@ -78,8 +78,9 @@ export function FoundersSection({
                   justifyContent: 'space-between',
                 }}
               >
-                <div>
+                <div className="founders-card-main" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
                   <div
+                    className="founders-card-avatar"
                     style={{
                       width: '92px',
                       height: '92px',
@@ -95,69 +96,87 @@ export function FoundersSection({
                       fontFamily: "'Lora', serif",
                       fontSize: '28px',
                       color: isDark ? 'var(--parchment)' : 'var(--ink)',
+                      flexShrink: 0,
                     }}
                   >
                     {founder.initials}
                   </div>
 
-                  <div style={{ marginBottom: '10px' }}>
-                    <h3
+                  <div className="founders-card-copy">
+                    <div style={{ marginBottom: '10px' }}>
+                      <h3
+                        style={{
+                          fontFamily: "'Lora', serif",
+                          fontSize: '38px',
+                          lineHeight: 1.08,
+                          fontWeight: 400,
+                          color: isDark ? 'var(--parchment)' : 'var(--ink)',
+                        }}
+                      >
+                        {founder.name}
+                      </h3>
+                    </div>
+
+                    <div
                       style={{
-                        fontFamily: "'Lora', serif",
-                        fontSize: '38px',
-                        lineHeight: 1.08,
-                        fontWeight: 400,
-                        color: isDark ? 'var(--parchment)' : 'var(--ink)',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                        color: isDark ? 'rgba(244,240,232,0.72)' : 'rgba(44,59,45,0.64)',
+                        marginBottom: '22px',
                       }}
                     >
-                      {founder.name}
-                    </h3>
+                      {founder.role}
+                    </div>
+
+                    <p
+                      style={{
+                        fontSize: '17px',
+                        lineHeight: 1.45,
+                        color: isDark ? 'rgba(244,240,232,0.86)' : 'var(--ash)',
+                        maxWidth: '28ch',
+                        marginBottom: '24px',
+                      }}
+                    >
+                      {founder.note}
+                    </p>
+                    <a
+                      href={founder.linkedinUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${founder.name} on LinkedIn`}
+                      className="founders-card-link"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontSize: '14px',
+                        lineHeight: 1.4,
+                        color: isDark ? 'rgba(244,240,232,0.88)' : 'var(--ink)',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '4px',
+                        marginTop: '24px',
+                      }}
+                    >
+                      <Image
+                        src="/images/icon-linkedin.svg"
+                        alt=""
+                        aria-hidden="true"
+                        width={20}
+                        height={20}
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          opacity: 1,
+                          filter: isDark
+                            ? 'brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(363%) hue-rotate(329deg) brightness(103%) contrast(92%)'
+                            : 'brightness(0) saturate(100%) invert(19%) sepia(10%) saturate(849%) hue-rotate(71deg) brightness(96%) contrast(88%)',
+                        }}
+                      />
+                      <span>{founder.linkedinText}</span>
+                    </a>
                   </div>
-
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      letterSpacing: '0.04em',
-                      textTransform: 'uppercase',
-                      color: isDark ? 'rgba(244,240,232,0.72)' : 'rgba(44,59,45,0.64)',
-                      marginBottom: '22px',
-                    }}
-                  >
-                    {founder.role}
-                  </div>
-
-                  <p
-                    style={{
-                      fontSize: '17px',
-                      lineHeight: 1.6,
-                      color: isDark ? 'rgba(244,240,232,0.86)' : 'var(--ash)',
-                      maxWidth: '28ch',
-                      marginBottom: '24px',
-                    }}
-                  >
-                    {founder.note}
-                  </p>
-
-                  <a
-                    href={founder.linkedinUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${founder.name} on LinkedIn`}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '14px',
-                      lineHeight: 1.4,
-                      color: isDark ? 'rgba(244,240,232,0.88)' : 'var(--ink)',
-                      textDecoration: 'underline',
-                      textUnderlineOffset: '4px',
-                    }}
-                  >
-                    <Linkedin size={14} strokeWidth={2} />
-                    <span>{linkedinLabel}</span>
-                  </a>
                 </div>
               </article>
             );
@@ -166,6 +185,30 @@ export function FoundersSection({
       </div>
 
       <style>{`
+        @media (min-width: 560px) and (max-width: 1023px) {
+          .founders-card {
+            min-height: 0 !important;
+          }
+
+          .founders-card-main {
+            flex-direction: row !important;
+            align-items: flex-start !important;
+            gap: 24px !important;
+          }
+
+          .founders-card-avatar {
+            margin-bottom: 0 !important;
+          }
+
+          .founders-card-copy {
+            flex: 1 1 auto;
+          }
+
+          .founders-card-link {
+            margin-top: 0 !important;
+          }
+        }
+
         @media (max-width: 1023px) {
           .founders-grid {
             grid-template-columns: 1fr !important;

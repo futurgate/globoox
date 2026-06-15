@@ -155,13 +155,15 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
     return (
       <>
         <div className="device-showcase-tablet-wrap">
-          <div className="device-showcase-tablet-stage">
-            <DeviceFrame
-              type="tablet"
-              className="device-showcase-tablet"
-              playbackMode="autoplay"
-              videoRef={tabletVideoRef}
-            />
+          <div className="device-showcase-tablet-viewport">
+            <div className="device-showcase-tablet-stage">
+              <DeviceFrame
+                type="tablet"
+                className="device-showcase-tablet"
+                playbackMode="autoplay"
+                videoRef={tabletVideoRef}
+              />
+            </div>
           </div>
         </div>
 
@@ -174,9 +176,14 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
             justify-content: flex-end;
           }
 
+          .device-showcase-tablet-viewport {
+            width: min(400px, 100%);
+            overflow: visible;
+          }
+
           .device-showcase-tablet-stage {
             position: relative;
-            width: min(400px, 100%);
+            width: 100%;
             aspect-ratio: 788 / 1073;
             margin: 0;
           }
@@ -190,25 +197,41 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
           @media (max-width: 767px) {
             .device-showcase-tablet-wrap {
               margin-top: 36px !important;
-              margin-bottom: -33% !important;
               justify-content: center !important;
             }
 
-            .device-showcase-tablet-stage {
+            .device-showcase-tablet-viewport {
               width: min(440px, calc(100vw - 40px)) !important;
+              aspect-ratio: 788 / 719 !important;
               margin: 0 auto !important;
+              position: relative !important;
+            }
+
+            .device-showcase-tablet-stage {
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 100% !important;
             }
           }
 
           @media (min-width: 768px) and (max-width: 1199px) {
             .device-showcase-tablet-wrap {
               margin-top: 36px !important;
-              margin-bottom: -33% !important;
               justify-content: center !important;
             }
 
-            .device-showcase-tablet-stage {
+            .device-showcase-tablet-viewport {
               width: min(560px, 100%) !important;
+              aspect-ratio: 788 / 719 !important;
+              position: relative !important;
+            }
+
+            .device-showcase-tablet-stage {
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 100% !important;
             }
           }
         `}</style>
