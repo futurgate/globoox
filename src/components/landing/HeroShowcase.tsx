@@ -396,6 +396,7 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
         @media (max-width: 999px) {
           .hero-showcase {
             --hero-stage-offset-x: 0px;
+            --hero-devices-margin-top: 40px;
           }
 
           .hero-device-laptop {
@@ -421,10 +422,10 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
             width: 100vw !important;
             margin-left: calc(50% - 50vw) !important;
             margin-right: calc(50% - 50vw) !important;
-            --hero-stage-width: 100%;
+            --hero-stage-width: 720px;
             --hero-stage-offset-x: 0px;
             --hero-stage-offset-y: -12px;
-            --hero-devices-margin-top: 24px;
+            --hero-devices-margin-top: 40px;
           }
 
           .hero-showcase-inner {
@@ -433,7 +434,9 @@ export function HeroShowcase({ title, subtitle, titleClassName }: HeroShowcasePr
           }
 
           .hero-device-stage {
-            width: 100% !important;
+            width: 720px !important;
+            max-width: none !important;
+            margin-left: calc(50% - 360px) !important;
           }
 
           .hero-showcase-title {

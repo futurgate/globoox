@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { HeroShowcase } from '@/components/landing/HeroShowcase';
 import { LandingHeader } from '@/components/landing/LandingHeader';
-import { PrivacyManifest } from '@/components/landing/PrivacyManifest';
 import { SupportedLanguages } from '@/components/landing/SupportedLanguages';
 import { UsageAnimation } from '@/components/landing/UsageAnimation';
 import { QualityAssuranceV2 } from '@/components/landing/QualityAssuranceV2';
@@ -30,7 +29,7 @@ export default async function LandingPage() {
             { label: 'How it works', href: '#how-it-works' },
             { label: 'Quality', href: '#quality' },
             { label: 'Languages', href: '#languages' },
-            { label: 'Privacy', href: '#privacy' },
+            { label: 'Team', href: '#team' },
             { label: 'Start reading', href: '#start' },
           ]}
         />
@@ -71,10 +70,6 @@ export default async function LandingPage() {
 
         <section id="languages" aria-label="Supported languages">
           <SupportedLanguages />
-        </section>
-
-        <section id="privacy" aria-label="Privacy">
-          <PrivacyManifest />
         </section>
 
         <section id="team" aria-label="Meet the team">

@@ -7,9 +7,17 @@ interface LandingHeaderProps {
   navItems?: Array<{ label: string; href: string }>;
 }
 
+const landingLanguages = [
+  { value: 'en', label: 'English' },
+  { value: 'es', label: 'Español' },
+  { value: 'fr', label: 'Français' },
+  { value: 'ru', label: 'Русский' },
+];
+
 export function LandingHeader({ navItems = [] }: LandingHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string>('');
+  const [activeLanguage, setActiveLanguage] = useState('en');
   const sectionIds = useMemo(
     () => navItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1)),
     [navItems]
@@ -141,6 +149,55 @@ export function LandingHeader({ navItems = [] }: LandingHeaderProps) {
                 </a>
               </div>
             ))}
+            <label
+              className="landing-header-language"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginLeft: '16px',
+                position: 'relative',
+              }}
+            >
+              <select
+                value={activeLanguage}
+                onChange={(event) => setActiveLanguage(event.target.value)}
+                aria-label="Select language"
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  color: 'var(--marketing-text-muted)',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: 1,
+                  padding: '8px 22px 8px 18px',
+                  outline: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                {landingLanguages.map((language) => (
+                  <option key={language.value} value={language.value}>
+                    {language.label}
+                  </option>
+                ))}
+              </select>
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  right: '6px',
+                  top: '50%',
+                  width: '8px',
+                  height: '8px',
+                  borderRight: '1.5px solid var(--marketing-text-muted)',
+                  borderBottom: '1.5px solid var(--marketing-text-muted)',
+                  transform: 'translateY(-70%) rotate(45deg)',
+                  pointerEvents: 'none',
+                }}
+              />
+            </label>
             <a
               href="/my-books"
               className="landing-header-open-app"
@@ -271,6 +328,56 @@ export function LandingHeader({ navItems = [] }: LandingHeaderProps) {
                 {item.label}
               </a>
             ))}
+            <label
+              style={{
+                display: 'flex',
+                position: 'relative',
+                marginTop: '18px',
+                paddingTop: '18px',
+                borderTop: '1px solid var(--marketing-border)',
+              }}
+            >
+              <select
+                value={activeLanguage}
+                onChange={(event) => setActiveLanguage(event.target.value)}
+                aria-label="Select language"
+                style={{
+                  width: '100%',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  border: 'none',
+                  borderRadius: '0',
+                  background: 'transparent',
+                  color: 'var(--marketing-text)',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                  padding: '0 18px 0 0',
+                  lineHeight: 1.2,
+                  outline: 'none',
+                }}
+              >
+                {landingLanguages.map((language) => (
+                  <option key={language.value} value={language.value}>
+                    {language.label}
+                  </option>
+                ))}
+              </select>
+              <span
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  right: '4px',
+                  top: 'calc(50% + 9px)',
+                  width: '8px',
+                  height: '8px',
+                  borderRight: '1.5px solid var(--marketing-text-muted)',
+                  borderBottom: '1.5px solid var(--marketing-text-muted)',
+                  transform: 'translateY(-70%) rotate(45deg)',
+                  pointerEvents: 'none',
+                }}
+              />
+            </label>
             <a
               href="/my-books"
               onClick={() => setMenuOpen(false)}
@@ -295,6 +402,9 @@ export function LandingHeader({ navItems = [] }: LandingHeaderProps) {
       <style>{`
         @media (max-width: 769px) {
           .landing-header-links {
+            display: none !important;
+          }
+          .landing-header-language {
             display: none !important;
           }
           .landing-header-menu-btn {
