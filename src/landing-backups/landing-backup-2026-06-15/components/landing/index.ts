@@ -1,0 +1,9 @@
+export { SectionLabel } from './SectionLabel';
+export { CompareSlider } from './CompareSlider';
+export { Hero } from './Hero';
+export { FeaturesGrid } from './FeaturesGrid';
+export { CTA } from './CTA';
+export { Footer } from './Footer';
+export { PricingCard } from './PricingCard';
+export { PricingGrid } from './PricingGrid';
+export { ComparisonTable } from './ComparisonTable';

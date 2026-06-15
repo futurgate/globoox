@@ -7,7 +7,6 @@ import {
 	siteTitle,
 } from '@/lib/shareMetadata';
 import { isLandingLocale } from '@/lib/landing-i18n';
-import './landing/landing.css';
 
 export const metadata: Metadata = {
 	title: siteTitle,
@@ -22,5 +21,5 @@ export default async function HomePage() {
 	const cookieStore = await cookies();
 	const preferredLocale = cookieStore.get('landing_locale')?.value;
 	const locale = isLandingLocale(preferredLocale) ? preferredLocale : 'en';
-	redirect(`/${locale}/landing`);
+	redirect(`/${locale}`);
 }

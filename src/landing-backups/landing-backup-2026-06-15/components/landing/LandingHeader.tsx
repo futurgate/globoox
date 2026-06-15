@@ -129,7 +129,7 @@ export function LandingHeader({
     }
 
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
-    const normalizedPath = pathname?.replace(/^\/(en|es|fr|ru)/, '') || '/';
+    const normalizedPath = pathname?.replace(/^\/(en|es|fr|ru)/, '') || '/landing';
     router.push(`/${nextLocale}${normalizedPath}${hash}`);
     setMenuOpen(false);
     setDesktopLanguageMenuOpen(false);

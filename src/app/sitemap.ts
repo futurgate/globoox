@@ -1,16 +1,18 @@
 import type { MetadataRoute } from 'next';
 import amazonBooks from '@/data/amazon-books.json';
+import { landingLocales } from '@/lib/landing-i18n';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://globoox.co';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const localizedLandingPages: MetadataRoute.Sitemap = landingLocales.map((locale) => ({
+    url: `${SITE_URL}/${locale}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 1.0,
+  }));
+
   const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: `${SITE_URL}/landing`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1.0,
-    },
     {
       url: `${SITE_URL}/store`,
       lastModified: new Date(),
@@ -26,5 +28,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...bookPages];
+  return [...localizedLandingPages, ...staticPages, ...bookPages];
 }
