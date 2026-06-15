@@ -131,6 +131,7 @@ export function LandingHeader({
 
   const renderLanguageMenu = (isMobile: boolean) => (
     <div
+      className="landing-header-language-menu-surface"
       style={{
         overflow: 'hidden',
         borderRadius: '20px',
@@ -144,6 +145,7 @@ export function LandingHeader({
           <button
             type="button"
             onClick={() => handleLanguageChange(language.value)}
+            className="landing-header-language-menu-item"
             style={{
               width: '100%',
               display: 'flex',
@@ -444,8 +446,9 @@ export function LandingHeader({
                   textUnderlineOffset: '6px',
                   fontSize: '15px',
                   fontWeight: activeHref === item.href ? 600 : 500,
-                  padding: '14px 0',
+                  padding: '14px 16px',
                   borderBottom: index < navItems.length - 1 ? '1px solid var(--marketing-border)' : 'none',
+                  margin: '0 -16px',
                 }}
               >
                 {item.label}
@@ -560,6 +563,23 @@ export function LandingHeader({
         .landing-header-language-dropdown,
         .landing-header-language-dropdown-mobile {
           animation: landing-header-dropdown-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .landing-header-language-menu-item {
+          transition: background-color 180ms ease;
+        }
+        .landing-header-language-menu-item:hover {
+          background: rgba(44,59,45,0.05);
+        }
+        .landing-header-language-menu-item:active {
+          background: rgba(44,59,45,0.08);
+        }
+        .landing-header-language-trigger:hover,
+        .landing-header-language-trigger-mobile:hover {
+          background: rgba(44,59,45,0.05) !important;
+        }
+        .landing-header-language-trigger:active,
+        .landing-header-language-trigger-mobile:active {
+          background: rgba(44,59,45,0.08) !important;
         }
         @keyframes landing-header-dropdown-in {
           from {
