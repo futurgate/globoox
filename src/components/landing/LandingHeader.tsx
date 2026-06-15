@@ -154,7 +154,6 @@ export function LandingHeader({
               gap: '12px',
               padding: isMobile ? '14px 18px' : '14px 18px',
               border: 'none',
-              background: 'transparent',
               color: 'var(--marketing-text)',
               fontSize: isMobile ? '17px' : '18px',
               lineHeight: 1.2,
@@ -270,6 +269,7 @@ export function LandingHeader({
                 aria-label={languageLabel}
                 aria-haspopup="menu"
                 aria-expanded={desktopLanguageMenuOpen}
+                className="landing-header-language-trigger"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -438,6 +438,7 @@ export function LandingHeader({
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
                 aria-current={activeHref === item.href ? 'true' : undefined}
+                className="landing-header-mobile-nav-link"
                 style={{
                   color: activeHref === item.href ? 'var(--marketing-text)' : 'var(--marketing-text-muted)',
                   textDecorationLine: activeHref === item.href ? 'underline' : 'none',
@@ -476,6 +477,7 @@ export function LandingHeader({
                 aria-label={languageLabel}
                 aria-haspopup="menu"
                 aria-expanded={mobileLanguageMenuOpen}
+                className="landing-header-language-trigger-mobile"
                 style={{
                   width: '100%',
                   border: 'none',
@@ -573,10 +575,19 @@ export function LandingHeader({
         .landing-header-language-menu-item {
           transition: background-color 180ms ease;
         }
+        .landing-header-mobile-nav-link {
+          transition: background-color 180ms ease, color 180ms ease;
+        }
         .landing-header-language-menu-item:hover {
-          background: rgba(44,59,45,0.05);
+          background: rgba(44,59,45,0.08);
         }
         .landing-header-language-menu-item:active {
+          background: rgba(44,59,45,0.08);
+        }
+        .landing-header-mobile-nav-link:hover {
+          background: rgba(44,59,45,0.05);
+        }
+        .landing-header-mobile-nav-link:active {
           background: rgba(44,59,45,0.08);
         }
         .landing-header-language-trigger:hover,
