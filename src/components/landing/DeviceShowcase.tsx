@@ -169,14 +169,16 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
           .device-showcase-tablet-wrap {
             z-index: 1;
             width: 100%;
-            margin: 48px auto 0;
+            margin: 0;
+            display: flex;
+            justify-content: flex-end;
           }
 
           .device-showcase-tablet-stage {
             position: relative;
-            width: min(440px, calc(100vw - 64px));
+            width: min(400px, 100%);
             aspect-ratio: 788 / 1073;
-            margin: 0 auto;
+            margin: 0;
           }
 
           .device-showcase-tablet {
@@ -188,10 +190,22 @@ export function DeviceShowcase({ mode }: DeviceShowcaseProps) {
           @media (max-width: 767px) {
             .device-showcase-tablet-wrap {
               margin-top: 36px !important;
+              justify-content: center !important;
             }
 
             .device-showcase-tablet-stage {
-              width: min(320px, calc(100vw - 40px)) !important;
+              width: min(440px, calc(100vw - 40px)) !important;
+              margin: 0 auto !important;
+            }
+          }
+
+          @media (min-width: 768px) and (max-width: 1199px) {
+            .device-showcase-tablet-wrap {
+              justify-content: center !important;
+            }
+
+            .device-showcase-tablet-stage {
+              width: min(560px, 100%) !important;
             }
           }
         `}</style>

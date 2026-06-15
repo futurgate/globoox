@@ -36,10 +36,10 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
             width: 'min(1600px, calc(100vw - 128px))',
             margin: '0 auto',
             minHeight: 'calc(100vh - 300px)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'stretch',
-            gap: '0',
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) minmax(360px, 440px)',
+            alignItems: 'center',
+            gap: '48px',
           }}
         >
           <div
@@ -47,10 +47,11 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
             style={{
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
               zIndex: 2,
               width: 'var(--hero-copy-width)',
-              textAlign: 'center',
+              textAlign: 'left',
               padding: '0 40px',
             }}
           >
@@ -64,7 +65,7 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
                 fontWeight: 500,
                 fontFamily: "'Lora', serif",
                 color: 'var(--ink)',
-                maxWidth: '820px',
+                maxWidth: '720px',
               }}
             >
               {title}
@@ -73,13 +74,13 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
               <p
                 className="hero-showcase-subtitle"
                 style={{
-                  fontSize: '20px',
-                  color: 'var(--ash)',
-                  marginBottom: '36px',
-                  maxWidth: '720px',
-                }}
-              >
-                {subtitle}
+                fontSize: '20px',
+                color: 'var(--ash)',
+                marginBottom: '36px',
+                maxWidth: '620px',
+              }}
+            >
+              {subtitle}
               </p>
             ) : null}
             <button
@@ -117,21 +118,27 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
             min-height: auto !important;
             width: 100vw !important;
             margin: 0 !important;
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
           }
 
           .hero-showcase-copy {
             padding: 0 40px !important;
+            align-items: center !important;
+            text-align: center !important;
           }
 
           .hero-showcase-title {
             width: 100% !important;
             font-size: 48px !important;
             line-height: 1.08 !important;
+            max-width: 820px !important;
           }
 
           .hero-showcase-subtitle {
             width: 100% !important;
             font-size: 20px !important;
+            max-width: 720px !important;
           }
         }
 
