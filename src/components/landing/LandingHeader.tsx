@@ -446,9 +446,9 @@ export function LandingHeader({
                   textUnderlineOffset: '6px',
                   fontSize: '15px',
                   fontWeight: activeHref === item.href ? 600 : 500,
-                  padding: '14px 16px',
+                  padding: '14px 0',
                   borderBottom: index < navItems.length - 1 ? '1px solid var(--marketing-border)' : 'none',
-                  margin: '0 -16px',
+                  margin: '0 -16px 0 16px',
                 }}
               >
                 {item.label}
@@ -459,11 +459,17 @@ export function LandingHeader({
               style={{
                 display: 'block',
                 position: 'relative',
-                marginTop: '18px',
-                paddingTop: '18px',
-                borderTop: '1px solid var(--marketing-border)',
+                paddingTop: '8px',
               }}
             >
+              <div
+                aria-hidden="true"
+                style={{
+                  height: '1px',
+                  margin: '0 0 8px 12px',
+                  background: 'var(--marketing-border)',
+                }}
+              />
               <button
                 type="button"
                 onClick={() => setMobileLanguageMenuOpen((open) => !open)}
