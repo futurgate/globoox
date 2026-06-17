@@ -143,11 +143,11 @@ const messages: Record<LandingLocale, LandingMessages> = {
     },
     hero: {
       eyebrow: '',
-      title: 'Globoox — reading app that instantly translates e-books into your native language.',
+      title: 'Globoox — reading app that instantly translates e\u2011books into your native language.',
       button: 'Upload your first book',
     },
     usage: {
-      label: 'How it works',
+      label: 'How it Works',
       heading: 'Three simple steps',
       steps: [
         { step: 'Step 1', description: 'Upload your ebook.' },
@@ -242,7 +242,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
     },
     hero: {
       eyebrow: '',
-      title: 'Globoox — app de lectura que traduce e-books al instante a tu idioma nativo',
+      title: 'Globoox — app de lectura que traduce e\u2011books al instante a tu idioma nativo',
       button: 'Empieza a leer gratis',
     },
     usage: {
@@ -304,11 +304,11 @@ const messages: Record<LandingLocale, LandingMessages> = {
   fr: {
     metadata: {
       title: 'Globoox',
-      description: 'Application de lecture qui traduit instantanément les ebooks dans votre langue maternelle. Importez des EPUB et lisez en anglais, français, espagnol ou russe.',
+      description: 'Application de lecture qui traduit instantanément les ebooks dans votre langue maternelle. Importez des EPUB et lisez en\u00A0anglais, français, espagnol ou russe.',
       featureList: [
-        "Import d'ebooks EPUB",
+        'Import d’ebooks EPUB',
         'Traduction de livres par IA',
-        "Prise en charge de l'anglais, du français, de l'espagnol, de l'allemand et du russe",
+        'Prise en charge de l’anglais, du français, de l’espagnol, de l’allemand et du russe',
         'Texte original et traduit côte à côte',
         'Synchronisation de la progression de lecture',
         'Bibliothèque personnelle privée',
@@ -316,7 +316,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       freeOffer: 'Import et traduction de votre premier livre gratuits',
     },
     header: {
-      openApp: "Ouvrir l'app",
+      openApp: 'Ouvrir l’app',
       nav: [
         { label: 'Fonctionnement', href: '#how-it-works' },
         { label: 'Qualité', href: '#quality' },
@@ -336,32 +336,32 @@ const messages: Record<LandingLocale, LandingMessages> = {
       howItWorks: 'Fonctionnement',
       quality: 'Qualité de traduction',
       languages: 'Langues prises en charge',
-      team: "L'équipe",
+      team: 'L’équipe',
       start: 'Commencer',
     },
     hero: {
       eyebrow: '',
-      title: "Globoox — l'application de lecture qui traduit instantanément vos e-books dans votre langue maternelle.",
+      title: 'Globoox — l’appli de lecture qui traduit instantanément vos e\u2011books dans votre langue.',
       button: 'Importer votre premier livre',
     },
     usage: {
-      label: 'Comment ça fonctionne ?',
+      label: 'Comment ça marche ?',
       heading: 'Trois étapes simples',
       steps: [
-        { step: 'Étape 1', description: 'Ajoutez votre e-book.' },
+        { step: 'Étape 1', description: 'Ajoutez votre e\u2011book.' },
         { step: 'Étape 2', description: 'Choisissez la langue de traduction.' },
         { step: 'Étape 3', description: 'Bonne lecture !' },
       ],
     },
     quality: {
-      label: 'Une qualité de traduction irréprochable',
-      heading: 'Faites confiance à nos traductions',
-      description: "Grâce à notre technologie d'intelligence artificielle optimisée par des linguistes experts, notre application propose des traductions fluides, précises et agréables à lire, qui respectent fidèlement l'intention de l'auteur.",
+      label: 'Qualité de traduction',
+      heading: 'Traduction irréprochable et fidèle à l’original',
+      description: 'Au cœur de l’application se trouve une puissante IA, calibrée par nos linguistes pour donner vie à\u00A0chaque texte.',
     },
     supportedLanguages: {
       label: 'Langues disponibles',
-      heading: 'Lisez en anglais, en espagnol, en russe ou en français',
-      description: "Ces quatre langues sont accessibles dès aujourd'hui. D'autres langues européennes, ainsi que l'arabe, le chinois et l'hindi, seront bientôt disponibles. Parce que chaque livre mérite de trouver son lecteur dans sa langue maternelle.",
+      heading: 'Lisez en\u00A0anglais, en\u00A0espagnol, en\u00A0russe et en\u00A0français',
+      description: 'Vous pouvez dès aujourd’hui lire dans ces 4\u00A0langues. D’autres langues européennes, ainsi que l’arabe, le chinois et l’hindi, seront bientôt ajoutées. Parce que chaque livre mérite de trouver son lecteur.',
       current: ['Anglais', 'Espagnol', 'Russe', 'Français'],
       future: [
         { label: 'Allemand', soon: true },
@@ -369,7 +369,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
         { label: 'Italien', soon: true },
         { label: 'Japonais', soon: true },
         { label: 'Coréen', soon: true },
-        { label: "et bien d'autres", soon: false },
+        { label: 'et bien d’autres', soon: false },
       ],
       soonLabel: 'bientôt',
       globeAlt: 'Icône globe',
@@ -377,11 +377,11 @@ const messages: Record<LandingLocale, LandingMessages> = {
     founders: {
       label: 'Qui sommes-nous ?',
       heading: 'Notre équipe est notre plus grande force',
-      description: "Notre équipe rassemble quatre profils aux expertises complémentaires. Un designer passionné par la typographie du livre numérique, un linguiste, un traducteur polyglotte et une ingénieure avec une profonde maîtrise de l'IA. Ensemble, nous construisons l'avenir de la lecture numérique: une plateforme qui efface les barrières de langues et ouvre l'accès aux meilleurs livres du monde.",
+      description: 'Notre équipe rassemble quatre profils aux expertises complémentaires. Un designer passionné par la typographie du livre numérique, un linguiste, un traducteur polyglotte et une ingénieure avec une profonde maîtrise de l’IA. Ensemble, nous construisons l’avenir de la lecture numérique\u00A0: une plateforme qui efface les barrières de langues et ouvre l’accès aux meilleurs livres du monde.',
       linkedinLabel: 'LinkedIn',
       items: [
         { ...sharedFounders[0], role: 'Développeuse et CTO', linkedinText: 'LinkedIn de Tatiana' },
-        { ...sharedFounders[1], role: 'CEO', linkedinText: "LinkedIn d'Anton" },
+        { ...sharedFounders[1], role: 'CEO', linkedinText: 'LinkedIn d’Anton' },
         { ...sharedFounders[2], role: 'Designer', linkedinText: 'LinkedIn de Kondrat' },
         { ...sharedFounders[3], role: 'Cofondateur', linkedinText: 'LinkedIn de Maxim' },
       ],
@@ -487,7 +487,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
     },
     cta: {
       heading: 'Начните читать бесплатно',
-      description: 'Загрузите свою книгу в\u00A0формате EPUB и\u00A0читайте на\u00A0своём языке.',
+      description: 'загрузите свою книгу в\u00A0формате EPUB и\u00A0читайте на\u00A0своём языке.',
       button: 'Загрузить первую книгу',
       floatingScripts: ['Учиться', '学ぶ', 'Essai', 'Наука', 'Arte', 'علم', 'Ler', '철학', 'Bilim', 'Lära', 'विज्ञान'],
     },
