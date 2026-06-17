@@ -21,7 +21,7 @@ const SCREEN_SEQUENCE = [
   { stepIndex: 0, fromProgress: 0, image: () => '/images/how-it-works/1.1.png' },
   {
     stepIndex: 0,
-    fromProgress: 0.995,
+    fromProgress: 0.5,
     image: (locale: LandingLocale) =>
       locale === 'en'
         ? '/images/how-it-works/1.2-es.png'
@@ -35,7 +35,7 @@ const SCREEN_SEQUENCE = [
         ? '/images/how-it-works/2.1-es.png'
         : '/images/how-it-works/2.1-en.png',
   },
-  { stepIndex: 1, fromProgress: 0.995, image: () => '/images/how-it-works/2.2.png' },
+  { stepIndex: 1, fromProgress: 0.5, image: () => '/images/how-it-works/2.2.png' },
   {
     stepIndex: 2,
     fromProgress: 0,
@@ -81,9 +81,8 @@ export function UsageAnimation({
     const updatePhase = () => {
       const viewportHeight = window.innerHeight;
       const enterCenterY = viewportHeight * 0.82;
-      const exitCenterY = viewportHeight * 0.18;
       const releaseCenterY = viewportHeight * 0.06;
-      const phaseSpan = Math.max(enterCenterY - exitCenterY, 1);
+      const phaseSpan = Math.max(enterCenterY - releaseCenterY, 1);
       let nextStepIndex = 0;
 
       cardRefs.current.forEach((card, index) => {
