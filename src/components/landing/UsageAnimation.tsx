@@ -11,33 +11,31 @@ interface UsageAnimationProps {
   locale: LandingLocale;
 }
 
-type UsagePhase = 0 | 1 | 2 | 3 | 4;
-
 const defaultSteps = [
   { step: 'Step 1', description: 'Upload your ebook.' },
   { step: 'Step 2', description: 'Choose your language to translate the book.' },
   { step: 'Step 3', description: 'Enjoy your book!' },
 ];
 
-function getPhaseImage(locale: LandingLocale, phase: UsagePhase) {
+function getPhaseImage(locale: LandingLocale, phase: 0 | 1 | 2 | 3 | 4) {
   if (phase === 0) {
-    return '/images/how-it-works/1.png';
+    return '/images/how-it-works/1.1.png';
   }
 
   if (phase === 1) {
+    return locale === 'en'
+      ? '/images/how-it-works/1.2-es.png'
+      : '/images/how-it-works/1.2-en.png';
+  }
+
+  if (phase === 2) {
     return locale === 'en'
       ? '/images/how-it-works/2.1-es.png'
       : '/images/how-it-works/2.1-en.png';
   }
 
-  if (phase === 2) {
-    return locale === 'en'
-      ? '/images/how-it-works/2.2-es.png'
-      : '/images/how-it-works/2.2-en.png';
-  }
-
   if (phase === 3) {
-    return '/images/how-it-works/2.3.png';
+    return '/images/how-it-works/2.2.png';
   }
 
   if (locale === 'es') {
@@ -55,18 +53,6 @@ function getPhaseImage(locale: LandingLocale, phase: UsagePhase) {
   return '/images/how-it-works/3-es-en.png';
 }
 
-function getTextStepIndex(phase: UsagePhase) {
-  if (phase === 0 || phase === 1) {
-    return 0;
-  }
-
-  if (phase === 4) {
-    return 2;
-  }
-
-  return 1;
-}
-
 export function UsageAnimation({
   label = 'How it works',
   heading = 'Three simple steps',
@@ -74,23 +60,53 @@ export function UsageAnimation({
   locale,
 }: UsageAnimationProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activePhase, setActivePhase] = useState<UsagePhase>(0);
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const [activePhase, setActivePhase] = useState<0 | 1 | 2 | 3 | 4>(0);
   const renderedSteps = useMemo(() => (steps.length > 0 ? steps : defaultSteps), [steps]);
 
   useEffect(() => {
-    const element = sectionRef.current;
-
-    if (!element) {
-      return;
-    }
-
     const updatePhase = () => {
-      const rect = element.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const totalScrollable = Math.max(element.offsetHeight - viewportHeight, 1);
-      const consumed = Math.min(Math.max(-rect.top, 0), totalScrollable);
-      const progress = consumed / totalScrollable;
-      const nextPhase = Math.min(4, Math.floor(progress * 5)) as UsagePhase;
+      const activationTop = viewportHeight * 0.76;
+      const exitTop = viewportHeight * 0.1;
+      const phaseSpan = Math.max(activationTop - exitTop, 1);
+      const focusY = viewportHeight * 0.52;
+      let nextStepIndex = 0;
+      let bestDistance = Number.POSITIVE_INFINITY;
+
+      cardRefs.current.forEach((card, index) => {
+        if (!card) {
+          return;
+        }
+
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(cardCenter - focusY);
+
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          nextStepIndex = index;
+        }
+      });
+
+      const activeCard = cardRefs.current[nextStepIndex];
+      const activeRect = activeCard?.getBoundingClientRect();
+      const cardProgress = activeRect
+        ? Math.min(Math.max((activationTop - activeRect.top) / phaseSpan, 0), 1)
+        : 0;
+
+      let nextPhase: 0 | 1 | 2 | 3 | 4 = 0;
+
+      if (nextStepIndex === 0) {
+        nextPhase = cardProgress < 0.995 ? 0 : 1;
+      } else if (nextStepIndex === 1) {
+        nextPhase = cardProgress < 0.995 ? 2 : 3;
+      } else {
+        nextPhase = 4;
+      }
+
+      setActiveStepIndex(nextStepIndex);
       setActivePhase(nextPhase);
     };
 
@@ -104,7 +120,6 @@ export function UsageAnimation({
     };
   }, []);
 
-  const activeStepIndex = getTextStepIndex(activePhase);
   const activeImageSrc = getPhaseImage(locale, activePhase);
 
   return (
@@ -162,30 +177,21 @@ export function UsageAnimation({
           className="how-it-works-layout"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) 348px',
+            gridTemplateColumns: '348px minmax(0, 1fr)',
             gap: '72px',
             alignItems: 'stretch',
+            maxWidth: '800px',
+            margin: '0 auto',
           }}
-        >
-          <div className="how-it-works-cards">
-            {renderedSteps.map((step, index) => {
-              const isActive = activeStepIndex === index;
-
-              return (
-                <article
-                  key={step.step}
-                  className={`how-it-works-card${isActive ? ' is-active' : ''}`}
-                >
-                  <div className="how-it-works-card-row">
-                    <div className="how-it-works-card-number">{index + 1}</div>
-                    <div className="how-it-works-card-copy">
-                      <h3 className="how-it-works-card-title">{step.step}</h3>
-                      <p className="how-it-works-card-text">{step.description}</p>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
+          >
+          <div className="how-it-works-side how-it-works-side-left" aria-hidden="true">
+            <div className="how-it-works-side-sticky">
+              <img
+                src="/images/monogram.svg"
+                alt=""
+                className="how-it-works-side-mark"
+              />
+            </div>
           </div>
 
           <div className="how-it-works-mockup-column">
@@ -200,6 +206,39 @@ export function UsageAnimation({
               </div>
             </div>
           </div>
+
+          <div className="how-it-works-cards">
+            {renderedSteps.map((step, index) => {
+              const isActive = activeStepIndex === index;
+
+              return (
+                <article
+                  key={step.step}
+                  className={`how-it-works-card${isActive ? ' is-active' : ''}`}
+                  ref={(node) => {
+                    cardRefs.current[index] = node;
+                  }}
+                >
+                  <div className="how-it-works-card-row">
+                    <div className="how-it-works-card-copy">
+                      <h3 className="how-it-works-card-title">{step.step}</h3>
+                      <p className="how-it-works-card-text">{step.description}</p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="how-it-works-side how-it-works-side-right" aria-hidden="true">
+            <div className="how-it-works-side-sticky">
+              <img
+                src="/images/monogram.svg"
+                alt=""
+                className="how-it-works-side-mark how-it-works-side-mark-right"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -207,51 +246,35 @@ export function UsageAnimation({
         .how-it-works-cards {
           position: relative;
           z-index: 1;
-          padding-top: 236px;
+          padding-top: 28px;
         }
 
         .how-it-works-card {
-          min-height: 72vh;
+          min-height: 58vh;
           display: flex;
           align-items: center;
         }
 
         .how-it-works-card + .how-it-works-card {
-          margin-top: 18vh;
+          margin-top: 0;
         }
 
         .how-it-works-card:last-child {
-          margin-bottom: 120vh;
+          margin-bottom: 48vh;
         }
 
         .how-it-works-card-row {
-          display: grid;
-          grid-template-columns: 92px minmax(0, 1fr);
-          gap: 28px;
-          align-items: start;
+          display: block;
           width: min(100%, 760px);
-          padding: 0;
-        }
-
-        .how-it-works-card-number {
-          width: 76px;
-          height: 76px;
-          border-radius: 999px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid rgba(232,184,154,0.78);
-          color: var(--dusk);
-          font-size: 30px;
-          font-weight: 700;
-          line-height: 1;
+          padding: 18px 0 0;
+          border-top: 1px solid var(--bg-dark-border);
         }
 
         .how-it-works-card-title {
           margin: 0 0 14px;
-          font-size: 14px;
-          line-height: 1.2;
-          letter-spacing: 0.08em;
+          font-size: var(--marketing-type-meta-size);
+          line-height: var(--marketing-type-meta-line);
+          letter-spacing: 0.12em;
           text-transform: uppercase;
           color: var(--dusk);
           font-weight: 600;
@@ -261,17 +284,49 @@ export function UsageAnimation({
           margin: 0;
           max-width: 620px;
           font-family: inherit;
-          font-size: 36px;
-          line-height: 1.08;
-          letter-spacing: -0.03em;
+          font-size: 24px;
+          line-height: 1.3;
           color: var(--parchment);
-          font-weight: 500;
+          font-weight: 400;
         }
 
         .how-it-works-mockup-column {
           position: relative;
           align-self: stretch;
           min-height: 100%;
+        }
+
+        .how-it-works-side {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 140px;
+          pointer-events: none;
+        }
+
+        .how-it-works-side-left {
+          right: calc(100% + 48px);
+        }
+
+        .how-it-works-side-right {
+          left: calc(100% + 48px);
+        }
+
+        .how-it-works-side-sticky {
+          position: sticky;
+          top: 248px;
+          display: flex;
+          justify-content: center;
+        }
+
+        .how-it-works-side-mark {
+          height: 382px;
+          width: auto;
+          opacity: 0.55;
+        }
+
+        .how-it-works-side-mark-right {
+          transform: scaleX(-1);
         }
 
         .how-it-works-mockup-sticky {
@@ -322,13 +377,13 @@ export function UsageAnimation({
           }
 
           .how-it-works-layout {
-            grid-template-columns: minmax(0, 1fr) 360px !important;
+            grid-template-columns: 348px minmax(0, 1fr) !important;
             gap: 40px !important;
             align-items: stretch !important;
           }
 
           .how-it-works-cards {
-            padding-top: 208px !important;
+            padding-top: 24px !important;
           }
 
           .how-it-works-card-title {
@@ -337,22 +392,15 @@ export function UsageAnimation({
           }
 
           .how-it-works-card-text {
-            font-size: 30px !important;
-          }
-
-          .how-it-works-card-number {
-            width: 60px !important;
-            height: 60px !important;
-            font-size: 24px !important;
-          }
-
-          .how-it-works-card-row {
-            grid-template-columns: 74px minmax(0, 1fr) !important;
-            gap: 20px !important;
+            font-size: 22px !important;
           }
 
           .how-it-works-phone-shell {
             width: 348px !important;
+          }
+
+          .how-it-works-side {
+            display: none !important;
           }
 
           .how-it-works-mockup-sticky {
@@ -412,39 +460,28 @@ export function UsageAnimation({
           }
 
           .how-it-works-card {
-            min-height: 62vh !important;
+            min-height: 50vh !important;
             align-items: flex-end !important;
           }
 
           .how-it-works-card + .how-it-works-card {
-            margin-top: 8vh !important;
+            margin-top: 0 !important;
           }
 
           .how-it-works-card:last-child {
-            margin-bottom: 90vh !important;
+            margin-bottom: 42vh !important;
           }
 
           .how-it-works-card-row {
-            grid-template-columns: 40px minmax(0, 1fr) !important;
-            gap: 14px !important;
-            width: 100% !important;
+            width: 80% !important;
+            margin: 0 auto 0 0 !important;
             padding: 18px 18px 20px !important;
             border-radius: 28px !important;
+            border-top: none !important;
             background: rgba(26,28,24,0.9) !important;
             border: 1px solid rgba(244,240,232,0.16) !important;
             box-shadow: 0 18px 48px rgba(0,0,0,0.28) !important;
             backdrop-filter: blur(12px) !important;
-          }
-
-          .how-it-works-card-number {
-            width: auto !important;
-            height: auto !important;
-            border: 0 !important;
-            color: var(--dusk) !important;
-            font-size: 28px !important;
-            justify-content: flex-start !important;
-            align-items: flex-start !important;
-            padding-top: 2px !important;
           }
 
           .how-it-works-card-title {
