@@ -17,40 +17,52 @@ const defaultSteps = [
   { step: 'Step 3', description: 'Enjoy your book!' },
 ];
 
-function getPhaseImage(locale: LandingLocale, phase: 0 | 1 | 2 | 3 | 4) {
-  if (phase === 0) {
-    return '/images/how-it-works/1.1.png';
-  }
+const SCREEN_SEQUENCE = [
+  { stepIndex: 0, fromProgress: 0, image: () => '/images/how-it-works/1.1.png' },
+  {
+    stepIndex: 0,
+    fromProgress: 0.995,
+    image: (locale: LandingLocale) =>
+      locale === 'en'
+        ? '/images/how-it-works/1.2-es.png'
+        : '/images/how-it-works/1.2-en.png',
+  },
+  {
+    stepIndex: 1,
+    fromProgress: 0,
+    image: (locale: LandingLocale) =>
+      locale === 'en'
+        ? '/images/how-it-works/2.1-es.png'
+        : '/images/how-it-works/2.1-en.png',
+  },
+  { stepIndex: 1, fromProgress: 0.995, image: () => '/images/how-it-works/2.2.png' },
+  {
+    stepIndex: 2,
+    fromProgress: 0,
+    image: (locale: LandingLocale) => {
+      if (locale === 'es') {
+        return '/images/how-it-works/3-en-es.png';
+      }
 
-  if (phase === 1) {
-    return locale === 'en'
-      ? '/images/how-it-works/1.2-es.png'
-      : '/images/how-it-works/1.2-en.png';
-  }
+      if (locale === 'fr') {
+        return '/images/how-it-works/3-en-fr.png';
+      }
 
-  if (phase === 2) {
-    return locale === 'en'
-      ? '/images/how-it-works/2.1-es.png'
-      : '/images/how-it-works/2.1-en.png';
-  }
+      if (locale === 'ru') {
+        return '/images/how-it-works/3-en-ru.png';
+      }
 
-  if (phase === 3) {
-    return '/images/how-it-works/2.2.png';
-  }
+      return '/images/how-it-works/3-es-en.png';
+    },
+  },
+] as const;
 
-  if (locale === 'es') {
-    return '/images/how-it-works/3-en-es.png';
-  }
+function getActiveImageSrc(locale: LandingLocale, stepIndex: number, cardProgress: number) {
+  const screen = SCREEN_SEQUENCE
+    .filter((item) => item.stepIndex === stepIndex && cardProgress >= item.fromProgress)
+    .at(-1);
 
-  if (locale === 'fr') {
-    return '/images/how-it-works/3-en-fr.png';
-  }
-
-  if (locale === 'ru') {
-    return '/images/how-it-works/3-en-ru.png';
-  }
-
-  return '/images/how-it-works/3-es-en.png';
+  return (screen ?? SCREEN_SEQUENCE[0]).image(locale);
 }
 
 export function UsageAnimation({
@@ -62,18 +74,17 @@ export function UsageAnimation({
   const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<Array<HTMLElement | null>>([]);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
-  const [activePhase, setActivePhase] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const [activeCardProgress, setActiveCardProgress] = useState(0);
   const renderedSteps = useMemo(() => (steps.length > 0 ? steps : defaultSteps), [steps]);
 
   useEffect(() => {
     const updatePhase = () => {
       const viewportHeight = window.innerHeight;
-      const activationTop = viewportHeight * 0.76;
-      const exitTop = viewportHeight * 0.1;
-      const phaseSpan = Math.max(activationTop - exitTop, 1);
-      const focusY = viewportHeight * 0.52;
+      const enterCenterY = viewportHeight * 0.82;
+      const exitCenterY = viewportHeight * 0.18;
+      const releaseCenterY = viewportHeight * 0.06;
+      const phaseSpan = Math.max(enterCenterY - exitCenterY, 1);
       let nextStepIndex = 0;
-      let bestDistance = Number.POSITIVE_INFINITY;
 
       cardRefs.current.forEach((card, index) => {
         if (!card) {
@@ -82,32 +93,21 @@ export function UsageAnimation({
 
         const rect = card.getBoundingClientRect();
         const cardCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(cardCenter - focusY);
 
-        if (distance < bestDistance) {
-          bestDistance = distance;
-          nextStepIndex = index;
+        if (cardCenter <= releaseCenterY) {
+          nextStepIndex = Math.min(index + 1, renderedSteps.length - 1);
         }
       });
 
       const activeCard = cardRefs.current[nextStepIndex];
       const activeRect = activeCard?.getBoundingClientRect();
+      const activeCenter = activeRect ? activeRect.top + activeRect.height / 2 : null;
       const cardProgress = activeRect
-        ? Math.min(Math.max((activationTop - activeRect.top) / phaseSpan, 0), 1)
+        ? Math.min(Math.max((enterCenterY - (activeCenter ?? 0)) / phaseSpan, 0), 1)
         : 0;
 
-      let nextPhase: 0 | 1 | 2 | 3 | 4 = 0;
-
-      if (nextStepIndex === 0) {
-        nextPhase = cardProgress < 0.995 ? 0 : 1;
-      } else if (nextStepIndex === 1) {
-        nextPhase = cardProgress < 0.995 ? 2 : 3;
-      } else {
-        nextPhase = 4;
-      }
-
       setActiveStepIndex(nextStepIndex);
-      setActivePhase(nextPhase);
+      setActiveCardProgress(cardProgress);
     };
 
     updatePhase();
@@ -120,7 +120,7 @@ export function UsageAnimation({
     };
   }, []);
 
-  const activeImageSrc = getPhaseImage(locale, activePhase);
+  const activeImageSrc = getActiveImageSrc(locale, activeStepIndex, activeCardProgress);
 
   return (
     <section
@@ -250,7 +250,7 @@ export function UsageAnimation({
         }
 
         .how-it-works-card {
-          min-height: 58vh;
+          min-height: 70vh;
           display: flex;
           align-items: center;
         }
@@ -260,7 +260,7 @@ export function UsageAnimation({
         }
 
         .how-it-works-card:last-child {
-          margin-bottom: 48vh;
+          margin-bottom: 0;
         }
 
         .how-it-works-card-row {
@@ -460,8 +460,8 @@ export function UsageAnimation({
           }
 
           .how-it-works-card {
-            min-height: 50vh !important;
-            align-items: flex-end !important;
+            min-height: 60vh !important;
+            align-items: center !important;
           }
 
           .how-it-works-card + .how-it-works-card {
@@ -469,7 +469,7 @@ export function UsageAnimation({
           }
 
           .how-it-works-card:last-child {
-            margin-bottom: 42vh !important;
+            margin-bottom: 0 !important;
           }
 
           .how-it-works-card-row {
