@@ -1,276 +1,427 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { AnimatedIPhoneMockup } from './AnimatedIPhoneMockup';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { PhoneImageFrame } from '@/components/landing/DeviceShowcase';
+import type { LandingLocale } from '@/lib/landing-i18n';
 
 interface UsageAnimationProps {
   label?: string;
   heading?: string;
   steps?: Array<{ step: string; description: string }>;
+  locale: LandingLocale;
 }
 
+type UsagePhase = 0 | 1 | 2 | 3 | 4;
+
 const defaultSteps = [
-  { step: 'Step 1', description: 'Upload your ebook' },
-  { step: 'Step 2', description: 'Choose your language' },
+  { step: 'Step 1', description: 'Upload your ebook.' },
+  { step: 'Step 2', description: 'Choose your language to translate the book.' },
   { step: 'Step 3', description: 'Enjoy your book!' },
 ];
+
+function getPhaseImage(locale: LandingLocale, phase: UsagePhase) {
+  if (phase === 0) {
+    return '/images/how-it-works/1.png';
+  }
+
+  if (phase === 1) {
+    return locale === 'en'
+      ? '/images/how-it-works/2.1-es.png'
+      : '/images/how-it-works/2.1-en.png';
+  }
+
+  if (phase === 2) {
+    return locale === 'en'
+      ? '/images/how-it-works/2.2-es.png'
+      : '/images/how-it-works/2.2-en.png';
+  }
+
+  if (phase === 3) {
+    return '/images/how-it-works/2.3.png';
+  }
+
+  if (locale === 'es') {
+    return '/images/how-it-works/3-en-es.png';
+  }
+
+  if (locale === 'fr') {
+    return '/images/how-it-works/3-en-fr.png';
+  }
+
+  if (locale === 'ru') {
+    return '/images/how-it-works/3-en-ru.png';
+  }
+
+  return '/images/how-it-works/3-es-en.png';
+}
+
+function getTextStepIndex(phase: UsagePhase) {
+  if (phase === 0 || phase === 1) {
+    return 0;
+  }
+
+  if (phase === 4) {
+    return 2;
+  }
+
+  return 1;
+}
 
 export function UsageAnimation({
   label = 'How it works',
   heading = 'Three simple steps',
   steps = defaultSteps,
+  locale,
 }: UsageAnimationProps) {
-  const [active, setActive] = useState(0);
-  const [jumpTo, setJumpTo] = useState<0 | 1 | 2 | null>(null);
-  const jumpKeyRef = useRef(0); // increment to re-trigger same-tab jumps
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activePhase, setActivePhase] = useState<UsagePhase>(0);
+  const renderedSteps = useMemo(() => (steps.length > 0 ? steps : defaultSteps), [steps]);
 
-  const scrollToTab = useCallback((index: number) => {
-    const container = scrollRef.current;
-    const tab = tabRefs.current[index];
-    if (!container || !tab) return;
-    const containerWidth = container.offsetWidth;
-    const tabLeft = tab.offsetLeft;
-    const tabWidth = tab.offsetWidth;
-    container.scrollTo({
-      left: tabLeft - containerWidth / 2 + tabWidth / 2,
-      behavior: 'smooth',
-    });
-  }, []);
-
-  const handleStepChange = useCallback((step: 0 | 1 | 2) => {
-    setActive(step);
-    requestAnimationFrame(() => scrollToTab(step));
-  }, [scrollToTab]);
-
-  const handleTabClick = useCallback((i: number) => {
-    jumpKeyRef.current += 1;
-    setJumpTo(i as 0 | 1 | 2);
-  }, []);
-
-  // scroll to active tab when active changes
   useEffect(() => {
-    scrollToTab(active);
-  }, [active, scrollToTab]);
+    const element = sectionRef.current;
 
-  // set spacer widths so first/last tab can be centered
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-    const updateSpacers = () => {
-      const containerWidth = container.offsetWidth;
-      const spacers = container.querySelectorAll<HTMLElement>('.threemockups-tab-spacer');
-      const firstTab = tabRefs.current[0];
-      const lastTab = tabRefs.current[tabRefs.current.length - 1];
-      if (spacers[0] && firstTab) spacers[0].style.width = `${containerWidth / 2 - firstTab.offsetWidth / 2}px`;
-      if (spacers[1] && lastTab) spacers[1].style.width = `${containerWidth / 2 - lastTab.offsetWidth / 2}px`;
+    if (!element) {
+      return;
+    }
+
+    const updatePhase = () => {
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const totalScrollable = Math.max(element.offsetHeight - viewportHeight, 1);
+      const consumed = Math.min(Math.max(-rect.top, 0), totalScrollable);
+      const progress = consumed / totalScrollable;
+      const nextPhase = Math.min(4, Math.floor(progress * 5)) as UsagePhase;
+      setActivePhase(nextPhase);
     };
-    updateSpacers();
-    const ro = new ResizeObserver(updateSpacers);
-    ro.observe(container);
-    return () => ro.disconnect();
+
+    updatePhase();
+    window.addEventListener('scroll', updatePhase, { passive: true });
+    window.addEventListener('resize', updatePhase);
+
+    return () => {
+      window.removeEventListener('scroll', updatePhase);
+      window.removeEventListener('resize', updatePhase);
+    };
   }, []);
+
+  const activeStepIndex = getTextStepIndex(activePhase);
+  const activeImageSrc = getPhaseImage(locale, activePhase);
 
   return (
-    <section className="threemockups-section" style={{ padding: '120px 0', background: 'var(--ink)', overflow: 'hidden' }}>
-      <div className="threemockups-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
-
-        <div className="threemockups-header" style={{ marginBottom: '80px', textAlign: 'center' }}>
-          <span style={{
-            textTransform: 'uppercase',
-            fontSize: '12px',
-            fontWeight: 600,
-            color: 'var(--dusk)',
-            letterSpacing: '0.12em',
-            marginBottom: '16px',
-            display: 'block',
-          }}>
+    <section
+      ref={sectionRef}
+      className="how-it-works-section"
+      style={{
+        position: 'relative',
+        background: 'var(--ink)',
+        padding: '88px 0 160px',
+      }}
+    >
+      <div
+        className="how-it-works-wrap"
+        style={{
+          width: 'min(1240px, calc(100vw - 80px))',
+          margin: '0 auto',
+        }}
+      >
+        <header
+          className="how-it-works-head"
+          style={{
+            textAlign: 'center',
+            marginBottom: '40px',
+          }}
+        >
+          <span
+            style={{
+              display: 'block',
+              marginBottom: '14px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              fontSize: '12px',
+              fontWeight: 600,
+              color: 'var(--dusk)',
+            }}
+          >
             {label}
           </span>
-          <h2 className="threemockups-heading" style={{
-            fontFamily: 'Lora, serif',
-            fontSize: '48px',
-            lineHeight: 1.1,
-            color: 'var(--parchment)',
-            margin: 0,
-          }}>
+          <h2
+            className="how-it-works-heading"
+            style={{
+              margin: 0,
+              fontFamily: "'Lora', serif",
+              fontSize: '68px',
+              lineHeight: 0.98,
+              color: 'var(--parchment)',
+            }}
+          >
             {heading}
           </h2>
-          <div className="threemockups-header-divider" style={{ display: 'none', height: '1px', background: 'rgba(255,255,255,0.1)', marginTop: '48px', maxWidth: '220px', margin: '48px auto 0' }} />
-        </div>
+        </header>
 
-        {/* Mobile horizontal tabs — visible only on mobile */}
-        <div className="threemockups-mobile-tabs" ref={scrollRef} style={{
-          display: 'none',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          marginBottom: '40px',
-          marginLeft: '-20px',
-          marginRight: '-20px',
-          WebkitOverflowScrolling: 'touch',
-        }}>
-          <div className="threemockups-tabs-inner" style={{ display: 'flex', gap: '0' }}>
-            <div className="threemockups-tab-spacer" style={{ flexShrink: 0 }} />
-            {steps.map(({ step, description }, i) => (
-              <button
-                key={i}
-                ref={el => { tabRefs.current[i] = el; }}
-                onClick={() => handleTabClick(i)}
-                style={{
-                  flexShrink: 0,
-                  height: '80px',
-                  padding: '0 28px',
-                  border: 'none',
-                  borderBottom: active === i ? '2px solid var(--primary)' : '2px solid rgba(255,255,255,0.1)',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px',
-                  transition: 'border-color 0.25s ease',
-                }}
-              >
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: 'var(--dusk)',
-                }}>
-                  {step}
-                </span>
-                <span style={{
-                  fontSize: '19px',
-                  fontFamily: 'Lora, serif',
-                  color: active === i ? 'var(--parchment)' : 'rgba(244,240,232,0.4)',
-                  transition: 'color 0.25s ease',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {description}
-                </span>
-              </button>
-            ))}
-            <div className="threemockups-tab-spacer" style={{ flexShrink: 0 }} />
-          </div>
-        </div>
+        <div
+          className="how-it-works-layout"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) 420px',
+            gap: '72px',
+            alignItems: 'start',
+          }}
+        >
+          <div className="how-it-works-cards">
+            {renderedSteps.map((step, index) => {
+              const isActive = activeStepIndex === index;
 
-        <div className="threemockups-center" style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '0',
-        }}>
-        {/* Left monogram */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/monogram.svg"
-          alt=""
-          aria-hidden="true"
-          className="threemockups-monogram"
-          style={{ height: '382px', flexShrink: 0, opacity: 0.55, marginRight: '48px' }}
-        />
-        <div className="threemockups-card" style={{
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '20px',
-          background: 'rgba(255,255,255,0.03)',
-          padding: '48px',
-          display: 'inline-flex',
-        }}>
-        <div className="threemockups-layout" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '64px',
-        }}>
-          {/* Mockup */}
-          <div className="threemockups-mockup" style={{ flexShrink: 0, width: '360px', display: 'flex', justifyContent: 'center' }}>
-            <AnimatedIPhoneMockup jumpTo={jumpTo} onStepChange={handleStepChange} />
+              return (
+                <article
+                  key={step.step}
+                  className={`how-it-works-card${isActive ? ' is-active' : ''}`}
+                >
+                  <div className="how-it-works-card-row">
+                    <div className="how-it-works-card-number">{index + 1}</div>
+                    <div className="how-it-works-card-copy">
+                      <h3 className="how-it-works-card-title">{step.step}</h3>
+                      <p className="how-it-works-card-text">{step.description}</p>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
 
-          {/* Desktop/tablet vertical tabs */}
-          <div className="threemockups-vertical-tabs" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {steps.map(({ step, description }, i) => (
-              <button
-                key={i}
-                onClick={() => handleTabClick(i)}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  gap: '6px',
-                  padding: '24px 28px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  backgroundColor: active === i ? 'rgba(255,255,255,0.07)' : 'transparent',
-                  borderLeft: active === i ? '2px solid var(--primary)' : '2px solid transparent',
-                  transition: 'background-color 0.25s ease',
-                }}
-              >
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: 'var(--dusk)',
-                  transition: 'color 0.25s ease',
-                }}>
-                  {step}
-                </span>
-                <span className="threemockups-tab-label" style={{
-                  fontSize: '24px',
-                  fontFamily: 'Lora, serif',
-                  color: active === i ? 'var(--parchment)' : 'rgba(244,240,232,0.4)',
-                  transition: 'color 0.25s ease',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {description}
-                </span>
-              </button>
-            ))}
-          </div>{/* /tabs */}
-        </div>{/* /layout */}
-        </div>{/* /card */}
-        {/* Right monogram (mirrored) */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/monogram.svg"
-          alt=""
-          aria-hidden="true"
-          className="threemockups-monogram"
-          style={{ height: '382px', flexShrink: 0, opacity: 0.55, marginLeft: '48px', transform: 'scaleX(-1)' }}
-        />
-      </div>{/* /centering flex */}
-      </div>{/* /container */}
+          <div className="how-it-works-mockup-column">
+            <div className="how-it-works-mockup-sticky">
+              <div className="how-it-works-visual-glow" aria-hidden="true" />
+              <div className="how-it-works-phone-shell">
+                <PhoneImageFrame
+                  className="how-it-works-phone-frame"
+                  imageSrc={activeImageSrc}
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <style>{`
-        .threemockups-mobile-tabs::-webkit-scrollbar { display: none; }
-        @media (max-width: 639px) {
-          .threemockups-monogram { display: none !important; }
-          .threemockups-section { padding: 60px 0 !important; overflow-x: hidden !important; }
-          .threemockups-container { padding: 0 20px !important; }
-          .threemockups-heading { font-size: 36px !important; }
-          .threemockups-header { margin-bottom: 32px !important; }
-          .threemockups-header-divider { display: block !important; }
-          .threemockups-center { display: block !important; }
-          .threemockups-card { border: none !important; border-radius: 0 !important; background: transparent !important; padding: 0 !important; display: block !important; width: 100% !important; }
-          .threemockups-layout { flex-direction: column !important; gap: 24px !important; align-items: stretch !important; width: 100% !important; }
-          .threemockups-mockup { width: 100% !important; }
-          .threemockups-mockup > div { scale: 0.88; transform-origin: top center !important; }
-          .threemockups-tab-label { white-space: normal !important; }
-          .threemockups-vertical-tabs { display: none !important; }
-          .threemockups-mobile-tabs { display: block !important; }
+        .how-it-works-cards {
+          position: relative;
+          z-index: 1;
         }
-        @media (min-width: 640px) and (max-width: 1023px) {
-          .threemockups-monogram { display: none !important; }
-          .threemockups-card { border: none !important; border-radius: 0 !important; background: transparent !important; padding: 0 !important; }
-          .threemockups-heading { font-size: 36px !important; }
-          .threemockups-layout { gap: 32px !important; }
-          .threemockups-mockup { width: 348px !important; }
-          .threemockups-header { margin-bottom: 48px !important; }
-          .threemockups-header-divider { display: block !important; }
+
+        .how-it-works-card {
+          min-height: 72vh;
+          display: flex;
+          align-items: center;
+        }
+
+        .how-it-works-card + .how-it-works-card {
+          margin-top: 18vh;
+        }
+
+        .how-it-works-card-row {
+          display: grid;
+          grid-template-columns: 92px minmax(0, 1fr);
+          gap: 28px;
+          align-items: start;
+          width: min(100%, 760px);
+          padding: 28px 32px;
+          border-radius: 28px;
+          background: rgba(244,240,232,0.035);
+          border: 1px solid rgba(244,240,232,0.09);
+          box-shadow: 0 24px 80px rgba(0,0,0,0.16);
+          transition: border-color 180ms ease, background 180ms ease;
+        }
+
+        .how-it-works-card.is-active .how-it-works-card-row {
+          background: rgba(244,240,232,0.055);
+          border-color: rgba(232,184,154,0.24);
+        }
+
+        .how-it-works-card-number {
+          width: 76px;
+          height: 76px;
+          border-radius: 999px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid rgba(232,184,154,0.78);
+          color: var(--dusk);
+          font-size: 30px;
+          font-weight: 700;
+          line-height: 1;
+        }
+
+        .how-it-works-card-title {
+          margin: 0 0 18px;
+          font-family: 'Lora', serif;
+          font-size: 56px;
+          line-height: 0.96;
+          color: var(--parchment);
+        }
+
+        .how-it-works-card-text {
+          margin: 0;
+          max-width: 620px;
+          font-size: 22px;
+          line-height: 1.42;
+          color: var(--text-dark-muted);
+        }
+
+        .how-it-works-mockup-column {
+          position: relative;
+        }
+
+        .how-it-works-mockup-sticky {
+          position: sticky;
+          top: 120px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: calc(100vh - 140px);
+        }
+
+        .how-it-works-visual-glow {
+          position: absolute;
+          inset: 8% -10%;
+          border-radius: 50%;
+          background: radial-gradient(circle at center, rgba(244,240,232,0.08) 0%, rgba(244,240,232,0.03) 36%, rgba(244,240,232,0) 70%);
+          filter: blur(20px);
+        }
+
+        .how-it-works-phone-shell {
+          position: relative;
+          width: 420px;
+          max-width: 100%;
+          aspect-ratio: 454 / 876;
+          z-index: 1;
+        }
+
+        .how-it-works-phone-frame {
+          inset: 0;
+          width: 100%;
+        }
+
+        @media (max-width: 1199px) {
+          .how-it-works-heading {
+            font-size: 56px !important;
+          }
+
+          .how-it-works-layout {
+            grid-template-columns: minmax(0, 1fr) 360px !important;
+            gap: 40px !important;
+          }
+
+          .how-it-works-card-title {
+            font-size: 42px !important;
+          }
+
+          .how-it-works-card-text {
+            font-size: 18px !important;
+          }
+
+          .how-it-works-card-number {
+            width: 60px !important;
+            height: 60px !important;
+            font-size: 24px !important;
+          }
+
+          .how-it-works-card-row {
+            grid-template-columns: 74px minmax(0, 1fr) !important;
+            gap: 20px !important;
+          }
+
+          .how-it-works-phone-shell {
+            width: 360px !important;
+          }
+        }
+
+        @media (max-width: 767px) {
+          .how-it-works-section {
+            padding: 56px 0 112px !important;
+          }
+
+          .how-it-works-wrap {
+            width: calc(100vw - 24px) !important;
+          }
+
+          .how-it-works-head {
+            margin-bottom: 20px !important;
+          }
+
+          .how-it-works-heading {
+            font-size: 36px !important;
+          }
+
+          .how-it-works-layout {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+
+          .how-it-works-mockup-column {
+            order: 1 !important;
+          }
+
+          .how-it-works-cards {
+            order: 2 !important;
+            margin-top: -220px !important;
+            padding-top: 180px !important;
+            position: relative !important;
+            z-index: 2 !important;
+          }
+
+          .how-it-works-mockup-sticky {
+            top: 88px !important;
+            min-height: auto !important;
+            justify-content: center !important;
+          }
+
+          .how-it-works-phone-shell {
+            width: min(320px, calc(100vw - 28px)) !important;
+          }
+
+          .how-it-works-card {
+            min-height: 62vh !important;
+            align-items: flex-end !important;
+          }
+
+          .how-it-works-card + .how-it-works-card {
+            margin-top: 8vh !important;
+          }
+
+          .how-it-works-card-row {
+            grid-template-columns: 40px minmax(0, 1fr) !important;
+            gap: 14px !important;
+            width: 100% !important;
+            padding: 18px 18px 20px !important;
+            border-radius: 28px !important;
+            background: rgba(26,28,24,0.9) !important;
+            border: 1px solid rgba(244,240,232,0.16) !important;
+            box-shadow: 0 18px 48px rgba(0,0,0,0.28) !important;
+            backdrop-filter: blur(12px) !important;
+          }
+
+          .how-it-works-card-number {
+            width: auto !important;
+            height: auto !important;
+            border: 0 !important;
+            color: var(--dusk) !important;
+            font-size: 28px !important;
+            justify-content: flex-start !important;
+            align-items: flex-start !important;
+            padding-top: 2px !important;
+          }
+
+          .how-it-works-card-title {
+            margin: 0 0 10px !important;
+            font-size: 28px !important;
+            line-height: 1.02 !important;
+          }
+
+          .how-it-works-card-text {
+            font-size: 18px !important;
+            line-height: 1.36 !important;
+          }
         }
       `}</style>
     </section>

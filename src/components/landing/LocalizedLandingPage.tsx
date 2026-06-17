@@ -90,6 +90,7 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
             label={messages.usage.label}
             heading={messages.usage.heading}
             steps={messages.usage.steps}
+            locale={locale}
           />
         </section>
 

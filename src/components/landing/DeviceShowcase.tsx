@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type MutableRefObject } from 'react';
+import { useEffect, useRef, useState, type MutableRefObject, type ReactNode } from 'react';
 
 type DeviceType = 'phone' | 'tablet' | 'laptop';
 type PlaybackMode = 'autoplay' | 'hover';
@@ -39,6 +39,55 @@ function getDeviceConfig(type: DeviceType) {
         : '(max-width: 767px) 150px, 280px',
     objectPosition: isTablet ? 'top center' : 'center center',
   };
+}
+
+function DeviceMediaFrame({
+  type,
+  className,
+  children,
+}: {
+  type: DeviceType;
+  className: string;
+  children: ReactNode;
+}) {
+  const config = getDeviceConfig(type);
+
+  return (
+    <div
+      className={className}
+      style={{
+        position: 'absolute',
+        aspectRatio: config.aspectRatio,
+        filter: 'drop-shadow(0 28px 60px rgba(44,59,45,0.18))',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          top: config.screenInset.top,
+          right: config.screenInset.right,
+          bottom: config.screenInset.bottom,
+          left: config.screenInset.left,
+          borderRadius: config.screenInset.radius,
+          overflow: 'hidden',
+          zIndex: 1,
+        }}
+      >
+        {children}
+      </div>
+      <Image
+        src={config.frameSrc}
+        alt=""
+        fill
+        sizes={config.sizes}
+        style={{
+          objectFit: 'contain',
+          zIndex: 2,
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
 }
 
 function DeviceFrame({
@@ -86,27 +135,14 @@ function DeviceFrame({
   }, [isHovered, playbackMode, videoRef]);
 
   return (
-    <div
-      className={className}
-      onMouseEnter={playbackMode === 'hover' ? () => setIsHovered(true) : undefined}
-      onMouseLeave={playbackMode === 'hover' ? () => setIsHovered(false) : undefined}
-      style={{
-        position: 'absolute',
-        aspectRatio: config.aspectRatio,
-        filter: 'drop-shadow(0 28px 60px rgba(44,59,45,0.18))',
-        cursor: playbackMode === 'hover' ? 'pointer' : 'default',
-      }}
-    >
+    <DeviceMediaFrame type={type} className={className}>
       <div
+        onMouseEnter={playbackMode === 'hover' ? () => setIsHovered(true) : undefined}
+        onMouseLeave={playbackMode === 'hover' ? () => setIsHovered(false) : undefined}
         style={{
-          position: 'absolute',
-          top: config.screenInset.top,
-          right: config.screenInset.right,
-          bottom: config.screenInset.bottom,
-          left: config.screenInset.left,
-          borderRadius: config.screenInset.radius,
-          overflow: 'hidden',
-          zIndex: 1,
+          width: '100%',
+          height: '100%',
+          cursor: playbackMode === 'hover' ? 'pointer' : 'default',
         }}
       >
         <video
@@ -131,18 +167,39 @@ function DeviceFrame({
           <source src={config.videoSrc} type="video/mp4" />
         </video>
       </div>
+    </DeviceMediaFrame>
+  );
+}
+
+export function PhoneImageFrame({
+  className,
+  imageSrc,
+  imageAlt = '',
+  sizes = '(max-width: 767px) 72vw, (max-width: 1023px) 46vw, 420px',
+  priority = false,
+}: {
+  className?: string;
+  imageSrc: string;
+  imageAlt?: string;
+  sizes?: string;
+  priority?: boolean;
+}) {
+  return (
+    <DeviceMediaFrame type="phone" className={className ?? ''}>
       <Image
-        src={config.frameSrc}
-        alt=""
+        key={imageSrc}
+        src={imageSrc}
+        alt={imageAlt}
         fill
-        sizes={config.sizes}
+        priority={priority}
+        sizes={sizes}
         style={{
-          objectFit: 'contain',
-          zIndex: 2,
-          pointerEvents: 'none',
+          objectFit: 'cover',
+          transition: 'opacity 260ms ease',
+          background: '#ece7df',
         }}
       />
-    </div>
+    </DeviceMediaFrame>
   );
 }
 
