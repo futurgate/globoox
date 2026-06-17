@@ -133,7 +133,7 @@ export function UsageAnimation({
       style={{
         position: 'relative',
         background: 'var(--ink)',
-        padding: '0 0 200px',
+        padding: '0 0 80px',
       }}
     >
       <div
@@ -189,16 +189,6 @@ export function UsageAnimation({
             margin: '0 auto',
           }}
           >
-          <div className="how-it-works-side how-it-works-side-left" aria-hidden="true">
-            <div className="how-it-works-side-sticky">
-              <img
-                src="/images/monogram.svg"
-                alt=""
-                className="how-it-works-side-mark"
-              />
-            </div>
-          </div>
-
           <div className="how-it-works-mockup-column">
             <div className="how-it-works-mockup-sticky">
               <div className="how-it-works-visual-glow" aria-hidden="true" />
@@ -235,15 +225,6 @@ export function UsageAnimation({
             })}
           </div>
 
-          <div className="how-it-works-side how-it-works-side-right" aria-hidden="true">
-            <div className="how-it-works-side-sticky">
-              <img
-                src="/images/monogram.svg"
-                alt=""
-                className="how-it-works-side-mark how-it-works-side-mark-right"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
@@ -300,39 +281,6 @@ export function UsageAnimation({
           position: relative;
           align-self: stretch;
           min-height: 100%;
-        }
-
-        .how-it-works-side {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          width: 140px;
-          pointer-events: none;
-        }
-
-        .how-it-works-side-left {
-          right: calc(100% + 24px);
-        }
-
-        .how-it-works-side-right {
-          left: calc(100% + 24px);
-        }
-
-        .how-it-works-side-sticky {
-          position: sticky;
-          top: 248px;
-          display: flex;
-          justify-content: center;
-        }
-
-        .how-it-works-side-mark {
-          height: 382px;
-          width: auto;
-          opacity: 0.55;
-        }
-
-        .how-it-works-side-mark-right {
-          transform: scaleX(-1);
         }
 
         .how-it-works-mockup-sticky {
@@ -406,10 +354,6 @@ export function UsageAnimation({
             width: 348px !important;
           }
 
-          .how-it-works-side {
-            display: none !important;
-          }
-
           .how-it-works-mockup-sticky {
             top: 188px !important;
             min-height: calc(100vh - 208px) !important;
@@ -418,7 +362,8 @@ export function UsageAnimation({
 
         @media (max-width: 767px) {
           .how-it-works-section {
-            padding: 0 0 112px !important;
+            padding: 0 0 80px !important;
+            --how-it-works-mobile-card-start: 360px;
           }
 
           .how-it-works-wrap {
@@ -450,7 +395,7 @@ export function UsageAnimation({
           .how-it-works-cards {
             grid-area: 1 / 1 !important;
             margin-top: 0 !important;
-            padding-top: 24px !important;
+            padding-top: var(--how-it-works-mobile-card-start) !important;
             position: relative !important;
             z-index: 2 !important;
           }
@@ -466,6 +411,10 @@ export function UsageAnimation({
             width: min(320px, calc(100vw - 28px)) !important;
             margin-left: auto !important;
             margin-right: 0 !important;
+          }
+
+          .how-it-works-visual-glow {
+            display: none !important;
           }
 
           .how-it-works-card {
@@ -487,7 +436,7 @@ export function UsageAnimation({
             max-width: 292px !important;
             margin: 0 auto 0 8px !important;
             padding: 16px 14px 18px 0 !important;
-            border-radius: 0 !important;
+            border-radius: 0 18px 18px 0 !important;
             border-top: 1px solid rgba(232,184,154,0.24) !important;
             border-right: 0 !important;
             border-bottom: 0 !important;
