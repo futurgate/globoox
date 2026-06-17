@@ -23,41 +23,41 @@ const CARD_PROGRESS_ANCHORS = {
 } as const;
 
 const SCREEN_SEQUENCE = [
-  { stepIndex: 0, fromProgress: 0, image: () => '/images/how-it-works/1.1.png' },
+  { stepIndex: 0, fromProgress: 0, image: () => '/images/how-it-works/1.1.webp' },
   {
     stepIndex: 0,
     fromProgress: 0.5,
     image: (locale: LandingLocale) =>
       locale === 'en'
-        ? '/images/how-it-works/1.2-es.png'
-        : '/images/how-it-works/1.2-en.png',
+        ? '/images/how-it-works/1.2-es.webp'
+        : '/images/how-it-works/1.2-en.webp',
   },
   {
     stepIndex: 1,
     fromProgress: 0,
     image: (locale: LandingLocale) =>
       locale === 'en'
-        ? '/images/how-it-works/2.1-es.png'
-        : '/images/how-it-works/2.1-en.png',
+        ? '/images/how-it-works/2.1-es.webp'
+        : '/images/how-it-works/2.1-en.webp',
   },
-  { stepIndex: 1, fromProgress: 0.5, image: () => '/images/how-it-works/2.2.png' },
+  { stepIndex: 1, fromProgress: 0.5, image: () => '/images/how-it-works/2.2.webp' },
   {
     stepIndex: 2,
     fromProgress: 0,
     image: (locale: LandingLocale) => {
       if (locale === 'es') {
-        return '/images/how-it-works/3-en-es.png';
+        return '/images/how-it-works/3-en-es.webp';
       }
 
       if (locale === 'fr') {
-        return '/images/how-it-works/3-en-fr.png';
+        return '/images/how-it-works/3-en-fr.webp';
       }
 
       if (locale === 'ru') {
-        return '/images/how-it-works/3-en-ru.png';
+        return '/images/how-it-works/3-en-ru.webp';
       }
 
-      return '/images/how-it-works/3-es-en.png';
+      return '/images/how-it-works/3-es-en.webp';
     },
   },
 ] as const;
@@ -364,6 +364,7 @@ export function UsageAnimation({
           .how-it-works-section {
             padding: 0 0 80px !important;
             --how-it-works-mobile-card-start: 360px;
+            --how-it-works-mobile-scroll-tail: 45vh;
           }
 
           .how-it-works-wrap {
@@ -398,6 +399,12 @@ export function UsageAnimation({
             padding-top: var(--how-it-works-mobile-card-start) !important;
             position: relative !important;
             z-index: 2 !important;
+          }
+
+          .how-it-works-cards::after {
+            content: '' !important;
+            display: block !important;
+            height: var(--how-it-works-mobile-scroll-tail) !important;
           }
 
           .how-it-works-mockup-sticky {

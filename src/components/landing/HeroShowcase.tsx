@@ -5,7 +5,7 @@ import { DeviceShowcase } from './DeviceShowcase';
 import { SectionLabel } from './SectionLabel';
 
 interface HeroShowcaseProps {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   subtitle?: string;
   buttonText: string;
@@ -33,7 +33,7 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
         <div
           className="hero-showcase-inner"
           style={{
-            width: 'min(1600px, calc(100vw - 128px))',
+            width: 'min(1200px, calc(100vw - 32px))',
             margin: '0 auto',
             minHeight: 'calc(100vh - 300px)',
             display: 'grid',
@@ -55,7 +55,7 @@ export function HeroShowcase({ eyebrow, title, subtitle, buttonText, titleClassN
               padding: '0 40px',
             }}
           >
-            <SectionLabel>{eyebrow}</SectionLabel>
+            {eyebrow ? <SectionLabel>{eyebrow}</SectionLabel> : null}
             <h1
               className={`hero-showcase-title ${titleClassName || ''}`}
               style={{

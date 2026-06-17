@@ -50,15 +50,15 @@ export type LandingMessages = {
   founders: {
     label: string;
     heading: string;
+    description: string;
     linkedinLabel: string;
     items: Array<{
       name: string;
       role: string;
-      note: string;
       linkedinText: string;
       theme: 'light' | 'dark';
       initials: string;
-      linkedinUrl: string;
+      linkedinUrl?: string;
     }>;
   };
   cta: {
@@ -95,6 +95,11 @@ const sharedFounders = [
     initials: 'KK',
     linkedinUrl: 'http://linkedin.com/in/kondrat-kondratenko/',
   },
+  {
+    name: 'Maxim Ilyichev',
+    theme: 'dark' as const,
+    initials: 'MI',
+  },
 ];
 
 const messages: Record<LandingLocale, LandingMessages> = {
@@ -124,7 +129,6 @@ const messages: Record<LandingLocale, LandingMessages> = {
       languageLabel: 'Language',
       languages: [
         { value: 'en', label: 'English' },
-        { value: 'es', label: 'Español' },
         { value: 'fr', label: 'Français' },
         { value: 'ru', label: 'Русский' },
       ],
@@ -138,7 +142,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       start: 'Get started',
     },
     hero: {
-      eyebrow: 'Introducing Globoox',
+      eyebrow: '',
       title: 'Globoox — reading app that instantly translates e-books into your native language.',
       button: 'Upload your first book',
     },
@@ -173,13 +177,15 @@ const messages: Record<LandingLocale, LandingMessages> = {
       globeAlt: 'Globe icon',
     },
     founders: {
-      label: 'Meet the team',
-      heading: 'The team behind Globoox.',
+      label: 'The People Behind Globoox',
+      heading: 'Our greatest strength is our team',
+      description: 'We gathered a designer passionate about digital book typography, experts with fundamental linguistic knowledge, and a software engineer with a deep understanding of AI. Together, we are building the future of digital reading, a platform that erases language barriers and unlocks access to the world’s greatest books.',
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], role: 'Developer & CTO', note: 'Builds the product foundation, leads engineering, and turns the reading experience into a working system.', linkedinText: "Tatiana's LinkedIn" },
-        { ...sharedFounders[1], role: 'CEO', note: 'Leads the company, shapes the direction, and keeps Globoox focused on becoming a global reading platform.', linkedinText: "Anton's LinkedIn" },
-        { ...sharedFounders[2], role: 'Designer', note: 'Designs the visual language and interfaces that make reading, discovery, and translation feel simple.', linkedinText: "Kondrat's LinkedIn" },
+        { ...sharedFounders[0], role: 'Developer & CTO', linkedinText: "Tatiana's LinkedIn" },
+        { ...sharedFounders[1], role: 'CEO', linkedinText: "Anton's LinkedIn" },
+        { ...sharedFounders[2], role: 'Designer', linkedinText: "Kondrat's LinkedIn" },
+        { ...sharedFounders[3], role: 'Co-founder', linkedinText: "Maxim's LinkedIn" },
       ],
     },
     cta: {
@@ -189,7 +195,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       floatingScripts: ['Lernen', '学ぶ', 'Essai', 'Наука', 'Arte', 'علم', 'Ler', '철학', 'Bilim', 'Lära', 'विज्ञान'],
     },
     footer: {
-      tagline: 'We are building a global book platform where any reader can discover, buy, read, and listen to any book in their native language.',
+      tagline: "We are building the world's first global digital ebook store where any reader can discover, buy, read, and listen to any book in their native language.",
       terms: 'Terms',
       privacy: 'Privacy Policy',
       legal: 'Legal',
@@ -222,7 +228,6 @@ const messages: Record<LandingLocale, LandingMessages> = {
       languageLabel: 'Idioma',
       languages: [
         { value: 'en', label: 'English' },
-        { value: 'es', label: 'Español' },
         { value: 'fr', label: 'Français' },
         { value: 'ru', label: 'Русский' },
       ],
@@ -236,7 +241,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       start: 'Empieza',
     },
     hero: {
-      eyebrow: 'Presentamos Globoox',
+      eyebrow: '',
       title: 'Globoox — app de lectura que traduce e-books al instante a tu idioma nativo',
       button: 'Empieza a leer gratis',
     },
@@ -273,11 +278,13 @@ const messages: Record<LandingLocale, LandingMessages> = {
     founders: {
       label: 'Conoce al equipo',
       heading: 'El equipo detrás de Globoox.',
+      description: 'Construimos Globoox con un equipo multidisciplinario que combina diseño, lenguaje, producto e ingeniería.',
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], role: 'Desarrolladora y CTO', note: 'Construye la base del producto, lidera la ingeniería y convierte la experiencia de lectura en un sistema real.', linkedinText: 'LinkedIn de Tatiana' },
-        { ...sharedFounders[1], role: 'CEO', note: 'Dirige la empresa, marca el rumbo y mantiene a Globoox enfocado en convertirse en una plataforma global de lectura.', linkedinText: 'LinkedIn de Anton' },
-        { ...sharedFounders[2], role: 'Diseñador', note: 'Diseña el lenguaje visual y las interfaces para que leer, descubrir y traducir se sienta simple.', linkedinText: 'LinkedIn de Kondrat' },
+        { ...sharedFounders[0], role: 'Desarrolladora y CTO', linkedinText: 'LinkedIn de Tatiana' },
+        { ...sharedFounders[1], role: 'CEO', linkedinText: 'LinkedIn de Anton' },
+        { ...sharedFounders[2], role: 'Diseñador', linkedinText: 'LinkedIn de Kondrat' },
+        { ...sharedFounders[3], role: 'Cofundador', linkedinText: 'LinkedIn de Maxim' },
       ],
     },
     cta: {
@@ -287,7 +294,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       floatingScripts: ['Aprender', '学ぶ', 'Lecture', 'Наука', 'Arte', 'علم', 'Ler', '철학', 'Bilim', 'Lära', 'विज्ञान'],
     },
     footer: {
-      tagline: 'Estamos construyendo una plataforma global de libros donde cualquier lector pueda descubrir, comprar, leer y escuchar cualquier libro en su idioma nativo.',
+      tagline: 'Estamos creando la primera tienda digital global de ebooks del mundo, donde cualquier lector pueda descubrir, comprar, leer y escuchar cualquier libro en su idioma nativo.',
       terms: 'Términos',
       privacy: 'Privacidad',
       legal: 'Legal',
@@ -320,7 +327,6 @@ const messages: Record<LandingLocale, LandingMessages> = {
       languageLabel: 'Langue',
       languages: [
         { value: 'en', label: 'English' },
-        { value: 'es', label: 'Español' },
         { value: 'fr', label: 'Français' },
         { value: 'ru', label: 'Русский' },
       ],
@@ -334,7 +340,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       start: 'Commencer',
     },
     hero: {
-      eyebrow: 'Découvrez Globoox',
+      eyebrow: '',
       title: "Globoox — l'application de lecture qui traduit instantanément vos e-books dans votre langue maternelle.",
       button: 'Importer votre premier livre',
     },
@@ -369,23 +375,25 @@ const messages: Record<LandingLocale, LandingMessages> = {
       globeAlt: 'Icône globe',
     },
     founders: {
-      label: "L'équipe",
-      heading: "L'équipe derrière Globoox.",
+      label: 'Qui sommes-nous ?',
+      heading: 'Notre équipe est notre plus grande force',
+      description: "Notre équipe rassemble quatre profils aux expertises complémentaires. Un designer passionné par la typographie du livre numérique, un linguiste, un traducteur polyglotte et une ingénieure avec une profonde maîtrise de l'IA. Ensemble, nous construisons l'avenir de la lecture numérique: une plateforme qui efface les barrières de langues et ouvre l'accès aux meilleurs livres du monde.",
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], role: 'Développeuse et CTO', note: 'Construit la base du produit, dirige l’ingénierie et transforme l’expérience de lecture en système concret.', linkedinText: 'LinkedIn de Tatiana' },
-        { ...sharedFounders[1], role: 'CEO', note: 'Dirige l’entreprise, fixe la direction et garde Globoox concentré sur son ambition de plateforme mondiale de lecture.', linkedinText: "LinkedIn d'Anton" },
-        { ...sharedFounders[2], role: 'Designer', note: 'Conçoit le langage visuel et les interfaces pour rendre la lecture, la découverte et la traduction plus naturelles.', linkedinText: 'LinkedIn de Kondrat' },
+        { ...sharedFounders[0], role: 'Développeuse et CTO', linkedinText: 'LinkedIn de Tatiana' },
+        { ...sharedFounders[1], role: 'CEO', linkedinText: "LinkedIn d'Anton" },
+        { ...sharedFounders[2], role: 'Designer', linkedinText: 'LinkedIn de Kondrat' },
+        { ...sharedFounders[3], role: 'Cofondateur', linkedinText: 'LinkedIn de Maxim' },
       ],
     },
     cta: {
-      heading: 'Commencez dès maintenant',
-      description: 'Ajoutez votre premier EPUB et lisez-le directement dans votre langue.',
-      button: 'Commencer la lecture gratuitement',
+      heading: 'Commencez à lire gratuitement',
+      description: 'Ajoutez votre premier EPUB et lisez-le dans votre langue.',
+      button: 'Importer votre premier livre',
       floatingScripts: ['Lire', '学ぶ', 'Essai', 'Наука', 'Arte', 'علم', 'Ler', '철학', 'Bilim', 'Lära', 'विज्ञान'],
     },
     footer: {
-      tagline: 'Nous construisons une plateforme mondiale du livre où chaque lecteur peut découvrir, acheter, lire et écouter n’importe quel livre dans sa langue maternelle.',
+      tagline: 'Nous créons la première plateforme globale de livres numériques, permettant à chaque lecteur de découvrir, acheter, lire et écouter le livre de son choix dans sa langue maternelle.',
       terms: 'Conditions',
       privacy: 'Confidentialité',
       legal: 'Mentions légales',
@@ -418,7 +426,6 @@ const messages: Record<LandingLocale, LandingMessages> = {
       languageLabel: 'Язык',
       languages: [
         { value: 'en', label: 'English' },
-        { value: 'es', label: 'Español' },
         { value: 'fr', label: 'Français' },
         { value: 'ru', label: 'Русский' },
       ],
@@ -432,7 +439,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
       start: 'Начать',
     },
     hero: {
-      eyebrow: 'Представляем Globoox',
+      eyebrow: '',
       title: 'Globoox — приложение для чтения с\u00A0мгновенным переводом электронных книг на\u00A0ваш язык.',
       button: 'Загрузить первую книгу',
     },
@@ -452,7 +459,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
     },
     supportedLanguages: {
       label: 'Языки перевода',
-      heading: 'Читайте на английском, испанском, русском или французском',
+      heading: 'Читайте на\u00A0английском, испанском, русском и\u00A0французском',
       description: 'Уже сейчас вы можете читать на\u00A04 языках. Скоро мы добавим больше европейских языков, а\u00A0также арабский, китайский и хинди. Потому что у\u00A0книг не\u00A0должно быть границ.',
       current: ['Английский', 'Испанский', 'Русский', 'Французский'],
       future: [
@@ -467,23 +474,25 @@ const messages: Record<LandingLocale, LandingMessages> = {
       globeAlt: 'Иконка глобуса',
     },
     founders: {
-      label: 'Команда',
-      heading: 'Команда Globoox.',
+      label: 'Кто делает Globoox',
+      heading: 'Команда — наша главная сила',
+      description: 'Мы — это дизайнер-эксперт по\u00A0типографике цифровых книг, лингвист, переводчик-полиглот и\u00A0инженер-разработчик с\u00A0глубоким пониманием ИИ. Вместе мы строим будущее цифрового чтения — платформу, которая стирает языковые барьеры и\u00A0открывает доступ к\u00A0лучшим книгам мира.',
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], name: 'Татьяна Мельникова', role: 'Разработчица и CTO', note: 'Строит техническую основу продукта, руководит инженерной частью и превращает идею чтения без барьеров в работающую систему.', linkedinText: 'LinkedIn Татьяны' },
-        { ...sharedFounders[1], name: 'Антон Ломовский', role: 'CEO', note: 'Определяет направление компании и отвечает за то, чтобы Globoox вырос в глобальную платформу для чтения.', linkedinText: 'LinkedIn Антона' },
-        { ...sharedFounders[2], name: 'Кондрат Кондратенко', role: 'Дизайнер', note: 'Создаёт визуальный язык и интерфейсы, которые делают чтение, поиск и перевод книг простыми и естественными.', linkedinText: 'LinkedIn Кондрата' },
+        { ...sharedFounders[0], name: 'Татьяна Мельникова', role: 'Разработчица и CTO', linkedinText: 'LinkedIn Татьяны' },
+        { ...sharedFounders[1], name: 'Антон Ломовский', role: 'CEO', linkedinText: 'LinkedIn Антона' },
+        { ...sharedFounders[2], name: 'Кондрат Кондратенко', role: 'Дизайнер', linkedinText: 'LinkedIn Кондрата' },
+        { ...sharedFounders[3], name: 'Максим Ильичев', role: 'Сооснователь', linkedinText: 'LinkedIn Максима' },
       ],
     },
     cta: {
       heading: 'Начните читать бесплатно',
-      description: 'Загрузите свою книгу в\u00A0формате EPUB и читайте на\u00A0своем языке.',
+      description: 'Загрузите свою книгу в\u00A0формате EPUB и\u00A0читайте на\u00A0своём языке.',
       button: 'Загрузить первую книгу',
       floatingScripts: ['Учиться', '学ぶ', 'Essai', 'Наука', 'Arte', 'علم', 'Ler', '철학', 'Bilim', 'Lära', 'विज्ञान'],
     },
     footer: {
-      tagline: 'Мы создаём глобальную книжную платформу, где любой читатель сможет находить, покупать, читать и слушать любые книги на\u00A0своём родном языке.',
+      tagline: 'Мы создаём первый в\u00A0мире глобальный цифровой магазин электронных книг, где любой читатель может находить, покупать, читать и\u00A0слушать любую книгу на\u00A0своём родном языке.',
       terms: 'Условия',
       privacy: 'Политика конфиденциальности',
       legal: 'Правовая информация',

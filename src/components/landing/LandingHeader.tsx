@@ -17,7 +17,6 @@ interface LandingHeaderProps {
 
 const DEFAULT_LANGUAGES: Array<{ value: LandingLocale; label: string }> = [
   { value: 'en', label: 'English' },
-  { value: 'es', label: 'Español' },
   { value: 'fr', label: 'Français' },
   { value: 'ru', label: 'Русский' },
 ];

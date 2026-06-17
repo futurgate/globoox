@@ -6,20 +6,21 @@ import { SectionLabel } from './SectionLabel';
 interface FoundersSectionProps {
   label: string;
   heading: string;
+  description: string;
   items: Array<{
     name: string;
     role: string;
-    note: string;
     linkedinText: string;
     theme: 'light' | 'dark';
     initials: string;
-    linkedinUrl: string;
+    linkedinUrl?: string;
   }>;
 }
 
 export function FoundersSection({
   label,
   heading,
+  description,
   items,
 }: FoundersSectionProps) {
   return (
@@ -46,13 +47,24 @@ export function FoundersSection({
           >
             {heading}
           </h2>
+          <p
+            style={{
+              margin: 0,
+              maxWidth: '680px',
+              fontSize: '19px',
+              lineHeight: 1.55,
+              color: 'var(--ash)',
+            }}
+          >
+            {description}
+          </p>
         </div>
 
         <div
           className="founders-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
             gap: '28px',
           }}
         >
@@ -130,52 +142,43 @@ export function FoundersSection({
                       {founder.role}
                     </div>
 
-                    <p
-                      style={{
-                        fontSize: '17px',
-                        lineHeight: 1.45,
-                        color: isDark ? 'rgba(244,240,232,0.86)' : 'var(--ash)',
-                        maxWidth: '28ch',
-                        marginBottom: '24px',
-                      }}
-                    >
-                      {founder.note}
-                    </p>
-                    <a
-                      href={founder.linkedinUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`${founder.name} on LinkedIn`}
-                      className="founders-card-link"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        fontSize: '14px',
-                        lineHeight: 1.4,
-                        color: isDark ? 'rgba(244,240,232,0.88)' : 'var(--ink)',
-                        textDecoration: 'underline',
-                        textUnderlineOffset: '4px',
-                        marginTop: '24px',
-                      }}
-                    >
-                      <Image
-                        src="/images/icon-linkedin.svg"
-                        alt=""
-                        aria-hidden="true"
-                        width={20}
-                        height={20}
+                    {founder.linkedinUrl ? (
+                      <a
+                        href={founder.linkedinUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${founder.name} on LinkedIn`}
+                        className="founders-card-link"
                         style={{
-                          width: '20px',
-                          height: '20px',
-                          opacity: 1,
-                          filter: isDark
-                            ? 'brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(363%) hue-rotate(329deg) brightness(103%) contrast(92%)'
-                            : 'brightness(0) saturate(100%) invert(19%) sepia(10%) saturate(849%) hue-rotate(71deg) brightness(96%) contrast(88%)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          fontSize: '14px',
+                          lineHeight: 1.4,
+                          color: isDark ? 'rgba(244,240,232,0.88)' : 'var(--ink)',
+                          textDecoration: 'underline',
+                          textUnderlineOffset: '4px',
+                          marginTop: '24px',
                         }}
-                      />
-                      <span>{founder.linkedinText}</span>
-                    </a>
+                      >
+                        <Image
+                          src="/images/icon-linkedin.svg"
+                          alt=""
+                          aria-hidden="true"
+                          width={20}
+                          height={20}
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            opacity: 1,
+                            filter: isDark
+                              ? 'brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(363%) hue-rotate(329deg) brightness(103%) contrast(92%)'
+                              : 'brightness(0) saturate(100%) invert(19%) sepia(10%) saturate(849%) hue-rotate(71deg) brightness(96%) contrast(88%)',
+                          }}
+                        />
+                        <span>{founder.linkedinText}</span>
+                      </a>
+                    ) : null}
                   </div>
                 </div>
               </article>

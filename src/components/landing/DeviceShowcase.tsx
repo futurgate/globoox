@@ -21,6 +21,11 @@ function getDeviceConfig(type: DeviceType) {
       : isTablet
         ? '/screenrecordings/ipad_screen_record_768x1170_h264.mp4'
         : '/screenrecordings/mac_screen_record_1280w_h264.mp4',
+    posterSrc: isPhone
+      ? '/images/device-posters/iphone.webp'
+      : isTablet
+        ? '/images/device-posters/ipad.webp'
+        : '/images/device-posters/mac.webp',
     frameSrc: isLaptop
       ? '/DeviceMockups/MacBook/MacBook Pro 16_ - 5th Gen - Silver.png'
       : isPhone
@@ -145,27 +150,43 @@ function DeviceFrame({
           cursor: playbackMode === 'hover' ? 'pointer' : 'default',
         }}
       >
-        <video
-          ref={videoRef}
-          autoPlay={playbackMode === 'autoplay'}
-          muted
-          loop={playbackMode === 'autoplay'}
-          playsInline
-          controls={false}
-          disablePictureInPicture
-          preload="auto"
-          aria-hidden="true"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: config.objectPosition,
-            display: 'block',
-            background: '#000',
-          }}
-        >
-          <source src={config.videoSrc} type="video/mp4" />
-        </video>
+        {playbackMode === 'hover' && !isHovered ? (
+          <Image
+            src={config.posterSrc}
+            alt=""
+            fill
+            sizes={config.sizes}
+            aria-hidden="true"
+            style={{
+              objectFit: 'cover',
+              objectPosition: config.objectPosition,
+              display: 'block',
+              background: '#000',
+            }}
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            autoPlay={playbackMode === 'autoplay'}
+            muted
+            loop={playbackMode === 'autoplay'}
+            playsInline
+            controls={false}
+            disablePictureInPicture
+            preload={playbackMode === 'hover' ? 'none' : 'auto'}
+            aria-hidden="true"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: config.objectPosition,
+              display: 'block',
+              background: '#000',
+            }}
+          >
+            <source src={config.videoSrc} type="video/mp4" />
+          </video>
+        )}
       </div>
     </DeviceMediaFrame>
   );
