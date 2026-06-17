@@ -162,7 +162,7 @@ export function UsageAnimation({
           className="how-it-works-layout"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'minmax(0, 1fr) 420px',
+            gridTemplateColumns: 'minmax(0, 1fr) 348px',
             gap: '72px',
             alignItems: 'stretch',
           }}
@@ -230,17 +230,7 @@ export function UsageAnimation({
           gap: 28px;
           align-items: start;
           width: min(100%, 760px);
-          padding: 28px 32px;
-          border-radius: 28px;
-          background: rgba(244,240,232,0.035);
-          border: 1px solid rgba(244,240,232,0.09);
-          box-shadow: 0 24px 80px rgba(0,0,0,0.16);
-          transition: border-color 180ms ease, background 180ms ease;
-        }
-
-        .how-it-works-card.is-active .how-it-works-card-row {
-          background: rgba(244,240,232,0.055);
-          border-color: rgba(232,184,154,0.24);
+          padding: 0;
         }
 
         .how-it-works-card-number {
@@ -258,19 +248,24 @@ export function UsageAnimation({
         }
 
         .how-it-works-card-title {
-          margin: 0 0 18px;
-          font-family: 'Lora', serif;
-          font-size: 56px;
-          line-height: 0.96;
-          color: var(--parchment);
+          margin: 0 0 14px;
+          font-size: 14px;
+          line-height: 1.2;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--dusk);
+          font-weight: 600;
         }
 
         .how-it-works-card-text {
           margin: 0;
           max-width: 620px;
-          font-size: 22px;
-          line-height: 1.42;
-          color: var(--text-dark-muted);
+          font-family: inherit;
+          font-size: 36px;
+          line-height: 1.08;
+          letter-spacing: -0.03em;
+          color: var(--parchment);
+          font-weight: 500;
         }
 
         .how-it-works-mockup-column {
@@ -306,7 +301,7 @@ export function UsageAnimation({
 
         .how-it-works-phone-shell {
           position: relative;
-          width: 420px;
+          width: 348px;
           max-width: 100%;
           aspect-ratio: 454 / 876;
           z-index: 1;
@@ -337,11 +332,12 @@ export function UsageAnimation({
           }
 
           .how-it-works-card-title {
-            font-size: 42px !important;
+            font-size: 13px !important;
+            margin-bottom: 12px !important;
           }
 
           .how-it-works-card-text {
-            font-size: 18px !important;
+            font-size: 30px !important;
           }
 
           .how-it-works-card-number {
@@ -356,7 +352,7 @@ export function UsageAnimation({
           }
 
           .how-it-works-phone-shell {
-            width: 360px !important;
+            width: 348px !important;
           }
 
           .how-it-works-mockup-sticky {
@@ -384,11 +380,15 @@ export function UsageAnimation({
           }
 
           .how-it-works-layout {
-            grid-template-columns: 1fr !important;
+            display: flex !important;
+            flex-direction: column !important;
             gap: 24px !important;
           }
 
           .how-it-works-mockup-column {
+            position: sticky !important;
+            top: 126px !important;
+            z-index: 1 !important;
             order: 1 !important;
           }
 
@@ -401,8 +401,9 @@ export function UsageAnimation({
           }
 
           .how-it-works-mockup-sticky {
-            top: 126px !important;
-            min-height: calc(100vh - 146px) !important;
+            position: relative !important;
+            top: auto !important;
+            min-height: auto !important;
             justify-content: center !important;
           }
 
@@ -448,13 +449,15 @@ export function UsageAnimation({
 
           .how-it-works-card-title {
             margin: 0 0 10px !important;
-            font-size: 28px !important;
-            line-height: 1.02 !important;
+            font-size: 13px !important;
+            line-height: 1.2 !important;
+            letter-spacing: 0.08em !important;
           }
 
           .how-it-works-card-text {
-            font-size: 18px !important;
-            line-height: 1.36 !important;
+            font-size: 28px !important;
+            line-height: 1.08 !important;
+            letter-spacing: -0.03em !important;
           }
         }
       `}</style>
