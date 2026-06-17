@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState, type MutableRefObject, type ReactNode } from 'react';
+import { useEffect, useRef, type MutableRefObject, type ReactNode } from 'react';
 
 type DeviceType = 'phone' | 'tablet' | 'laptop';
 type PlaybackMode = 'autoplay' | 'hover';
@@ -106,10 +106,13 @@ function DeviceFrame({
   playbackMode: PlaybackMode;
   videoRef: MutableRefObject<HTMLVideoElement | null>;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
   const config = getDeviceConfig(type);
 
   useEffect(() => {
+    if (playbackMode !== 'autoplay') {
+      return;
+    }
+
     const video = videoRef.current;
 
     if (!video) {
@@ -124,33 +127,18 @@ function DeviceFrame({
     video.setAttribute('webkit-playsinline', 'true');
     video.removeAttribute('controls');
 
-    if (playbackMode === 'autoplay') {
-      void video.play().catch(() => {});
-      return;
-    }
-
-    if (isHovered) {
-      video.currentTime = 0;
-      void video.play().catch(() => {});
-      return;
-    }
-
-    video.pause();
-    video.currentTime = 0;
-  }, [isHovered, playbackMode, videoRef]);
+    void video.play().catch(() => {});
+  }, [playbackMode, videoRef]);
 
   return (
     <DeviceMediaFrame type={type} className={className}>
       <div
-        onMouseEnter={playbackMode === 'hover' ? () => setIsHovered(true) : undefined}
-        onMouseLeave={playbackMode === 'hover' ? () => setIsHovered(false) : undefined}
         style={{
           width: '100%',
           height: '100%',
-          cursor: playbackMode === 'hover' ? 'pointer' : 'default',
         }}
       >
-        {playbackMode === 'hover' && !isHovered ? (
+        {playbackMode === 'hover' ? (
           <Image
             src={config.posterSrc}
             alt=""
@@ -173,7 +161,7 @@ function DeviceFrame({
             playsInline
             controls={false}
             disablePictureInPicture
-            preload={playbackMode === 'hover' ? 'none' : 'auto'}
+            preload="auto"
             aria-hidden="true"
             style={{
               width: '100%',
