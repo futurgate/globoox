@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, type MutableRefObject, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type MutableRefObject, type ReactNode } from 'react';
 
 type DeviceType = 'phone' | 'tablet' | 'laptop';
 type PlaybackMode = 'autoplay' | 'hover';
@@ -107,6 +107,7 @@ function DeviceFrame({
   videoRef: MutableRefObject<HTMLVideoElement | null>;
 }) {
   const config = getDeviceConfig(type);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   useEffect(() => {
     if (playbackMode !== 'autoplay') {
@@ -127,13 +128,29 @@ function DeviceFrame({
     video.setAttribute('webkit-playsinline', 'true');
     video.removeAttribute('controls');
 
-    void video.play().catch(() => {});
+    const playVideo = () => {
+      void video.play().catch(() => {
+        setIsVideoPlaying(false);
+      });
+    };
+
+    playVideo();
+    video.addEventListener('canplay', playVideo);
+    document.addEventListener('visibilitychange', playVideo);
+    window.addEventListener('pageshow', playVideo);
+
+    return () => {
+      video.removeEventListener('canplay', playVideo);
+      document.removeEventListener('visibilitychange', playVideo);
+      window.removeEventListener('pageshow', playVideo);
+    };
   }, [playbackMode, videoRef]);
 
   return (
     <DeviceMediaFrame type={type} className={className}>
       <div
         style={{
+          position: 'relative',
           width: '100%',
           height: '100%',
         }}
@@ -153,27 +170,51 @@ function DeviceFrame({
             }}
           />
         ) : (
-          <video
-            ref={videoRef}
-            autoPlay={playbackMode === 'autoplay'}
-            muted
-            loop={playbackMode === 'autoplay'}
-            playsInline
-            controls={false}
-            disablePictureInPicture
-            preload="auto"
-            aria-hidden="true"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: config.objectPosition,
-              display: 'block',
-              background: '#000',
-            }}
-          >
-            <source src={config.videoSrc} type="video/mp4" />
-          </video>
+          <>
+            <video
+              ref={videoRef}
+              className="device-showcase-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls={false}
+              controlsList="nodownload nofullscreen noremoteplayback"
+              disablePictureInPicture
+              preload="auto"
+              aria-hidden="true"
+              onPlaying={() => setIsVideoPlaying(true)}
+              onPlay={() => setIsVideoPlaying(true)}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: config.objectPosition,
+                display: 'block',
+                background: '#000',
+                pointerEvents: 'none',
+              }}
+            >
+              <source src={config.videoSrc} type="video/mp4" />
+            </video>
+            {!isVideoPlaying ? (
+              <Image
+                src={config.posterSrc}
+                alt=""
+                fill
+                priority={type === 'tablet'}
+                sizes={config.sizes}
+                aria-hidden="true"
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: config.objectPosition,
+                  background: '#000',
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                }}
+              />
+            ) : null}
+          </>
         )}
       </div>
     </DeviceMediaFrame>
