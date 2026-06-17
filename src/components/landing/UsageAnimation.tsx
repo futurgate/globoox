@@ -164,7 +164,7 @@ export function UsageAnimation({
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 1fr) 420px',
             gap: '72px',
-            alignItems: 'start',
+            alignItems: 'stretch',
           }}
         >
           <div className="how-it-works-cards">
@@ -275,7 +275,8 @@ export function UsageAnimation({
 
         .how-it-works-mockup-column {
           position: relative;
-          align-self: start;
+          align-self: stretch;
+          min-height: 100%;
         }
 
         .how-it-works-mockup-sticky {
@@ -328,7 +329,7 @@ export function UsageAnimation({
           .how-it-works-layout {
             grid-template-columns: minmax(0, 1fr) 360px !important;
             gap: 40px !important;
-            align-items: start !important;
+            align-items: stretch !important;
           }
 
           .how-it-works-cards {
