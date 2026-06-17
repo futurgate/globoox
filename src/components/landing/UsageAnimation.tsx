@@ -114,7 +114,7 @@ export function UsageAnimation({
       style={{
         position: 'relative',
         background: 'var(--ink)',
-        padding: '88px 0 160px',
+        padding: '0 0 200px',
       }}
     >
       <div
@@ -207,6 +207,7 @@ export function UsageAnimation({
         .how-it-works-cards {
           position: relative;
           z-index: 1;
+          padding-top: 236px;
         }
 
         .how-it-works-card {
@@ -217,6 +218,10 @@ export function UsageAnimation({
 
         .how-it-works-card + .how-it-works-card {
           margin-top: 18vh;
+        }
+
+        .how-it-works-card:last-child {
+          margin-bottom: 120vh;
         }
 
         .how-it-works-card-row {
@@ -270,15 +275,24 @@ export function UsageAnimation({
 
         .how-it-works-mockup-column {
           position: relative;
+          align-self: start;
         }
 
         .how-it-works-mockup-sticky {
           position: sticky;
-          top: 120px;
+          top: 228px;
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: calc(100vh - 140px);
+          min-height: calc(100vh - 248px);
+        }
+
+        .how-it-works-head {
+          position: sticky;
+          top: 0;
+          z-index: 4;
+          padding: 88px 0 28px;
+          background: var(--ink);
         }
 
         .how-it-works-visual-glow {
@@ -307,9 +321,18 @@ export function UsageAnimation({
             font-size: 56px !important;
           }
 
+          .how-it-works-head {
+            padding: 72px 0 24px !important;
+          }
+
           .how-it-works-layout {
             grid-template-columns: minmax(0, 1fr) 360px !important;
             gap: 40px !important;
+            align-items: start !important;
+          }
+
+          .how-it-works-cards {
+            padding-top: 208px !important;
           }
 
           .how-it-works-card-title {
@@ -334,11 +357,16 @@ export function UsageAnimation({
           .how-it-works-phone-shell {
             width: 360px !important;
           }
+
+          .how-it-works-mockup-sticky {
+            top: 196px !important;
+            min-height: calc(100vh - 216px) !important;
+          }
         }
 
         @media (max-width: 767px) {
           .how-it-works-section {
-            padding: 56px 0 112px !important;
+            padding: 0 0 112px !important;
           }
 
           .how-it-works-wrap {
@@ -346,7 +374,8 @@ export function UsageAnimation({
           }
 
           .how-it-works-head {
-            margin-bottom: 20px !important;
+            margin-bottom: 8px !important;
+            padding: 56px 0 18px !important;
           }
 
           .how-it-works-heading {
@@ -371,8 +400,8 @@ export function UsageAnimation({
           }
 
           .how-it-works-mockup-sticky {
-            top: 88px !important;
-            min-height: auto !important;
+            top: 126px !important;
+            min-height: calc(100vh - 146px) !important;
             justify-content: center !important;
           }
 
@@ -387,6 +416,10 @@ export function UsageAnimation({
 
           .how-it-works-card + .how-it-works-card {
             margin-top: 8vh !important;
+          }
+
+          .how-it-works-card:last-child {
+            margin-bottom: 90vh !important;
           }
 
           .how-it-works-card-row {
