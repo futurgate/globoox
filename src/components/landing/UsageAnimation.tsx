@@ -17,6 +17,11 @@ const defaultSteps = [
   { step: 'Step 3', description: 'Enjoy your book!' },
 ];
 
+const CARD_PROGRESS_ANCHORS = {
+  enterCenterY: 0.82,
+  releaseCenterY: 0.22,
+} as const;
+
 const SCREEN_SEQUENCE = [
   { stepIndex: 0, fromProgress: 0, image: () => '/images/how-it-works/1.1.png' },
   {
@@ -80,8 +85,8 @@ export function UsageAnimation({
   useEffect(() => {
     const updatePhase = () => {
       const viewportHeight = window.innerHeight;
-      const enterCenterY = viewportHeight * 0.82;
-      const releaseCenterY = viewportHeight * 0.06;
+      const enterCenterY = viewportHeight * CARD_PROGRESS_ANCHORS.enterCenterY;
+      const releaseCenterY = viewportHeight * CARD_PROGRESS_ANCHORS.releaseCenterY;
       const phaseSpan = Math.max(enterCenterY - releaseCenterY, 1);
       let nextStepIndex = 0;
 
@@ -163,8 +168,8 @@ export function UsageAnimation({
             style={{
               margin: 0,
               fontFamily: "'Lora', serif",
-              fontSize: '68px',
-              lineHeight: 0.98,
+              fontSize: '48px',
+              lineHeight: 1.1,
               color: 'var(--parchment)',
             }}
           >
@@ -175,6 +180,7 @@ export function UsageAnimation({
         <div
           className="how-it-works-layout"
           style={{
+            position: 'relative',
             display: 'grid',
             gridTemplateColumns: '348px minmax(0, 1fr)',
             gap: '72px',
@@ -266,11 +272,12 @@ export function UsageAnimation({
           display: block;
           width: min(100%, 760px);
           padding: 18px 0 0;
-          border-top: 1px solid var(--bg-dark-border);
+          border-top: 1px solid rgba(232,184,154,0.24);
         }
 
         .how-it-works-card-title {
           margin: 0 0 14px;
+          font-family: 'Inter', sans-serif;
           font-size: var(--marketing-type-meta-size);
           line-height: var(--marketing-type-meta-line);
           letter-spacing: 0.12em;
@@ -282,9 +289,9 @@ export function UsageAnimation({
         .how-it-works-card-text {
           margin: 0;
           max-width: 620px;
-          font-family: inherit;
-          font-size: 24px;
-          line-height: 1.3;
+          font-family: 'Lora', serif;
+          font-size: 32px;
+          line-height: 1.18;
           color: var(--parchment);
           font-weight: 400;
         }
@@ -304,11 +311,11 @@ export function UsageAnimation({
         }
 
         .how-it-works-side-left {
-          right: calc(100% + 48px);
+          right: calc(100% + 24px);
         }
 
         .how-it-works-side-right {
-          left: calc(100% + 48px);
+          left: calc(100% + 24px);
         }
 
         .how-it-works-side-sticky {
@@ -330,11 +337,11 @@ export function UsageAnimation({
 
         .how-it-works-mockup-sticky {
           position: sticky;
-          top: 228px;
+          top: 204px;
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: calc(100vh - 248px);
+          min-height: calc(100vh - 224px);
         }
 
         .how-it-works-head {
@@ -391,7 +398,8 @@ export function UsageAnimation({
           }
 
           .how-it-works-card-text {
-            font-size: 22px !important;
+            font-size: 30px !important;
+            line-height: 1.18 !important;
           }
 
           .how-it-works-phone-shell {
@@ -403,8 +411,8 @@ export function UsageAnimation({
           }
 
           .how-it-works-mockup-sticky {
-            top: 196px !important;
-            min-height: calc(100vh - 216px) !important;
+            top: 188px !important;
+            min-height: calc(100vh - 208px) !important;
           }
         }
 
@@ -427,35 +435,37 @@ export function UsageAnimation({
           }
 
           .how-it-works-layout {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 24px !important;
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 0 !important;
           }
 
           .how-it-works-mockup-column {
-            position: sticky !important;
-            top: 126px !important;
+            grid-area: 1 / 1 !important;
+            position: relative !important;
             z-index: 1 !important;
-            order: 1 !important;
+            align-self: start !important;
           }
 
           .how-it-works-cards {
-            order: 2 !important;
-            margin-top: -220px !important;
-            padding-top: 180px !important;
+            grid-area: 1 / 1 !important;
+            margin-top: 0 !important;
+            padding-top: 24px !important;
             position: relative !important;
             z-index: 2 !important;
           }
 
           .how-it-works-mockup-sticky {
-            position: relative !important;
-            top: auto !important;
-            min-height: auto !important;
-            justify-content: center !important;
+            position: sticky !important;
+            top: 196px !important;
+            min-height: 0 !important;
+            justify-content: flex-end !important;
           }
 
           .how-it-works-phone-shell {
             width: min(320px, calc(100vw - 28px)) !important;
+            margin-left: auto !important;
+            margin-right: 0 !important;
           }
 
           .how-it-works-card {
@@ -472,15 +482,19 @@ export function UsageAnimation({
           }
 
           .how-it-works-card-row {
-            width: 80% !important;
-            margin: 0 auto 0 0 !important;
-            padding: 18px 18px 20px !important;
-            border-radius: 28px !important;
-            border-top: none !important;
-            background: rgba(26,28,24,0.9) !important;
-            border: 1px solid rgba(244,240,232,0.16) !important;
-            box-shadow: 0 18px 48px rgba(0,0,0,0.28) !important;
-            backdrop-filter: blur(12px) !important;
+            width: clamp(224px, 70vw, 292px) !important;
+            min-width: 224px !important;
+            max-width: 292px !important;
+            margin: 0 auto 0 8px !important;
+            padding: 16px 14px 18px 0 !important;
+            border-radius: 0 !important;
+            border-top: 1px solid rgba(232,184,154,0.24) !important;
+            border-right: 0 !important;
+            border-bottom: 0 !important;
+            border-left: 0 !important;
+            background: var(--ink) !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
           }
 
           .how-it-works-card-title {
@@ -491,9 +505,9 @@ export function UsageAnimation({
           }
 
           .how-it-works-card-text {
-            font-size: 28px !important;
-            line-height: 1.08 !important;
-            letter-spacing: -0.03em !important;
+            font-size: 30px !important;
+            line-height: 1.18 !important;
+            letter-spacing: 0 !important;
           }
         }
       `}</style>
