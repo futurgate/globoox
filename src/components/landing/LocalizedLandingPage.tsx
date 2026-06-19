@@ -6,6 +6,7 @@ import { LandingHeader } from './LandingHeader';
 import { SupportedLanguages } from './SupportedLanguages';
 import { UsageAnimation } from './UsageAnimation';
 import { QualityAssuranceV2 } from './QualityAssuranceV2';
+import { FoundersSection } from './FoundersSection';
 import { CTA } from './CTA';
 import { Footer } from './Footer';
 
@@ -110,6 +111,15 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
             futureLangs={messages.supportedLanguages.future}
             soonLabel={messages.supportedLanguages.soonLabel}
             globeAlt={messages.supportedLanguages.globeAlt}
+          />
+        </section>
+
+        <section id="team" aria-label={messages.sections.team}>
+          <FoundersSection
+            label={messages.founders.label}
+            heading={messages.founders.heading}
+            description={messages.founders.description}
+            items={messages.founders.items}
           />
         </section>
 

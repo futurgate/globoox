@@ -58,6 +58,7 @@ export type LandingMessages = {
       linkedinText: string;
       theme: 'light' | 'dark';
       initials: string;
+      photoSrc?: string;
       linkedinUrl?: string;
     }>;
   };
@@ -81,24 +82,28 @@ const sharedFounders = [
     name: 'Tatiana Melnikova',
     theme: 'light' as const,
     initials: 'TM',
+    photoSrc: '/images/founders/tatiana.webp',
     linkedinUrl: 'https://www.linkedin.com/in/tanya-melnikova-224b3a191/',
   },
   {
     name: 'Anton Lomovski',
     theme: 'dark' as const,
     initials: 'AL',
+    photoSrc: '/images/founders/anton.webp',
     linkedinUrl: 'https://www.linkedin.com/in/lomovski/',
   },
   {
     name: 'Kondrat Kondratenko',
     theme: 'light' as const,
     initials: 'KK',
+    photoSrc: '/images/founders/kondrat.webp',
     linkedinUrl: 'http://linkedin.com/in/kondrat-kondratenko/',
   },
   {
     name: 'Maxim Ilyichev',
     theme: 'dark' as const,
     initials: 'MI',
+    photoSrc: '/images/founders/maxim.webp',
   },
 ];
 
@@ -487,7 +492,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
     },
     cta: {
       heading: 'Начните читать бесплатно',
-      description: 'загрузите свою книгу в\u00A0формате EPUB и\u00A0читайте на\u00A0своём языке.',
+      description: 'Загрузите свою книгу в\u00A0формате EPUB и\u00A0читайте на\u00A0своём языке.',
       button: 'Загрузить первую книгу',
       floatingScripts: ['Учиться', '学ぶ', 'Essai', 'Наука', 'Arte', 'علم', 'Ler', '철학', 'Bilim', 'Lära', 'विज्ञान'],
     },

@@ -13,6 +13,7 @@ interface FoundersSectionProps {
     linkedinText: string;
     theme: 'light' | 'dark';
     initials: string;
+    photoSrc?: string;
     linkedinUrl?: string;
   }>;
 }
@@ -76,7 +77,7 @@ export function FoundersSection({
                 key={founder.name}
                 className="founders-card"
                 style={{
-                  minHeight: '460px',
+                  minHeight: '240px',
                   borderRadius: '8px',
                   padding: '34px 34px 32px',
                   background: isDark ? '#202635' : 'rgba(255,255,255,0.72)',
@@ -94,8 +95,9 @@ export function FoundersSection({
                   <div
                     className="founders-card-avatar"
                     style={{
-                      width: '92px',
-                      height: '92px',
+                      position: 'relative',
+                      width: '112px',
+                      height: '112px',
                       borderRadius: '8px',
                       marginBottom: '28px',
                       background: isDark
@@ -109,9 +111,22 @@ export function FoundersSection({
                       fontSize: '28px',
                       color: isDark ? 'var(--parchment)' : 'var(--ink)',
                       flexShrink: 0,
+                      overflow: 'hidden',
                     }}
                   >
-                    {founder.initials}
+                    {founder.photoSrc ? (
+                      <Image
+                        src={founder.photoSrc}
+                        alt={founder.name}
+                        fill
+                        sizes="112px"
+                        style={{
+                          objectFit: 'cover',
+                        }}
+                      />
+                    ) : (
+                      founder.initials
+                    )}
                   </div>
 
                   <div className="founders-card-copy">
@@ -188,7 +203,7 @@ export function FoundersSection({
       </div>
 
       <style>{`
-        @media (min-width: 560px) and (max-width: 1023px) {
+        @media (max-width: 1023px) {
           .founders-card {
             min-height: 0 !important;
           }
@@ -205,14 +220,13 @@ export function FoundersSection({
 
           .founders-card-copy {
             flex: 1 1 auto;
+            min-width: 0;
           }
 
           .founders-card-link {
             margin-top: 0 !important;
           }
-        }
 
-        @media (max-width: 1023px) {
           .founders-grid {
             grid-template-columns: 1fr !important;
           }
@@ -229,6 +243,68 @@ export function FoundersSection({
 
           .founders-heading {
             font-size: 34px !important;
+          }
+        }
+
+        @media (max-width: 559px) {
+          .founders-card {
+            padding: 20px 18px !important;
+          }
+
+          .founders-card-main {
+            gap: 16px !important;
+          }
+
+          .founders-card-avatar {
+            width: 78px !important;
+            height: 78px !important;
+          }
+
+          .founders-card-copy h3 {
+            font-size: 28px !important;
+          }
+
+          .founders-card-copy > div:nth-child(2) {
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+            margin-bottom: 12px !important;
+          }
+
+          .founders-card-link {
+            font-size: 13px !important;
+          }
+        }
+
+        @media (min-width: 720px) and (max-width: 1023px) {
+          .founders-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+
+          .founders-card {
+            padding: 20px 18px !important;
+          }
+
+          .founders-card-main {
+            gap: 16px !important;
+          }
+
+          .founders-card-avatar {
+            width: 78px !important;
+            height: 78px !important;
+          }
+
+          .founders-card-copy h3 {
+            font-size: 28px !important;
+          }
+
+          .founders-card-copy > div:nth-child(2) {
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+            margin-bottom: 12px !important;
+          }
+
+          .founders-card-link {
+            font-size: 13px !important;
           }
         }
       `}</style>
