@@ -37,6 +37,24 @@ export type LandingMessages = {
     label: string;
     heading: string;
     description: string;
+    compare: {
+      original: {
+        lang: string;
+        languageLabel: string;
+        title: string;
+        author: string;
+        heading: string;
+        paragraphs: string[];
+      };
+      translated: {
+        lang: string;
+        languageLabel: string;
+        title: string;
+        author: string;
+        heading: string;
+        paragraphs: string[];
+      };
+    };
   };
   supportedLanguages: {
     label: string;
@@ -104,8 +122,52 @@ const sharedFounders = [
     theme: 'dark' as const,
     initials: 'MI',
     photoSrc: '/images/founders/maxim.webp',
+    linkedinUrl: 'https://www.linkedin.com/in/maksim-ilichev-6a48ba12',
   },
 ];
+
+const qualityCompareText = {
+  en: {
+    lang: 'en',
+    languageLabel: 'EN',
+    title: 'The Voyage of the Beagle',
+    author: 'Charles Darwin',
+    heading: 'The Voyage of the Beagle',
+    paragraphs: [
+      'After having been twice driven back by heavy southwestern gales, Her Majesty’s ship Beagle, a ten-gun brig, under the command of Captain Fitz Roy, R.N., sailed from Devonport on the 27th of December, 1831. The object of the expedition was to complete the survey of Patagonia and Tierra del Fuego, commenced under Captain King in 1826 to 1830﻿—to survey the shores of Chile, Peru, and of some islands in the Pacific﻿—and to carry a chain of chronometrical measurements round the world. On the 6th of January we reached Teneriffe, but were prevented landing, by fears of our bringing the cholera: the next morning we saw the sun rise behind the rugged outline of the Grand Canary island, and suddenly illuminate the Peak of Teneriffe, whilst the lower parts were veiled in fleecy clouds. This was the first of many delightful days never to be forgotten. On the 16th of January, 1832, we anchored at Porto Praya, in St.\u00A0Jago, the chief island of the Cape de Verd archipelago.',
+    ],
+  },
+  ru: {
+    lang: 'ru',
+    languageLabel: 'RU',
+    title: 'Путешествие на «Бигле»',
+    author: 'Чарльз Дарвин',
+    heading: 'Путешествие на «Бигле»',
+    paragraphs: [
+      '27 декабря 1831 года десятипушечный бриг Ее Величества «Бигль» под командованием капитана королевского флота Фицроя покинул Девонпорт, до этого дважды вынужденный возвращаться из-за жестоких юго-западных штормов. Цель экспедиции заключалась в том, чтобы завершить картографирование Патагонии и Огненной Земли, начатое капитаном Кингом в 1826–1830 годах, исследовать побережья Чили, Перу и ряда тихоокеанских островов, а также провести серию хронометрических измерений вокруг земного шара. 6 января мы достигли Тенерифе, однако высадиться нам не разрешили из-за опасений, что экипаж может занести холеру. На следующее утро мы наблюдали, как солнце, взойдя из-за зубчатых очертаний острова Гран-Канария, внезапно озарило Тенерифский пик, тогда как его подножие все еще скрывалось в пелене легких облаков. Это был первый из многих восхитительных дней, навсегда оставшихся в памяти. 16 января 1832 года мы бросили якорь в Порту-Прая на Сантьягу — главном острове архипелага Островов Зеленого Мыса.',
+    ],
+  },
+  fr: {
+    lang: 'fr',
+    languageLabel: 'FR',
+    title: 'Le Voyage du Beagle',
+    author: 'Charles Darwin',
+    heading: 'Le Voyage du Beagle',
+    paragraphs: [
+      'Après avoir été contraint de rebrousser chemin à deux reprises face à de violentes tempêtes du sud-ouest, le "Beagle", brick de dix canons de Sa Majesté placé sous le commandement du capitaine Fitz Roy de la Royal Navy, appareilla de Devonport le 27 décembre 1831. L’expédition avait en effet pour but d’achever les relevés de la Patagonie et de la Terre de Feu, initiés sous les ordres du capitaine King entre 1826 et 1830﻿—d’explorer les côtes du Chili, du Pérou ainsi que de quelques îles du Pacifique﻿—et, enfin, d’établir une chaîne de mesures chronométriques à travers le globe. Le 6 janvier, nous atteignîmes Tenerife, or il nous fut interdit d’y débarquer par crainte que nous n’y introduisions le choléra\u00A0: dès le lendemain matin, nous pûmes toutefois observer le soleil poindre derrière les crêtes escarpées de la Grande Canarie pour illuminer soudainement le pic de Tenerife, alors que ses contreforts demeuraient voilés de nuages cotonneux. Cette journée marqua ainsi le prélude d’une longue série d’instants enchanteurs, gravés à jamais dans nos mémoires. Le 16 janvier 1832, nous jetâmes l’ancre à Porto Praya, sur l’île de Santiago, la principale de l’archipel du Cap-Vert.',
+    ],
+  },
+  es: {
+    lang: 'es',
+    languageLabel: 'ES',
+    title: 'El viaje del Beagle',
+    author: 'Charles Darwin',
+    heading: 'El viaje del Beagle',
+    paragraphs: [
+      'Después de que los fuertes vendavales del suroeste le obligaran a retroceder en dos ocasiones, el buque de Su Majestad Beagle, un bergantín de diez cañones bajo el mando del capitán Fitz Roy, de la Marina Real, zarpó de Devonport el 27 de diciembre de 1831. El objetivo de la expedición era completar el levantamiento cartográfico de la Patagonia y Tierra del Fuego, comenzado bajo las órdenes del capitán King de 1826 a 1830 —explorar las costas de Chile, Perú y de algunas islas del Pacífico— y llevar a cabo una cadena de mediciones cronométricas alrededor del mundo. El 6 de enero llegamos a Tenerife, pero se nos impidió desembarcar por temor a que introdujéramos el cólera: a la mañana siguiente vimos salir el sol por detrás de la escarpada silueta de la isla de Gran Canaria y cómo iluminaba de repente el pico de Tenerife, mientras las zonas inferiores quedaban ocultas tras unas nubes algodonosas. Este fue el primero de muchos días maravillosos que jamás olvidaremos. El 16 de enero de 1832 fondeamos en Porto Praya, en Santiago, la isla principal del archipiélago de Cabo Verde.',
+    ],
+  },
+};
 
 const messages: Record<LandingLocale, LandingMessages> = {
   en: {
@@ -164,6 +226,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       label: 'Translation Quality',
       heading: 'Translation You Can Trust',
       description: "Built on an AI engine fine-tuned by expert linguists, our app delivers clear, accurate, and easy-to-read translations that capture the author's true intent.",
+      compare: {
+        original: qualityCompareText.es,
+        translated: qualityCompareText.en,
+      },
     },
     supportedLanguages: {
       label: 'Supported Languages',
@@ -190,7 +256,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
         { ...sharedFounders[0], role: 'Developer & CTO', linkedinText: "Tatiana's LinkedIn" },
         { ...sharedFounders[1], role: 'CEO', linkedinText: "Anton's LinkedIn" },
         { ...sharedFounders[2], role: 'Designer', linkedinText: "Kondrat's LinkedIn" },
-        { ...sharedFounders[3], role: 'Co-founder', linkedinText: "Maxim's LinkedIn" },
+        { ...sharedFounders[3], role: 'Linguistics Expert', linkedinText: "Maxim's LinkedIn" },
       ],
     },
     cta: {
@@ -263,6 +329,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       label: 'Calidad de traducción',
       heading: 'Traducciones en las que puedes confiar',
       description: 'Nuestra app se basa en un motor de IA afinado por lingüistas expertos para ofrecer traducciones claras, precisas y fáciles de leer, fieles a la intención original del autor.',
+      compare: {
+        original: qualityCompareText.en,
+        translated: qualityCompareText.es,
+      },
     },
     supportedLanguages: {
       label: 'Idiomas disponibles',
@@ -289,7 +359,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
         { ...sharedFounders[0], role: 'Desarrolladora y CTO', linkedinText: 'LinkedIn de Tatiana' },
         { ...sharedFounders[1], role: 'CEO', linkedinText: 'LinkedIn de Anton' },
         { ...sharedFounders[2], role: 'Diseñador', linkedinText: 'LinkedIn de Kondrat' },
-        { ...sharedFounders[3], role: 'Cofundador', linkedinText: 'LinkedIn de Maxim' },
+        { ...sharedFounders[3], role: 'Experto lingüista', linkedinText: 'LinkedIn de Maxim' },
       ],
     },
     cta: {
@@ -362,6 +432,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       label: 'Qualité de traduction',
       heading: 'Traduction irréprochable et fidèle à l’original',
       description: 'Au cœur de l’application se trouve une puissante IA, calibrée par nos linguistes pour donner vie à\u00A0chaque texte.',
+      compare: {
+        original: qualityCompareText.en,
+        translated: qualityCompareText.fr,
+      },
     },
     supportedLanguages: {
       label: 'Langues disponibles',
@@ -388,7 +462,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
         { ...sharedFounders[0], role: 'Développeuse et CTO', linkedinText: 'LinkedIn de Tatiana' },
         { ...sharedFounders[1], role: 'CEO', linkedinText: 'LinkedIn d’Anton' },
         { ...sharedFounders[2], role: 'Designer', linkedinText: 'LinkedIn de Kondrat' },
-        { ...sharedFounders[3], role: 'Cofondateur', linkedinText: 'LinkedIn de Maxim' },
+        { ...sharedFounders[3], role: 'Expert linguiste', linkedinText: 'LinkedIn de Maxim' },
       ],
     },
     cta: {
@@ -461,6 +535,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       label: 'Качество перевода',
       heading: 'Не просто перевод, а\u00A0живой текст.',
       description: 'В основе приложения — искусственный интеллект, тщательно настроенный экспертами-лингвистами. Текст получается таким, каким его задумал автор.',
+      compare: {
+        original: qualityCompareText.en,
+        translated: qualityCompareText.ru,
+      },
     },
     supportedLanguages: {
       label: 'Языки перевода',
@@ -487,7 +565,7 @@ const messages: Record<LandingLocale, LandingMessages> = {
         { ...sharedFounders[0], name: 'Татьяна Мельникова', role: 'Разработчица и CTO', linkedinText: 'LinkedIn Татьяны' },
         { ...sharedFounders[1], name: 'Антон Ломовский', role: 'CEO', linkedinText: 'LinkedIn Антона' },
         { ...sharedFounders[2], name: 'Кондрат Кондратенко', role: 'Дизайнер', linkedinText: 'LinkedIn Кондрата' },
-        { ...sharedFounders[3], name: 'Максим Ильичев', role: 'Сооснователь', linkedinText: 'LinkedIn Максима' },
+        { ...sharedFounders[3], name: 'Максим Ильичев', role: 'Эксперт-лингвист', linkedinText: 'LinkedIn Максима' },
       ],
     },
     cta: {

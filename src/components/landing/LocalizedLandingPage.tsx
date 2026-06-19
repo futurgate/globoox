@@ -99,6 +99,7 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
             label={messages.quality.label}
             heading={messages.quality.heading}
             description={messages.quality.description}
+            compare={messages.quality.compare}
           />
         </section>
 

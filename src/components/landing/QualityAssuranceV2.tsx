@@ -1,12 +1,16 @@
-import { CompareSlider } from './CompareSlider';
+import { CompareSlider, type CompareSliderText } from './CompareSlider';
 
 interface QualityAssuranceV2Props {
   label: string;
   heading: string;
   description: string;
+  compare: {
+    original: CompareSliderText;
+    translated: CompareSliderText;
+  };
 }
 
-export function QualityAssuranceV2({ label, heading, description }: QualityAssuranceV2Props) {
+export function QualityAssuranceV2({ label, heading, description, compare }: QualityAssuranceV2Props) {
   return (
     <section className="qa-section" style={{ padding: '120px 0', background: 'var(--parchment)' }}>
       <div className="qa-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
@@ -77,7 +81,7 @@ export function QualityAssuranceV2({ label, heading, description }: QualityAssur
               }}
             >
               <div className="device-screen-slider" style={{ width: '100%', height: '100%' }}>
-                <CompareSlider />
+                <CompareSlider original={compare.original} translated={compare.translated} />
               </div>
             </div>
           </div>
@@ -119,7 +123,7 @@ export function QualityAssuranceV2({ label, heading, description }: QualityAssur
               }}
             >
               <div className="device-screen-slider" style={{ width: '100%', height: '100%' }}>
-                <CompareSlider />
+                <CompareSlider original={compare.original} translated={compare.translated} />
               </div>
             </div>
           </div>
@@ -151,7 +155,7 @@ export function QualityAssuranceV2({ label, heading, description }: QualityAssur
               }}
             >
               <div className="device-screen-slider" style={{ width: '100%', height: '100%', background: '#fcfcfc' }}>
-                <CompareSlider />
+                <CompareSlider original={compare.original} translated={compare.translated} />
               </div>
             </div>
           </div>

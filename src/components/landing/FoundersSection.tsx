@@ -70,46 +70,37 @@ export function FoundersSection({
           }}
         >
           {items.map((founder) => {
-            const isDark = founder.theme === 'dark';
-
             return (
               <article
                 key={founder.name}
                 className="founders-card"
                 style={{
-                  minHeight: '240px',
                   borderRadius: '8px',
-                  padding: '34px 34px 32px',
-                  background: isDark ? '#202635' : 'rgba(255,255,255,0.72)',
-                  color: isDark ? 'var(--parchment)' : 'var(--ink)',
-                  border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(44,59,45,0.08)',
-                  boxShadow: isDark
-                    ? '0 24px 60px rgba(20, 25, 34, 0.18)'
-                    : '0 18px 48px rgba(44,59,45,0.08)',
+                  padding: '20px 18px',
+                  background: 'rgba(255,255,255,0.72)',
+                  color: 'var(--ink)',
+                  border: '1px solid rgba(44,59,45,0.08)',
+                  boxShadow: '0 18px 48px rgba(44,59,45,0.08)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                 }}
               >
-                <div className="founders-card-main" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                <div className="founders-card-main" style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: '16px' }}>
                   <div
                     className="founders-card-avatar"
                     style={{
                       position: 'relative',
-                      width: '112px',
-                      height: '112px',
+                      width: '78px',
+                      height: '78px',
                       borderRadius: '8px',
-                      marginBottom: '28px',
-                      background: isDark
-                        ? 'linear-gradient(180deg, rgba(232,184,154,0.22) 0%, rgba(232,184,154,0.08) 100%)'
-                        : 'linear-gradient(180deg, rgba(192,90,58,0.16) 0%, rgba(192,90,58,0.05) 100%)',
-                      border: isDark ? '1px solid rgba(232,184,154,0.18)' : '1px solid rgba(192,90,58,0.12)',
+                      background: 'linear-gradient(180deg, rgba(192,90,58,0.16) 0%, rgba(192,90,58,0.05) 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: "'Lora', serif",
                       fontSize: '28px',
-                      color: isDark ? 'var(--parchment)' : 'var(--ink)',
+                      color: 'var(--ink)',
                       flexShrink: 0,
                       overflow: 'hidden',
                     }}
@@ -119,7 +110,7 @@ export function FoundersSection({
                         src={founder.photoSrc}
                         alt={founder.name}
                         fill
-                        sizes="112px"
+                        sizes="78px"
                         style={{
                           objectFit: 'cover',
                         }}
@@ -129,15 +120,15 @@ export function FoundersSection({
                     )}
                   </div>
 
-                  <div className="founders-card-copy">
-                    <div style={{ marginBottom: '10px' }}>
+                  <div className="founders-card-copy" style={{ flex: '1 1 auto', minWidth: 0 }}>
+                    <div style={{ marginBottom: '4px' }}>
                       <h3
                         style={{
                           fontFamily: "'Lora', serif",
-                          fontSize: '38px',
+                          fontSize: '28px',
                           lineHeight: 1.08,
                           fontWeight: 400,
-                          color: isDark ? 'var(--parchment)' : 'var(--ink)',
+                          color: 'var(--ink)',
                         }}
                       >
                         {founder.name}
@@ -146,12 +137,12 @@ export function FoundersSection({
 
                     <div
                       style={{
-                        fontSize: '14px',
+                        fontSize: '12px',
                         fontWeight: 600,
-                        letterSpacing: '0.04em',
+                        letterSpacing: '0.08em',
                         textTransform: 'uppercase',
-                        color: isDark ? 'rgba(244,240,232,0.72)' : 'rgba(44,59,45,0.64)',
-                        marginBottom: '22px',
+                        color: 'var(--primary)',
+                        marginBottom: '10px',
                       }}
                     >
                       {founder.role}
@@ -168,12 +159,13 @@ export function FoundersSection({
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '5px',
-                          fontSize: '14px',
+                          fontSize: '13px',
                           lineHeight: 1.4,
-                          color: isDark ? 'rgba(244,240,232,0.88)' : 'var(--ink)',
+                          color: 'var(--ink)',
                           textDecoration: 'underline',
                           textUnderlineOffset: '4px',
-                          marginTop: '24px',
+                          marginTop: '0',
+                          transform: 'translate(-2px, -3px)',
                         }}
                       >
                         <Image
@@ -186,9 +178,7 @@ export function FoundersSection({
                             width: '20px',
                             height: '20px',
                             opacity: 1,
-                            filter: isDark
-                              ? 'brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(363%) hue-rotate(329deg) brightness(103%) contrast(92%)'
-                              : 'brightness(0) saturate(100%) invert(19%) sepia(10%) saturate(849%) hue-rotate(71deg) brightness(96%) contrast(88%)',
+                            filter: 'brightness(0) saturate(100%) invert(19%) sepia(10%) saturate(849%) hue-rotate(71deg) brightness(96%) contrast(88%)',
                           }}
                         />
                         <span>{founder.linkedinText}</span>
@@ -206,25 +196,6 @@ export function FoundersSection({
         @media (max-width: 1023px) {
           .founders-card {
             min-height: 0 !important;
-          }
-
-          .founders-card-main {
-            flex-direction: row !important;
-            align-items: flex-start !important;
-            gap: 24px !important;
-          }
-
-          .founders-card-avatar {
-            margin-bottom: 0 !important;
-          }
-
-          .founders-card-copy {
-            flex: 1 1 auto;
-            min-width: 0;
-          }
-
-          .founders-card-link {
-            margin-top: 0 !important;
           }
 
           .founders-grid {
@@ -246,65 +217,9 @@ export function FoundersSection({
           }
         }
 
-        @media (max-width: 559px) {
-          .founders-card {
-            padding: 20px 18px !important;
-          }
-
-          .founders-card-main {
-            gap: 16px !important;
-          }
-
-          .founders-card-avatar {
-            width: 78px !important;
-            height: 78px !important;
-          }
-
-          .founders-card-copy h3 {
-            font-size: 28px !important;
-          }
-
-          .founders-card-copy > div:nth-child(2) {
-            font-size: 12px !important;
-            line-height: 1.2 !important;
-            margin-bottom: 12px !important;
-          }
-
-          .founders-card-link {
-            font-size: 13px !important;
-          }
-        }
-
         @media (min-width: 720px) and (max-width: 1023px) {
           .founders-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          }
-
-          .founders-card {
-            padding: 20px 18px !important;
-          }
-
-          .founders-card-main {
-            gap: 16px !important;
-          }
-
-          .founders-card-avatar {
-            width: 78px !important;
-            height: 78px !important;
-          }
-
-          .founders-card-copy h3 {
-            font-size: 28px !important;
-          }
-
-          .founders-card-copy > div:nth-child(2) {
-            font-size: 12px !important;
-            line-height: 1.2 !important;
-            margin-bottom: 12px !important;
-          }
-
-          .founders-card-link {
-            font-size: 13px !important;
           }
         }
       `}</style>
