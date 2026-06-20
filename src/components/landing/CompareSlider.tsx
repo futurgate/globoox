@@ -20,6 +20,17 @@ interface CompareSliderProps {
 }
 
 const DEFAULT_ORIGINAL: CompareSliderText = {
+  lang: 'ru',
+  languageLabel: 'RU',
+  title: 'Путешествие на «Бигле»',
+  author: 'Чарльз Дарвин',
+  heading: 'Путешествие на «Бигле»',
+  paragraphs: [
+    '27 декабря 1831 года десятипушечный бриг Ее Величества «Бигль» под командованием капитана королевского флота Фицроя покинул Девонпорт.',
+  ],
+};
+
+const DEFAULT_TRANSLATED: CompareSliderText = {
   lang: 'en',
   languageLabel: 'EN',
   title: 'The Voyage of the Beagle',
@@ -30,16 +41,9 @@ const DEFAULT_ORIGINAL: CompareSliderText = {
   ],
 };
 
-const DEFAULT_TRANSLATED: CompareSliderText = {
-  lang: 'ru',
-  languageLabel: 'RU',
-  title: 'Путешествие на «Бигле»',
-  author: 'Чарльз Дарвин',
-  heading: 'Путешествие на «Бигле»',
-  paragraphs: [
-    '27 декабря 1831 года десятипушечный бриг Ее Величества «Бигль» под командованием капитана королевского флота Фицроя покинул Девонпорт.',
-  ],
-};
+type TouchDragDirection = 'horizontal' | 'vertical' | null;
+
+const TOUCH_DIRECTION_THRESHOLD = 10;
 
 export function CompareSlider({
   original = DEFAULT_ORIGINAL,
@@ -51,6 +55,8 @@ export function CompareSlider({
   const wrapRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(50);
   const isDragging = useRef(false);
+  const touchStart = useRef({ x: 0, y: 0 });
+  const touchDirection = useRef<TouchDragDirection>(null);
   const languagePairLabel = `${original.languageLabel}→${translated.languageLabel}`;
 
   const move = (clientX: number) => {
@@ -68,22 +74,47 @@ export function CompareSlider({
       isDragging.current = false;
     };
     const onTouchMove = (e: TouchEvent) => {
-      if (isDragging.current) move(e.touches[0].clientX);
+      if (!isDragging.current || e.touches.length === 0) {
+        return;
+      }
+
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStart.current.x;
+      const dy = touch.clientY - touchStart.current.y;
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+
+      if (!touchDirection.current && Math.max(absX, absY) >= TOUCH_DIRECTION_THRESHOLD) {
+        touchDirection.current = absX > absY ? 'horizontal' : 'vertical';
+      }
+
+      if (touchDirection.current === 'vertical') {
+        isDragging.current = false;
+        return;
+      }
+
+      if (touchDirection.current === 'horizontal') {
+        e.preventDefault();
+        move(touch.clientX);
+      }
     };
     const onTouchEnd = () => {
       isDragging.current = false;
+      touchDirection.current = null;
     };
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-    document.addEventListener('touchmove', onTouchMove, { passive: true });
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
     document.addEventListener('touchend', onTouchEnd);
+    document.addEventListener('touchcancel', onTouchEnd);
 
     return () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
       document.removeEventListener('touchmove', onTouchMove);
       document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('touchcancel', onTouchEnd);
     };
   }, []);
 
@@ -116,8 +147,11 @@ export function CompareSlider({
           move(e.clientX);
         }}
         onTouchStart={(e) => {
+          const touch = e.touches[0];
+          touchStart.current = { x: touch.clientX, y: touch.clientY };
+          touchDirection.current = null;
           isDragging.current = true;
-          move(e.touches[0].clientX);
+          move(touch.clientX);
         }}
         style={{
           position: 'relative',
@@ -131,9 +165,9 @@ export function CompareSlider({
           userSelect: 'none',
         }}
       >
-        {/* Layer 1: Original (left) */}
+        {/* Layer 1: translated text */}
         <div
-          lang={original.lang}
+          lang={translated.lang}
           style={{
             position: 'absolute',
             inset: 0,
@@ -155,8 +189,8 @@ export function CompareSlider({
           <div style={{ ...readerHeader, color: '#999' }}>
             <svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M7 1L1 6.5L7 12" stroke="#C05A3A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             <div style={{ position: 'absolute', left: 40, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.05, gap: 2, maxWidth: 'calc(100% - 106px)' }}>
-              <span style={{ color: '#2C3B2D', fontSize: 13, fontWeight: 600 }}>{original.title}</span>
-              <span style={{ color: 'rgba(44,59,45,0.62)', fontSize: 10, fontWeight: 500 }}>{original.author}</span>
+              <span style={{ color: '#2C3B2D', fontSize: 13, fontWeight: 600 }}>{translated.title}</span>
+              <span style={{ color: 'rgba(44,59,45,0.62)', fontSize: 10, fontWeight: 500 }}>{translated.author}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#C05A3A' }}>{languagePairLabel}</span>
@@ -165,15 +199,15 @@ export function CompareSlider({
           <div className="compare-text-pad" style={{ flex: 1, overflow: 'hidden', padding: '28px 32px' }}>
             <div style={{ maxWidth: '480px', margin: '0 auto' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 400, marginBottom: '14px', fontFamily: "'Lora', serif" }}>
-                {original.heading}
+                {translated.heading}
               </h3>
-              {original.paragraphs.map((paragraph, index) => (
+              {translated.paragraphs.map((paragraph, index) => (
                 <p
                   key={paragraph}
                   style={{
                     fontSize: '14px',
                     lineHeight: 1.8,
-                    marginBottom: index === original.paragraphs.length - 1 ? 0 : '10px',
+                    marginBottom: index === translated.paragraphs.length - 1 ? 0 : '10px',
                   }}
                 >
                   {paragraph}
@@ -183,9 +217,9 @@ export function CompareSlider({
           </div>
         </div>
 
-        {/* Layer 2: Translation (right, revealed by slider) */}
+        {/* Layer 2: original text, revealed by slider */}
         <div
-          lang={translated.lang}
+          lang={original.lang}
           style={{
             position: 'absolute',
             inset: 0,
@@ -208,8 +242,8 @@ export function CompareSlider({
           <div style={{ ...readerHeader, color: 'var(--dusk)', borderBottomColor: 'rgba(178,80,50,0.1)' }}>
             <svg width="8" height="13" viewBox="0 0 8 13" fill="none"><path d="M7 1L1 6.5L7 12" stroke="#C05A3A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             <div style={{ position: 'absolute', left: 40, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.05, gap: 2, maxWidth: 'calc(100% - 106px)' }}>
-              <span style={{ color: '#CB694A', fontSize: 13, fontWeight: 600 }}>{translated.title}</span>
-              <span style={{ color: '#d59d8c', fontSize: 10, fontWeight: 500 }}>{translated.author}</span>
+              <span style={{ color: '#CB694A', fontSize: 13, fontWeight: 600 }}>{original.title}</span>
+              <span style={{ color: '#d59d8c', fontSize: 10, fontWeight: 500 }}>{original.author}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#C05A3A' }}>{languagePairLabel}</span>
@@ -218,15 +252,15 @@ export function CompareSlider({
           <div className="compare-text-pad" style={{ flex: 1, overflow: 'hidden', padding: '28px 32px' }}>
             <div style={{ maxWidth: '480px', margin: '0 auto' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 400, marginBottom: '14px', fontFamily: "'Lora', serif", color: 'var(--primary)' }}>
-                {translated.heading}
+                {original.heading}
               </h3>
-              {translated.paragraphs.map((paragraph, index) => (
+              {original.paragraphs.map((paragraph, index) => (
                 <p
                   key={paragraph}
                   style={{
                     fontSize: '14px',
                     lineHeight: 1.8,
-                    marginBottom: index === translated.paragraphs.length - 1 ? 0 : '10px',
+                    marginBottom: index === original.paragraphs.length - 1 ? 0 : '10px',
                   }}
                 >
                   {paragraph}

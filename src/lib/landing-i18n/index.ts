@@ -167,6 +167,32 @@ const qualityCompareText = {
       'Después de que los fuertes vendavales del suroeste le obligaran a retroceder en dos ocasiones, el buque de Su Majestad Beagle, un bergantín de diez cañones bajo el mando del capitán Fitz Roy, de la Marina Real, zarpó de Devonport el 27 de diciembre de 1831. El objetivo de la expedición era completar el levantamiento cartográfico de la Patagonia y Tierra del Fuego, comenzado bajo las órdenes del capitán King de 1826 a 1830 —explorar las costas de Chile, Perú y de algunas islas del Pacífico— y llevar a cabo una cadena de mediciones cronométricas alrededor del mundo. El 6 de enero llegamos a Tenerife, pero se nos impidió desembarcar por temor a que introdujéramos el cólera: a la mañana siguiente vimos salir el sol por detrás de la escarpada silueta de la isla de Gran Canaria y cómo iluminaba de repente el pico de Tenerife, mientras las zonas inferiores quedaban ocultas tras unas nubes algodonosas. Este fue el primero de muchos días maravillosos que jamás olvidaremos. El 16 de enero de 1832 fondeamos en Porto Praya, en Santiago, la isla principal del archipiélago de Cabo Verde.',
     ],
   },
+  luriaRu: {
+    lang: 'ru',
+    languageLabel: 'RU',
+    title: 'Маленькая книжка о\u00A0большой памяти',
+    author: 'Александр\u00A0Лурия',
+    heading: 'Замысел',
+    paragraphs: [
+      'Эта маленькая книжка о\u00A0большой памяти имеет длинную историю.',
+      'В\u00A0течение почти тридцати лет автор мог систематически наблюдать человека, чья выдающаяся память относилась к\u00A0числу самых сильных, описанных в\u00A0литературе.',
+      'За\u00A0это время был собран большой материал, позволяющий не\u00A0только изучать основные формы и\u00A0приёмы этой памяти, которая практически не\u00A0имела границ. Приведённые наблюдения позволили, вместе с\u00A0тем, автору описать основные особенности личности этого замечательного человека.',
+      'В\u00A0отличие от\u00A0других психологов, занимавшихся исследованием выдающейся памяти, автор не\u00A0ограничивался измерением её\u00A0объёма и\u00A0прочности или описанием тех приёмов, которыми его испытуемый пользовался для запоминания и\u00A0воспроизведения материала. Гораздо больше его интересовали другие вопросы. Как сказывается выдающаяся память на\u00A0всех основных сторонах личности человека\u00A0— на\u00A0его мышлении, воображении и\u00A0поведении? Как может измениться внутренний мир человека, его общение с\u00A0другими, его жизненный путь, если одна сторона его психической жизни\u00A0— память\u00A0— получает необычное развитие и\u00A0начинает вызывать изменение всех других сторон его психической деятельности?',
+    ],
+  },
+  luriaEn: {
+    lang: 'en',
+    languageLabel: 'EN',
+    title: 'A Little Book About a Vast Memory',
+    author: 'Alexander Luria',
+    heading: 'The Premise',
+    paragraphs: [
+      'This little book about a vast memory has a long history.',
+      'For nearly thirty years, the author systematically observed a man whose extraordinary memory ranks among the most powerful ever described in the literature.',
+      'Over this period, the author gathered extensive data. This material made it possible to study the core forms and mechanisms of a memory that knew virtually no bounds. Simultaneously, these observations allowed the author to describe the fundamental personality traits of this remarkable man.',
+      'Unlike other psychologists studying exceptional memory, the author did not merely measure its capacity and retention. Nor did he simply catalog the techniques his subject used to memorize and recall information. Other questions interested him far more. How does an extraordinary memory affect every major aspect of a person’s personality\u2014their thinking, imagination, and behavior? How might a person’s inner world, their relationships with others, and their life path change when a single facet of their mental life\u2014memory\u2014develops so unusually that it transforms every other aspect of their mental activity?',
+    ],
+  },
 };
 
 const messages: Record<LandingLocale, LandingMessages> = {
@@ -227,8 +253,8 @@ const messages: Record<LandingLocale, LandingMessages> = {
       heading: 'Translation You Can Trust',
       description: "Built on an AI engine fine-tuned by expert linguists, our app delivers clear, accurate, and easy-to-read translations that capture the author's true intent.",
       compare: {
-        original: qualityCompareText.es,
-        translated: qualityCompareText.en,
+        original: qualityCompareText.luriaRu,
+        translated: qualityCompareText.luriaEn,
       },
     },
     supportedLanguages: {
