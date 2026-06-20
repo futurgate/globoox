@@ -121,6 +121,8 @@ export function CompareSlider({
           overflow: 'hidden',
           border: '1px solid rgba(0,0,0,0.08)',
           cursor: 'col-resize',
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
         }}
       >
         {/* Layer 1: Original (left) */}
