@@ -14,6 +14,9 @@ export interface CompareSliderText {
 interface CompareSliderProps {
   original?: CompareSliderText;
   translated?: CompareSliderText;
+  hideStatusBarContent?: boolean;
+  statusBarHeight?: number;
+  statusBarPadding?: string;
 }
 
 const DEFAULT_ORIGINAL: CompareSliderText = {
@@ -41,6 +44,9 @@ const DEFAULT_TRANSLATED: CompareSliderText = {
 export function CompareSlider({
   original = DEFAULT_ORIGINAL,
   translated = DEFAULT_TRANSLATED,
+  hideStatusBarContent = false,
+  statusBarHeight = 22,
+  statusBarPadding = '12px 24px 0',
 }: CompareSliderProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(50);
@@ -94,11 +100,11 @@ export function CompareSlider({
   };
 
   const statusBarBase: React.CSSProperties = {
-    height: 22,
+    height: statusBarHeight,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '12px 24px 0',
+    padding: statusBarPadding,
   };
 
   return (
@@ -140,8 +146,8 @@ export function CompareSlider({
           }}
         >
           <div style={{ ...statusBarBase, background: '#fcfcfc' }}>
-            <span style={{ color: '#2C3B2D', fontSize: 10, fontWeight: 600 }}>9:41</span>
-            <div style={{ width: 18, height: 9, border: '1.5px solid #2C3B2D', borderRadius: 2, position: 'relative', opacity: 0.6 }}>
+            <span style={{ color: '#2C3B2D', fontSize: 10, fontWeight: 600, visibility: hideStatusBarContent ? 'hidden' : 'visible' }}>9:41</span>
+            <div style={{ width: 18, height: 9, border: '1.5px solid #2C3B2D', borderRadius: 2, position: 'relative', opacity: 0.6, visibility: hideStatusBarContent ? 'hidden' : 'visible' }}>
               <div style={{ position: 'absolute', right: -4, top: '50%', transform: 'translateY(-50%)', width: 3, height: 5, background: '#2C3B2D', borderRadius: '0 1px 1px 0' }} />
               <div style={{ position: 'absolute', inset: 2, right: 3, background: '#2C3B2D', borderRadius: 0.5 }} />
             </div>
@@ -193,8 +199,8 @@ export function CompareSlider({
           }}
         >
           <div style={{ ...statusBarBase, background: '#fffbf9' }}>
-            <span style={{ color: '#2C3B2D', fontSize: 10, fontWeight: 600 }}>9:41</span>
-            <div style={{ width: 18, height: 9, border: '1.5px solid #2C3B2D', borderRadius: 2, position: 'relative', opacity: 0.6 }}>
+            <span style={{ color: '#2C3B2D', fontSize: 10, fontWeight: 600, visibility: hideStatusBarContent ? 'hidden' : 'visible' }}>9:41</span>
+            <div style={{ width: 18, height: 9, border: '1.5px solid #2C3B2D', borderRadius: 2, position: 'relative', opacity: 0.6, visibility: hideStatusBarContent ? 'hidden' : 'visible' }}>
               <div style={{ position: 'absolute', right: -4, top: '50%', transform: 'translateY(-50%)', width: 3, height: 5, background: '#2C3B2D', borderRadius: '0 1px 1px 0' }} />
               <div style={{ position: 'absolute', inset: 2, right: 3, background: '#2C3B2D', borderRadius: 0.5 }} />
             </div>

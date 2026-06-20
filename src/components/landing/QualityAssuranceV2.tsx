@@ -81,7 +81,13 @@ export function QualityAssuranceV2({ label, heading, description, compare }: Qua
               }}
             >
               <div className="device-screen-slider" style={{ width: '100%', height: '100%' }}>
-                <CompareSlider original={compare.original} translated={compare.translated} />
+                <CompareSlider
+                  original={compare.original}
+                  translated={compare.translated}
+                  hideStatusBarContent
+                  statusBarHeight={4}
+                  statusBarPadding="0 24px"
+                />
               </div>
             </div>
           </div>
