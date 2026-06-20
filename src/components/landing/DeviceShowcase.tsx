@@ -27,10 +27,10 @@ function getDeviceConfig(type: DeviceType) {
         ? '/images/device-posters/ipad.webp'
         : '/images/device-posters/mac.webp',
     frameSrc: isLaptop
-      ? '/DeviceMockups/MacBook/MacBook Pro 16_ - 5th Gen - Silver.png'
+      ? '/DeviceMockups/MacBook/MacBook Pro 16_ - 5th Gen - Silver.webp'
       : isPhone
-        ? '/DeviceMockups/iPhone/iPhone 13 Pro - Midnight -  Portrait.png'
-        : '/DeviceMockups/iPad/iPad Pro 11 - Space Gray - Portrait.png',
+        ? '/DeviceMockups/iPhone/iPhone 13 Pro - Midnight -  Portrait.webp'
+        : '/DeviceMockups/iPad/iPad Pro 11 - Space Gray - Portrait.webp',
     screenInset: isLaptop
       ? { top: '10.9%', right: '10%', bottom: '10.9%', left: '10%', radius: '0' }
       : isPhone
