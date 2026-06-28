@@ -59,7 +59,7 @@ export default async function LandingPage() {
         </section>
 
         <section id="how-it-works" aria-label="How it works">
-          <UsageAnimation />
+          <UsageAnimation locale="en" />
         </section>
 
         <section id="quality" aria-label="Translation quality">
