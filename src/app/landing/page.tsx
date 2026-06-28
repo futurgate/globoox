@@ -8,8 +8,10 @@ import { UsageAnimation } from '@/components/landing/UsageAnimation';
 import { QualityAssuranceV2 } from '@/components/landing/QualityAssuranceV2';
 import { CTA } from '@/components/landing/CTA';
 import { Footer } from '@/components/landing/Footer';
+import { getLandingMessages } from '@/lib/landing-i18n';
 
 export default async function LandingPage() {
+  const messages = getLandingMessages('en');
   const supabase = await createClient();
   const {
     data: { user },
@@ -67,11 +69,20 @@ export default async function LandingPage() {
             label="Translation Quality"
             heading="Translations You Can Trust"
             description="Built on an AI engine fine-tuned by expert linguists, our app delivers clear, accurate, and easy-to-read translations that capture the author's true intent."
+            compare={messages.quality.compare}
           />
         </section>
 
         <section id="languages" aria-label="Supported languages">
-          <SupportedLanguages />
+          <SupportedLanguages
+            label={messages.supportedLanguages.label}
+            heading={messages.supportedLanguages.heading}
+            description={messages.supportedLanguages.description}
+            currentLangs={messages.supportedLanguages.current}
+            futureLangs={messages.supportedLanguages.future}
+            soonLabel={messages.supportedLanguages.soonLabel}
+            globeAlt={messages.supportedLanguages.globeAlt}
+          />
         </section>
 
         <section id="privacy" aria-label="Privacy">
@@ -83,11 +94,16 @@ export default async function LandingPage() {
             heading="Start with your first book"
             description="Upload your EPUB and enjoy it in your language."
             buttonText="Upload Your First Book"
+            floatingScripts={messages.cta.floatingScripts}
           />
         </section>
 
         <Footer
           tagline="We are building a global book platform where any reader can discover, buy, read, and listen to any book in their native language."
+          legalLabel={messages.footer.legal}
+          termsLabel={messages.footer.terms}
+          privacyLabel={messages.footer.privacy}
+          copyright={messages.footer.copyright}
         />
       </div>
     </>
