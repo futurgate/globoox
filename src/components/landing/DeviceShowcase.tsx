@@ -46,6 +46,17 @@ function getDeviceConfig(type: DeviceType) {
   };
 }
 
+function prepareAutoplayVideo(video: HTMLVideoElement) {
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+  video.setAttribute('x-webkit-airplay', 'deny');
+  video.removeAttribute('controls');
+}
+
 function DeviceMediaFrame({
   type,
   className,
@@ -120,13 +131,7 @@ function DeviceFrame({
       return;
     }
 
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-    video.setAttribute('muted', '');
-    video.setAttribute('playsinline', 'true');
-    video.setAttribute('webkit-playsinline', 'true');
-    video.removeAttribute('controls');
+    prepareAutoplayVideo(video);
 
     const playVideo = () => {
       void video.play().catch(() => {
@@ -172,7 +177,12 @@ function DeviceFrame({
         ) : (
           <>
             <video
-              ref={videoRef}
+              ref={(node) => {
+                videoRef.current = node;
+                if (node) {
+                  prepareAutoplayVideo(node);
+                }
+              }}
               className="device-showcase-video"
               autoPlay
               muted
@@ -181,8 +191,14 @@ function DeviceFrame({
               controls={false}
               controlsList="nodownload nofullscreen noremoteplayback"
               disablePictureInPicture
+              disableRemotePlayback
               preload="auto"
+              poster={config.posterSrc}
               aria-hidden="true"
+              {...{
+                'webkit-playsinline': '',
+                'x-webkit-airplay': 'deny',
+              }}
               onPlaying={() => setIsVideoPlaying(true)}
               onPlay={() => setIsVideoPlaying(true)}
               style={{
@@ -217,6 +233,14 @@ function DeviceFrame({
           </>
         )}
       </div>
+      <style>{`
+        .device-showcase-video::-webkit-media-controls,
+        .device-showcase-video::-webkit-media-controls-start-playback-button,
+        .device-showcase-video::-webkit-media-controls-overlay-play-button {
+          display: none !important;
+          -webkit-appearance: none;
+        }
+      `}</style>
     </DeviceMediaFrame>
   );
 }
