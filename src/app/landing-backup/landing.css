@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* ============================================
+   Landing Page - Complete Isolation
+   ============================================ */
+
+/* Reset all default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  /* Brand: Forest & Terracotta */
+  --ink:           #2C3B2D;
+  --ink-80:        #3D5040;
+  --ink-50:        rgba(44,59,45,.50);
+  --ink-10:        rgba(44,59,45,.07);
+  --primary:       #C05A3A;
+  --primary-hover:  #A34D32;
+  --primary-10:    rgba(192,90,58,.08);
+  --primary-20:    rgba(192,90,58,.15);
+  --primary-30:    rgba(192,90,58,.25);
+  --parchment-white: #FFFFFF;
+  --parchment-light: #FAF8F3;
+  --parchment:     #F4F0E8;
+  --parchment-dark:#E6E0D6;
+  --ash:           #7A8C7B;
+  --sage:          #C9D6C4;
+  --dusk:          #E8B89A;
+  --mist:          #B8C4B9;
+
+  /* Semantic aliases */
+  --bg-light: var(--parchment);
+  --bg-dark: var(--ink);
+  --bg-dark-card: var(--ink-80);
+  --bg-dark-border: rgba(255,255,255,0.08);
+  --accent: var(--primary);
+  --accent-hover: var(--primary-hover);
+  --accent-muted: var(--primary-hover);
+  --accent-on-dark: var(--dusk);
+  --accent-glow: var(--primary-20);
+  --stars: var(--dusk);
+  --text-heading: var(--ink);
+  --text-body: var(--ash);
+  --text-dark-heading: var(--parchment);
+  --text-dark-body: var(--parchment);
+  --text-dark-muted: var(--ink-50);
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-heading);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lora', serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 56px;
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: 32px;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-30px) rotate(5deg);
+  }
+}
+
+.spine-hover:hover {
+  transform: translateY(-20px) scale(1.05) rotate(2deg) !important;
+  z-index: 10;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 6px 12px 20px rgba(0,0,0,0.18), 2px 4px 6px rgba(0,0,0,0.10) !important;
+}
+
+.spine-wrap:hover .spine-shadow {
+  transform: translateX(24px) translateY(36px) scaleX(0.85);
+  opacity: 0.55;
+}
+
+.spine-shadow {
+  position: absolute;
+  bottom: -4px;
+  left: 4px;
+  right: -4px;
+  height: 100%;
+  background: rgba(0,0,0,0.25);
+  border-radius: 4px;
+  filter: blur(8px);
+  transform: translateX(6px) translateY(10px) scaleX(0.9);
+  opacity: 0.3;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.btn-primary-hover:hover {
+  background: var(--primary-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(178, 80, 50, 0.3) !important;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+
+main {
+  width: 100%;
+}
+
+section {
+  width: 100%;
+}
+
+/* ============================================
+   Form Elements
+   ============================================ */
+
+button {
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, textarea, select {
+  font-family: 'Inter', sans-serif;
+}
+
+/* ============================================
+   Lists
+   ============================================ */
+
+ul, ol {
+  list-style: none;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================
+   Tables
+   ============================================ */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  padding: 0;
+  margin: 0;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .floating-script {
+    display: none !important;
+  }
+
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  /* Stack grids on mobile */
+  [style*="gridTemplateColumns: repeat(12"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [style*="gridTemplateColumns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  [style*="gridTemplateColumns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  p {
+    font-size: 15px;
+  }
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--parchment);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B25032;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
+
+/* Firefox */
+* {
+  scrollbar-color: #B25032 var(--parchment);
+  scrollbar-width: thin;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  button {
+    display: none;
+  }
+}

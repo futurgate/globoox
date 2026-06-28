@@ -97,7 +97,7 @@ export type LandingMessages = {
 
 const sharedFounders = [
   {
-    name: 'Tatiana Melnikova',
+    name: 'Tanya Melnikova',
     theme: 'light' as const,
     initials: 'TM',
     photoSrc: '/images/founders/tatiana.webp',
@@ -118,7 +118,7 @@ const sharedFounders = [
     linkedinUrl: 'http://linkedin.com/in/kondrat-kondratenko/',
   },
   {
-    name: 'Maxim Ilyichev',
+    name: 'Maksim Ilichev',
     theme: 'dark' as const,
     initials: 'MI',
     photoSrc: '/images/founders/maxim.webp',
@@ -273,10 +273,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       description: 'We gathered a designer passionate about digital book typography, experts with fundamental linguistic knowledge, and a software engineer with a deep understanding of AI. Together, we are building the future of digital reading, a platform that erases language barriers and unlocks access to the world’s greatest books.',
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], role: 'Developer & CTO', linkedinText: "Tatiana's LinkedIn" },
+        { ...sharedFounders[0], role: 'Developer & CTO', linkedinText: "Tanya's LinkedIn" },
         { ...sharedFounders[1], role: 'CEO', linkedinText: "Anton's LinkedIn" },
         { ...sharedFounders[2], role: 'Designer', linkedinText: "Kondrat's LinkedIn" },
-        { ...sharedFounders[3], role: 'Linguistics Expert', linkedinText: "Maxim's LinkedIn" },
+        { ...sharedFounders[3], role: 'Linguistics Expert', linkedinText: "Maksim's LinkedIn" },
       ],
     },
     cta: {
@@ -376,10 +376,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       description: 'Construimos Globoox con un equipo multidisciplinario que combina diseño, lenguaje, producto e ingeniería.',
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], role: 'Desarrolladora y CTO', linkedinText: 'LinkedIn de Tatiana' },
+        { ...sharedFounders[0], role: 'Desarrolladora y CTO', linkedinText: 'LinkedIn de Tanya' },
         { ...sharedFounders[1], role: 'CEO', linkedinText: 'LinkedIn de Anton' },
         { ...sharedFounders[2], role: 'Diseñador', linkedinText: 'LinkedIn de Kondrat' },
-        { ...sharedFounders[3], role: 'Experto lingüista', linkedinText: 'LinkedIn de Maxim' },
+        { ...sharedFounders[3], role: 'Experto lingüista', linkedinText: 'LinkedIn de Maksim' },
       ],
     },
     cta: {
@@ -479,10 +479,10 @@ const messages: Record<LandingLocale, LandingMessages> = {
       description: 'Notre équipe rassemble quatre profils aux expertises complémentaires. Un designer passionné par la typographie du livre numérique, un linguiste, un traducteur polyglotte et une ingénieure avec une profonde maîtrise de l’IA. Ensemble, nous construisons l’avenir de la lecture numérique\u00A0: une plateforme qui efface les barrières de langues et ouvre l’accès aux meilleurs livres du monde.',
       linkedinLabel: 'LinkedIn',
       items: [
-        { ...sharedFounders[0], role: 'Développeuse et CTO', linkedinText: 'LinkedIn de Tatiana' },
+        { ...sharedFounders[0], role: 'Développeuse et CTO', linkedinText: 'LinkedIn de Tanya' },
         { ...sharedFounders[1], role: 'CEO', linkedinText: 'LinkedIn d’Anton' },
         { ...sharedFounders[2], role: 'Designer', linkedinText: 'LinkedIn de Kondrat' },
-        { ...sharedFounders[3], role: 'Expert linguiste', linkedinText: 'LinkedIn de Maxim' },
+        { ...sharedFounders[3], role: 'Expert linguiste', linkedinText: 'LinkedIn de Maksim' },
       ],
     },
     cta: {

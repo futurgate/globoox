@@ -1,0 +1,83 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e7]:
+          - heading "My Books" [level=1] [ref=e8]
+          - button "Sign In" [ref=e10] [cursor=pointer]
+        - generic [ref=e11]:
+          - generic [ref=e13]:
+            - generic [ref=e14]:
+              - link "Humanistic Wellbeing" [ref=e16] [cursor=pointer]:
+                - /url: /reader/155dcd01-02d7-4f4f-95e3-b4fe6ccd3342
+                - img "Humanistic Wellbeing" [ref=e21]
+              - link "Humanistic Wellbeing Joar Vittersø" [ref=e22] [cursor=pointer]:
+                - /url: /reader/155dcd01-02d7-4f4f-95e3-b4fe6ccd3342
+                - paragraph [ref=e23]: Humanistic Wellbeing
+                - paragraph [ref=e24]: Joar Vittersø
+            - generic [ref=e25]:
+              - link "La rebelión de las masas" [ref=e27] [cursor=pointer]:
+                - /url: /reader/2fed5da7-2bb1-47bc-9c14-9184b2312e73
+                - img "La rebelión de las masas" [ref=e32]
+              - link "La rebelión de las masas José Ortega y Gasset" [ref=e33] [cursor=pointer]:
+                - /url: /reader/2fed5da7-2bb1-47bc-9c14-9184b2312e73
+                - paragraph [ref=e34]: La rebelión de las masas
+                - paragraph [ref=e35]: José Ortega y Gasset
+            - generic [ref=e36]:
+              - link "Ten Days That Shook the World" [ref=e38] [cursor=pointer]:
+                - /url: /reader/846895b5-d93e-46f4-a67d-4ec798edd70c
+                - img "Ten Days That Shook the World" [ref=e43]
+              - link "Ten Days That Shook the World John Reed" [ref=e44] [cursor=pointer]:
+                - /url: /reader/846895b5-d93e-46f4-a67d-4ec798edd70c
+                - paragraph [ref=e45]: Ten Days That Shook the World
+                - paragraph [ref=e46]: John Reed
+            - generic [ref=e47]:
+              - link "La Vie des Abeilles" [ref=e49] [cursor=pointer]:
+                - /url: /reader/8ee73733-c339-4aa9-8920-f854697e2eeb
+                - img "La Vie des Abeilles" [ref=e54]
+              - link "La Vie des Abeilles Maurice Maeterlinck" [ref=e55] [cursor=pointer]:
+                - /url: /reader/8ee73733-c339-4aa9-8920-f854697e2eeb
+                - paragraph [ref=e56]: La Vie des Abeilles
+                - paragraph [ref=e57]: Maurice Maeterlinck
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - heading "Upload your own books" [level=2] [ref=e61]
+              - paragraph [ref=e62]: Sign in to upload and translate your own EPUBs.
+            - list [ref=e63]:
+              - listitem [ref=e64]:
+                - img [ref=e65]
+                - generic [ref=e68]: Your library stays saved
+              - listitem [ref=e69]:
+                - img [ref=e70]
+                - generic [ref=e72]: Reading progress syncs across devices
+              - listitem [ref=e73]:
+                - img [ref=e74]
+                - generic [ref=e77]: Translate EPUBs with AI
+            - button "Sign In" [ref=e79] [cursor=pointer]
+        - generic [ref=e80]:
+          - text: Need help?
+          - link "support@globoox.co" [ref=e81] [cursor=pointer]:
+            - /url: mailto:support@globoox.co
+    - navigation [ref=e82]:
+      - generic [ref=e83]:
+        - button "soon Store" [disabled] [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - img
+            - generic [ref=e87]: soon
+          - generic [ref=e88]: Store
+        - link "My Books" [ref=e89] [cursor=pointer]:
+          - /url: /my-books
+          - img
+          - generic [ref=e90]: My Books
+        - link "Settings" [ref=e91] [cursor=pointer]:
+          - /url: /settings
+          - img
+          - generic [ref=e92]: Settings
+  - button "Open Next.js Dev Tools" [ref=e98] [cursor=pointer]:
+    - img [ref=e99]
+  - alert [ref=e102]
+```
