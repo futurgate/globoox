@@ -934,3 +934,62 @@ export function joinAlpha(token: string): Promise<{ success: boolean }> {
     body: JSON.stringify({ token }),
   })
 }
+
+// ── Admin: translation model-comparison playground ───────────────────────────
+
+export interface PlaygroundJudgeVerdict {
+  adequacy: number
+  fluency: number
+  style: number
+  overall: number
+  summary: string
+  errors: Array<{
+    category: string
+    severity: 'minor' | 'major' | 'critical'
+    span?: string
+    explanation?: string
+    suggestion?: string
+  }>
+}
+
+export interface PlaygroundResult {
+  model: string
+  actualModel?: string
+  ok: boolean
+  translatedText?: string
+  latencyMs?: number
+  costUsd?: number
+  tokensIn?: number
+  tokensOut?: number
+  verdict?: PlaygroundJudgeVerdict | null
+  mqmPenalty?: number | null
+  judgeCostUsd?: number | null
+  judgeError?: string | null
+  error?: string
+}
+
+export interface PlaygroundResponse {
+  targetLanguage: string
+  sourceLanguage: string | null
+  judged: boolean
+  judgeModel: string | null
+  referenceUsed: boolean
+  results: PlaygroundResult[]
+}
+
+export interface PlaygroundRequest {
+  sourceText: string
+  targetLanguage: string
+  sourceLanguage?: string
+  models: string[]
+  judge?: boolean
+  judgeModel?: string
+  reference?: string
+}
+
+export function runTranslationPlayground(payload: PlaygroundRequest): Promise<PlaygroundResponse> {
+  return request<PlaygroundResponse>('/api/admin/translation-playground', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
