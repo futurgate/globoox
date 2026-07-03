@@ -22,7 +22,7 @@ import IOSSettingsRow from '@/components/ui/ios-settings-row';
 export default function SettingsPage() {
     const router = useRouter();
     const supabaseRef = useRef<SupabaseClient | null>(null);
-    const { user, isAlpha, loading } = useAuth();
+    const { user, isAlpha, isAdmin, loading } = useAuth();
     const [signingOut, setSigningOut] = useState(false);
     const [showAccessModal, setShowAccessModal] = useState(false);
     const { mode: currentMode, palette: currentColorTheme, setAppTheme } = useAppTheme();
@@ -112,6 +112,24 @@ export default function SettingsPage() {
                                     >
                                         Join
                                     </Button>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Admin tools */}
+                        {isAdmin && (
+                            <Card className="shadow-none overflow-hidden">
+                                <CardContent className="p-4 flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <FlaskConical className="w-5 h-5 text-sky-500 shrink-0" />
+                                        <div>
+                                            <p className="text-sm font-medium">Translation Playground</p>
+                                            <p className="text-xs text-[var(--app-text-muted)]">Compare & score LLM translations (admin)</p>
+                                        </div>
+                                    </div>
+                                    <Link href="/admin/playground">
+                                        <Button size="sm" variant="outline" className="shrink-0">Open</Button>
+                                    </Link>
                                 </CardContent>
                             </Card>
                         )}
