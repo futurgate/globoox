@@ -14,15 +14,19 @@ import {
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
 
-// Curated starting list; admins can add any model id via the free-text input.
+// Curated to the Gemini 2.5 GA line — the only ids served on both surfaces the
+// backend actually runs: AI Studio (2.5-pro is closed to new keys, so it may
+// 404 there) and Vertex/globoox-ai, which only publishes the 2.5 line on
+// us-central1 (3.x ids like gemini-3.5-flash / gemini-3.1-pro are NOT enabled
+// for this project and 404). Admins can still type any other id in the
+// free-text box; enable 3.x in Vertex Model Garden first if you want it.
 const DEFAULT_MODELS = [
-  'gemini-2.5-pro',
   'gemini-2.5-flash',
   'gemini-2.5-flash-lite',
-  'gemini-3-pro-preview',
+  'gemini-2.5-pro',
 ];
 
-const JUDGE_MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash'];
+const JUDGE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro'];
 
 function fmtCost(v?: number | null): string {
   if (v == null) return '—';
@@ -42,10 +46,10 @@ export default function TranslationPlaygroundPage() {
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState<string>('EN');
   const [targetLanguage, setTargetLanguage] = useState<string>('RU');
-  const [models, setModels] = useState<string[]>(['gemini-2.5-pro', 'gemini-2.5-flash']);
+  const [models, setModels] = useState<string[]>(['gemini-2.5-flash', 'gemini-2.5-pro']);
   const [customModel, setCustomModel] = useState('');
   const [judge, setJudge] = useState(true);
-  const [judgeModel, setJudgeModel] = useState('gemini-2.5-pro');
+  const [judgeModel, setJudgeModel] = useState('gemini-2.5-flash');
   const [reference, setReference] = useState('');
 
   const [running, setRunning] = useState(false);
