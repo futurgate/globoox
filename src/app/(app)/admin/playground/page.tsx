@@ -15,14 +15,18 @@ import {
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
 
 // Curated starting list; admins can add any model id via the free-text input.
+// gemini-2.5-pro / gemini-3-pro-preview were removed — both now 404 on AI Studio
+// (closed to new keys / shut down). gemini-3.1-pro-preview is the live Pro id and
+// the backend auto-remaps it to the Vertex GA id (gemini-3.1-pro) when Vertex is
+// on. On Vertex you can also type gemini-2.5-pro / gemini-3.1-pro directly.
 const DEFAULT_MODELS = [
-  'gemini-2.5-pro',
   'gemini-2.5-flash',
   'gemini-2.5-flash-lite',
-  'gemini-3-pro-preview',
+  'gemini-3.5-flash',
+  'gemini-3.1-pro-preview',
 ];
 
-const JUDGE_MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash'];
+const JUDGE_MODELS = ['gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'];
 
 function fmtCost(v?: number | null): string {
   if (v == null) return '—';
@@ -42,10 +46,10 @@ export default function TranslationPlaygroundPage() {
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState<string>('EN');
   const [targetLanguage, setTargetLanguage] = useState<string>('RU');
-  const [models, setModels] = useState<string[]>(['gemini-2.5-pro', 'gemini-2.5-flash']);
+  const [models, setModels] = useState<string[]>(['gemini-2.5-flash', 'gemini-3.5-flash']);
   const [customModel, setCustomModel] = useState('');
   const [judge, setJudge] = useState(true);
-  const [judgeModel, setJudgeModel] = useState('gemini-2.5-pro');
+  const [judgeModel, setJudgeModel] = useState('gemini-2.5-flash');
   const [reference, setReference] = useState('');
 
   const [running, setRunning] = useState(false);
