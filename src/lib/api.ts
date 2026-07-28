@@ -935,6 +935,33 @@ export function joinAlpha(token: string): Promise<{ success: boolean }> {
   })
 }
 
+// ── Pro subscription (LemonSqueezy) ──────────────────────────────────────────
+
+export interface SubscriptionResponse {
+  tier: 'pro' | null
+  status: string | null
+  renewsAt: string | null
+  endsAt: string | null
+  isPro: boolean
+}
+
+export function getSubscription(): Promise<SubscriptionResponse> {
+  return request<SubscriptionResponse>('/api/subscription')
+}
+
+/** Start a Pro checkout; returns the LemonSqueezy hosted checkout URL to redirect to. */
+export function createCheckout(redirectUrl?: string): Promise<{ url: string }> {
+  return request<{ url: string }>('/api/billing/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ redirectUrl }),
+  })
+}
+
+/** Get the LemonSqueezy Customer Portal URL (cancel / update card / invoices). */
+export function getBillingPortal(): Promise<{ url: string }> {
+  return request<{ url: string }>('/api/billing/portal')
+}
+
 // ── Admin: translation model-comparison playground ───────────────────────────
 
 export interface PlaygroundJudgeVerdict {
@@ -992,4 +1019,19 @@ export function runTranslationPlayground(payload: PlaygroundRequest): Promise<Pl
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export interface PlaygroundModels {
+  /** Text-generation Gemini ids the active provider exposes, newest-first. */
+  models: string[]
+  provider: 'vertex' | 'aistudio'
+  location: string | null
+  fetchedAt: number
+  /** true when live discovery failed and a static list was returned. */
+  fallback?: boolean
+}
+
+/** List the models available to compare in the playground (provider-discovered). */
+export function fetchPlaygroundModels(): Promise<PlaygroundModels> {
+  return request<PlaygroundModels>('/api/admin/models')
 }

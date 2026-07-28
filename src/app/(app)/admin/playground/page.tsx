@@ -1,35 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Play, Plus, X, ShieldAlert } from 'lucide-react';
+import { Loader2, Play, Plus, X, ShieldAlert, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   runTranslationPlayground,
+  fetchPlaygroundModels,
   type PlaygroundResult,
   type PlaygroundResponse,
 } from '@/lib/api';
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
 
-// Models verified available on our Vertex project (globoox-ai, location=global)
-// as of 2026-07-28. Admins can add any other id via the free-text input.
-// The backend (server/utils/llm.ts → resolveModelForClient) remaps only ids
-// CONFIRMED to differ between AI Studio and Vertex — currently just
-// gemini-2.5-pro-preview → gemini-2.5-pro. Everything else is sent verbatim.
-// NB: gemini-3.1-pro-preview is the live Pro id on BOTH backends — the GA id
-// gemini-3.1-pro does NOT exist on Vertex, so do not "strip -preview".
-const DEFAULT_MODELS = [
-  'gemini-2.5-flash',
-  'gemini-2.5-flash-lite',
-  'gemini-2.5-pro',
+// The model chips are discovered at runtime from GET /api/admin/models (the
+// backend lists whatever the active provider — Vertex or AI Studio — exposes),
+// so a newly-released Gemini text model appears here automatically. This static
+// list is only a fallback shown until discovery resolves or if it fails.
+const FALLBACK_MODELS = [
   'gemini-3.5-flash',
   'gemini-3.1-pro-preview',
+  'gemini-2.5-pro',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
 ];
 
-const JUDGE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'];
+// Pre-selected on first load (intersected with what's actually available).
+const PREFERRED_SELECTION = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash'];
 
 function fmtCost(v?: number | null): string {
   if (v == null) return '—';
@@ -49,7 +48,7 @@ export default function TranslationPlaygroundPage() {
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState<string>('EN');
   const [targetLanguage, setTargetLanguage] = useState<string>('RU');
-  const [models, setModels] = useState<string[]>(['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash']);
+  const [models, setModels] = useState<string[]>(PREFERRED_SELECTION);
   const [customModel, setCustomModel] = useState('');
   const [judge, setJudge] = useState(true);
   const [judgeModel, setJudgeModel] = useState('gemini-2.5-flash');
@@ -58,6 +57,39 @@ export default function TranslationPlaygroundPage() {
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<PlaygroundResponse | null>(null);
+
+  // Provider-discovered model list (falls back to the static list until loaded).
+  const [availableModels, setAvailableModels] = useState<string[]>(FALLBACK_MODELS);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [modelsMeta, setModelsMeta] = useState<{ provider: string; fallback?: boolean } | null>(null);
+
+  const loadModels = async (refresh = false) => {
+    setModelsLoading(true);
+    try {
+      const res = await fetchPlaygroundModels();
+      if (res.models.length) {
+        setAvailableModels(res.models);
+        setModelsMeta({ provider: res.provider, fallback: res.fallback });
+        // On first load, keep only preferred picks that actually exist.
+        if (!refresh) {
+          setModels((prev) => {
+            const preferred = PREFERRED_SELECTION.filter((m) => res.models.includes(m));
+            return preferred.length ? preferred : prev.filter((m) => res.models.includes(m));
+          });
+        }
+      }
+    } catch {
+      // Keep the static fallback list already in state.
+      setModelsMeta({ provider: 'unknown', fallback: true });
+    } finally {
+      setModelsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAdmin) loadModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin]);
 
   const toggleModel = (m: string) => {
     setModels((prev) => (prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]));
@@ -182,12 +214,27 @@ export default function TranslationPlaygroundPage() {
 
         {/* Models */}
         <div>
-          <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-            Models to compare
-          </label>
+          <div className="mb-1.5 flex items-center gap-2">
+            <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+              Models to compare
+            </label>
+            <button
+              type="button"
+              onClick={() => loadModels(true)}
+              disabled={modelsLoading}
+              title="Refresh available models"
+              className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-50"
+            >
+              <RefreshCw className={'h-3 w-3' + (modelsLoading ? ' animate-spin' : '')} />
+              {modelsMeta?.provider && modelsMeta.provider !== 'unknown'
+                ? `${modelsMeta.provider}${modelsMeta.fallback ? ' · fallback' : ''}`
+                : 'refresh'}
+            </button>
+          </div>
           <div className="flex flex-wrap gap-2">
-            {[...new Set([...DEFAULT_MODELS, ...models])].map((m) => {
+            {[...new Set([...availableModels, ...models])].map((m) => {
               const active = models.includes(m);
+              const discovered = availableModels.includes(m);
               return (
                 <button
                   key={m}
@@ -201,7 +248,7 @@ export default function TranslationPlaygroundPage() {
                   }
                 >
                   {m}
-                  {active && !DEFAULT_MODELS.includes(m) && <X className="h-3 w-3" />}
+                  {active && !discovered && <X className="h-3 w-3" />}
                 </button>
               );
             })}
@@ -239,7 +286,7 @@ export default function TranslationPlaygroundPage() {
                 onChange={(e) => setJudgeModel(e.target.value)}
                 className={inputCls + ' w-auto py-1'}
               >
-                {JUDGE_MODELS.map((m) => (
+                {[...new Set([judgeModel, ...availableModels])].map((m) => (
                   <option key={m} value={m}>
                     {m}
                   </option>
