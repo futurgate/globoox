@@ -14,19 +14,22 @@ import {
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
 
-// Curated starting list; admins can add any model id via the free-text input.
+// Models verified available on our Vertex project (globoox-ai, location=global)
+// as of 2026-07-28. Admins can add any other id via the free-text input.
 // The backend (server/utils/llm.ts → resolveModelForClient) remaps only ids
 // CONFIRMED to differ between AI Studio and Vertex — currently just
-// gemini-2.5-pro-preview → gemini-2.5-pro on Vertex. Any id not in that alias map
-// is sent verbatim, so to try a Gemini 3.x Pro model on Vertex type the exact
-// Vertex id here (blindly stripping "-preview" gives gemini-3.1-pro, which 404s).
+// gemini-2.5-pro-preview → gemini-2.5-pro. Everything else is sent verbatim.
+// NB: gemini-3.1-pro-preview is the live Pro id on BOTH backends — the GA id
+// gemini-3.1-pro does NOT exist on Vertex, so do not "strip -preview".
 const DEFAULT_MODELS = [
   'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
   'gemini-2.5-pro',
   'gemini-3.5-flash',
+  'gemini-3.1-pro-preview',
 ];
 
-const JUDGE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash'];
+const JUDGE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash', 'gemini-3.1-pro-preview'];
 
 function fmtCost(v?: number | null): string {
   if (v == null) return '—';
