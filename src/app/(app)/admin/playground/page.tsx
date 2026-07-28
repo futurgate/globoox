@@ -15,14 +15,18 @@ import {
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
 
 // Curated starting list; admins can add any model id via the free-text input.
+// The backend (server/utils/llm.ts → resolveModelForClient) remaps only ids
+// CONFIRMED to differ between AI Studio and Vertex — currently just
+// gemini-2.5-pro-preview → gemini-2.5-pro on Vertex. Any id not in that alias map
+// is sent verbatim, so to try a Gemini 3.x Pro model on Vertex type the exact
+// Vertex id here (blindly stripping "-preview" gives gemini-3.1-pro, which 404s).
 const DEFAULT_MODELS = [
-  'gemini-2.5-pro',
   'gemini-2.5-flash',
-  'gemini-2.5-flash-lite',
-  'gemini-3-pro-preview',
+  'gemini-2.5-pro',
+  'gemini-3.5-flash',
 ];
 
-const JUDGE_MODELS = ['gemini-2.5-pro', 'gemini-2.5-flash'];
+const JUDGE_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash'];
 
 function fmtCost(v?: number | null): string {
   if (v == null) return '—';
@@ -42,10 +46,10 @@ export default function TranslationPlaygroundPage() {
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState<string>('EN');
   const [targetLanguage, setTargetLanguage] = useState<string>('RU');
-  const [models, setModels] = useState<string[]>(['gemini-2.5-pro', 'gemini-2.5-flash']);
+  const [models, setModels] = useState<string[]>(['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-3.5-flash']);
   const [customModel, setCustomModel] = useState('');
   const [judge, setJudge] = useState(true);
-  const [judgeModel, setJudgeModel] = useState('gemini-2.5-pro');
+  const [judgeModel, setJudgeModel] = useState('gemini-2.5-flash');
   const [reference, setReference] = useState('');
 
   const [running, setRunning] = useState(false);
