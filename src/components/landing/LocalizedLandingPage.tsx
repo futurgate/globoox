@@ -9,6 +9,7 @@ import { QualityAssuranceV2 } from './QualityAssuranceV2';
 import { FoundersSection } from './FoundersSection';
 import { CTA } from './CTA';
 import { Footer } from './Footer';
+import { CookieBanner } from './CookieBanner';
 
 export async function LocalizedLandingPage({ locale }: { locale: string }) {
   if (!isLandingLocale(locale)) {
@@ -141,6 +142,7 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
           copyright={messages.footer.copyright}
         />
       </div>
+      <CookieBanner messages={messages.cookies} />
     </>
   );
 }
