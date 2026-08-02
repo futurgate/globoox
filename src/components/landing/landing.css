@@ -206,6 +206,107 @@ li {
 }
 
 /* ============================================
+   Cookie consent
+   ============================================ */
+
+.cookie-banner {
+  position: fixed;
+  z-index: 300;
+  right: 24px;
+  bottom: 24px;
+  width: min(560px, calc(100vw - 48px));
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 20px;
+  color: var(--marketing-text);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--marketing-border);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(30, 43, 31, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.cookie-banner__copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.cookie-banner h2 {
+  margin-bottom: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.cookie-banner p {
+  color: var(--marketing-text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cookie-banner__button {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--marketing-motion-fast), color var(--marketing-motion-fast), transform var(--marketing-motion-fast);
+}
+
+.cookie-banner__button:active {
+  transform: translateY(1px);
+}
+
+.cookie-banner__button--primary {
+  color: white;
+  background: var(--marketing-accent);
+}
+
+.cookie-banner__button--primary:hover {
+  background: var(--marketing-accent-hover);
+}
+
+.cookie-banner__button--secondary {
+  color: var(--marketing-text);
+  background: var(--marketing-accent-soft);
+}
+
+.cookie-banner__button--secondary:hover {
+  background: var(--ink-10);
+}
+
+@media (max-width: 639px) {
+  .cookie-banner {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .cookie-banner__actions {
+    flex-direction: column-reverse;
+  }
+
+  .cookie-banner__button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* ============================================
    Tables
    ============================================ */
 
