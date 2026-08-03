@@ -16,7 +16,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useSubscription } from '@/lib/hooks/useSubscription';
 import { getSubscriptionView } from '@/lib/subscription';
-import { getBillingPortal } from '@/lib/api';
+import { getBillingPortal, getTranslationUsage, type TranslationLimitResponse } from '@/lib/api';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { APP_THEME_MODE_OPTIONS, APP_THEME_PALETTE_OPTIONS } from '@/lib/theme-options';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -29,6 +29,7 @@ export default function SettingsPage() {
     const [signingOut, setSigningOut] = useState(false);
     const [openingPortal, setOpeningPortal] = useState(false);
     const [showUpgradeNote, setShowUpgradeNote] = useState(false);
+    const [usage, setUsage] = useState<TranslationLimitResponse | null>(null);
     const { mode: currentMode, palette: currentColorTheme, setAppTheme } = useAppTheme();
 
     useEffect(() => {
@@ -36,7 +37,29 @@ export default function SettingsPage() {
         supabaseRef.current = supabase;
     }, []);
 
+    // Current rolling-period usage (books used + reset day), shown in the Subscription card.
+    useEffect(() => {
+        if (!user) return;
+        let cancelled = false;
+        getTranslationUsage()
+            .then((u) => { if (!cancelled) setUsage(u); })
+            .catch(() => { /* usage line is non-critical; hide it on error */ });
+        return () => { cancelled = true; };
+    }, [user]);
+
     const subView = getSubscriptionView(subscription);
+
+    // "1 of 2 books used · resets Sep 2, 2026" — only for capped plans once loaded.
+    const usageLine = (() => {
+        if (!usage || usage.limit == null) return null;
+        const used = `${usage.count} of ${usage.limit} book${usage.limit === 1 ? '' : 's'} used`;
+        const reset = usage.periodEndsAt
+            ? new Date(usage.periodEndsAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+            : null;
+        return reset && !Number.isNaN(new Date(usage.periodEndsAt as string).getTime())
+            ? `${used} · resets ${reset}`
+            : used;
+    })();
 
     const handleManageSubscription = async () => {
         setOpeningPortal(true);
@@ -124,6 +147,11 @@ export default function SettingsPage() {
                                                         ? 'Unlimited · Alpha'
                                                         : subView.planLabel}
                                             </p>
+                                            {usageLine && (
+                                                <p className="text-xs text-[var(--app-text-muted)] mt-0.5">
+                                                    {usageLine}
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                     {!subLoading && (
