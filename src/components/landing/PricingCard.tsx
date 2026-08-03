@@ -10,6 +10,10 @@ interface PricingCardProps {
   buttonText: string;
   buttonType: 'primary' | 'outline';
   featured?: boolean;
+  /** Optional click handler (e.g. start checkout). Ignored when disabled. */
+  onButtonClick?: () => void;
+  /** Dim + disable the button, e.g. for the plan the user is already on. */
+  disabled?: boolean;
 }
 
 function CheckIcon() {
@@ -42,6 +46,8 @@ export function PricingCard({
   buttonText,
   buttonType,
   featured = false,
+  onButtonClick,
+  disabled = false,
 }: PricingCardProps) {
   const [hovered, setHovered] = useState(false);
 
@@ -207,10 +213,11 @@ export function PricingCard({
       </ul>
 
       <button
-        style={buttonStyle}
-        onMouseEnter={() => setHovered(true)}
+        style={{ ...buttonStyle, ...(disabled ? { opacity: 0.5, cursor: 'default' } : {}) }}
+        onMouseEnter={() => !disabled && setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onClick={() => {}}
+        onClick={() => !disabled && onButtonClick?.()}
+        disabled={disabled}
       >
         {buttonText}
       </button>
