@@ -235,6 +235,8 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
     const [isChapterEntryTransitionActive, setIsChapterEntryTransitionActive] = useState(false);
     const [showTranslationLimitModal, setShowTranslationLimitModal] = useState(false);
     const translationAllowedRef = useRef<boolean | null>(null);
+    // Enforced limit + reset date from the check, so the modal copy matches the backend.
+    const [translationLimitInfo, setTranslationLimitInfo] = useState<{ limit: number | null; periodEndsAt: string | null }>({ limit: null, periodEndsAt: null });
 
     const resolvedServerLang = useMemo<Language>(() => {
         const localBookLang = perBookLanguages[bookId];
@@ -352,8 +354,9 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
     // Pre-check translation limit for non-alpha users reading their own books
     useEffect(() => {
         if (!isOwn || isAlpha || !isAuthenticated || authLoading) return;
-        checkTranslationLimit(bookId).then(({ allowed }) => {
+        checkTranslationLimit(bookId).then(({ allowed, limit, periodEndsAt }) => {
             translationAllowedRef.current = allowed;
+            setTranslationLimitInfo({ limit: limit ?? null, periodEndsAt: periodEndsAt ?? null });
         }).catch(() => {
             translationAllowedRef.current = true; // fail open
         });
@@ -2072,6 +2075,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                     const result = await checkTranslationLimit(bookId);
                     allowed = result.allowed;
                     translationAllowedRef.current = allowed;
+                    setTranslationLimitInfo({ limit: result.limit ?? null, periodEndsAt: result.periodEndsAt ?? null });
                 } catch {
                     allowed = true; // fail open
                 }
@@ -2374,6 +2378,8 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                     open={showTranslationLimitModal}
                     onOpenChange={setShowTranslationLimitModal}
                     userEmail={user.email ?? ''}
+                    limit={translationLimitInfo.limit}
+                    periodEndsAt={translationLimitInfo.periodEndsAt}
                 />
             )}
 

@@ -913,6 +913,10 @@ export function getJobStatus(jobId: string): Promise<JobStatus> {
 export interface TranslationLimitResponse {
   allowed: boolean
   count: number
+  /** Per-period book cap; null when unlimited (alpha / Pro). */
+  limit?: number | null
+  /** ISO timestamp the current rolling period ends. */
+  periodEndsAt?: string | null
 }
 
 export function checkTranslationLimit(excludeBookId: string): Promise<TranslationLimitResponse> {
@@ -938,11 +942,16 @@ export function joinAlpha(token: string): Promise<{ success: boolean }> {
 // ── Pro subscription (LemonSqueezy) ──────────────────────────────────────────
 
 export interface SubscriptionResponse {
-  tier: 'pro' | null
+  tier: 'premium' | 'pro' | null
   status: string | null
   renewsAt: string | null
   endsAt: string | null
+  /** True only for an active unlimited Pro plan (Premium is paid but capped). */
   isPro: boolean
+  /** Per-period book cap for the current plan; null when unlimited. */
+  limit?: number | null
+  /** Length of the rolling period in days. */
+  periodDays?: number
 }
 
 export function getSubscription(): Promise<SubscriptionResponse> {
