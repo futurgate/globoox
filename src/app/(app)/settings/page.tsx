@@ -17,6 +17,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useSubscription } from '@/lib/hooks/useSubscription';
 import { getSubscriptionView } from '@/lib/subscription';
 import { getBillingPortal, getTranslationUsage, type TranslationLimitResponse } from '@/lib/api';
+import { trackUpgradeClicked } from '@/lib/posthog';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { APP_THEME_MODE_OPTIONS, APP_THEME_PALETTE_OPTIONS } from '@/lib/theme-options';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -172,7 +173,7 @@ export default function SettingsPage() {
                                             <Button
                                                 size="sm"
                                                 className="shrink-0"
-                                                onClick={() => setShowUpgradeNote(true)}
+                                                onClick={() => { trackUpgradeClicked({ source: 'settings' }); setShowUpgradeNote(true); }}
                                             >
                                                 Upgrade to Premium
                                             </Button>

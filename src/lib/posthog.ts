@@ -220,3 +220,13 @@ export function trackFontSizeChanged(props: {
 }) {
   posthog.capture('font_size_changed', props)
 }
+
+// ─── Subscription / Upgrade ────────────────────────────────────────────────────
+
+// Fired when the user clicks an "Upgrade to Premium" CTA. `source` distinguishes the
+// limit-reached dialog from the Settings card. Mock CTA until real checkout ships.
+export function trackUpgradeClicked(props: {
+  source: 'limit_dialog' | 'settings'
+}) {
+  posthog.capture('premium_upgrade_clicked', props)
+}

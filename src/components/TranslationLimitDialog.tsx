@@ -6,6 +6,7 @@ import IOSFeatureDialog from '@/components/ui/ios-feature-dialog';
 import { IOSAction, IOSActionDivider, IOSActionStack } from '@/components/ui/ios-action-group';
 import IOSIconFeatureListItem from '@/components/ui/ios-icon-feature-list-item';
 import { joinWaitlist } from '@/lib/api';
+import { trackUpgradeClicked } from '@/lib/posthog';
 
 interface TranslationLimitDialogProps {
   open: boolean;
@@ -64,6 +65,7 @@ export default function TranslationLimitDialog({
 
   // Mock: a real Premium checkout (payment provider) is wired in later.
   const handleUpgrade = () => {
+    trackUpgradeClicked({ source: 'limit_dialog' });
     setStatus('upgrade');
   };
 
