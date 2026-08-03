@@ -925,6 +925,14 @@ export function checkTranslationLimit(excludeBookId: string): Promise<Translatio
   )
 }
 
+/**
+ * Current rolling-period usage for the signed-in user (no book excluded):
+ * `{ count, limit, periodEndsAt }`. Used by Settings to show "X of N · resets …".
+ */
+export function getTranslationUsage(): Promise<TranslationLimitResponse> {
+  return request<TranslationLimitResponse>('/api/translation-limit')
+}
+
 export function joinWaitlist(email: string): Promise<{ success: boolean }> {
   return request<{ success: boolean }>('/api/waitlist', {
     method: 'POST',
