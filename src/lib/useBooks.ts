@@ -233,7 +233,7 @@ export function useBooks(options?: { scopeKey?: string; stabilizeOnMount?: boole
     try {
       await updateBook(id, { status: 'hidden' })
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to hide book'
+      const message = err instanceof Error ? err.message : 'Failed to archive book'
       setBooks(previousBooks)
       booksCache.set(cacheKey, { data: previousBooks, fetchedAt: Date.now() })
       void setCachedBooksList(scopeKey, 'all', previousBooks)
@@ -258,7 +258,7 @@ export function useBooks(options?: { scopeKey?: string; stabilizeOnMount?: boole
     try {
       await updateBook(id, { status: 'active' })
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to unhide book'
+      const message = err instanceof Error ? err.message : 'Failed to restore book'
       setBooks(previousBooks)
       booksCache.set(cacheKey, { data: previousBooks, fetchedAt: Date.now() })
       void setCachedBooksList(scopeKey, 'all', previousBooks)

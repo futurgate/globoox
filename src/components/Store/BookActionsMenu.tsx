@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Eye, EyeOff, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Archive, ArchiveRestore, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useAdaptiveDropdown } from '@/components/ui/useAdaptiveDropdown';
 import { uiIconCircleButton, uiMenuItemButton } from '@/components/ui/button-styles';
 import IOSItemsStack from '@/components/ui/ios-items-stack';
@@ -13,7 +13,7 @@ interface BookActionsMenuProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Hide', onOpenChange }: BookActionsMenuProps) {
+export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Archive', onOpenChange }: BookActionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -98,10 +98,10 @@ export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Hide', 
             }}
             className={`${uiMenuItemButton} justify-start gap-3 text-[15px]`}
           >
-            {hideLabel === 'Unhide' ? (
-              <Eye className="w-4 h-4 text-[var(--app-accent)]" />
+            {hideLabel === 'Restore' ? (
+              <ArchiveRestore className="w-4 h-4 text-[var(--app-accent)]" />
             ) : (
-              <EyeOff className="w-4 h-4 text-[var(--app-accent)]" />
+              <Archive className="w-4 h-4 text-[var(--app-accent)]" />
             )}
             <span className="text-[15px]">{hideLabel}</span>
           </button>

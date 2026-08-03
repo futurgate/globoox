@@ -477,7 +477,7 @@ export function ReaderMockup({ onCycleEnd }: { onCycleEnd?: () => void } = {}) {
 
           {/* filter pills */}
           <div style={{ display: 'flex', gap: 8, padding: '10px 16px', backgroundColor: C.bg }}>
-            {['Visible', 'Hidden', 'All'].map((f, i) => (
+            {['Visible', 'Archived', 'All'].map((f, i) => (
               <div key={f} style={{
                 padding: '4px 12px',
                 borderRadius: 16,

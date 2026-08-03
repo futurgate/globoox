@@ -579,7 +579,7 @@ export default function ComponentsPreviewPage() {
                   Visible
                 </Button>
                 <Button variant="outline" size="sm" className={`${uiFilterPillBase} ${uiFilterPillInactive}`}>
-                  Hidden
+                  Archived
                 </Button>
                 <Button variant="outline" size="sm" className={`${uiFilterPillBase} ${uiFilterPillInactive}`}>
                   All

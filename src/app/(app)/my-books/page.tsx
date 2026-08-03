@@ -546,7 +546,7 @@ export default function MyBooksPage() {
             >
               <SlidersHorizontal className="size-4" strokeWidth={1.8} />
               <span>
-                {statusFilter === 'visible' ? 'Visible' : statusFilter === 'hidden' ? 'Hidden' : 'All'}
+                {statusFilter === 'visible' ? 'Visible' : statusFilter === 'hidden' ? 'Archived' : 'All'}
               </span>
             </button>
 
@@ -555,7 +555,7 @@ export default function MyBooksPage() {
               <IOSItemsStack className="py-[8px] bg-[var(--app-surface-bg)] shadow-lg border border-[var(--app-border)]">
                 {([
                   { value: 'visible', label: 'Visible' },
-                  { value: 'hidden', label: 'Hidden' },
+                  { value: 'hidden', label: 'Archived' },
                   { value: 'all', label: 'All' },
                 ] as const).map(({ value, label }, i, arr) => (
                   <div key={value}>
@@ -587,7 +587,7 @@ export default function MyBooksPage() {
                   : uiFilterPillInactive,
               ].join(' ')}
             >
-              {f === 'visible' ? 'Visible' : f === 'hidden' ? 'Hidden' : 'All'}
+              {f === 'visible' ? 'Visible' : f === 'hidden' ? 'Archived' : 'All'}
             </Button>
           ))}
           <button
@@ -663,7 +663,7 @@ export default function MyBooksPage() {
                     progress={getBookProgress(book)}
                     onHide={book.status === 'hidden' ? unhideBook : hideBook}
                     onDelete={handleRequestDelete}
-                    hideLabel={book.status === 'hidden' ? 'Unhide' : 'Hide'}
+                    hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
                     onOpen={() => {
                       touchLastRead(book.id);
                       const nowIso = new Date().toISOString();
