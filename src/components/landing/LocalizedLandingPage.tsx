@@ -28,7 +28,7 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
   const messages = getLandingMessages(locale);
 
   return (
-    <>
+    <div className="marketing-page">
       <div
         aria-hidden="true"
         style={{
@@ -143,6 +143,6 @@ export async function LocalizedLandingPage({ locale }: { locale: string }) {
         />
       </div>
       <CookieBanner messages={messages.cookies} />
-    </>
+    </div>
   );
 }

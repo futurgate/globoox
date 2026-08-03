@@ -22,7 +22,7 @@ export default async function LandingPage() {
   }
 
   return (
-    <>
+    <div className="marketing-page">
       <div aria-hidden="true" style={{ position: 'fixed', inset: 0, background: 'var(--marketing-shell-bg)', pointerEvents: 'none', zIndex: 0 }} />
       <div aria-hidden="true" style={{ position: 'fixed', left: 0, right: 0, bottom: 0, height: '160px', background: 'var(--marketing-text)', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'relative', zIndex: 1, paddingTop: '92px' }}>
@@ -106,6 +106,6 @@ export default async function LandingPage() {
           copyright={messages.footer.copyright}
         />
       </div>
-    </>
+    </div>
   );
 }
