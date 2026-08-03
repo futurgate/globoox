@@ -206,6 +206,118 @@ li {
 }
 
 /* ============================================
+   Cookie consent
+   ============================================ */
+
+.cookie-banner {
+  position: fixed;
+  z-index: 300;
+  right: 20px;
+  bottom: 20px;
+  width: min(720px, calc(100vw - 40px));
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 18px;
+  color: var(--marketing-text);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--marketing-border);
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(30, 43, 31, 0.16);
+  backdrop-filter: blur(16px);
+}
+
+.cookie-banner__copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.cookie-banner h2 {
+  margin-bottom: 3px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.cookie-banner p {
+  color: var(--marketing-text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.cookie-banner__button {
+  min-height: 38px;
+  padding: 0 15px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--marketing-motion-fast), color var(--marketing-motion-fast), transform var(--marketing-motion-fast);
+}
+
+.cookie-banner__button:active {
+  transform: translateY(1px);
+}
+
+.cookie-banner__button--primary {
+  color: white;
+  background: var(--marketing-accent);
+}
+
+.cookie-banner__button--primary:hover {
+  background: var(--marketing-accent-hover);
+}
+
+.cookie-banner__button--secondary {
+  color: var(--marketing-text);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(44, 59, 45, 0.12);
+}
+
+.cookie-banner__button--secondary:hover {
+  background: var(--ink-10);
+}
+
+@media (max-width: 719px) {
+  .cookie-banner {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .cookie-banner__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cookie-banner__button {
+    min-width: 0;
+    width: 100%;
+    min-height: 42px;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .cookie-banner__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
    Tables
    ============================================ */
 

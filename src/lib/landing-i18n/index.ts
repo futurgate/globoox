@@ -93,6 +93,12 @@ export type LandingMessages = {
     legal: string;
     copyright: string;
   };
+  cookies: {
+    title: string;
+    description: string;
+    accept: string;
+    necessary: string;
+  };
 };
 
 const sharedFounders = [
@@ -292,6 +298,12 @@ const messages: Record<LandingLocale, LandingMessages> = {
       legal: 'Legal',
       copyright: 'Globoox © 2026',
     },
+    cookies: {
+      title: 'Cookies on Globoox',
+      description: 'We use cookies to run the site and improve Globoox.',
+      accept: 'Accept all',
+      necessary: 'Necessary only',
+    },
   },
   es: {
     metadata: {
@@ -394,6 +406,12 @@ const messages: Record<LandingLocale, LandingMessages> = {
       privacy: 'Privacidad',
       legal: 'Legal',
       copyright: 'Globoox © 2026',
+    },
+    cookies: {
+      title: 'Cookies en Globoox',
+      description: 'Usamos cookies para que el sitio funcione y mejorar Globoox.',
+      accept: 'Aceptar todas',
+      necessary: 'Solo necesarias',
     },
   },
   fr: {
@@ -498,6 +516,12 @@ const messages: Record<LandingLocale, LandingMessages> = {
       legal: 'Mentions légales',
       copyright: 'Globoox © 2026',
     },
+    cookies: {
+      title: 'Cookies sur Globoox',
+      description: 'Nous utilisons des cookies pour faire fonctionner le site et améliorer Globoox.',
+      accept: 'Tout accepter',
+      necessary: 'Nécessaires uniquement',
+    },
   },
   ru: {
     metadata: {
@@ -600,6 +624,12 @@ const messages: Record<LandingLocale, LandingMessages> = {
       privacy: 'Политика конфиденциальности',
       legal: 'Правовая информация',
       copyright: 'Globoox © 2026',
+    },
+    cookies: {
+      title: 'Cookies в Globoox',
+      description: 'Используем cookies для работы сайта и улучшения Globoox.',
+      accept: 'Принять все',
+      necessary: 'Только необходимые',
     },
   },
 };

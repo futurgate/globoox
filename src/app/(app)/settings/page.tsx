@@ -19,16 +19,14 @@ import { getSubscriptionView } from '@/lib/subscription';
 import { getBillingPortal } from '@/lib/api';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { APP_THEME_MODE_OPTIONS, APP_THEME_PALETTE_OPTIONS } from '@/lib/theme-options';
-import JoinAlphaDialog from '@/components/JoinAlphaDialog';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 
 export default function SettingsPage() {
     const router = useRouter();
     const supabaseRef = useRef<SupabaseClient | null>(null);
-    const { user, isAlpha, isAdmin, loading } = useAuth();
+    const { user, isAlpha, loading } = useAuth();
     const { subscription, loading: subLoading } = useSubscription();
     const [signingOut, setSigningOut] = useState(false);
-    const [showAccessModal, setShowAccessModal] = useState(false);
     const [openingPortal, setOpeningPortal] = useState(false);
     const [showUpgradeNote, setShowUpgradeNote] = useState(false);
     const { mode: currentMode, palette: currentColorTheme, setAppTheme } = useAppTheme();
@@ -161,47 +159,6 @@ export default function SettingsPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Alpha Tester */}
-                        {!isAlpha && (
-                            <Card className="shadow-none overflow-hidden">
-                                <CardContent className="p-4 flex items-center justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <FlaskConical className="w-5 h-5 text-violet-500 shrink-0" />
-                                        <div>
-                                            <p className="text-sm font-medium">Join Alpha Program</p>
-                                            <p className="text-xs text-[var(--app-text-muted)]">Get early access to new features</p>
-                                        </div>
-                                    </div>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="shrink-0 border-violet-300 text-violet-700 hover:bg-violet-50 dark:border-violet-700 dark:text-violet-400 dark:hover:bg-violet-900/20"
-                                        onClick={() => setShowAccessModal(true)}
-                                    >
-                                        Join
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* Admin tools */}
-                        {isAdmin && (
-                            <Card className="shadow-none overflow-hidden">
-                                <CardContent className="p-4 flex items-center justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <FlaskConical className="w-5 h-5 text-sky-500 shrink-0" />
-                                        <div>
-                                            <p className="text-sm font-medium">Translation Playground</p>
-                                            <p className="text-xs text-[var(--app-text-muted)]">Compare & score LLM translations (admin)</p>
-                                        </div>
-                                    </div>
-                                    <Link href="/admin/playground">
-                                        <Button size="sm" variant="outline" className="shrink-0">Open</Button>
-                                    </Link>
-                                </CardContent>
-                            </Card>
-                        )}
-
                         {/* Appearance */}
                         <div>
                             <p className="px-4 pb-1 text-[13px] font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
@@ -289,13 +246,6 @@ export default function SettingsPage() {
                 </p>
             </div>
 
-            {user && (
-                <JoinAlphaDialog
-                    open={showAccessModal}
-                    onOpenChange={setShowAccessModal}
-                    userEmail={user.email ?? ''}
-                />
-            )}
         </div>
     );
 }
