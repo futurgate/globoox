@@ -913,6 +913,10 @@ export function getJobStatus(jobId: string): Promise<JobStatus> {
 export interface TranslationLimitResponse {
   allowed: boolean
   count: number
+  /** Per-period book cap; null when unlimited (alpha / Pro). */
+  limit?: number | null
+  /** ISO timestamp the current rolling period ends. */
+  periodEndsAt?: string | null
 }
 
 export function checkTranslationLimit(excludeBookId: string): Promise<TranslationLimitResponse> {
@@ -933,6 +937,38 @@ export function joinAlpha(token: string): Promise<{ success: boolean }> {
     method: 'POST',
     body: JSON.stringify({ token }),
   })
+}
+
+// ── Pro subscription (LemonSqueezy) ──────────────────────────────────────────
+
+export interface SubscriptionResponse {
+  tier: 'premium' | 'pro' | null
+  status: string | null
+  renewsAt: string | null
+  endsAt: string | null
+  /** True only for an active unlimited Pro plan (Premium is paid but capped). */
+  isPro: boolean
+  /** Per-period book cap for the current plan; null when unlimited. */
+  limit?: number | null
+  /** Length of the rolling period in days. */
+  periodDays?: number
+}
+
+export function getSubscription(): Promise<SubscriptionResponse> {
+  return request<SubscriptionResponse>('/api/subscription')
+}
+
+/** Start a Pro checkout; returns the LemonSqueezy hosted checkout URL to redirect to. */
+export function createCheckout(redirectUrl?: string): Promise<{ url: string }> {
+  return request<{ url: string }>('/api/billing/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ redirectUrl }),
+  })
+}
+
+/** Get the LemonSqueezy Customer Portal URL (cancel / update card / invoices). */
+export function getBillingPortal(): Promise<{ url: string }> {
+  return request<{ url: string }>('/api/billing/portal')
 }
 
 // ── Admin: translation model-comparison playground ───────────────────────────
@@ -992,4 +1028,19 @@ export function runTranslationPlayground(payload: PlaygroundRequest): Promise<Pl
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export interface PlaygroundModels {
+  /** Text-generation Gemini ids the active provider exposes, newest-first. */
+  models: string[]
+  provider: 'vertex' | 'aistudio'
+  location: string | null
+  fetchedAt: number
+  /** true when live discovery failed and a static list was returned. */
+  fallback?: boolean
+}
+
+/** List the models available to compare in the playground (provider-discovered). */
+export function fetchPlaygroundModels(): Promise<PlaygroundModels> {
+  return request<PlaygroundModels>('/api/admin/models')
 }

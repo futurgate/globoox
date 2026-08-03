@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, HelpCircle, LogOut, Loader2, FlaskConical } from 'lucide-react';
+import { User, HelpCircle, LogOut, Loader2, FlaskConical, Crown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { uiMenuItemButton } from '@/components/ui/button-styles';
@@ -14,6 +14,9 @@ import PageHeader from '@/components/ui/PageHeader';
 import { createClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useSubscription } from '@/lib/hooks/useSubscription';
+import { getSubscriptionView } from '@/lib/subscription';
+import { getBillingPortal } from '@/lib/api';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { APP_THEME_MODE_OPTIONS, APP_THEME_PALETTE_OPTIONS } from '@/lib/theme-options';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -22,13 +25,28 @@ export default function SettingsPage() {
     const router = useRouter();
     const supabaseRef = useRef<SupabaseClient | null>(null);
     const { user, isAlpha, loading } = useAuth();
+    const { subscription, loading: subLoading } = useSubscription();
     const [signingOut, setSigningOut] = useState(false);
+    const [openingPortal, setOpeningPortal] = useState(false);
+    const [showUpgradeNote, setShowUpgradeNote] = useState(false);
     const { mode: currentMode, palette: currentColorTheme, setAppTheme } = useAppTheme();
 
     useEffect(() => {
         const supabase = createClient();
         supabaseRef.current = supabase;
     }, []);
+
+    const subView = getSubscriptionView(subscription);
+
+    const handleManageSubscription = async () => {
+        setOpeningPortal(true);
+        try {
+            const { url } = await getBillingPortal();
+            window.location.href = url;
+        } catch {
+            setOpeningPortal(false);
+        }
+    };
 
     const handleSignOut = async () => {
         if (!supabaseRef.current) return;
@@ -88,6 +106,56 @@ export default function SettingsPage() {
                                         <CardDescription>{displayEmail}</CardDescription>
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Subscription */}
+                        <Card className="shadow-none overflow-hidden">
+                            <CardContent className="p-4 flex flex-col gap-2">
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                        <Crown className="w-5 h-5 text-amber-500 shrink-0" />
+                                        <div>
+                                            <p className="text-sm font-medium">Subscription</p>
+                                            <p className="text-xs text-[var(--app-text-muted)]">
+                                                {subLoading
+                                                    ? 'Loading…'
+                                                    : isAlpha && !subView.isPro
+                                                        ? 'Unlimited · Alpha'
+                                                        : subView.planLabel}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {!subLoading && (
+                                        subView.cta === 'manage' ? (
+                                            // A paid subscription is always manageable, even for alpha users.
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="shrink-0"
+                                                onClick={handleManageSubscription}
+                                                disabled={openingPortal}
+                                            >
+                                                {openingPortal ? 'Opening…' : 'Manage'}
+                                            </Button>
+                                        ) : !isAlpha ? (
+                                            // Free (non-alpha) user → prompt to upgrade.
+                                            // Mock CTA: a real Premium checkout is wired in when payments ship.
+                                            <Button
+                                                size="sm"
+                                                className="shrink-0"
+                                                onClick={() => setShowUpgradeNote(true)}
+                                            >
+                                                Upgrade to Premium
+                                            </Button>
+                                        ) : null
+                                    )}
+                                </div>
+                                {showUpgradeNote && (
+                                    <p className="text-xs text-[var(--app-text-muted)] pl-8">
+                                        Premium checkout is coming soon — we&apos;ll let you know the moment it&apos;s ready.
+                                    </p>
+                                )}
                             </CardContent>
                         </Card>
 
