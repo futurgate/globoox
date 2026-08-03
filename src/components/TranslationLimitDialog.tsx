@@ -11,12 +11,26 @@ interface TranslationLimitDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userEmail: string;
-  /** Free-plan cap for the copy (defaults to 2). */
+  /**
+   * The enforced per-period cap that blocked the user (from GET /api/translation-limit).
+   * Used verbatim in the copy so it always matches the backend; falls back to `freeLimit`.
+   */
+  limit?: number | null;
+  /** ISO timestamp the current period resets; when present, shown as "resets on …". */
+  periodEndsAt?: string | null;
+  /** Fallback free-plan cap when `limit` is unavailable (defaults to 2). */
   freeLimit?: number;
-  /** Premium cap for the copy (defaults to 6). */
+  /** Premium cap for the upsell copy (defaults to 6). */
   premiumLimit?: number;
   /** Rolling-period length for the copy (defaults to 30). */
   periodDays?: number;
+}
+
+function formatResetDate(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 const PREMIUM_BENEFITS = [
@@ -32,11 +46,16 @@ export default function TranslationLimitDialog({
   open,
   onOpenChange,
   userEmail,
+  limit,
+  periodEndsAt,
   freeLimit = 2,
   premiumLimit = 6,
   periodDays = 30,
 }: TranslationLimitDialogProps) {
   const [status, setStatus] = useState<Status>('idle');
+  // Prefer the backend-enforced cap so the copy never drifts from what's applied.
+  const effectiveLimit = limit ?? freeLimit;
+  const resetDate = formatResetDate(periodEndsAt);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (nextOpen) setStatus('idle');
@@ -77,9 +96,10 @@ export default function TranslationLimitDialog({
       </span>
     ) : (
       <span>
-        The free plan covers {freeLimit} books every {periodDays} days. Upgrade to Premium for{' '}
-        {premiumLimit} books, or request expanded access and we&apos;ll contact you at{' '}
-        <span className="font-medium">{userEmail}</span>.
+        The free plan covers {effectiveLimit} books every {periodDays} days.{' '}
+        {resetDate ? <>Your access resets on {resetDate}. </> : null}
+        Upgrade to Premium for {premiumLimit} books, or request expanded access and we&apos;ll
+        contact you at <span className="font-medium">{userEmail}</span>.
         {status === 'error' ? (
           <span className="mt-2 block text-destructive">
             Something went wrong. Please try again.

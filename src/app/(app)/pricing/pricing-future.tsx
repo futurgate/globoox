@@ -1,5 +1,10 @@
 'use client';
 
+// PRESERVED, NON-ROUTED: the old LemonSqueezy "Free 3 / Pro unlimited" pricing UI,
+// kept for the future Pro plan. /pricing currently redirects to /settings (see page.tsx).
+// TODO(pricing): numbers below (FREE_BOOK_LIMIT = 3, "unlimited") reflect the OLD model
+// and must be updated to the Free-2 / Premium-6 / Pro-unlimited model before this is revived.
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PricingCard } from '@/components/landing/PricingCard';

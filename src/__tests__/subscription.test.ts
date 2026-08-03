@@ -54,6 +54,13 @@ describe('getSubscriptionView', () => {
     expect(v.planLabel).toBe('Premium · 6 books every 30 days');
   });
 
+  it('premium snapshot missing limit infers the premium cap (not unlimited)', () => {
+    const bare = { tier: 'premium', status: 'active', renewsAt: null, endsAt: null, isPro: false } as SubscriptionResponse;
+    const v = getSubscriptionView(bare, { premiumBooks: 6, periodDays: 30 });
+    expect(v.planLabel).toBe('Premium · 6 books every 30 days');
+    expect(v.cta).toBe('manage');
+  });
+
   it('cancelled-in-grace Premium → Manage CTA with ends date', () => {
     const v = getSubscriptionView(
       sub({ tier: 'premium', status: 'cancelled', isPro: false, endsAt: future() })

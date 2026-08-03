@@ -12,6 +12,8 @@ export interface SubscriptionView {
 interface SubscriptionViewOptions {
   /** Free-plan book cap, used when the snapshot omits `limit`. */
   freeBooks?: number;
+  /** Premium-plan book cap, used when a premium snapshot omits `limit`. */
+  premiumBooks?: number;
   /** Rolling-period length, used when the snapshot omits `periodDays`. */
   periodDays?: number;
 }
@@ -44,8 +46,11 @@ export function getSubscriptionView(
 ): SubscriptionView {
   const periodDays = sub?.periodDays ?? opts.periodDays ?? 30;
   const freeBooks = opts.freeBooks ?? 2;
+  const premiumBooks = opts.premiumBooks ?? 6;
   const tier = sub?.tier ?? null;
-  const limit = sub?.limit === undefined ? (tier ? null : freeBooks) : sub.limit;
+  // Infer per-tier when the snapshot omits `limit` (Premium is capped, not unlimited).
+  const inferredLimit = tier === 'premium' ? premiumBooks : tier === 'pro' ? null : freeBooks;
+  const limit = sub?.limit === undefined ? inferredLimit : sub.limit;
   const q = quota(limit, periodDays);
 
   // Pro — active unlimited paid plan.
