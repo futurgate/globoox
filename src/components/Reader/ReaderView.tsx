@@ -88,7 +88,6 @@ interface ReaderViewProps {
     originalLanguage?: string | null;
     serverLanguage?: string | null;
     coverUrl?: string | null;
-    isOwn?: boolean;
 }
 
 type PaginationCacheEntry = {
@@ -201,7 +200,7 @@ function getLayoutContentSignature(blocks: ContentBlock[]): string {
 // Module-level cache so it survives route navigation (unmount/remount).
 const paginationCache = new Map<string, PaginationCacheEntry>();
 
-export default function ReaderView({ bookId, title, author, availableLanguages, originalLanguage, serverLanguage, coverUrl, isOwn = false }: ReaderViewProps) {
+export default function ReaderView({ bookId, title, author, availableLanguages, originalLanguage, serverLanguage, coverUrl }: ReaderViewProps) {
     const { user, isAlpha, isAuthenticated, loading: authLoading } = useAuth();
     const {
         hasHydrated,
@@ -351,16 +350,18 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
         setBookLanguage(bookId, resolvedServerLang);
     }, [bookId, perBookLanguages, resolvedServerLang, setBookLanguage]);
 
-    // Pre-check translation limit for non-alpha users reading their own books
+    // Pre-check the translation limit for authenticated non-alpha users. The backend
+    // decides whether this book counts (any user-uploaded book does; system/NULL-owner
+    // books are exempt), so we don't gate on ownership here.
     useEffect(() => {
-        if (!isOwn || isAlpha || !isAuthenticated || authLoading) return;
+        if (isAlpha || !isAuthenticated || authLoading) return;
         checkTranslationLimit(bookId).then(({ allowed, limit, periodEndsAt }) => {
             translationAllowedRef.current = allowed;
             setTranslationLimitInfo({ limit: limit ?? null, periodEndsAt: periodEndsAt ?? null });
         }).catch(() => {
             translationAllowedRef.current = true; // fail open
         });
-    }, [isOwn, isAlpha, isAuthenticated, authLoading, bookId]);
+    }, [isAlpha, isAuthenticated, authLoading, bookId]);
     // NOTE: glow state is derived later, once pagination + currentPageBlocks are available.
 
     // ─── Reading session tracking ─────────────────────────────────────────────
@@ -2066,9 +2067,10 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
     const handleLanguageChange = async (lang: Language) => {
         if (lang.toLowerCase() === activeLang.toLowerCase()) return;
 
-        // Check translation limit for non-alpha users switching to a non-source language on their own book
+        // Check the translation limit when a non-alpha user switches to a translated
+        // language. The backend exempts system/NULL-owner books, so no ownership gate here.
         const isTargetingTranslation = !originalLanguage || lang.toUpperCase() !== originalLanguage.toUpperCase();
-        if (isOwn && !isAlpha && isAuthenticated && isTargetingTranslation) {
+        if (!isAlpha && isAuthenticated && isTargetingTranslation) {
             let allowed = translationAllowedRef.current;
             if (allowed === null) {
                 try {
