@@ -6,7 +6,7 @@
 
 /* Reset all default styles */
 .marketing-page,
-.marketing-page * {
+:where(.marketing-page) * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -101,8 +101,8 @@ html:has(.marketing-page) {
    Typography
    ============================================ */
 
-.marketing-page h1, .marketing-page h2, .marketing-page h3,
-.marketing-page h4, .marketing-page h5, .marketing-page h6 {
+:where(.marketing-page) h1, :where(.marketing-page) h2, :where(.marketing-page) h3,
+:where(.marketing-page) h4, :where(.marketing-page) h5, :where(.marketing-page) h6 {
   font-family: 'Lora', serif;
   font-weight: 400;
   letter-spacing: -0.01em;
@@ -111,35 +111,35 @@ html:has(.marketing-page) {
   padding: 0;
 }
 
-.marketing-page h1 {
+:where(.marketing-page) h1 {
   font-size: var(--marketing-type-hero-size);
   line-height: var(--marketing-type-hero-line);
 }
 
-.marketing-page h2 {
+:where(.marketing-page) h2 {
   font-size: 32px;
   line-height: 1.25;
 }
 
-.marketing-page h3 {
+:where(.marketing-page) h3 {
   font-size: 24px;
   line-height: 1.3;
 }
 
-.marketing-page p {
+:where(.marketing-page) p {
   margin: 0;
   padding: 0;
   font-size: var(--marketing-type-body-size);
   line-height: var(--marketing-type-body-line);
 }
 
-.marketing-page a {
+:where(.marketing-page) a {
   color: var(--marketing-accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-.marketing-page a:hover {
+:where(.marketing-page) a:hover {
   text-decoration: underline;
 }
 
@@ -176,11 +176,11 @@ html:has(.marketing-page) {
    Layout
    ============================================ */
 
-.marketing-page main {
+:where(.marketing-page) main {
   width: 100%;
 }
 
-.marketing-page section {
+:where(.marketing-page) section {
   width: 100%;
 }
 
@@ -188,14 +188,14 @@ html:has(.marketing-page) {
    Form Elements
    ============================================ */
 
-.marketing-page button {
+:where(.marketing-page) button {
   font-family: 'Inter', sans-serif;
   cursor: pointer;
   border: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.marketing-page input, .marketing-page textarea, .marketing-page select {
+:where(.marketing-page) input, :where(.marketing-page) textarea, :where(.marketing-page) select {
   font-family: 'Inter', sans-serif;
 }
 
@@ -203,11 +203,11 @@ html:has(.marketing-page) {
    Lists
    ============================================ */
 
-.marketing-page ul, .marketing-page ol {
+:where(.marketing-page) ul, :where(.marketing-page) ol {
   list-style: none;
 }
 
-.marketing-page li {
+:where(.marketing-page) li {
   margin: 0;
   padding: 0;
 }
@@ -216,12 +216,12 @@ html:has(.marketing-page) {
    Tables
    ============================================ */
 
-.marketing-page table {
+:where(.marketing-page) table {
   border-collapse: collapse;
   width: 100%;
 }
 
-.marketing-page td, .marketing-page th {
+:where(.marketing-page) td, :where(.marketing-page) th {
   padding: 0;
   margin: 0;
 }
@@ -235,42 +235,42 @@ html:has(.marketing-page) {
     display: none !important;
   }
 
-  .marketing-page h1 {
+  :where(.marketing-page) h1 {
     font-size: 40px;
   }
 
-  .marketing-page h2 {
+  :where(.marketing-page) h2 {
     font-size: 24px;
   }
 
-  .marketing-page p {
+  :where(.marketing-page) p {
     font-size: 16px;
   }
 
   /* Stack grids on mobile */
-  .marketing-page [style*="gridTemplateColumns: repeat(12"] {
+  :where(.marketing-page) [style*="gridTemplateColumns: repeat(12"] {
     grid-template-columns: 1fr !important;
   }
 
-  .marketing-page [style*="gridTemplateColumns: repeat(3"] {
+  :where(.marketing-page) [style*="gridTemplateColumns: repeat(3"] {
     grid-template-columns: 1fr !important;
   }
 
-  .marketing-page [style*="gridTemplateColumns: 1fr 1fr"] {
+  :where(.marketing-page) [style*="gridTemplateColumns: 1fr 1fr"] {
     grid-template-columns: 1fr !important;
   }
 }
 
 @media (max-width: 480px) {
-  .marketing-page h1 {
+  :where(.marketing-page) h1 {
     font-size: 32px;
   }
 
-  .marketing-page h2 {
+  :where(.marketing-page) h2 {
     font-size: 20px;
   }
 
-  .marketing-page p {
+  :where(.marketing-page) p {
     font-size: 15px;
   }
 }
@@ -280,31 +280,31 @@ html:has(.marketing-page) {
    ============================================ */
 
 html:has(.marketing-page)::-webkit-scrollbar,
-.marketing-page *::-webkit-scrollbar {
+:where(.marketing-page) *::-webkit-scrollbar {
   display: block;
   width: 8px;
   height: 8px;
 }
 
 html:has(.marketing-page)::-webkit-scrollbar-track,
-.marketing-page *::-webkit-scrollbar-track {
+:where(.marketing-page) *::-webkit-scrollbar-track {
   background: var(--marketing-scrollbar-track);
 }
 
 html:has(.marketing-page)::-webkit-scrollbar-thumb,
-.marketing-page *::-webkit-scrollbar-thumb {
+:where(.marketing-page) *::-webkit-scrollbar-thumb {
   background: var(--marketing-scrollbar-thumb);
   border-radius: 4px;
 }
 
 html:has(.marketing-page)::-webkit-scrollbar-thumb:hover,
-.marketing-page *::-webkit-scrollbar-thumb:hover {
+:where(.marketing-page) *::-webkit-scrollbar-thumb:hover {
   background: var(--marketing-scrollbar-thumb-hover);
 }
 
 /* Firefox */
 html:has(.marketing-page),
-.marketing-page * {
+:where(.marketing-page) * {
   scrollbar-color: var(--marketing-scrollbar-thumb) var(--marketing-scrollbar-track);
   scrollbar-width: thin;
 }
@@ -319,11 +319,11 @@ html:has(.marketing-page),
     color: black;
   }
 
-  .marketing-page a {
+  :where(.marketing-page) a {
     text-decoration: underline;
   }
 
-  .marketing-page button {
+  :where(.marketing-page) button {
     display: none;
   }
 }
