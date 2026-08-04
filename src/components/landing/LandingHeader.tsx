@@ -33,14 +33,12 @@ export function LandingHeader({
   const [desktopLanguageMenuOpen, setDesktopLanguageMenuOpen] = useState(false);
   const [mobileLanguageMenuOpen, setMobileLanguageMenuOpen] = useState(false);
   const [activeHref, setActiveHref] = useState<string>('');
-  const [sectionTransitionCovered, setSectionTransitionCovered] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const shellRef = useRef<HTMLDivElement>(null);
   const desktopMeasureRef = useRef<HTMLDivElement>(null);
   const languageTriggerRef = useRef<HTMLButtonElement>(null);
   const languageMenuRef = useRef<HTMLDivElement>(null);
-  const sectionTransitionTimeoutRef = useRef<number | null>(null);
   const sectionIds = useMemo(
     () => navItems.filter((item) => item.href.startsWith('#')).map((item) => item.href.slice(1)),
     [navItems]
@@ -63,12 +61,6 @@ export function LandingHeader({
   useEffect(() => {
     document.cookie = `landing_locale=${locale}; path=/; max-age=31536000; samesite=lax`;
   }, [locale]);
-
-  useEffect(() => () => {
-    if (sectionTransitionTimeoutRef.current !== null) {
-      window.clearTimeout(sectionTransitionTimeoutRef.current);
-    }
-  }, []);
 
   useEffect(() => {
     if (sectionIds.length === 0) return;
@@ -157,61 +149,37 @@ export function LandingHeader({
     }
   }, [shouldCollapse]);
 
-  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const hero = document.getElementById('hero');
-    if (!hero) return;
-
-    event.preventDefault();
-    hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.history.replaceState(null, '', '#hero');
-    setActiveHref('');
-    setMenuOpen(false);
-    setDesktopLanguageMenuOpen(false);
-    setMobileLanguageMenuOpen(false);
-  };
-
   const handleSectionNavigation = (
     event: React.MouseEvent<HTMLAnchorElement>,
     href: string,
   ) => {
     setMenuOpen(false);
+    setDesktopLanguageMenuOpen(false);
+    setMobileLanguageMenuOpen(false);
 
-    if (href !== '#how-it-works') return;
+    if (!href.startsWith('#')) return;
 
-    const section = document.getElementById('how-it-works');
+    const section = document.getElementById(href.slice(1));
     if (!section) return;
 
     event.preventDefault();
-    const updateLocation = () => {
-      if (window.location.hash === href) {
-        window.history.replaceState(null, '', href);
-      } else {
-        window.history.pushState(null, '', href);
-      }
-      setActiveHref(href);
-    };
+    const root = document.documentElement;
+    const body = document.body;
+    const previousRootScrollBehavior = root.style.scrollBehavior;
+    const previousBodyScrollBehavior = body.style.scrollBehavior;
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      section.scrollIntoView({ behavior: 'instant', block: 'start' });
-      updateLocation();
-      return;
+    root.style.scrollBehavior = 'auto';
+    body.style.scrollBehavior = 'auto';
+    section.scrollIntoView({ behavior: 'auto', block: 'start' });
+    root.style.scrollBehavior = previousRootScrollBehavior;
+    body.style.scrollBehavior = previousBodyScrollBehavior;
+
+    if (window.location.hash === href) {
+      window.history.replaceState(null, '', href);
+    } else {
+      window.history.pushState(null, '', href);
     }
-
-    if (sectionTransitionTimeoutRef.current !== null) {
-      window.clearTimeout(sectionTransitionTimeoutRef.current);
-    }
-
-    setSectionTransitionCovered(true);
-    sectionTransitionTimeoutRef.current = window.setTimeout(() => {
-      section.scrollIntoView({ behavior: 'instant', block: 'start' });
-      updateLocation();
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => {
-          setSectionTransitionCovered(false);
-        });
-      });
-      sectionTransitionTimeoutRef.current = null;
-    }, 200);
+    setActiveHref(href);
   };
 
   const handleLanguageChange = (nextLocale: LandingLocale) => {
@@ -284,19 +252,6 @@ export function LandingHeader({
 
   return (
     <>
-      <div
-        aria-hidden="true"
-        className="landing-section-transition-cover"
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 210,
-          pointerEvents: sectionTransitionCovered ? 'auto' : 'none',
-          background: 'var(--ink)',
-          opacity: sectionTransitionCovered ? 1 : 0,
-          transition: 'opacity 180ms var(--marketing-ease-standard)',
-        }}
-      />
       <header
         style={{
           position: 'fixed',
@@ -327,7 +282,7 @@ export function LandingHeader({
         >
           <Link
             href="#hero"
-            onClick={handleLogoClick}
+            onClick={(event) => handleSectionNavigation(event, '#hero')}
             className="landing-header-logo"
             style={{
               fontFamily: "'Lora', serif",
