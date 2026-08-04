@@ -14,7 +14,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.marketing-page {
+html:has(.marketing-page) {
   scroll-behavior: smooth;
 }
 
@@ -89,7 +89,9 @@
   background-color: var(--marketing-shell-bg);
   color: var(--marketing-text);
   line-height: 1.6;
-  overflow-x: hidden;
+  /* `clip` prevents horizontal paint overflow without creating a scroll
+     container, which would break descendant `position: sticky` elements. */
+  overflow-x: clip;
 }
 
 /* ============================================

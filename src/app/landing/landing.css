@@ -14,8 +14,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.marketing-page {
+html:has(.marketing-page) {
   scroll-behavior: smooth;
+  --marketing-scrollbar-track: #F4F0E8;
+  --marketing-scrollbar-thumb: #B25032;
+  --marketing-scrollbar-thumb-hover: #A34D32;
 }
 
 .marketing-page {
@@ -89,7 +92,9 @@
   background-color: var(--marketing-shell-bg);
   color: var(--marketing-text);
   line-height: 1.6;
-  overflow-x: hidden;
+  /* `clip` prevents horizontal paint overflow without creating a scroll
+     container, which would break descendant `position: sticky` elements. */
+  overflow-x: clip;
 }
 
 /* ============================================
@@ -274,32 +279,33 @@
    Scrollbar
    ============================================ */
 
-.marketing-page::-webkit-scrollbar,
+html:has(.marketing-page)::-webkit-scrollbar,
 .marketing-page *::-webkit-scrollbar {
+  display: block;
   width: 8px;
   height: 8px;
 }
 
-.marketing-page::-webkit-scrollbar-track,
+html:has(.marketing-page)::-webkit-scrollbar-track,
 .marketing-page *::-webkit-scrollbar-track {
-  background: var(--parchment);
+  background: var(--marketing-scrollbar-track);
 }
 
-.marketing-page::-webkit-scrollbar-thumb,
+html:has(.marketing-page)::-webkit-scrollbar-thumb,
 .marketing-page *::-webkit-scrollbar-thumb {
-  background: #B25032;
+  background: var(--marketing-scrollbar-thumb);
   border-radius: 4px;
 }
 
-.marketing-page::-webkit-scrollbar-thumb:hover,
+html:has(.marketing-page)::-webkit-scrollbar-thumb:hover,
 .marketing-page *::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-hover);
+  background: var(--marketing-scrollbar-thumb-hover);
 }
 
 /* Firefox */
-.marketing-page,
+html:has(.marketing-page),
 .marketing-page * {
-  scrollbar-color: #B25032 var(--parchment);
+  scrollbar-color: var(--marketing-scrollbar-thumb) var(--marketing-scrollbar-track);
   scrollbar-width: thin;
 }
 
