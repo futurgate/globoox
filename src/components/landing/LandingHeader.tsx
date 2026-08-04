@@ -149,17 +149,37 @@ export function LandingHeader({
     }
   }, [shouldCollapse]);
 
-  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const hero = document.getElementById('hero');
-    if (!hero) return;
-
-    event.preventDefault();
-    hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.history.replaceState(null, '', '#hero');
-    setActiveHref('');
+  const handleSectionNavigation = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
     setMenuOpen(false);
     setDesktopLanguageMenuOpen(false);
     setMobileLanguageMenuOpen(false);
+
+    if (!href.startsWith('#')) return;
+
+    const section = document.getElementById(href.slice(1));
+    if (!section) return;
+
+    event.preventDefault();
+    const root = document.documentElement;
+    const body = document.body;
+    const previousRootScrollBehavior = root.style.scrollBehavior;
+    const previousBodyScrollBehavior = body.style.scrollBehavior;
+
+    root.style.scrollBehavior = 'auto';
+    body.style.scrollBehavior = 'auto';
+    section.scrollIntoView({ behavior: 'auto', block: 'start' });
+    root.style.scrollBehavior = previousRootScrollBehavior;
+    body.style.scrollBehavior = previousBodyScrollBehavior;
+
+    if (window.location.hash === href) {
+      window.history.replaceState(null, '', href);
+    } else {
+      window.history.pushState(null, '', href);
+    }
+    setActiveHref(href);
   };
 
   const handleLanguageChange = (nextLocale: LandingLocale) => {
@@ -262,7 +282,7 @@ export function LandingHeader({
         >
           <Link
             href="#hero"
-            onClick={handleLogoClick}
+            onClick={(event) => handleSectionNavigation(event, '#hero')}
             className="landing-header-logo"
             style={{
               fontFamily: "'Lora', serif",
@@ -286,6 +306,7 @@ export function LandingHeader({
               <div key={item.href} className="landing-header-nav-item" style={{ display: 'flex', alignItems: 'center' }}>
                 <a
                   href={item.href}
+                  onClick={(event) => handleSectionNavigation(event, item.href)}
                   aria-current={activeHref === item.href ? 'true' : undefined}
                   style={{
                     color: activeHref === item.href ? 'var(--marketing-text)' : 'var(--marketing-text-muted)',
@@ -566,7 +587,7 @@ export function LandingHeader({
               <a
                 key={item.href}
                 href={item.href}
-                onClick={() => setMenuOpen(false)}
+                onClick={(event) => handleSectionNavigation(event, item.href)}
                 aria-current={activeHref === item.href ? 'true' : undefined}
                 className="landing-header-mobile-nav-link"
                 style={{

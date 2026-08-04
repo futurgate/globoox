@@ -51,6 +51,8 @@ function LegalModal({
 
   if (!open || typeof document === 'undefined') return null;
 
+  const portalRoot = document.querySelector('.marketing-page') ?? document.body;
+
   return createPortal(
     <div
       style={{
@@ -197,7 +199,7 @@ function LegalModal({
         }
       `}</style>
     </div>,
-    document.body,
+    portalRoot,
   );
 }
 
