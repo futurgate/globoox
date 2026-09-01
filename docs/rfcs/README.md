@@ -13,6 +13,7 @@ RFCs describe proposed behavior and never override current reference documentati
 
 | RFC | Implementation | Main unresolved decision |
 |---|---|---|
+| [Billing, entitlements, and translation access](active/billing-entitlements-and-translation-access.md) | Proposed; backend billing/quota skeleton exists but the target contract is not aligned | Align demo-only access, stable quota identity, and observable checkout activation |
 | [My Books server snapshot](active/my-books-server-snapshot.md) | Partially implemented client optimizations; unified server snapshot absent | Backend endpoint vs Next server composition; restore benchmark evidence |
 | [Reader adaptive typography](active/reader-adaptive-typography.md) | Not started | Language profiles and whether font auto-fit may override user settings |
 | [Translation orchestration](active/translation-orchestration.md) | Not started | Adaptive chunks and staged commits vs previous no-adaptive constraint |
