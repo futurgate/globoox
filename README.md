@@ -75,4 +75,4 @@ Local setup details are in [docs/runbooks/local-development.md](docs/runbooks/lo
 
 ## Deployment
 
-Production deployments are triggered from `main`. Configure the same required environment variables in the deployment environment; prefer `API_URL` over exposing the backend URL through `NEXT_PUBLIC_API_URL`.
+Automatic Vercel deployments from `dev` and `main` are disabled in `vercel.json`. Deploy explicitly when a release is intended. Configure the same required environment variables in the deployment environment; prefer `API_URL` over exposing the backend URL through `NEXT_PUBLIC_API_URL`.
