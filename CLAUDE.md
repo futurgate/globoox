@@ -1,103 +1,44 @@
-# Globoox Preview
+# Globoox Frontend Contributor Context
 
-## 🎯 Overview
-Next.js 16 frontend for Globooks. Modern React reader UI consuming the Nuxt backend API. Supabase auth with shadcn/ui components.
+Read [docs/README.md](docs/README.md) before changing a documented subsystem. It defines which documents are current and which are historical.
 
-**Tech:** Next.js 16, React 19, TypeScript, Supabase SSR, shadcn/ui, Tailwind, Zustand  
-**Backend:** `../` (Nuxt API at https://globooks.onrender.com)
+## Project facts
 
-## 🚨 Critical Rules
-1. **Never commit `.env.local`** - Contains Supabase secrets
-2. **Use server components** - Default to RSC, add 'use client' only when needed
-3. **Supabase SSR** - Use `@supabase/ssr` for server-side auth
-4. **shadcn/ui** - Components in `components/ui/`, don't modify directly
-5. **Backend API** - All data from parent Nuxt API, not direct DB access
-6. **Safari/Canvas** - Before writing any `canvas.drawImage()` code, read `docs/safari-bugs.md`. Always use `img.decode()` instead of `img.onload` before canvas operations.
+- Next.js 16, React 19, TypeScript, Tailwind, Zustand, Supabase SSR.
+- Application pages and API handlers live under `src/app/(app)/`.
+- Shared UI primitives live under `src/components/ui/`.
+- Browser API calls must use local `/api/*` routes; direct backend calls are server-only.
+- `API_URL` is the preferred backend configuration. `NEXT_PUBLIC_API_URL` is a fallback that exposes the value to the browser bundle.
+- PostHog is the active analytics provider.
 
-## 🚀 Quick Start
+## Critical rules
+
+1. Never commit `.env.local` or credentials.
+2. Default to Server Components; add `'use client'` only when browser state or effects require it.
+3. Use `@supabase/ssr` for server authentication and keep auth injection inside the API proxy boundary.
+4. Reuse components in `src/components/ui/`; do not fork primitive behavior inside feature pages.
+5. Before changing canvas/image behavior, read [the Safari runbook](docs/runbooks/safari.md).
+6. Before changing Reader layout, read [the Reader reference](docs/reference/reader/README.md) and update its algorithm version when cached layouts become incompatible.
+7. When behavior changes, update the current reference in the same change. Record a new ADR when the architectural decision changes.
+
+## Commands
+
+See [local development](docs/runbooks/local-development.md). The standard validation set is:
+
 ```bash
-npm install                    # Install deps
-# Create .env.local with:
-# NEXT_PUBLIC_SUPABASE_URL=...
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-# API_URL=https://globooks.onrender.com  # Backend API endpoint
-npm run dev                    # http://localhost:3000
+npm run lint
+npm run docs:check
+npx tsc --noEmit
+npm test
+npm run build
 ```
 
-## 🐛 Troubleshooting
-| Issue | Fix |
-|-------|-----|
-| Auth not working | Check env vars, verify callback route |
-| Hydration error | Mark component with 'use client' |
-| shadcn missing | Run `npx shadcn@latest add <component>` |
-| API errors | Verify backend is running, check CORS |
-| 503 Backend not configured | Set `API_URL` in `.env.local` |
+## Documentation map
 
-## 📂 Key Structure
-```
-src/app/           → App router pages
-  auth/callback/   → OAuth callback handler
-components/ui/     → shadcn/ui components
-docs/              → Architecture docs
-public/            → Static assets, covers
-```
-
-## 📞 Where to Find More
-- **API architecture:** `docs/api-architecture.md`
-- **Fast start (RU):** `docs/faststart.md`
-- **Parent API:** `../BACKEND_API.md`
-- **DB schema:** `../supabase/schema.sql`
-- **shadcn config:** `components.json`
-- **Safari bugs:** `docs/safari-bugs.md` (read before touching image/canvas code)
-
----
-
-# Tier 2: Contextual Details
-
-## Auth Callback Flow
-```typescript
-// src/app/auth/callback/route.ts
-// Handles OAuth redirect from Supabase
-// Exchanges code for session, redirects to app
-```
-
-## State Management
-- **Zustand** for client state
-- **React Query** pattern for server state (if added)
-- **Supabase realtime** for live updates (if needed)
-
-## UI Components
-- **Radix UI** primitives via shadcn
-- **Framer Motion** for animations
-- **Lucide** for icons
-- **next-themes** for dark mode
-
-## API Integration
-All API calls go through Next.js API routes which proxy to the backend:
-
-**Architecture:**
-```
-Browser → /api/* (Next.js routes) → Backend API (with auth injection)
-Server-side → Direct backend calls (SSR/SSG)
-```
-
-**Environment Variables:**
-- `API_URL` - Backend API endpoint (server-side only, recommended)
-- `NEXT_PUBLIC_API_URL` - Alternative (exposed to browser, fallback)
-
-**Example:**
-```env
-API_URL=https://globooks.onrender.com
-```
-
-**API Routes:**
-```typescript
-// Client calls Next.js routes (relative paths)
-GET /api/books
-GET /api/books/{id}/chapters
-GET /api/chapters/{id}/content?lang=XX
-POST /api/chapters/{id}/translate
-
-// Next.js routes proxy to backend with auth headers
-// Backend: ${API_URL}/api/books, etc.
-```
+- [API and sync](docs/reference/architecture/api-and-sync.md)
+- [Translation](docs/reference/architecture/translation.md)
+- [Reader](docs/reference/reader/README.md)
+- [Design system](docs/reference/product/design-system.md)
+- [Troubleshooting](docs/runbooks/troubleshooting.md)
+- [Decision records](docs/decisions/README.md)
+- [Active RFCs](docs/rfcs/README.md)

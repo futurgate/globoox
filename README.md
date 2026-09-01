@@ -1,76 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Globoox Frontend
 
-## Getting Started
+Next.js 16 and React 19 frontend for the Globoox reading application. It provides the library, paginated reader, on-demand translation, store, account, and marketing experiences.
 
-### 1. Environment Setup
+## Quick start
 
-Create a `.env.local` file with the following variables:
+Create `.env.local`:
 
 ```env
-# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# Google One Tap
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_oauth_client_id
-# Optional: comma-separated list of origins where One Tap may initialize.
-# Example: NEXT_PUBLIC_GOOGLE_ALLOWED_ORIGINS=http://localhost:3000,https://globoox.com
+# Preferred server-only backend URL.
+API_URL=https://your-backend.example.com
 
-# Backend API Configuration
-API_URL=https://globooks.onrender.com
-# Or use NEXT_PUBLIC_API_URL if you need it exposed to the browser
+# Optional integrations.
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+NEXT_PUBLIC_GOOGLE_ALLOWED_ORIGINS=http://localhost:3000
+NEXT_PUBLIC_POSTHOG_KEY=your_posthog_key
+NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-### 2. Install Dependencies
+Install and run:
 
 ```bash
 npm install
+npm run dev
 ```
 
-### 3. Run the Development Server
+Open [http://localhost:3000](http://localhost:3000).
+
+## Validation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run docs:check
+npx tsc --noEmit
+npm test
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Use `npm run test:watch` while developing tests.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture at a glance
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Application routes live under `src/app/(app)/`.
+- Localized marketing entry routes live under `src/app/[locale]/`.
+- Browser data requests use local Next.js `/api/*` handlers.
+- `src/app/(app)/api/_proxy.ts` attaches the Supabase access token and proxies requests to the configured backend.
+- Reader state is local-first: short-lived memory caches, persisted IndexedDB data, and server revalidation serve different roles.
+- PostHog is the active product analytics integration.
 
-## Learn More
+Common routes:
 
-To learn more about Next.js, take a look at the following resources:
+- `/my-books`
+- `/reader/[id]`
+- `/store`
+- `/settings`
+- `/pricing`
+- `/auth`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Legacy `/library` and `/profile` URLs redirect to `/my-books` and `/settings`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation
 
-## Deploy on Vercel
+Start with [docs/README.md](docs/README.md). It separates:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- current reference;
+- architecture decisions and rejected alternatives;
+- active RFCs;
+- operational runbooks;
+- historical source material.
 
-Production deployments are triggered from commits on `main`.
+Local setup details are in [docs/runbooks/local-development.md](docs/runbooks/local-development.md), and common recovery procedures are in [docs/runbooks/troubleshooting.md](docs/runbooks/troubleshooting.md).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
 
-## Client Caching (Front-end)
-
-We cache some user data client-side to reduce backend load and avoid loading states during in-app navigation.
-
-- Books list (`GET /api/books?status=active`) — in-memory stale-while-revalidate cache in `src/lib/useBooks.ts` (TTL ~5 minutes).
-- Reading position (`GET /api/books/:id/reading-position`) — in-memory per-book cache in `src/lib/api.ts` (TTL ~30 seconds).
-- Chapter content blocks (`GET /api/chapters/:id/content?lang=XX`) — persistent cache in IndexedDB via `src/lib/contentCache.ts`:
-  - `chapter_skeleton` (chapter structure)
-  - `block_text` (per-block text by `(blockId, lang)`)
-
-Debug / reset:
-- Chrome DevTools → Application → Storage → IndexedDB → `globoox-cache` (clear stores), or “Clear site data”.
+Production deployments are triggered from `main`. Configure the same required environment variables in the deployment environment; prefer `API_URL` over exposing the backend URL through `NEXT_PUBLIC_API_URL`.
