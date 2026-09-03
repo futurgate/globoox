@@ -208,7 +208,58 @@ const recentGetResponses = new Map<string, { expiresAt: number; value: unknown }
 const inflightChromeTranslationRequests = new Map<string, Promise<unknown>>()
 let browserTokenCache: { token: string | null; expiresAt: number } | null = null
 const ACCESS_TOKEN_STORAGE_KEY = 'globoox:access_token'
+const SHARE_TOKEN_STORAGE_KEY = 'globoox:share_token'
 let lastBooksAuthWarnAt = 0
+
+/**
+ * Curated share link support: an unregistered visitor arrives via /s/<token>,
+ * we persist the token, and every /api/books request carries `?share=<token>` so
+ * the backend returns ONLY that link's curated books (never the public catalog).
+ */
+export function getShareToken(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    return window.localStorage.getItem(SHARE_TOKEN_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+export function setShareToken(token: string): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(SHARE_TOKEN_STORAGE_KEY, token)
+  } catch {
+    // Ignore storage failures (private mode / quota).
+  }
+}
+
+export function clearShareToken(): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(SHARE_TOKEN_STORAGE_KEY)
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
+/**
+ * Cache scope key for unauthenticated users. In share mode it is namespaced by
+ * token so a curated library never bleeds into (or out of) the normal guest cache.
+ */
+export function getGuestScopeKey(): string {
+  const token = getShareToken()
+  return token ? `share:${token}` : 'guest'
+}
+
+/** Append `?share=<token>` to /api/books requests when a share token is active. */
+function withShareToken(path: string): string {
+  if (!path.startsWith('/api/books')) return path
+  const token = getShareToken()
+  if (!token) return path
+  const sep = path.includes('?') ? '&' : '?'
+  return `${path}${sep}share=${encodeURIComponent(token)}`
+}
 
 // Reading position cache with TTL (30 seconds)
 const POSITION_CACHE_TTL_MS = 30000
@@ -323,7 +374,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     let statusCode: number | undefined
 
     try {
-      const res = await fetch(`${API_URL}${path}`, {
+      const res = await fetch(`${API_URL}${withShareToken(path)}`, {
         ...options,
         headers,
       })
@@ -401,6 +452,8 @@ export async function fetchBooksStreaming(
   const params = new URLSearchParams()
   if (status) params.set('status', status)
   params.set('stream', '1')
+  const shareToken = getShareToken()
+  if (shareToken) params.set('share', shareToken)
   const path = `/api/books?${params.toString()}`
 
   const startTime = performance.now()
@@ -977,6 +1030,14 @@ export function createCheckout(redirectUrl?: string): Promise<{ url: string }> {
 /** Get the LemonSqueezy Customer Portal URL (cancel / update card / invoices). */
 export function getBillingPortal(): Promise<{ url: string }> {
   return request<{ url: string }>('/api/billing/portal')
+}
+
+/**
+ * Reconcile the subscription with LemonSqueezy right after checkout, closing the
+ * gap between the redirect back and the (async) webhook. Returns the fresh snapshot.
+ */
+export function reconcileSubscription(): Promise<SubscriptionResponse> {
+  return request<SubscriptionResponse>('/api/billing/reconcile', { method: 'POST' })
 }
 
 // ── Admin: translation model-comparison playground ───────────────────────────
