@@ -25,7 +25,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import GoogleOneTap from '@/components/GoogleOneTap';
 import PageHeader from '@/components/ui/PageHeader';
 import { trackBookOpened } from '@/lib/posthog';
-import { BookReadingProgress, ApiBook, fetchReadingPosition } from '@/lib/api';
+import { BookReadingProgress, ApiBook, fetchReadingPosition, getGuestScopeKey } from '@/lib/api';
 import {
   getCachedLibraryViewSnapshotSync,
   getCachedLibraryViewSnapshot,
@@ -112,7 +112,7 @@ function mergeProgressMonotonic(existing: ProgressRow | undefined, incoming: Pro
 export default function MyBooksPage() {
   const { progress, touchLastRead, updateServerProgress, syncVersions } = useAppStore();
   const { user, isAuthenticated, loading: authLoading } = useAuth();
-  const scopeKey = isAuthenticated && user?.id ? user.id : 'guest';
+  const scopeKey = isAuthenticated && user?.id ? user.id : getGuestScopeKey();
   const { books, loading, error, hideBook, unhideBook, removeBook, refresh } = useBooks({ scopeKey });
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [progressData, setProgressData] = useState<Record<string, ProgressRow>>({});
