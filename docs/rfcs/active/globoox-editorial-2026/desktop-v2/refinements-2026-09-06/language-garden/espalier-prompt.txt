@@ -1,0 +1,25 @@
+Use case: ui-mockup / editorial illustration
+Asset type: one complete desktop website languages section, 1683 × 935 landscape.
+Input image 1 is the reference/edit target for the entire LEFT text, typography, scale, positions, warm ivory canvas, dark pine headings and muted sage body. Preserve this left composition faithfully. Change the RIGHT-hand supporting composition only. One image, not a contact sheet.
+
+New art direction: a cultivated language tree, drawn as a modern abstract ESPALIER / FAN. A broad, low, deliberately shaped fan of four organic branches, not a tall tree and not a straight staircase. The four horizontal cards feel like ripe fruits grown by this little tree. Build a compact supporting editorial illustration, roughly x920–1450 and y250–590. Start a fine short sage trunk at x1175,y585; split it low into four sweeping, botanically irregular branches. Branches radiate up and out in graceful broad curves, establishing a WIDE, LOW fan silhouette. They disappear behind four language cards at different branch tips. English at upper-left around x990,y295; Spanish at upper-right around x1275,y275; Russian lower-left around x960,y425; French lower-right around x1275,y425. The cards should occupy an irregular balanced 2×2 canopy, not input rows. Restrained open space between them allows the fan to be understood. No central card and no diagram junction.
+
+Modern reductive illustration medium: just confident thin olive-gray ink gestures and about 8 tiny FLAT sage leaf shapes, no veins or realistic shading. A little asymmetry in curves, absolutely no connector elbows, arrows, perfect symmetry, trellis rails, fence or support poles. Think a beautifully composed contemporary literary editorial illustration, nearly a single-line drawing. The gently curving branches and few leaves supply the life. Everything stays light. Cards are fresh ivory with a barely perceptible pale sage difference between them, hairline warm edges, near-square 2px corners and almost no shadow. All card surfaces are plain. Names use refined pine serif type around 32px. Four cards only, with an optical width around 220px and height75px; almost horizontal, no hanging strings or tags.
+
+Below this mature fan tree, the future languages form a tiny cultivated nursery around x945–1410,y655–775. A small italic "soon" begins the group. Use two short, fine sprout drawings of DIFFERENT maturity: one seed just opened, one tiny stem with two leaves, in pale sage. Tuck one to the left of each text row, like growing margin notes. The rows themselves remain quiet readable sans-serif and NOT boxed. This connects growth with the upcoming words while preserving clarity. No pots, gardening objects, ground line, soil mound, seed-packet designs, grids, statuses, fake controls or checkboxes.
+
+Text must be exact, preserve from reference:
+Eyebrow: "SUPPORTED LANGUAGES"
+Heading:
+"Read in English,
+Spanish, Russian,
+and French"
+Body:
+"These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue."
+Mature cards: "English", "Spanish", "Russian", "French"
+Future: "soon"
+"German · Portuguese · Italian"
+"Japanese · Korean · and dozens more"
+No other text and no rewritten copy.
+
+Critical finish: large negative space, clean flat ivory backdrop, contemporary premium digital reading brand. Do not make the diagram or plant the hero; the reference's typography is still dominant. No parchment, distressed fibers, old book stock, sepia, engraving, photorealism, stock botanical clipart, blossoms, wreaths, cute illustration, 3D objects, bright gradients, thick outlines, floating UI widgets, heavy shadows or enormous sprawling tree. This wide compact cultivated fan and its two tiny nursery shoots is a deliberate alternative to a tall natural sapling.

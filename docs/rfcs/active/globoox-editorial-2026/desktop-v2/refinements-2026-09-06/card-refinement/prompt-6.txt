@@ -1,0 +1,19 @@
+Create a complete Globoox desktop landing LANGUAGE SECTION around the EXACT refined card composition in the attached image. Target1440x800, wide landscape. The supplied image is the sole visual reference: keep its specific clipped olive-leaf motifs, its card shapes, staggered silhouette and fresh pale-paper treatment. Do not change any of those motifs into grass, ginkgo, flowers, berries or whole miniature plant icons.
+
+Recompose the attached isolated graphic into the RIGHT COLUMN of a two-column website section. Remove its blank surrounding margins; scale the cards and small "soon" note to occupy a520px-wide field. The complete right-hand graphic including the note is about400px tall. Preserve its natural proportions and use very light contact shadows. Do not enclose it in a panel. The language names remain28px normal-weight serif. Avoid making the graphic larger than the left-column text block.
+On the LEFT, x140 width505, set the following EXACT wording:
+Eyebrow: "SUPPORTED LANGUAGES" at11px DM Sans uppercase with1.8px tracking, muted sage.
+Heading: "Read in English, Spanish, Russian, and French" in Newsreader,58px, regular400 weight, tight1.06line-height and three balanced lines.
+Paragraph,25px below heading: "These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue." at17px DM Sans,1.75line-height, muted #697465.
+Use flat warm-ivory #f7f5ed background and deep pine #243d33 heading/label text. Generous whitespace, section centered vertically in canvas. The columns have at least85px breathing room between them.
+Exact right-hand words from the reference, each once:
+English
+Spanish
+Russian
+French
+soon
+German · Portuguese · Italian
+Japanese · Korean · and dozens more
+Upcoming note stays small and quiet, aligned below the graphic. It is not a card or badge.
+The important invariant is the reference's modern clipped botanical linework: some artwork ends at a card edge, the stems and leaves are asymmetrical fragments, one thin sage stroke style, not four dissimilar plant illustrations. Keep the art small and unobtrusive.
+No vintage paper grain, aged color, curled edges, glows, heavy shadows, image background object, paperclip, book illustration, footer, navigation, button, flag, check, fabricated product screen, native-name duplicate or extra wording. A clean, convincing designed website section with literary warmth.

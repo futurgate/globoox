@@ -1,0 +1,23 @@
+Use case: ui-mockup.
+Asset type: complete desktop Globoox landing-page languages section, 1683 × 935 landscape.
+Input image 1 is the edit target and exact reference for typography, palette, background, left column copy and placement. Preserve the entire left column visually unchanged. Replace only the right-hand four card graphic and reinterpret the existing “soon” group as a tiny nursery.
+
+Concept: an airy, asymmetrical LANGUAGE TREE whose four mature leaves have become clean ivory language cards; the upcoming languages are represented by a few tiny newly sprouted seeds beneath it. Make this feel like a contemporary literary illustration drawn by a confident illustrator with very few lines, quiet and intelligent.
+
+Tree drawing: one single gently curved, extremely slender continuous dark muted sage stroke rises from around (1190,605) to (1230,220), with only four sparse tapering offshoots to the cards. A loose natural asymmetric rhythm, more like a tiny young trained olive tree than a big spreading oak. Use a 1–2px olive ink line at this resolution, NOT a filled trunk or bark. No canopy, no crown of leaves and no foliage pattern. Four language cards themselves replace the large leaves: two attach on left branches and two on right branches, with one subtle connecting stem peeking out behind each. Maximum three tiny natural leaves elsewhere, no more than 15px each. The trunk is partly hidden by the cards. This should remain a small illustrative accent, with ample open ivory around it.
+
+Cards: four slim modern landscape cards, approximately 210–235px wide and 62–72px high. English highest around x1010/y250; Spanish rightward around x1200/y315; Russian leftward around x960/y405; French rightward around x1160/y470. Delicate, purposeful stagger and barely perceptible rotations. Contemporary warm-white untextured stock, subtle 1px warm-gray edge, minimal diffuse contact shadow, corners only 2px softened. Deep pine elegant serif labels, centered and fully readable: “English”, “Spanish”, “Russian”, “French”. No botanical art printed on their surfaces. The stems connect organically to the cards, so they read as a grown arrangement, never a flowchart or labeled family-tree diagram.
+
+Nursery: “soon” in a small italic serif around x970/y653. Below, preserve the two existing lines as crisp muted sans-serif: “German · Portuguese · Italian” then “Japanese · Korean · and dozens more”. Near the bottom left of this group, three tiny quiet apricot seed dots with fine sage emerging shoots, each only 12–22px tall. They can echo the mature tree's curved line. No ground line, soil bed, planter, garden landscape, rows of decorative flowers or large future cards. The seeds establish the metaphor without disrupting text.
+
+Exact left column content remains:
+“SUPPORTED LANGUAGES”
+“Read in English,”
+“Spanish, Russian,”
+“and French”
+“These four languages are available now, with more
+European languages, along with Arabic, Chinese and
+Hindi, coming soon. Because every book deserves to
+reach every reader in their mother tongue.”
+
+Constraints: use the reference's exact ivory page, pine type, ample margins and left composition. Right graphic remains within x930–1450/y210–760. No new slogans, icons, statuses, flags or UI controls. No fruits or bright colors. No glitter, photorealism, dense foliage, vintage engraving, worn parchment, heavy borders, bevels or strong shadows. Not a decorative hero scene, not cute children's gardening art, not a branching software diagram. Reduce everything to a few assured strokes, four beautiful paper cards and a whisper of sowing below.

@@ -1,0 +1,19 @@
+Use case: ui-mockup / editorial illustration
+Asset type: one full desktop website languages section, 1683 × 935 landscape.
+Input image 1: reference and edit target. Preserve its entire LEFT typography, text, positions, type sizes, warm ivory canvas and dark pine / muted sage palette. Redesign only the supporting RIGHT illustration, keeping its visual mass subordinate to the heading. Deliver one image, not a contact sheet.
+
+Concept: a language orchard. A single contemporary, very sparsely drawn pear-tree shape bears four fresh horizontal language cards as its mature fruit. The metaphor must feel quietly intelligent and editorial, not whimsical nursery art. Draw one narrow subtly curved olive-gray trunk, splitting into irregular slender organic branches. Branches are genuine botanical gestures, not perfect connector lines. Place clean ivory cards at naturally different branch ends, two on the left and two on the right, slight height offsets, a little overlap at the center. The branching silhouette and cards together occupy roughly x935–1440, y210–570. Each card is about 205–245px wide and 65–85px tall, mostly horizontal, maximum 2 degrees of rotation. Only FOUR cards. A few tiny sage leaves appear where branches emerge behind them. Most branches are hidden behind cards; the full tree remains airy and extremely spare. No decorative illustrations printed on card faces. Branch ends sit behind the cards without strings, holes, hooks, or dangling tags. Soft contact shadows only, crisp contemporary milky surfaces, near-square subtle corners. Name lettering elegant Newsreader-like serif, pine, about 31px.
+
+At the base, make upcoming languages feel like a tiny nursery that will grow: three very small fresh two-leaf seedlings loosely aligned below the tree, separated by ample air. No soil mound, pots, fence, landscape, thick ground line or garden tools. Seedlings are pale muted sage ink and lower contrast than text, about 20–30px tall. The exact future-language words remain in TWO quiet, legible sans-serif lines below the seedlings. One small italic “soon” sits above or next to these sowings; no extra headings or copy. This entire upcoming group stays around y635–750. The seedlings must read as a modest detail, never as a competing row of icons.
+
+Text (verbatim, left exactly as reference):
+"SUPPORTED LANGUAGES"
+"Read in English,
+Spanish, Russian,
+and French"
+"These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue."
+Four mature card names exactly: "English", "Spanish", "Russian", "French".
+Future text exactly: "soon"; "German · Portuguese · Italian"; "Japanese · Korean · and dozens more".
+No additional text.
+
+Finish: outstanding modern literary SaaS art direction, confident negative space, controlled asymmetry, subtle warm-white tonal shifts. Preserve the fresh neutral background. No distressed fibers, parchment, sepia, old engraving, vintage stock, photoreal leaves, 3D-rendered plants, thick outlines, cute fruit, actual pears, pompous ornamental clipart, blossoms, stamps, badges, circles, buttons, links, diagrams, arrows, ground stripes, or heavy shadows. Keep the left half pixel-close to the reference. The tree and seedling metaphor is the only design change.

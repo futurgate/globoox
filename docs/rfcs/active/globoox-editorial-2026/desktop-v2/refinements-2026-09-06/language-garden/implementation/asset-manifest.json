@@ -1,0 +1,86 @@
+[
+  {
+    "file": "paper-ivory.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 1714486,
+    "sha256": "718dd48a00770a2ebe74ca3f85d99745d3cca0b679eb5482e88aa9a89fb2501b"
+  },
+  {
+    "file": "paper-mini-wide.png",
+    "width": 2101,
+    "height": 748,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 1155034,
+    "sha256": "ac97fc77c310d31da1beac5cf143cdc8371e8c128ccaa5c777713f59fa65804d"
+  },
+  {
+    "file": "paper-mini.png",
+    "width": 1746,
+    "height": 901,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "bytes": 1146830,
+    "sha256": "93b469d9678e5cb5be805c77cf37174512dbb2f6f05a3457d42eeacfa31d84b9"
+  },
+  {
+    "file": "paper-sage.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 1512680,
+    "sha256": "0dd598410e5211c4bc4268a9b6ff00623f372f0d3459e1af0b2eb78e48343b25"
+  },
+  {
+    "file": "paper-soft.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 1490030,
+    "sha256": "5bae8994c018545d26970cb9667fbb6e4a7f2b0a3aa32a22e503cff1f89176e9"
+  },
+  {
+    "file": "seedlings.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 297465,
+    "sha256": "a444a8a1bd8694729f2390c8e635b2f50e2e16247ed743e8a1c0553ea0e97b2f"
+  },
+  {
+    "file": "tree.png",
+    "width": 1182,
+    "height": 1330,
+    "mode": "RGBA",
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "bytes": 355298,
+    "sha256": "ddee047abaee4a353994ddedad99bff9adbd258670e8bdaf25db133bfd9e526f"
+  }
+]

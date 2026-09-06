@@ -2,7 +2,7 @@ import posthog from 'posthog-js'
 import * as Sentry from '@sentry/nextjs'
 import { hasFreshAnalyticsConsent } from '@/lib/cookieConsent'
 
-const LANDING_PATH = /^\/(?:landing|(?:en|es|fr|ru)(?:\/landing)?)\/?$/
+const LANDING_PATH = /^\/(?:landing|landing-editorial|(?:en|es|fr|ru)(?:\/landing)?)\/?$/
 
 posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,

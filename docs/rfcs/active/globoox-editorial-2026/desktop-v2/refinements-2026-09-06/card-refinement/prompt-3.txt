@@ -1,0 +1,13 @@
+Edit the attached Globoox mockup. Keep the entire LEFT TEXT column, background, fonts, exact words and small "soon" note unchanged. Keep the quiet cropped botanical linework language already present.
+Change ONLY the right-hand card group's geometry and surface tone. The previous image drifted into two almost side-by-side pairs. Pull it back together into ONE COMPACT overlapping vertical composition with narrow staggered offsets. Avoid a2x2 collage.
+
+On the current1680x936 canvas, use approximately these card bounds:
+English left960 top260 width410 height86.
+Spanish left1020 top318 width430 height86.
+Russian left900 top400 width390 height86.
+French left1090 top455 width370 height86.
+This means the four cards are much shorter vertically, and their left edges all fall within a190px-wide band. The complete group is approximately560px wide and281px tall. All four language words remain fully visible and undisturbed by overlap. Card words28–30px at1440-equivalent scale, left inset28px, vertically centered. Tiny rotations under1degree.
+Give the English and Russian cards fresh warm-white stock, and the Spanish and French cards an extremely faint grey-sage tint (#eef0e9). No gradients or texture. Small3px corners, edges barely outlined. Shadows even weaker than the current image, only a short indication of contact at the overlap, not thick floating paper.
+The tiny pale botanical fragments stay at far-right corners, clipped at the card edges; same fine line weight, no complete plant icons. Keep them under35px equivalent height.
+Position the complete small upcoming-language note below the cards, around y615 on the1680 canvas, aligned aroundx925. Retain the exact three lines "soon", "German · Portuguese · Italian", "Japanese · Korean · and dozens more". No new text or graphic.
+The only goal of this edit is a tighter, lower, more unified silhouette with gentle tonal variation. Preserve the calm, fresh editorial quality. No paperclip, vintage effects, additional objects, extra ornament, rewritten copy, simulated controls or product screens.

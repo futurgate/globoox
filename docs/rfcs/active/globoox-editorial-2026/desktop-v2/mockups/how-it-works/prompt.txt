@@ -1,0 +1,32 @@
+Create a realistic, production-quality desktop landing-page SECTION design for Globoox, titled “Three simple steps”. This is one chosen design direction, not an options board. Target canvas 1440 × 960 pixels. Current date 2026-09-05; do not put a date in the image.
+
+REFERENCE ROLES
+Reference image 1 (/Users/user/Desktop/download.png) is STYLE AND COMPOSITION INSPIRATION ONLY: warm paper, deep pine ink, refined literary serif, fine botanical marginalia. Do not copy its headline, invented app, outline logo, or device composition.
+Reference image 2 is the actual unchanged Globoox upload screenshot, 1.1.webp.
+Reference image 3 is the actual unchanged Globoox language-selection screenshot, 2.1-en.webp.
+Reference image 4 is the actual unchanged Globoox translated-reading screenshot, 3-en-es.webp.
+The product screenshots are hard evidence. Never repaint their interface, change their text, recolor the product, crop away context, substitute an invented app, or invent controls. Only one actual screenshot is visible in this mock: use reference image 3 as the complete, uncropped portrait image in the right column. The other screenshots ground the three-step journey. Their existing status bars and controls belong to the source image and must remain intact.
+
+GOAL
+Make the simple upload → choose a language → read journey immediately understandable without a long scroll, three tiny screenshot cards, a carousel, autoplay, a scroll trap, or scroll-triggered swapping. The composition is a calm single product stage with three explicit selectable step rows. Show the second step selected, with the real language menu screenshot. This mock is for a marketing section; the product's existing UI remains exactly as supplied.
+
+LAYOUT
+Use one continuous warm ivory paper surface #f7f5ed, no enclosing section card. Center the small section label near y80 and the heading below near y116. Center a generous two-column composition under the heading. Left: a 520px-wide list, approximately x200 to720, three vertically spaced text rows separated by extremely light fine rules. Right: the one actual complete phone screenshot, approximately x910,y238,width300,height649. Keep its 788:1705 proportions and every edge visible, including top status bar and bottom home bar. A 2px pine outline, 12px corner radius and very restrained natural shadow may quietly distinguish the image edge; no realistic phone shell, notch, hardware, collage or floating UI cards.
+Give the left rows roughly 155px each; align their text clearly and keep the complete three-step overview visible. Rows are visibly selectable through a quiet trailing arrow and hover-like active typography, not large buttons. Step 2 has a small copper vertical line to its left and deep pine text. Inactive steps stay fully legible in muted pine. No repeated screenshots and no thumbnails.
+A single very light natural-history fern engraving may sit in the far lower-right margin beyond the product image, in desaturated sage at about 15% visual intensity. Keep all reading/UI text clear and do not repeat the dominant hero illustration. Composition should feel like a quiet printed literary journal introducing a real reading product.
+
+EXACT MARKETING TEXT — preserve every word and punctuation; no other marketing copy:
+Label: “How it Works”
+Heading: “Three simple steps”
+First row label: “Step 1”
+First row description: “Upload your ebook.”
+Second row label: “Step 2”
+Second row description: “Choose your language to translate the book.”
+Third row label: “Step 3”
+Third row description: “Enjoy your book!”
+
+TYPOGRAPHY
+Newsreader-like refined serif, regular weight, for the 64px heading and 34px step descriptions; DM Sans-like clean functional sans for 12px step labels and small section label. Use pine #20382f, sage #718168, restrained copper #b87956, fine rule #daded1. Natural wrapping of the second description across two or three balanced lines is encouraged. Never shrink it to fit one line. Preserve the original screenshot's own typography.
+
+QUALITY CONSTRAINTS
+Elegant product-first typography, deliberate space, strong optical alignment, minimal decoration, no fake benefits, no badges, no feature grid, no extra heading, no added CTA, no invented book cover, no gradients, no perspective, no cropped screenshot. Design the section as a viable frontend layout.

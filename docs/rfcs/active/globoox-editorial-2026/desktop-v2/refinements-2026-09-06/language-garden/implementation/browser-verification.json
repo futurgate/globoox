@@ -1,0 +1,161 @@
+{
+  "art": [
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Ftree.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-ivory.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-sage.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-soft.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-ivory.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fseedlings.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-mini.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-mini.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-mini.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-mini.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-mini.png&w=3840&q=75"
+    },
+    {
+      "alt": "",
+      "hidden": "true",
+      "loaded": true,
+      "src": "/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-mini-wide.png&w=3840&q=75"
+    }
+  ],
+  "description": "These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.",
+  "heading": "Read in English, Spanish, Russian, and French",
+  "interactiveElements": 0,
+  "labels": [
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+      "fontSize": "30px",
+      "text": "English"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+      "fontSize": "30px",
+      "text": "Spanish"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+      "fontSize": "30px",
+      "text": "Russian"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+      "fontSize": "30px",
+      "text": "French"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial DM Sans\", Arial, sans-serif",
+      "fontSize": "15px",
+      "text": "German"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial DM Sans\", Arial, sans-serif",
+      "fontSize": "15px",
+      "text": "Portuguese"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial DM Sans\", Arial, sans-serif",
+      "fontSize": "15px",
+      "text": "Italian"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial DM Sans\", Arial, sans-serif",
+      "fontSize": "15px",
+      "text": "Japanese"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial DM Sans\", Arial, sans-serif",
+      "fontSize": "15px",
+      "text": "Korean"
+    },
+    {
+      "color": "rgb(32, 56, 47)",
+      "font": "\"Editorial DM Sans\", Arial, sans-serif",
+      "fontSize": "15px",
+      "text": "and dozens more"
+    }
+  ],
+  "links": [
+    {
+      "href": "#languages",
+      "text": "Languages"
+    }
+  ],
+  "overflow": false,
+  "sectionHeight": 820.796875,
+  "sectionOrder": [
+    "hero",
+    "how-it-works",
+    "quality",
+    "languages",
+    "team",
+    "start"
+  ],
+  "viewport": {
+    "height": 935,
+    "width": 1440
+  }
+}

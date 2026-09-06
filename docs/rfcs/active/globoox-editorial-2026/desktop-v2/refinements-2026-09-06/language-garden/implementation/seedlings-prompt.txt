@@ -1,0 +1,18 @@
+Seedlings asset provenance
+Built-in image_gen used; output copied unchanged. No raster editing.
+Selected source: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-a1a6dfa8-c1d6-48fd-87c9-028dfdc2bbaf.png
+Production: public/redesign/language-garden/seedlings.png
+Dimensions: 2172 x 724, RGBA, alpha extrema 0..255, four corners RGBA(0,0,0,0).
+Reference: docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-06/language-garden/implementation/target.png
+
+Selected prompt (attempt 2):
+Extract only the three tiny seedlings from the lower right of this reference as a transparent-background PNG cutout. Remove every card, every word, the tall tree and the entire cream background. Reconstruct the short stems naturally behind where the small cards used to be. Match the thin graceful grey-brown stems and sparse sage narrow leaves, clean hand-painted botanical style. Three separate complete seedlings in a row, plenty of space between, wide1100x330 canvas. Vary their heights, smallest at left and tallest at right, bases aligned near the bottom. True transparent alpha background for website compositing; only the three seedlings should be visible. No layout, no cards, no writing, no ground, no paper, no shadows. Preserve the delicate natural ink and watercolor style.
+
+Attempt 1 prompt:
+Create three tiny young seedlings as a transparent-background PNG cutout, using the attached tree only as the drawing-style reference. Same thin grey-taupe natural stems and softly painted muted sage leaves. Three separate sparse plants across a wide 1100x330 canvas. Stem bases all near y290, positioned near x140, x500 and x900. Heights approximately110,160,240 pixels, varying naturally. Each has only2–4 small narrow leaves, organic asymmetric poses, plenty of empty space between. True transparent alpha background for website compositing; only the seedlings should be visible. No tree, no cards, no writing, no ground, no soil, no pot, no shadows. Delicate fresh editorial botanical ink and watercolor, not flowers or geometric clipart. Preserve complete seedlings uncropped.
+Reference: public/redesign/language-garden/tree.png
+Output: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-120223eb-3399-42eb-bb02-9f57a84a5b8e.png
+Rejected: RGB drawn checkerboard.
+
+Visual note: Three sparse seedlings with varied heights, 3/3/4 leaves, matching subdued sage foliage and fine grey-taupe stems. No cards/text/ground. Genuine alpha preserved. Intended as a decorative row behind miniature upcoming-language cards. Root to confirm compositing at final CSS size. Pillow used only for metadata/pixel statistics, not image editing.
+

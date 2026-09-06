@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Globoox — языковой сад</title>
+  <style>
+    :root { --paper:#f7f5ef; --surface:#fcfaf6; --pine:#163e38; --muted:#626f62; --line:#dcded2; --sage:#e7ebdf; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--pine); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:inherit; text-decoration-color:#8b9b87; text-underline-offset:4px; }
+    a:hover { text-decoration-color:currentColor; }
+    a:focus-visible { outline:2px solid var(--pine); outline-offset:5px; }
+    .skip { position:absolute; left:24px; top:-80px; padding:10px 16px; background:var(--pine); color:white; z-index:2; }
+    .skip:focus { top:12px; }
+    .wrap { width:min(1380px,calc(100% - 80px)); margin-inline:auto; }
+    header { padding-top:64px; padding-bottom:42px; }
+    .eyebrow { margin:0 0 18px; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
+    h1,h2,h3 { font-family:Georgia,"Times New Roman",serif; font-weight:400; line-height:1.1; }
+    h1 { font-size:clamp(42px,5.5vw,76px); letter-spacing:-.04em; margin:0 0 24px; }
+    .intro { max-width:780px; font-size:18px; color:var(--muted); margin:0 0 22px; }
+    .nav { display:flex; flex-wrap:wrap; gap:12px 26px; font-size:14px; }
+    .status { margin:0 0 42px; padding:18px 22px; border-radius:6px; background:var(--sage); color:#4f6254; max-width:100%; font-size:14px; }
+    .status p { margin:0; max-width:1040px; }
+    .section-head { display:flex; gap:24px; align-items:baseline; justify-content:space-between; margin-bottom:22px; }
+    h2 { font-size:36px; letter-spacing:-.025em; margin:0; }
+    .tag { display:inline-block; color:#4e654d; font-size:11px; line-height:1.5; letter-spacing:.08em; text-transform:uppercase; border:1px solid #cbd4c2; border-radius:30px; padding:5px 11px; }
+    .featured { margin-bottom:72px; }
+    .image-link { display:block; background:var(--surface); text-decoration:none; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    .image-link:hover { border-color:#a3b09b; }
+    img { display:block; width:100%; height:auto; }
+    .featured-caption { display:flex; justify-content:space-between; align-items:start; gap:30px; margin-top:20px; }
+    .featured-caption p { max-width:790px; margin:0; color:var(--muted); }
+    .links { display:flex; flex-wrap:wrap; gap:18px; font-size:13px; white-space:nowrap; }
+    .grid-intro { color:var(--muted); font-size:15px; margin:0 0 30px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:42px 28px; }
+    .study { min-width:0; scroll-margin-top:24px; }
+    .study h3 { font-size:27px; letter-spacing:-.02em; margin:18px 0 10px; }
+    .study p { margin:0 0 13px; color:var(--muted); font-size:14px; line-height:1.65; max-width:590px; }
+    .refinements { margin-top:50px; padding:20px 0; border-top:1px solid var(--line); }
+    .refinements summary { cursor:pointer; font-size:18px; }
+    .refinements .study { margin-top:26px; }
+    footer { padding:68px 0 44px; color:var(--muted); font-size:13px; }
+    footer p { margin:0; }
+    @media (max-width:800px) {
+      .wrap { width:calc(100% - 36px); }
+      header { padding-top:34px; padding-bottom:28px; }
+      .grid { grid-template-columns:1fr; gap:34px; }
+      .section-head,.featured-caption { flex-direction:column; gap:14px; align-items:start; }
+      h2 { font-size:30px; }
+      .featured { margin-bottom:52px; }
+    }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#studies">К вариантам</a>
+  <header class="wrap">
+    <p class="eyebrow">Globoox · визуальное исследование · 6 сентября 2026</p>
+    <h1>Языковой сад</h1>
+    <p class="intro">Карточки, книжные мотивы и деревья с «созревшими» языками. Восемь самостоятельных вариантов и дополнительные итерации после сравнения.</p>
+    <nav class="nav" aria-label="Материалы исследования">
+      <a href="#favorite">Мой выбор</a>
+      <a href="#studies">Все варианты</a>
+      <a href="../card-refinement/selected.png">Исходный макет</a>
+      <a href="README.md">Решения и история</a>
+    </nav>
+  </header>
+  <main class="wrap">
+    <aside class="status" aria-label="Статус макетов">
+      <p>Это сгенерированные ImageGen-исследования. Оригинальные маркетинговые тексты и действующая вёрстка лендинга сохранены. Выбор арт-директора обозначает визуальное предпочтение; он не означает, что пользователь уже одобрил внедрение.</p>
+    </aside>
+    <section class="featured" id="favorite" aria-labelledby="favorite-title">
+      <div class="section-head">
+        <h2 id="favorite-title">Мой выбор — Молодой сад</h2>
+        <span class="tag">Выбор арт-директора</span>
+      </div>
+      <a class="image-link" href="orchard.png" aria-label="Открыть макет «Молодой сад» в полном размере">
+        <img src="orchard.png" width="1683" height="935" alt="Тонкое естественно разветвлённое дерево несёт четыре светлые карточки; под ним три маленьких ростка." fetchpriority="high">
+      </a>
+      <div class="featured-caption">
+        <p>Естественное редкое ветвление связывает карточки и оставляет названия главным. Зрелое дерево и молодые ростки ясно различают доступные языки и soon.</p>
+        <div class="links"><a href="orchard.png">Полный PNG</a><a href="orchard-prompt.txt">Промпт</a></div>
+      </div>
+    </section>
+    <section id="studies" aria-labelledby="studies-title">
+      <div class="section-head"><h2 id="studies-title">Восемь направлений</h2></div>
+      <p class="grid-intro">Каждое изображение показано целиком. Нажатие открывает исходный PNG; рядом сохранён точный промпт.</p>
+      <div class="grid">
+        <article class="study" id="page-fan">
+          <a class="image-link" href="page-fan.png" aria-label="Открыть «Веер страниц»"><img src="page-fan.png" width="1683" height="935" loading="lazy" alt="Четыре широкие светлые карточки, сложенные веером с бледно-зелёными подложками."></a>
+          <h3>Веер страниц</h3>
+          <p>Цельная бумажная композиция; объём и крупные плоскости делают её тяжелее остальных.</p>
+          <div class="links"><a href="page-fan.png">PNG</a><a href="page-fan-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="paper-canopy">
+          <a class="image-link" href="paper-canopy.png" aria-label="Открыть «Тихий силуэт»"><img src="paper-canopy.png" width="1683" height="935" loading="lazy" alt="Светлые языковые карточки на общей едва заметной органической подложке."></a>
+          <h3>Тихий силуэт</h3>
+          <p>Светлая подложка собирает карточки; её абстрактная форма пока мало связана с чтением.</p>
+          <div class="links"><a href="paper-canopy.png">PNG</a><a href="paper-canopy-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="reading-ribbon">
+          <a class="image-link" href="reading-ribbon.png" aria-label="Открыть «Лента-закладка»"><img src="reading-ribbon.png" width="1683" height="935" loading="lazy" alt="Четыре узкие карточки, связанные плавной светло-зелёной лентой-закладкой."></a>
+          <h3>Лента-закладка</h3>
+          <p>Понятная связь с книгой и хороший ритм; лента местами выглядит подарочным декором.</p>
+          <div class="links"><a href="reading-ribbon.png">PNG</a><a href="reading-ribbon-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="little-editions">
+          <a class="image-link" href="little-editions.png" aria-label="Открыть «Маленькие издания»"><img src="little-editions.png" width="1683" height="935" loading="lazy" alt="Четыре вертикальные карточки-закладки с тонкими ботаническими и геометрическими рисунками."></a>
+          <h3>Маленькие издания</h3>
+          <p>Второе перспективное направление: современная книжная графика. Рисункам нужна общая логика, а карточкам — меньший масштаб.</p>
+          <div class="links"><a href="little-editions.png">PNG</a><a href="little-editions-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="orchard">
+          <a class="image-link" href="orchard.png" aria-label="Открыть «Молодой сад»"><img src="orchard.png" width="1683" height="935" loading="lazy" alt="Тонкое естественно разветвлённое дерево несёт четыре светлые карточки; под ним три маленьких ростка."></a>
+          <h3>Молодой сад</h3>
+          <p>Самая ясная связь карточек и роста; дереву полезны меньший масштаб и более свободная группа ростков.</p>
+          <div class="links"><a href="orchard.png">PNG</a><a href="orchard-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="espalier">
+          <a class="image-link" href="espalier.png" aria-label="Открыть «Веер ветвей»"><img src="espalier.png" width="1683" height="935" loading="lazy" alt="Широкие тонкие ветви расходятся веером к четырём карточкам языков."></a>
+          <h3>Веер ветвей</h3>
+          <p>Красивые чистые линии, но широкая крона и одинаковые прямоугольники напоминают схему.</p>
+          <div class="links"><a href="espalier.png">PNG</a><a href="espalier-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="paper-tree">
+          <a class="image-link" href="paper-tree.png" aria-label="Открыть «Бумажное дерево»"><img src="paper-tree.png" width="1683" height="935" loading="lazy" alt="Бледный плоский силуэт дерева с четырьмя языковыми карточками и маленькими ростками рядом с soon."></a>
+          <h3>Бумажное дерево</h3>
+          <p>Метафора считывается сразу; широкий ствол делает иллюстрацию чуть слишком буквальной.</p>
+          <div class="links"><a href="paper-tree.png">PNG</a><a href="paper-tree-prompt.txt">Промпт</a></div>
+        </article>
+        <article class="study" id="seed-tree">
+          <a class="image-link" href="seed-tree.png" aria-label="Открыть «Тонкий побег»"><img src="seed-tree.png" width="1683" height="935" loading="lazy" alt="Тонкий изогнутый стебель соединяет четыре карточки, а под будущими языками прорастают маленькие абрикосовые семена."></a>
+          <h3>Тонкий побег</h3>
+          <p>Запасной графический язык: самый лёгкий рисунок и деликатный цвет семян. Вытянутый стебель пока напоминает схему.</p>
+          <div class="links"><a href="seed-tree.png">PNG</a><a href="seed-tree-prompt.txt">Промпт</a></div>
+        </article>
+      </div>
+    </section>
+    <details class="refinements">
+      <summary>Дополнительные итерации сада</summary>
+      <article class="study" id="orchard-refined">
+        <a class="image-link" href="orchard-refined.png" aria-label="Открыть «Собранную крону»"><img src="orchard-refined.png" width="1683" height="935" loading="lazy" alt="Дополнительная итерация дерева с более плотной кроной карточек и ростками будущих языков."></a>
+        <h3>Собранная крона</h3>
+        <p>Попытка уплотнить композицию: крона стала перегруженнее, а ростки — крупнее. Это промежуточная итерация.</p>
+        <div class="links"><a href="orchard-refined.png">PNG</a><a href="orchard-refined-prompt.txt">Промпт</a></div>
+      </article>
+      <article class="study" id="orchard-quiet">
+        <a class="image-link" href="orchard-quiet.png" aria-label="Открыть «Уменьшенный сад»"><img src="orchard-quiet.png" width="1683" height="935" loading="lazy" alt="Итерация с уменьшенными языковыми карточками и смещённой к внешнему краю группой будущих языков."></a>
+        <h3>Уменьшенный сад</h3>
+        <p>Карточки стали слишком маленькими, а текст soon сместился к внешнему краю. Исходный «Молодой сад» лучше держит баланс.</p>
+        <div class="links"><a href="orchard-quiet.png">PNG</a><a href="orchard-quiet-prompt.txt">Промпт</a></div>
+      </article>
+    </details>
+  </main>
+  <footer class="wrap"><p>Globoox · независимое исследование языкового блока · <a href="README.md">Документация</a> · <a href="../card-refinement/selected.png">Предыдущий выбранный макет</a></p></footer>
+</body>
+</html>

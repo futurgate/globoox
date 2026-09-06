@@ -1,0 +1,9 @@
+Use case: product-mockup
+Asset type: production transparent PNG paper surface for Globoox language cards; live HTML text will be placed over it.
+Input image 1 is a STYLE REFERENCE ONLY. Look at the English card's fresh ivory paper, thin edge and very restrained short shadow. Do not recreate the web page.
+Primary request: produce exactly ONE BLANK contemporary horizontal rectangular ivory paper slip, completely isolated with genuinely transparent alpha outside the paper and its shadow.
+Canvas: wide 1200 x 400 pixels. Paper approximately x40..1160, y35..350, with transparent breathing room on all four sides. Paper ratio roughly 3.55:1.
+Subject/material: warm white #fffdf7 fresh, clean, thin fine-fibre paper. Only faint fibre under raking light, not visible grunge. Almost perfectly straight crisp cut edges and square sharp corners with a tiny natural paper-edge variation. Completely flat and frontal orthographic, exactly horizontal, no rotation, no perspective. Full opaque quiet centre for live text.
+Lighting: exceptionally gentle diffuse upper-left light; include a delicate short warm-neutral contact shadow just below the paper, faint and close, no lifted card, no dramatic drop shadow.
+Constraints: ONE card only. NO letters, words, labels, numbers, symbols, drawings, plants, leaves, objects or decorations. NO website, no text, no UI, no pills, no rounded corners. NO yellowed parchment, vintage styling, torn/deckled edges, curls, folded corners, heavy cardstock, broad cast shadow.
+Background: actual transparent PNG alpha, not a white background and not a baked checkerboard. Preserve partial alpha in the tiny shadow.

@@ -1,0 +1,20 @@
+BUILT-IN IMAGEGEN — WIDE MINI PAPER SURFACE
+
+Selected output (third generation):
+/Users/user/.codex/generated_images/01a0786b-66cb-7e93-8ff3-c0ad38427955/exec-6332db6f-8721-4534-8d0c-51ef26582735.png
+Final asset: public/redesign/language-garden/paper-mini-wide.png
+No raster editing was used. Copied original output unchanged.
+Inspected visually: fresh blank warm-white paper, clean near-straight edges, minimal short shadow, no words/plants. Intended for live HTML 'and dozens more'. Actual canvas 2101×748, RGBA alpha 0..255; all corners transparent. Approx paper body x98..2000/y98..636, ratio3.54:1.
+
+SELECTED GENERATION EXACT PROMPT:
+A single blank rectangular warm-white paper card, front view, isolated on a transparent alpha background. The paper's width is three and a half times its height. Clean sharp nearly straight edges, a fine smooth paper grain, and tiny restrained shadow immediately under its lower edge. Contemporary fresh paper, not aged. A flat blank surface for live website text; render no text. Wide landscape composition with comfortable empty transparent margin. Output a real RGBA PNG cutout. No checkerboard squares, no opaque background, no ground, no plants, no fold, no texture stains, no rounded corners. Thin delicate paper; almost white #fffdf7.
+
+GENERATION 1 (NOT SELECTED: PAPER TOO SLIM ~5.7:1, ACTUAL RGBA) EXACT PROMPT:
+Create one isolated blank warm-white paper strip on genuinely transparent background, output a PNG cutout with actual alpha around the paper. A clean contemporary rectangular strip of thin paper, sharp square corners, finest smooth paper grain, no text, symbols or decoration. Orthographic front view, no perspective, no rotation. The paper itself is VERY WIDE AND SLIM, width 1500 pixels, height 440 pixels, 3.4:1 proportions. Leave generous transparent space around it on a 1792×896 landscape canvas. Only a nearly invisible short shadow directly under the paper edge. Fresh warm-white #fffdf7. No floor, background color or checkerboard pixels. Avoid vintage, stains, parchment, tears, curls, rounded corners and long shadows. This small paper surface will hold the live HTML text 'and dozens more' later, so do not render any text now.
+Output: /Users/user/.codex/generated_images/01a0786b-66cb-7e93-8ff3-c0ad38427955/exec-daf79b64-a561-4ab9-a39f-cb06966aa393.png
+
+GENERATION 2 (REJECTED: RGB BAKED CHECKERBOARD) EXACT PROMPT:
+Edit this transparent paper asset: increase only the paper strip's height so its white body is exactly 3.5 times as wide as it is tall. Existing paper is too skinny. Keep its width and horizontal center; enlarge height around its vertical center to approximately 450px. Keep the same warm-white thin paper surface, sharp almost straight edges, no text or decoration, extremely quiet edge shadow, and transparent background. Output actual RGBA PNG alpha as the input. No checkerboard or opaque background. Preserve the clean orthographic/front-on view and zero rotation. A single blank paper rectangle, 3.5:1 body proportions, with comfortable transparent surrounding padding.
+Reference: generation1 output
+Output: /Users/user/.codex/generated_images/01a0786b-66cb-7e93-8ff3-c0ad38427955/exec-67a54cbc-1832-4cfa-8492-e812c4c361db.png
+

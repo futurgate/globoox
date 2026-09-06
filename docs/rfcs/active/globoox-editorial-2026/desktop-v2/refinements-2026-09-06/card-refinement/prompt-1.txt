@@ -1,0 +1,19 @@
+Use case: ui-mockup / targeted design refinement
+Edit the attached Globoox language-section mockup. Same wide canvas, target1440x800, same ivory page, same left headline/description and same small upcoming-language note. Source image is the visual target to improve, not inspiration to redesign from scratch.
+Only refine the RIGHT-HAND CARD COMPOSITION. It is currently too tall, too evenly stair-stepped, too shadowy, with four unrelated botanical drawings. Make it feel like contemporary book-design ephemera: precise, quiet, fresh, not vintage.
+
+CARD GEOMETRY: four shallow horizontal cards, height64px (roughly20% less than source), subtly varied widths. Their approximate layout in a480x265px field: English x40 y0 width305; Spanish x92 y60 width340; Russian x10 y126 width318; French x137 y192 width289. Gently overlap corners, with small irregular offsets instead of a rigid equal staircase. Tiny rotations between -1.3 and +1 degree. All labels fully visible, horizontal enough to read instantly. Flat warm-white stock, radius4px, barely-visible contour, very short soft contact shadow (2px vertical,8px spread,5% dark), no floating slabs.
+
+TYPOGRAPHY: card names in consistent28px Newsreader-style serif, normal weight, pine #243d33, inset28px from left and vertically centered. Exact names once each, reading order English / Spanish / Russian / French.
+COLOR: cards English and Russian milk #fffdf8; Spanish and French faint grey-sage #edf0e8. Very subtle tonal difference, not pastel cards. Background #f7f5ed. No peach, blue or gold.
+
+DECOR: one coherent motif family instead of four different plants. Each card has one small stylized two-leaf stem, made from a single very thin sage contour with few details. Same line weight, same simplification, same visual size (~35px) across all four. Place it near the far right edge; in Spanish and French, crop a small part of one leaf at the outer edge, as printed artwork continuing beyond the card. No full botanical engraving, no hatching, no grass, no ginkgo fan, no flowers, no berries. Fine, modern, understated line illustration that does not compete with type. Nothing outside the card bounds.
+
+LEFT COPY must remain EXACTLY:
+"SUPPORTED LANGUAGES"
+"Read in English, Spanish, Russian, and French"
+"These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue."
+Preserve its existing typography, three-line heading, full paragraph and generous line-height. No added/rewritten wording.
+UPCOMING NOTE below the complete card group,40px separation, aligned to the card group's left inset:
+"soon" in small italic serif, then "German · Portuguese · Italian" and "Japanese · Korean · and dozens more" in14px muted sans.
+No other text, flags, controls, checkmarks, background object, paperclip, rendered book, texture, ornamental borders, antique paper, curls, cast-shadow drama or unrelated graphics. Preserve whitespace around both columns. Make the card group secondary to the heading in scale and equally composed in silhouette.

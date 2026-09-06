@@ -1,0 +1,239 @@
+"use client";
+
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
+import { Monitor, Pause, Play, Smartphone, Tablet } from "lucide-react";
+import styles from "./ProductRecording.module.css";
+
+type Device = "desktop" | "tablet" | "phone";
+type PlaybackIntent = "automatic" | "play" | "pause";
+
+const devices = ["desktop", "tablet", "phone"] as const;
+const recordings = {
+  desktop: {
+    label: "Desktop",
+    src: "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+    poster: "/images/device-posters/mac.webp",
+    width: 1280,
+    height: 820,
+    Icon: Monitor,
+  },
+  tablet: {
+    label: "Tablet",
+    src: "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+    poster: "/images/device-posters/ipad.webp",
+    width: 768,
+    height: 1170,
+    Icon: Tablet,
+  },
+  phone: {
+    label: "Phone",
+    src: "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+    poster: "/images/device-posters/iphone.webp",
+    width: 540,
+    height: 1170,
+    Icon: Smartphone,
+  },
+};
+
+function subscribeViewport(callback: () => void) {
+  const query = window.matchMedia("(max-width: 600px)");
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+function viewportDevice(): Device {
+  return window.matchMedia("(max-width: 600px)").matches ? "phone" : "desktop";
+}
+
+function serverDevice(): Device | null {
+  return null;
+}
+
+function subscribeMotion(callback: () => void) {
+  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+  query.addEventListener("change", callback);
+  return () => query.removeEventListener("change", callback);
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function serverReducedMotion() {
+  return true;
+}
+
+/** Real, existing product recordings. The surrounding frame adds no simulated UI. */
+export default function ProductRecording() {
+  const responsiveDevice = useSyncExternalStore(subscribeViewport, viewportDevice, serverDevice);
+  const reducedMotion = useSyncExternalStore(subscribeMotion, prefersReducedMotion, serverReducedMotion);
+  const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
+  const [playbackIntent, setPlaybackIntent] = useState<PlaybackIntent>("automatic");
+  const [playingDevice, setPlayingDevice] = useState<Device | null>(null);
+  const [failedDevice, setFailedDevice] = useState<Device | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const id = useId();
+  const device = selectedDevice ?? responsiveDevice ?? "desktop";
+  const recording = recordings[device];
+  const ready = responsiveDevice !== null;
+  const isPlaying = playingDevice === device;
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const stage = stageRef.current;
+    if (!ready || !video || !stage) return;
+
+    // Autoplay is controlled here rather than by the HTML attribute, so an
+    // offscreen recording and reduced-motion visitors never start unexpectedly.
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    const bounds = stage.getBoundingClientRect();
+    let onScreen = bounds.bottom > 0 && bounds.top < window.innerHeight;
+
+    const syncPlayback = () => {
+      const permitted = playbackIntent === "play" || (playbackIntent === "automatic" && !reducedMotion);
+      if (onScreen && document.visibilityState === "visible" && permitted) {
+        void video.play().catch(() => {
+          // Browser autoplay restrictions leave the poster and explicit Play
+          // control available; a rejected autoplay request is not a file error.
+        });
+      } else {
+        video.pause();
+      }
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      onScreen = entry.isIntersecting && entry.intersectionRatio >= 0.1;
+      syncPlayback();
+    }, { threshold: [0, 0.1] });
+
+    observer.observe(stage);
+    video.addEventListener("canplay", syncPlayback);
+    document.addEventListener("visibilitychange", syncPlayback);
+    syncPlayback();
+
+    return () => {
+      observer.disconnect();
+      video.removeEventListener("canplay", syncPlayback);
+      document.removeEventListener("visibilitychange", syncPlayback);
+      video.pause();
+    };
+  }, [device, playbackIntent, ready, reducedMotion]);
+
+  function chooseDevice(next: Device) {
+    if (next === device) return;
+    setSelectedDevice(next);
+    setPlayingDevice(null);
+    setFailedDevice(null);
+  }
+
+  function navigateTabs(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % devices.length;
+    else if (event.key === "ArrowLeft") next = (index + devices.length - 1) % devices.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = devices.length - 1;
+    else return;
+
+    event.preventDefault();
+    chooseDevice(devices[next]);
+    tabRefs.current[next]?.focus();
+  }
+
+  function togglePlayback() {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isPlaying) {
+      setPlaybackIntent("pause");
+      video.pause();
+    } else {
+      setPlaybackIntent("play");
+      // Calling play directly from the gesture also works when the browser
+      // blocks autoplay or when the visitor prefers reduced motion.
+      void video.play().catch(() => {});
+    }
+  }
+
+  return (
+    <figure className={styles.showcase} aria-label="Globoox product recordings">
+      <div
+        ref={stageRef}
+        className={styles.stage}
+        role="tabpanel"
+        tabIndex={0}
+        id={`${id}-panel`}
+        aria-labelledby={`${id}-${device}-tab`}
+      >
+        <div className={styles.frame} data-device={device}>
+          <video
+            key={device}
+            ref={videoRef}
+            id={`${id}-video`}
+            className={styles.video}
+            // No video file is requested before the client resolves the device.
+            // Only the selected recording exists in the DOM or preloads.
+            src={ready ? recording.src : undefined}
+            poster={recording.poster}
+            width={recording.width}
+            height={recording.height}
+            preload="metadata"
+            muted
+            loop
+            playsInline
+            aria-label={`${recording.label} recording of Globoox`}
+            aria-describedby={`${id}-description`}
+            onPlaying={() => setPlayingDevice(device)}
+            onPause={() => setPlayingDevice((current) => current === device ? null : current)}
+            onError={() => setFailedDevice(device)}
+          />
+        </div>
+      </div>
+
+      <figcaption className={styles.controls}>
+        <div className={styles.tabs} role="tablist" aria-label="Choose a device recording">
+          {devices.map((item, index) => {
+            const { Icon, label } = recordings[item];
+            return (
+              <button
+                key={item}
+                ref={(node) => { tabRefs.current[index] = node; }}
+                type="button"
+                role="tab"
+                id={`${id}-${item}-tab`}
+                aria-selected={device === item}
+                aria-controls={`${id}-panel`}
+                tabIndex={device === item ? 0 : -1}
+                onClick={() => chooseDevice(item)}
+                onKeyDown={(event) => navigateTabs(event, index)}
+              ><Icon size={15} strokeWidth={1.4} aria-hidden="true" /><span>{label}</span></button>
+            );
+          })}
+        </div>
+
+        <button
+          className={styles.playback}
+          type="button"
+          onClick={togglePlayback}
+          aria-controls={`${id}-video`}
+          aria-label={`${isPlaying ? "Pause" : "Play"} ${recording.label.toLowerCase()} recording`}
+        >
+          {isPlaying ? <Pause size={13} strokeWidth={1.6} aria-hidden="true" /> : <Play size={13} strokeWidth={1.6} aria-hidden="true" />}
+          <span>{isPlaying ? "Pause" : "Play"}</span>
+        </button>
+      </figcaption>
+
+      <p id={`${id}-description`} className={styles.srOnly}>
+        Silent screen recording of the actual Globoox app. A reader views Alexis de Tocqueville’s
+        Democracy in America in French, chooses a reading language, and views translated text.
+        The language menu offers English, Russian, Spanish and French. Use the device tabs to
+        view the desktop, tablet or phone recording. The Play and Pause button controls playback.
+      </p>
+      {failedDevice === device && <p className={styles.error} role="status">This recording could not load. Please choose another device.</p>}
+    </figure>
+  );
+}

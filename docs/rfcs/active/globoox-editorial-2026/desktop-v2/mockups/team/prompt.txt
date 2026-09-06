@@ -1,0 +1,51 @@
+Use case: ui-mockup.
+Create one realistic, production-quality desktop website TEAM SECTION mockup for Globoox, a literary ebook reading product. This is a standalone section in a long landing page, not a whole website and not a mobile design. Target canvas exactly 1440 pixels wide by 960 pixels high. Render a sharp, flat, front-on website screenshot, no browser chrome, no device mockup, no perspective, no annotations or numbered options.
+
+Input images are attached in this exact order:
+1. The existing Globoox visual-direction image: use ONLY its warm ivory paper, dark pine green refined serif typography, quiet sophistication, measured margins, thin rules and graceful natural-history atmosphere. Its headline, fabricated reading UI, button wording and replacement logo are NOT content sources for this section.
+2. Actual portrait of Tanya Melnikova. Use as the Tanya card portrait.
+3. Actual portrait of Anton Lomovski. Use as the Anton card portrait.
+4. Actual portrait of Kondrat Kondratenko. Use as the Kondrat card portrait.
+5. Actual portrait of Maksim Ilichev. Use as the Maksim card portrait.
+Preserve each actual person's identity, facial features, hairstyle, facial hair, age, clothing, natural skin tone and source background. Do not substitute stock people, redraw glamorous faces, convert to grayscale, tint faces green, or change expressions. These attached photographs are the content, not loose inspiration.
+
+Art direction: a warm, assured editorial team introduction. The portraits should feel like real people behind a considered reading product. Warm ivory background #f7f5ed, pine ink #20382f, subtly brighter ivory cards #fffdf9, restrained copper accents #986442, quiet gray-green body text with comfortable contrast. Newsreader-style refined literary serif for the heading and names, DM Sans-style clear sans serif for description, roles and links. Maximum two font families. No glossy effects, no broad gradients, no huge empty expanse, no tiny microtype.
+
+Composition:
+- Desktop content width 1200px, centered with 120px side margins.
+- Intro occupies the top portion, with a small plain sans serif label above the large left-aligned heading. Heading about 58px, regular elegant serif, balanced across two lines reading "Our greatest strength" then "is our team". Label about 12px, moderately tracked, never inside a pill.
+- Place the full original description at right, in a roughly 535px-wide block, 17px type and 1.6 line height, aligned thoughtfully with the heading. Give text breathable but deliberate space. All original description must be legible and complete.
+- Below the intro, show FOUR substantial, balanced founder cards in a TWO-COLUMN BY TWO-ROW grid. Reading order: top left Tanya, top right Anton, bottom left Kondrat, bottom right Maksim.
+- Each card approximately 588px wide and 230px tall, with 24px gutters. Subtle 1px neutral border and a very light restrained shadow; 8px corners. These are individual people, not cards nested inside a huge card.
+- Inside each card, a generously sized natural-color portrait on the left, about 170–180px wide and 190–200px tall. A clear face crop with shoulders and original background retained. All faces have consistent framing and equal visual status.
+- Name on the right at about 29–32px in the serif, role below in readable 14px sans serif. LinkedIn link sits below with a small recognizable LinkedIn icon, fine underline and exact original link text. Maintain a clear hierarchy and a strong, coherent relationship among photo, name, role and action.
+- Fine editorial rhythm, generous inner padding, no cramped names. No full-width photo gallery and no four narrow columns.
+- At most one very subtle etched botanical fragment at the far outer bottom-right margin, outside cards and content, carrying the visual reference's natural-history atmosphere. It must never cover a person, label or link. Do not repeat the hero's giant plants in this section.
+- End with calm lower margin. No navigation, CTA block, footer, testimonials, extra biography, badges, statistics, or social networks other than the existing LinkedIn links.
+
+Exact text content (copy verbatim, correct capitalization and apostrophes; do not shorten or paraphrase):
+Section label: "The People Behind Globoox"
+Heading: "Our greatest strength is our team"
+Description: "We gathered a designer passionate about digital book typography, experts with fundamental linguistic knowledge, and a software engineer with a deep understanding of AI. Together, we are building the future of digital reading, a platform that erases language barriers and unlocks access to the world’s greatest books."
+
+Card 1:
+"Tanya Melnikova"
+"Developer & CTO"
+"Tanya's LinkedIn"
+
+Card 2:
+"Anton Lomovski"
+"CEO"
+"Anton's LinkedIn"
+
+Card 3:
+"Kondrat Kondratenko"
+"Designer"
+"Kondrat's LinkedIn"
+
+Card 4:
+"Maksim Ilichev"
+"Linguistics Expert"
+"Maksim's LinkedIn"
+
+Prioritize real-face fidelity, readable exact copy, coherent typography and beautifully proportioned cards. This image is a layout reference for later implementation with the unchanged source photos and live HTML text. Do not label it as a concept or add any explanatory text inside the image.

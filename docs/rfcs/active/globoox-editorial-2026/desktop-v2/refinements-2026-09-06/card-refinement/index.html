@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Globoox — selected language-card refinement</title>
+<style>
+:root{color-scheme:light;--paper:#f7f5ed;--ink:#243d33;--muted:#697465;--line:#dedfd4}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 system-ui,sans-serif}main,header,footer{width:min(1280px,calc(100% - 64px));margin:auto}
+header{padding:26px 0;font-size:12px;display:flex;justify-content:space-between;gap:24px}a{color:inherit;text-underline-offset:4px}a:hover{color:#8b684e}
+a:focus-visible,summary:focus-visible{outline:2px solid #8b684e;outline-offset:5px}
+.intro{max-width:780px;padding:40px 0 34px}.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{font-family:Georgia,serif;font-weight:400;line-height:1.15}h1{font-size:48px;letter-spacing:-1.5px;margin:16px 0 18px}h2{font-size:30px}h3{font-size:23px}
+p{margin:0 0 16px;color:var(--muted)}figure{margin:0}.selected{border:1px solid var(--line);border-radius:5px;overflow:hidden;background:#fffdf8}
+img{display:block;width:100%;height:auto}figcaption{display:flex;justify-content:space-between;gap:24px;padding:16px 0;font-size:12px;color:var(--muted)}
+.links{display:flex;gap:24px;flex-wrap:wrap}.notes{max-width:780px;margin:24px 0 48px}
+details{margin:32px 0;padding:24px 0;border-top:1px solid var(--line)}summary{cursor:pointer;font-size:17px}
+.history{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;margin-top:30px}.history figure{min-width:0}.history img{border:1px solid var(--line);border-radius:4px}.history figcaption{display:block}.history p{margin:8px 0;font-size:13px}.source{margin-top:26px;max-width:950px}
+footer{padding:28px 0 38px;font-size:12px;color:var(--muted)}
+@media(max-width:720px){main,header,footer{width:calc(100% - 32px)}h1{font-size:36px}.history{grid-template-columns:1fr}figcaption,header{flex-wrap:wrap}.intro{padding-top:20px}}
+</style>
+</head>
+<body>
+<header><a href="../card-variations/index.html">← Previous five variants</a><span>Globoox / 06 September 2026</span></header>
+<main>
+<section class="intro"><div class="eyebrow">Selected after seven ImageGen iterations</div><h1>A quieter composition.<br>A clearer hierarchy.</h1><p>Compact contemporary language cards, deliberate overlaps and small botanical details printed at their edges. This is the art-directed visual target selected in the autonomous refinement loop.</p></section>
+<figure><a class="selected" href="selected.png"><img src="selected.png" width="1683" height="935" alt="Selected Globoox language-section mockup. Original heading and paragraph sit beside a compact staggered group of four pale cards, with clipped olive-leaf details and a quiet upcoming-language note."></a><figcaption><span>Selected: iteration 7 · generated mock · 1683 × 935 PNG</span><div class="links"><a href="selected.png">Full PNG ↗</a><a href="README.md">Decision and prompt chain ↗</a></div></figcaption></figure>
+<div class="notes"><p>The original words stay. The cards now have less visual mass than the starting point; one coherent leaf-drawing style replaces the separate botanical motifs. Earlier iterations tested paired cards, a tighter stack and a focused component study before the final optical-sizing pass.</p><p>The existing live paper-index baseline is preserved. This page presents a selected mockup, not an implemented change.</p></div>
+<details><summary>Compare with the starting variant</summary><figure class="source"><a href="../card-variations/variant-3.png"><img loading="lazy" src="../card-variations/variant-3.png" width="1681" height="936" alt="Starting variant 3, with larger cards and four separate botanical motifs."></a><figcaption><span>Starting point: variant 3 from the five-card exploration</span><a href="../card-variations/prompt-3.txt">Source prompt ↗</a></figcaption></figure></details>
+<details><summary>Open the iteration history and exact prompts</summary><div class="history">
+<figure><h3>1. Repeated seedlings</h3><a href="iteration-1.png"><img loading="lazy" src="iteration-1.png" alt="ImageGen refinement iteration 1: Repeated seedlings."></a><figcaption><p>Cleaner surfaces, but the repeated plant symbols and regular staircase felt generic.</p><div class="links"><a href="iteration-1.png">Full PNG ↗</a><a href="prompt-1.txt">Exact prompt ↗</a></div></figcaption></figure>
+<figure><h3>2. Separated pairs</h3><a href="iteration-2.png"><img loading="lazy" src="iteration-2.png" alt="ImageGen refinement iteration 2: Separated pairs."></a><figcaption><p>Better clipped art; the cards spread too far apart into two pairs.</p><div class="links"><a href="iteration-2.png">Full PNG ↗</a><a href="prompt-2.txt">Exact prompt ↗</a></div></figcaption></figure>
+<figure><h3>3. Over-compressed stack</h3><a href="iteration-3.png"><img loading="lazy" src="iteration-3.png" alt="ImageGen refinement iteration 3: Over-compressed stack."></a><figcaption><p>The silhouette became a straight software-like list and lost the paper-fragment character.</p><div class="links"><a href="iteration-3.png">Full PNG ↗</a><a href="prompt-3.txt">Exact prompt ↗</a></div></figcaption></figure>
+<figure><h3>4. Focused composition</h3><a href="iteration-4.png"><img loading="lazy" src="iteration-4.png" alt="ImageGen refinement iteration 4: Focused composition."></a><figcaption><p>The separate graphic recovered irregular overlaps and coherent edge artwork.</p><div class="links"><a href="iteration-4.png">Full PNG ↗</a><a href="prompt-4.txt">Exact prompt ↗</a></div></figcaption></figure>
+<figure><h3>5. Rejected regression</h3><a href="iteration-5.png"><img loading="lazy" src="iteration-5.png" alt="ImageGen refinement iteration 5: Rejected regression."></a><figcaption><p>The complete-section edit restored the old different plants. Rejected.</p><div class="links"><a href="iteration-5.png">Full PNG ↗</a><a href="prompt-5.txt">Exact prompt ↗</a></div></figcaption></figure>
+<figure><h3>6. Complete section</h3><a href="iteration-6.png"><img loading="lazy" src="iteration-6.png" alt="ImageGen refinement iteration 6: Complete section."></a><figcaption><p>Correct refined artwork, but the group was still too large relative to the text.</p><div class="links"><a href="iteration-6.png">Full PNG ↗</a><a href="prompt-6.txt">Exact prompt ↗</a></div></figcaption></figure>
+<figure><h3>7. Selected optical scale</h3><a href="iteration-7.png"><img loading="lazy" src="iteration-7.png" alt="ImageGen refinement iteration 7: Selected optical scale."></a><figcaption><p>A smaller supporting composition with readable labels and a quiet upcoming note.</p><div class="links"><a href="iteration-7.png">Full PNG ↗</a><a href="prompt-7.txt">Exact prompt ↗</a></div></figcaption></figure>
+</div></details>
+</main>
+<footer><div class="links"><a href="README.md">Full decision record</a><a href="../README.md">Design authority and preserved baseline</a></div></footer>
+</body></html>

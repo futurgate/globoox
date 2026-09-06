@@ -1,0 +1,157 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Check, ChevronDown, Menu, X, Maximize2 } from 'lucide-react';
+import { getLandingMessages } from '@/lib/landing-i18n';
+import ProductRecording from './ProductRecording';
+import s from './EditorialLanding.module.css';
+import posthog from 'posthog-js';
+import { readCookieConsent, saveCookieConsent, type CookieConsentChoice } from '@/lib/cookieConsent';
+
+const messages = getLandingMessages('en');
+const nav = messages.header.nav.map(({ label, href }) => [label, href]);
+const languages = [
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' },
+  { code: 'ru', name: 'Русский' },
+];
+const subscribe = () => () => {};
+
+function Wordmark() {
+  return <span className={s.wordmark}><Image src="/icon.svg" width={35} height={35} alt="" aria-hidden="true" /><span>Globoox</span></span>;
+}
+
+function SectionNote({ number, children }: { number: string; children: React.ReactNode }) {
+  return <div className={s.sectionNote}><span>{number}</span><span className={s.noteLine} /><span>{children}</span></div>;
+}
+
+// Reuse the existing consent contract with an isolated presentation. The shared
+// before_send gate recognizes this new route before client hydration.
+function PreviewConsent() {
+  const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
+  const [sessionChoice, setSessionChoice] = useState<CookieConsentChoice | null>(null);
+  const choice = sessionChoice ?? (hydrated ? readCookieConsent() : null);
+  useEffect(() => {
+    if (choice === 'accepted') posthog.opt_in_capturing();
+    else posthog.opt_out_capturing();
+  }, [choice]);
+  const choose = (value: CookieConsentChoice) => {
+    try { saveCookieConsent(value); } catch { /* Keep the choice for this session. */ }
+    setSessionChoice(value);
+  };
+  if (!hydrated || choice) return null;
+  return <aside className={s.consent} aria-label={messages.cookies.title}>
+    <div><strong>{messages.cookies.title}</strong><p>{messages.cookies.description}</p></div>
+    <div className={s.consentActions}>
+      <button type="button" onClick={() => choose('necessary')}>{messages.cookies.necessary}</button>
+      <button type="button" onClick={() => choose('accepted')}>{messages.cookies.accept} <Check size={13} /></button>
+    </div>
+  </aside>;
+}
+
+const walkthroughImages = [
+  { src: '/images/how-it-works/1.1.webp', position: 'uploadCrop', alt: 'Globoox upload dialog: choose an EPUB from your device' },
+  { src: '/images/how-it-works/2.1-en.webp', position: 'languageCrop', alt: 'Globoox language menu showing English, Russian, Spanish and French' },
+  { src: '/images/how-it-works/3-en-es.webp', position: 'readingCrop', alt: 'The Voyage of the Beagle translated into Spanish in the Globoox reader' },
+];
+
+function Walkthrough() {
+  const [active, setActive] = useState(0);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const show = (index: number) => { setActive(index); dialog.current?.showModal(); };
+  return <>
+    <div className={s.steps}>{walkthroughImages.map((image, index) => <article className={s.step} key={image.src}>
+      <button type="button" className={`${s.stepVisual} ${s.screenshotButton} ${s[image.position]}`} aria-label={`View screenshot: ${messages.usage.steps[index].description}`} onClick={() => show(index)}><div className={s.screenshotCrop}><Image src={image.src} alt={image.alt} width={788} height={1705} sizes="(max-width: 600px) 80vw, (max-width: 900px) 28vw, 300px" /></div><span className={s.expandScreenshot}><Maximize2 size={13} strokeWidth={1.3}/></span></button>
+      <div className={s.stepText}><span className={s.stepNumber}>{messages.usage.steps[index].step}</span><h3>{messages.usage.steps[index].description}</h3></div>
+    </article>)}</div>
+    <dialog className={s.screenshotDialog} ref={dialog} aria-label={messages.usage.steps[active].description} onClick={event => { if(event.target === event.currentTarget) dialog.current?.close(); }}>
+      <div className={s.dialogBody}><button type="button" className={s.dialogClose} aria-label="Close screenshot" onClick={() => dialog.current?.close()}><X size={20}/></button><Image src={walkthroughImages[active].src} alt={walkthroughImages[active].alt} width={788} height={1705} sizes="400px" /></div>
+    </dialog>
+  </>;
+}
+
+export default function EditorialLanding() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [comparison, setComparison] = useState(true);
+  const [selectedLanguage, setSelectedLanguage] = useState(1);
+  const language = languages[selectedLanguage];
+  const founders = messages.founders.items;
+  const { original, translated } = messages.quality.compare;
+
+  return <div className={s.page}>
+    <a href="#main-content" className={s.skipLink}>Skip to content</a>
+    <header className={s.header}>
+      <Link href="#hero" aria-label="Globoox home"><Wordmark /></Link>
+      <nav className={s.desktopNav} aria-label="Main navigation">{nav.map(([label, href]) => <a key={href} href={href}>{label}</a>)}</nav>
+      <div className={s.localeSelect}><label htmlFor="editorial-locale" className={s.srOnly}>{messages.header.languageLabel}</label><select id="editorial-locale" defaultValue="en" onChange={e => { window.location.href = `/${e.target.value}`; }}>{messages.header.languages.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}</select><ChevronDown size={12} aria-hidden="true" /></div>
+      <Link href="/my-books" className={s.headerCta}>{messages.header.openApp} <ArrowUpRight size={16} strokeWidth={1.5} /></Link>
+      <button type="button" className={s.menuButton} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} aria-controls="editorial-mobile-nav" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
+      {menuOpen && <nav id="editorial-mobile-nav" className={s.mobileNav} aria-label="Mobile navigation">{nav.map(([label, href]) => <a key={href} href={href} onClick={() => setMenuOpen(false)}>{label}<ArrowUpRight size={15} /></a>)}<Link href="/my-books">{messages.header.openApp} <ArrowRight size={15} /></Link><div className={s.mobileLocales} aria-label={messages.header.languageLabel}>{messages.header.languages.map(l => <Link key={l.value} href={`/${l.value}`} lang={l.value} aria-current={l.value === "en" ? "page" : undefined}>{l.label}</Link>)}</div></nav>}
+    </header>
+
+    <main id="main-content">
+      <section id="hero" className={s.hero} aria-labelledby="editorial-title">
+        <div className={s.heroCopy}>
+          
+          <h1 id="editorial-title">{messages.hero.title.replace("your native language.", "")}<em>your native language.</em></h1>
+          
+          <div className={s.heroActions}><Link className={s.primaryButton} href="/my-books">{messages.hero.button} <ArrowRight size={17} strokeWidth={1.5} /></Link><a className={s.textLink} href="#how-it-works">{messages.header.nav[0].label} <ArrowDown size={14} strokeWidth={1.5} /></a></div>
+        </div>
+        <div className={s.productStage}>
+          <Image className={s.botanical} src="/redesign/botanical-frame.png" alt="" aria-hidden="true" width={1536} height={1024} priority sizes="100vw" />
+          <div className={s.readerWrap}><ProductRecording /></div>
+        </div>
+        
+      </section>
+
+      <section id="how-it-works" className={`${s.section} ${s.how}`} aria-labelledby="how-title">
+        <div className={s.container}>
+          <div className={s.sectionTop}><div><SectionNote number="01">{messages.usage.label}</SectionNote><h2 id="how-title">{messages.usage.heading}</h2></div></div>
+          <Walkthrough />
+        </div>
+      </section>
+
+      <section id="quality" className={`${s.section} ${s.quality}`} aria-labelledby="quality-title">
+        <div className={s.container}>
+          <div className={s.qualityIntro}><div><SectionNote number="02">{messages.quality.label}</SectionNote><h2 id="quality-title">{messages.quality.heading}</h2></div><div className={s.qualityDescription}><p>{messages.quality.description}</p></div></div>
+          <div className={s.comparison}>
+            <div className={s.comparisonToolbar}><span><BookOpen size={17} strokeWidth={1.3} />{translated.title}<span className={s.byline}>— {translated.author}</span></span><button type="button" className={s.compareToggle} aria-pressed={comparison} onClick={() => setComparison(!comparison)}><span className={`${s.switch} ${comparison ? s.switchOn : ''}`} />Show original</button></div>
+            <div className={`${s.comparisonPages} ${!comparison ? s.translationAlone : ''}`}>
+              {comparison && <article lang={original.lang}><p className={s.excerptLabel}>{original.title}<span>{original.languageLabel}</span></p><span className={s.excerptAuthor}>{original.author}</span><h3>{original.heading}</h3><div className={s.excerptScroll} tabIndex={0} role="region" aria-label="Original comparison passage">{original.paragraphs.map(p => <p key={p} className={s.excerpt}>{p}</p>)}</div></article>}
+              <article lang={translated.lang}><p className={s.excerptLabel}>{translated.title}<span>{translated.languageLabel}</span></p><span className={s.excerptAuthor}>{translated.author}</span><h3>{translated.heading}</h3><div className={s.excerptScroll} tabIndex={0} role="region" aria-label="Translated comparison passage">{translated.paragraphs.map(p => <p key={p} className={s.excerpt}>{p}</p>)}</div></article>
+            </div>
+            <div className={s.comparisonFooter}><span>{original.languageLabel}<ArrowRight size={13}/>{translated.languageLabel}</span><span>{messages.quality.label}</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="languages" className={s.languages} aria-labelledby="languages-title">
+        <div className={s.container}>
+          <div className={s.languageLayout}>
+            <div className={s.languageCopy}><SectionNote number="03">{messages.supportedLanguages.label}</SectionNote><h2 id="languages-title">{messages.supportedLanguages.heading}</h2><p>{messages.supportedLanguages.description}</p></div>
+            <div className={s.languageSpecimen}><span className={s.languageCode}>{language.code.toUpperCase()} <span> / 04</span></span><div className={s.phrase} lang={language.code} aria-live="polite">{language.name}</div><span className={s.phraseTranslation}>{messages.supportedLanguages.current[[0,1,3,2][selectedLanguage]]}</span><div className={s.languageTabs} aria-label="Choose a language to preview">{languages.map((l, i) => <button key={l.code} type="button" aria-pressed={selectedLanguage === i} onClick={() => setSelectedLanguage(i)} lang={l.code}>{l.name}{selectedLanguage === i && <Check size={12} />}</button>)}</div></div>
+          </div>
+          <div className={s.futureLanguages}>{messages.supportedLanguages.future.map(l => <span key={l.label}>{l.label}{l.soon && <small>{messages.supportedLanguages.soonLabel}</small>}</span>)}</div>
+        </div>
+      </section>
+
+      <section id="team" className={`${s.section} ${s.team}`} aria-labelledby="team-title">
+        <div className={s.container}>
+          <div className={s.teamIntro}><div><SectionNote number="04">{messages.founders.label}</SectionNote><h2 id="team-title">{messages.founders.heading}</h2></div><p>{messages.founders.description}</p></div>
+          <div className={s.people}>{founders.map((person) => <article className={s.person} key={person.name}><a href={person.linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label={`${person.name} on LinkedIn`}><div className={s.portrait}>{person.photoSrc && <Image src={person.photoSrc} alt={person.name} fill sizes="(max-width: 560px) 43vw, (max-width: 900px) 40vw, 260px" />}<span className={s.profileArrow}><ArrowUpRight size={18} strokeWidth={1.4} /></span></div><h3>{person.name}</h3><p>{person.role}</p><span className={s.personLink}>{person.linkedinText} <ArrowUpRight size={12}/></span></a></article>)}</div>
+        </div>
+      </section>
+
+      <section id="start" className={s.start} aria-labelledby="start-title">
+        <div className={s.startInner}><Image src="/icon.svg" alt="" width={56} height={56} aria-hidden="true" /><h2 id="start-title">{messages.cta.heading}</h2><p>{messages.cta.description}</p><Link href="/my-books" className={s.primaryButton}>{messages.cta.button} <ArrowRight size={17} strokeWidth={1.5} /></Link></div>
+        <div className={s.floatingScripts} aria-hidden="true">{messages.cta.floatingScripts.map(t => <span key={t}>{t}</span>)}</div>
+      </section>
+    </main>
+
+    <footer className={s.footer}><div className={s.footerTop}><a href="#hero" aria-label="Globoox — back to top"><Wordmark /></a><p>{messages.footer.tagline}</p></div><div className={s.footerBottom}><span>{messages.footer.copyright}</span><a href="#hero" className={s.backTop}>Back to top <ArrowUpRight size={15} /></a></div></footer>
+    <PreviewConsent />
+  </div>;
+}

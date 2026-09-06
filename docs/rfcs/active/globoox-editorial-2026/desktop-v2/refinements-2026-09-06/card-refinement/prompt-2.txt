@@ -1,0 +1,24 @@
+Use case: ui-mockup / editorial composition refinement.
+The FIRST attached image is the approved direction to refine: fresh botanical language cards. The SECOND is a failed refinement: do NOT repeat its identical seedling logos or evenly spaced tall staircase.
+Produce one full Globoox language-section mockup, same wide aspect ratio, canvas1440x800. Preserve the FIRST image's LEFT COPY, font style, hierarchy, page color and exact wording. Only redesign the right card group and reposition its unchanged small upcoming note accordingly.
+
+The desired result is a compact, considered collection of contemporary printed cards. Arrange four cards in TWO SLIGHTLY OVERLAPPING PAIRS rather than a uniform staircase:
+Upper pair: English then Spanish, Spanish shifted90px to the right and45px down, overlapping English's bottom-right edge by15px.
+Lower pair: Russian then French, beginning120px below the first card; Russian extends25px farther left than English, French shifts125px right and45px down.
+Cards each60–66px high, widths275–325px. No upright square cards. Overall group width450px and height235px, appreciably SMALLER vertically than the first image. Center the group vertically beside the left headline/description, rather than stretching it from the section's top to bottom. All four text labels must remain fully visible. Tiny rotations under1.5degrees, not a fan or tossed pile. Four subtly different lengths, with deliberate asymmetry.
+Names "English", "Spanish", "Russian", "French" in identical28px normal Newsreader serif, pine #243d33, left inset24px. No repeated/native names.
+Surface: clean white milk and barely grey-sage stock, smooth fresh edges, radius4px, almost imperceptible short contact shadows; no vintage textures, yellowing, curls, heavy borders or gradients.
+
+BOTANICAL ART: use very small FRAGMENTS of one unified delicate olive-branch line drawing as printed corner details. No standalone seedling, no plant icon, no stems with two symmetrical leaves. On English, one cropped narrow leaf enters from the lower-right corner. On Spanish, a partial stem with one leaf enters from the right edge. On Russian, a small cropped pair of asymmetric leaves at the top-right. On French, one leaf tip at the lower-right. Each fragment covers at most32x28px, one consistent fine pale-sage stroke, no hatching, berries, flowers or complete plant illustration. Its purpose is to quietly finish the card edges, not to become an icon beside the language. Printed details clipped cleanly at card boundaries.
+
+Under the small right group,35px below, put "soon" in21px italic muted serif and then the two exact14px sans lines:
+"German · Portuguese · Italian"
+"Japanese · Korean · and dozens more"
+All future words fully visible. No rule or separate card.
+
+LEFT EXACT TEXT (do not rewrite):
+"SUPPORTED LANGUAGES"
+"Read in English, Spanish, Russian, and French"
+"These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue."
+No other text. No background object, fake product screen, button, flags, check marks, colored badges, paperclip, antique book or decorative frame.
+Art-direct for subtlety. The first source has charm but too much vertical mass; the second lost charm through repetition. Recover charm with asymmetry and tiny clipped linework, keeping the fresh precision of modern web design.

@@ -1,0 +1,28 @@
+Use case: ui-mockup.
+Asset type: a finished high-end desktop website section for Globoox, 1683 × 935, landscape.
+Input image 1 is the EDIT TARGET for the full section. Preserve its exact left column, wording, line breaks, type sizes, positions, near-white warm ivory background and dark pine / muted sage palette. Change only the graphic in the right column and the modest arrangement of its existing upcoming-language labels.
+
+Primary request: replace the four botanical-decorated slips with an elegant contemporary PAPER TREE bearing four mature language cards. Under the mature tree, very small seedlings quietly introduce the upcoming languages. It is a conceptual editorial illustration supporting the product copy, not an interactive control or a game.
+
+Art direction: refined flat cut-paper illustration for an adult literary software brand. A single very pale sage silhouette, one gently tapered trunk with four simple branching arms, emerges from beneath four clean ivory cards. The cards form a light asymmetrical canopy and conceal most of the pale branches. A few slender oval sage leaves, no more than 5, can peek out between cards. Tree is recognizably one tree yet extremely simplified, airy and graphic; no stippling, bark, realistic modeling or lush crown. Flat modern paper surfaces, almost invisible contact shadows, no thick bevels or folds. Think a well-cut paper illustration on a restrained contemporary book jacket. Do not imitate antique botanical illustration.
+
+Composition: Keep all illustration within roughly x930–1440, y200–620. Four narrow ivory cards, each around 230–265 px wide and 68–80 px tall, with subtly varied placement: English upper left, Spanish upper right a little lower, Russian middle left, French lower right. Cards are the visual focus of this tiny tree. They should not all share an aligned edge; overlaps are occasional and slight. All labels unobscured. A pale sage tapered trunk is visible only through central gaps and below the last card, narrowing into a small flat ground-free base around y610. No circular background, pot, grassy landscape, visible horizon or enclosing panel.
+
+Upcoming languages: at y650, an understated italic serif “soon”. Beneath it, two clean muted sans-serif lines, exactly as given below. Put 2 or 3 minuscule paper-cut young shoots near the left edge of this group, no taller than 25px, barely dark enough to notice. These quiet shoots establish growth rather than literal seed rows. Keep this group subordinate and highly legible. Do not turn the future words into additional large cards.
+
+All text must be exact:
+Left eyebrow: “SUPPORTED LANGUAGES”
+Left heading, three lines:
+“Read in English,”
+“Spanish, Russian,”
+“and French”
+Left paragraph:
+“These four languages are available now, with more
+European languages, along with Arabic, Chinese and
+Hindi, coming soon. Because every book deserves to
+reach every reader in their mother tongue.”
+Right current card labels: “English”, “Spanish”, “Russian”, “French”.
+Right upcoming label: “soon”.
+Two upcoming lines: “German · Portuguese · Italian” and “Japanese · Korean · and dozens more”.
+
+Constraints: preserve left column entirely. Clean modern serif lettering on cards, no leaf decoration printed ON the cards, no icons, no checkmarks, no invented copy. Delicate tonal difference between warm ivory cards and background. Nothing ornate, vintage, childish, cute, fantasy-like, photorealistic or glossy. No fruit, acorns, faces, flags, parchment, rough paper, deep shadows, 3D extrusion, golden swirls or fake UI. This is an understated landing-page illustration with substantial negative space.

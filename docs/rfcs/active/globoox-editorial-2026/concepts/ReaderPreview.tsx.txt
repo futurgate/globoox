@@ -1,0 +1,180 @@
+"use client";
+
+import { useId, useState } from "react";
+import Image from "next/image";
+import { ArrowLeftRight, BookOpen, Bookmark, ChevronDown, Moon, Sun } from "lucide-react";
+import styles from "./ReaderPreview.module.css";
+
+type Language = "es" | "fr" | "ru";
+
+// Public-domain original: Charles Darwin, The Voyage of the Beagle, chapter I.
+// https://www.gutenberg.org/cache/epub/944/pg944.html
+// The translations below were written for this interactive design demonstration.
+// They are fixed samples, not a live translation service or a quality benchmark.
+const original = {
+  chapter: "Chapter I",
+  title: "St. Jago — Cape de Verd",
+  paragraphs: [
+    "After having been twice driven back by heavy southwestern gales, Her Majesty’s ship Beagle, a ten-gun brig, under the command of Captain Fitz Roy, R. N., sailed from Devonport on the 27th of December, 1831.",
+    "The object of the expedition was to complete the survey of Patagonia and Tierra del Fuego, commenced under Captain King in 1826 to 1830,—to survey the shores of Chile, Peru, and of some islands in the Pacific—and to carry a chain of chronometrical measurements round the World.",
+  ],
+};
+
+const translations: Record<Language, { name: string; chapter: string; title: string; paragraphs: string[] }> = {
+  es: {
+    name: "Español",
+    chapter: "Capítulo I",
+    title: "Santiago — Cabo Verde",
+    paragraphs: [
+      "Tras haber sido obligado a regresar dos veces por fuertes vendavales del sudoeste, el Beagle, un bergantín de diez cañones de Su Majestad, al mando del capitán Fitz Roy, de la Marina Real, zarpó de Devonport el 27 de diciembre de 1831.",
+      "El propósito de la expedición era completar el reconocimiento de la Patagonia y Tierra del Fuego, iniciado bajo el mando del capitán King entre 1826 y 1830; explorar las costas de Chile, Perú y algunas islas del Pacífico, y realizar una serie de mediciones cronométricas alrededor del mundo.",
+    ],
+  },
+  fr: {
+    name: "Français",
+    chapter: "Chapitre I",
+    title: "Santiago — Cap-Vert",
+    paragraphs: [
+      "Après avoir été repoussé deux fois par de violentes tempêtes du sud-ouest, le Beagle, un brick de dix canons de Sa Majesté, commandé par le capitaine Fitz Roy, de la Marine royale, quitta Devonport le 27 décembre 1831.",
+      "L’expédition avait pour but d’achever le relevé de la Patagonie et de la Terre de Feu, commencé sous le capitaine King entre 1826 et 1830, d’explorer les côtes du Chili, du Pérou et de quelques îles du Pacifique, et d’effectuer une série de mesures chronométriques autour du monde.",
+    ],
+  },
+  ru: {
+    name: "Русский",
+    chapter: "Глава I",
+    title: "Сантьягу — Кабо-Верде",
+    paragraphs: [
+      "Дважды вынужденный вернуться из-за сильных юго-западных штормов, корабль Его Величества «Бигль», десятипушечный бриг под командованием капитана Королевского флота Фицроя, вышел из Девонпорта 27 декабря 1831 года.",
+      "Целью экспедиции было завершить съёмку Патагонии и Огненной Земли, начатую под руководством капитана Кинга в 1826–1830 годах, исследовать берега Чили, Перу и некоторых островов Тихого океана, а также провести ряд хронометрических измерений вокруг света.",
+    ],
+  },
+};
+
+/** Matching first passages for the landing page's translation comparison. */
+export const readingSamples: Record<"en" | Language, string> = {
+  en: original.paragraphs[0],
+  es: translations.es.paragraphs[0],
+  fr: translations.fr.paragraphs[0],
+  ru: translations.ru.paragraphs[0],
+};
+
+const sizeNames = ["regular", "large", "largest"];
+
+export default function ReaderPreview() {
+  const [language, setLanguage] = useState<Language>("es");
+  const [bookmarked, setBookmarked] = useState(false);
+  const [dark, setDark] = useState(false);
+  const [textSize, setTextSize] = useState(0);
+  const [mobilePage, setMobilePage] = useState<"original" | "translation">("translation");
+  const id = useId();
+  const translation = translations[language];
+
+  return (
+    <div
+      className={`${styles.preview} ${dark ? styles.dark : ""}`}
+      data-text-size={textSize}
+      aria-label="Interactive bilingual reader preview"
+    >
+      <aside className={styles.sidebar} aria-label="Current book">
+        <div className={styles.brand}><Image src="/icon.svg" alt="" width={23} height={23} /><span>Globoox</span></div>
+        <div className={styles.readingLabel}><BookOpen size={17} strokeWidth={1.4} /> Reading</div>
+        <div className={styles.currentBook}>
+          <span className={styles.sidebarEyebrow}>ON YOUR SHELF</span>
+          {/* Bespoke ImageGen cover, 2026-09-05; a concept cover, not a published edition. */}
+          <Image
+            className={styles.bookCover}
+            src="/redesign/beagle-cover.png"
+            alt=""
+            width={1023}
+            height={1537}
+            sizes="82px"
+          />
+          <span className={styles.sidebarBookTitle}>The Voyage<br />of the Beagle</span>
+          <span className={styles.sidebarAuthor}>Charles Darwin</span>
+        </div>
+        <span className={styles.sidebarFooter}>A world between<br />the pages.</span>
+      </aside>
+
+      <div className={styles.reader}>
+        <div className={styles.toolbar}>
+          <div className={styles.bookHeading}>
+            <span>The Voyage of the Beagle</span>
+            <span>Charles Darwin</span>
+          </div>
+          <div className={styles.tools}>
+            <button
+              type="button"
+              className={styles.iconButton}
+              aria-label={`Text size: ${sizeNames[textSize]}. Change text size`}
+              title={`Text size: ${sizeNames[textSize]}`}
+              onClick={() => setTextSize((value) => (value + 1) % 3)}
+            ><span className={styles.typeIcon}>Aa</span></button>
+            <button
+              type="button"
+              className={styles.iconButton}
+              aria-label={dark ? "Use light reading theme" : "Use dark reading theme"}
+              aria-pressed={dark}
+              title={dark ? "Light reading theme" : "Dark reading theme"}
+              onClick={() => setDark((value) => !value)}
+            >{dark ? <Sun size={18} strokeWidth={1.4} /> : <Moon size={18} strokeWidth={1.4} />}</button>
+            <button
+              type="button"
+              className={`${styles.iconButton} ${bookmarked ? styles.bookmarked : ""}`}
+              aria-label={bookmarked ? "Remove bookmark" : "Bookmark this page"}
+              aria-pressed={bookmarked}
+              title={bookmarked ? "Remove bookmark" : "Bookmark this page"}
+              onClick={() => setBookmarked((value) => !value)}
+            ><Bookmark size={18} strokeWidth={1.4} fill={bookmarked ? "currentColor" : "none"} /></button>
+          </div>
+        </div>
+
+        <div className={styles.mobileSwitch} aria-label="Choose reading view">
+          <button type="button" aria-pressed={mobilePage === "original"} aria-controls={`${id}-original`} onClick={() => setMobilePage("original")}>Original</button>
+          <button type="button" aria-pressed={mobilePage === "translation"} aria-controls={`${id}-translation`} onClick={() => setMobilePage("translation")}>Translation</button>
+        </div>
+
+        <div className={styles.pages} data-mobile-page={mobilePage}>
+          <article className={`${styles.page} ${styles.originalPage}`} id={`${id}-original`} lang="en" aria-label="Original English excerpt">
+            <div className={styles.languageHeader}><span>Original <span className={styles.languageName}>English</span></span><span className={styles.languageCode}>EN</span></div>
+            <div className={styles.readingText} tabIndex={0} role="region" aria-label="Original passage, scroll to read">
+              <span className={styles.chapter}>{original.chapter}</span>
+              <h3>{original.title}</h3>
+              {original.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+          </article>
+
+          <div className={styles.bridge} aria-hidden="true"><ArrowLeftRight size={16} strokeWidth={1.25} /></div>
+
+          <article className={`${styles.page} ${styles.translatedPage}`} id={`${id}-translation`} lang={language} aria-label={`${translation.name} translation excerpt`}>
+            <div className={styles.languageHeader}>
+              <label className={styles.languageControl}>
+                <span lang="en">Translation</span>
+                <span className={styles.selectWrap}>
+                  <select value={language} aria-label="Translation language" lang="en" onChange={(event) => setLanguage(event.target.value as Language)}>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="ru">Русский</option>
+                  </select>
+                  <ChevronDown size={12} strokeWidth={1.5} aria-hidden="true" />
+                </span>
+              </label>
+              <span className={styles.languageCode}>{language.toUpperCase()}</span>
+            </div>
+            <div className={styles.readingText} tabIndex={0} role="region" aria-label="Translated passage, scroll to read">
+              <span className={styles.chapter}>{translation.chapter}</span>
+              <h3>{translation.title}</h3>
+              {translation.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+          </article>
+        </div>
+
+        <div className={styles.readerFooter}>
+          <span className={styles.chapterFooter}><BookOpen size={14} strokeWidth={1.4} /> Chapter I</span>
+          <div className={styles.progress} role="progressbar" aria-label="Sample reading progress" aria-valuenow={12} aria-valuemin={0} aria-valuemax={100}><span /></div>
+          <span className={styles.progressLabel}>12<span className={styles.percent}>%</span></span>
+          <span className={styles.srOnly} role="status" aria-live="polite">{translation.name} translation. {bookmarked ? "Page bookmarked. " : ""}Text size {sizeNames[textSize]}. {dark ? "Dark" : "Light"} theme.</span>
+        </div>
+      </div>
+    </div>
+  );
+}

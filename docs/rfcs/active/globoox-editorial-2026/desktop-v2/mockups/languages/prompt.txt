@@ -1,0 +1,31 @@
+Use case: ui-mockup.
+Asset type: a high-fidelity desktop web design mockup for the LANGUAGES section of the existing Globoox landing page, target canvas 1440 x 760 pixels. This is a section screenshot, not a full landing page, not a moodboard and not a poster.
+
+Input image: /Users/user/Desktop/download.png is a STYLE REFERENCE ONLY: borrow its warm cream paper, elegant pine serif typography, restrained sage tones, careful spacing and refined literary mood. Do not reproduce its hero, book icon, invented product screen, navigation, CTA, or invented marketing copy.
+
+Design a compact, calm language availability section that sits seamlessly in a continuous cream landing page. Flat warm paper #f7f5ed across the entire canvas, pine ink #20382f, muted sage #8a967a, tiny warm copper accent only if needed. The typography should resemble Newsreader for heading/native language names and DM Sans for body, small labels and metadata. Crisp and realistic as a front-end website screenshot, with highly legible accurate text. No image grain that damages readability.
+
+Composition: 1160px content width centered with 140px left/right margins. An elegant asymmetric two-column composition: left column around 550px holds the exact small section label, exact heading in a measured 50px serif over about three lines, and full exact description in 18px sans with 28px line height. Right column around 470px displays all four native language names together as a readable static availability LIST: four aligned generously spaced rows, native name around 34px serif at left, its original English-language label at right in small sans. English appears only once in its row. Tiny sage dots may indicate availability. No tabs, no buttons, no selected state, no fake interaction, no oversized decorative lettering. All four have equal availability. The list must feel like the index of an elegant book, not a card grid or dashboard.
+
+Below the two columns, place the complete future-language list as a quiet compact inline typographic row or two lines: each language has a small subdued 'soon' immediately beside it; the final 'and dozens more' has no soon badge. No pill borders or card backgrounds. Keep this list visually part of the same section. Use whitespace and alignment for hierarchy; no horizontal dividers, no enclosing panels or boxes, no unnecessary vertical rules. Height should feel compact and finished, with only intentional top/bottom breathing room. No navigation, no footer, no app screen, no product claims beyond exact source text. Do not add extra labels such as 'Available now' or 'Coming soon' because current/future status is already stated.
+
+Text MUST be rendered verbatim, without omissions, rewrites, corrections or new copy:
+Section label: "Supported Languages"
+Heading: "Read in English, Spanish, Russian, and French"
+Description: "These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue."
+
+Static available language rows:
+"English"
+"Español" paired with "Spanish"
+"Русский" paired with "Russian"
+"Français" paired with "French"
+
+Future-language labels in order:
+"German" "soon"
+"Portuguese" "soon"
+"Italian" "soon"
+"Japanese" "soon"
+"Korean" "soon"
+"and dozens more"
+
+Required polish: elegant but useful supporting typography, excellent optical alignment, calm spacing, readable body, equal availability hierarchy, all original words preserved. This is an availability section that supports a real reading/translation product, not a typography showcase. No large botanical illustration here: restraint lets the botanical hero remain special. Output one PNG mockup.

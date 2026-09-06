@@ -1,0 +1,34 @@
+Tree asset provenance
+Built-in image_gen used; output copied unchanged. No raster editing.
+Selected source: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-9f3572b8-3599-4e3d-8271-48a51fbee2b9.png
+Production: public/redesign/language-garden/tree.png
+Dimensions: 1182 x 1330, RGBA, alpha extrema 0..255.
+Reference: docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-06/language-garden/implementation/target.png
+
+Selected prompt (attempt 3):
+Extract only the delicate tall tree from the right side of this reference as a transparent-background PNG cutout. Remove all cards, all text, all seedlings and the entire cream background. Reconstruct branches naturally behind where the cards used to be. Match the thin graceful grey-brown stem and sparse sage narrow leaves, clean hand-painted botanical style. One entire tree, edge breathing room, portrait 1024x1152. True transparent alpha background for website compositing; only the tree should be visible. No layout, no cards, no writing, no ground, no paper, no shadows. Preserve the slender organic asymmetric four-branch composition.
+
+Attempt 1 prompt:
+Use case: background-extraction.
+Asset type: transparent botanical PNG for an editorial reading-app landing page, shown about 410 x 460 CSS pixels.
+Input image 1 is the visual reference. Recreate ONLY its tall mature tree on the right, without the four language cards. Remove every card and every word, all page typography, all background, and all small seedlings below. Reconstruct the naturally curved branches where the cards obscured them.
+Subject: one delicate sparse young olive-like tree, slender naturally bending taupe-sage trunk, asymmetric graceful branches, rare small narrow muted sage leaves rendered in very restrained hand-painted ink/watercolor. Follow the reference's airy proportions and organic quiet line quality, not a geometric branching diagram.
+Composition: standalone portrait canvas 1024 x 1152 pixels. Entire tree centered with 10 percent breathing space on all edges. Narrow curved trunk rooted near bottom center, four main branching areas opening upper left, upper right, lower left, lower right where HTML cards will later be placed. No card shapes in this asset. Not bushy. Fine visible branches, no dark thick trunk.
+Background: GENUINELY TRANSPARENT PNG alpha, with nothing behind or below the tree. Transparent empty pixels everywhere except tree ink. No ivory rectangle, no white background, no colored backdrop, no checkerboard image, no shadow, no ground, no soil, no pot.
+Palette: soft desaturated sage leaves and fine neutral warm grey-brown stems. Fresh contemporary editorial botanical illustration, not aged vintage engraving, not decorative clipart.
+Text: none. No letters, no labels, no typography. Only the tree.
+Output: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-0789d98f-7990-4158-ac15-2a6a68c0ecf0.png
+Rejected: RGB drawn checkerboard.
+
+Attempt 2 correction prompt:
+Use case: background-extraction. Edit the attached tree asset. Keep the tree itself visually unchanged: thin warm taupe curved trunk, sparse sage leaves, natural asymmetric branches, portrait proportions. REMOVE THE DRAWN WHITE AND GREY CHECKERBOARD COMPLETELY. It is an unwanted background, not part of the illustration. Deliver a PNG with an ACTUAL ALPHA CHANNEL: every background pixel must have alpha 0. The asset will be placed over arbitrary website backgrounds and must genuinely composite transparently. No white fill, no grey fill, no paper texture, no checkerboard, no replacement background. ONLY the tree pixels remain visible. Do not add, remove or redesign branches/leaves. Do not add cards, text, seedlings, soil, shadows or any other objects. Keep full tree uncropped with edge space. Genuinely transparent RGBA output required.
+Output: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-4167dc5e-49e9-4a6e-91a7-41245e48eb6d.png
+Rejected: RGB drawn checkerboard.
+
+Attempt 4 correction prompt:
+Clean this transparent botanical tree PNG. Keep the tree shape, branch positions, fine warm grey-brown trunk and softly painted sage leaves unchanged. Remove all neon yellow, red, green colored specks/fringing around the edges of the leaves and branches, replacing those fringe pixels with clean transparency. The only remaining opaque colors should be the quiet sage leaves and grey-brown tree. Clean natural antialiased edges. Preserve actual transparent alpha background, no backdrop. No black, white, paper or checkerboard rectangle. Do not add anything. Output transparent PNG.
+Output: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-b9616ec3-c2e5-48be-9894-3da4d9834ff7.png
+Rejected: reverted to RGB drawn checkerboard.
+
+Visual/alpha note: Selected attempt3 is a graceful sparse tree with usable asymmetric branch positions and no cards or text. Transparent background is actual RGBA. Black-background image viewer exaggerates colored fringe pixels; pixel inspection found 8771 saturated fringe pixels but ALL had alpha <=16/255 (none at alpha>16). Check actual warm-background compositing at final CSS size. No scripts modified pixels; Pillow only read metadata/statistics.
+

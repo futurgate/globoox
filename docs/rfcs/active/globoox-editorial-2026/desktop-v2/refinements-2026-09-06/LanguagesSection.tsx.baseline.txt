@@ -1,0 +1,35 @@
+import { getLandingMessages } from '@/lib/landing-i18n';
+import s from './LanguagesSection.module.css';
+
+const { supportedLanguages: messages } = getLandingMessages('en');
+
+/** Static language availability; no simulated reader UI or generated illustration. */
+export default function LanguagesSection() {
+  return (
+    <section id="languages" className={s.section} aria-labelledby="languages-title">
+      <div className={s.layout}>
+        <div className={s.copy}>
+          <p className={s.label}>{messages.label}</p>
+          <h2 id="languages-title" className={s.heading}>{messages.heading}</h2>
+          <p className={s.description}>{messages.description}</p>
+        </div>
+        <div className={s.index}>
+          <ul className={s.currentList} aria-label="Available languages">
+            {messages.current.map(language => (
+              <li key={language}>
+                <span className={s.check} aria-hidden="true" />
+                {language}
+              </li>
+            ))}
+          </ul>
+          <div className={s.upcoming}>
+            <p id="upcoming-languages-title" className={s.soon}>{messages.soonLabel}</p>
+            <ul className={s.futureList} aria-labelledby="upcoming-languages-title">
+              {messages.future.map(language => <li key={language.label}>{language.label}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

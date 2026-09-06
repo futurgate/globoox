@@ -1,0 +1,31 @@
+Use case: ui-mockup.
+Create one realistic, production-quality desktop website mockup of ONLY the CLOSING CALL TO ACTION followed immediately by the FOOTER of Globoox's literary ebook landing page. Target desktop canvas 1440 pixels wide by 900 pixels high. A flat front-on website screenshot, no browser chrome, no perspective, no annotations, no labels naming the mockup. This is the page ending, not a hero and not a complete landing page.
+
+Two input images are attached:
+1. The user's supplied Globoox visual-direction image. Use ONLY its warm ivory paper, deep pine ink, elegant literary serif, calm typography, purposeful empty space and natural-history botanical framing. Do not copy its invented headline, secondary copy, UI screen, navigation, device, or replacement outlined book logo.
+2. The existing actual Globoox app icon, a dark forest rounded square containing a cream open book with A and 文 and two sparkles. Preserve this original icon exactly: shape, dark-square silhouette, book lettering, sparkles, colors and proportions. Do not draw a replacement logo, outline icon or monogram. The final coded page will use the unchanged original icon asset.
+
+Art direction:
+A confident, quiet ending on one continuous cream paper field #f7f5ed. Warm, tasteful, inviting, and readable. The call to action is the clear visual focal point, with the footer settling below it. Avoid a separate tinted box, abrupt dark footer, generic panel, decorative divider, heavy horizontal rules, artificial gradients, floating badges, meaningless scattered glyphs, or ornamental filler.
+Typography: refined Newsreader-style serif for the CTA heading and the Globoox wordmark; clear DM Sans-style sans serif for supporting copy, button, footer statement, and copyright. Maximum two typefaces. Pine green #20382f primary text, comfortable contrast muted gray-green #606c5c for secondary text, button in pine with warm ivory text. No tiny text.
+
+Composition:
+- Use a 1200px-wide desktop content alignment with 120px outer margins.
+- Upper CTA region: center the original app icon at about 56px square around y=108. Below it place the exact heading, generously sized around 72px, regular literary serif, in a single beautifully balanced line. This heading should be inviting rather than shouting, with sophisticated letter spacing and plentiful space around it.
+- Full exact supporting sentence below the heading, 18–19px sans serif, one line with a calm line height and deliberate gap.
+- One substantial centered primary button below: around 290px wide and 58px high, dark pine fill, 6px radius, legible 16px label, and one small right-pointing arrow. The label must be exactly "Upload your first book". No secondary CTA, trial claim, email field, sign-up badge or new offer.
+- At the far outer margins, a restrained asymmetrical botanical echo from the reference: a modest fern fragment on the lower left and a fine seed stem on the right. They should occupy the side margins and guide the eye toward the CTA without touching the heading, button, icon or footer. Much quieter and smaller than the reference hero's plants; desaturated natural olive and warm copper etching detail. Do not add scattered floating words or random objects.
+- The CTA composition ends naturally with breathing space. Transition to the footer through spacing alone, on the same continuous ivory surface. Do not insert a horizontal separator.
+- Footer at the bottom: a strong identity group on the left, aligned x=120, with the original app icon at about 36px followed by the exact word "Globoox" in a substantial 40px literary serif. Place the full original footer statement to the right in a roughly 560px-wide block, readable 16–17px sans serif and 1.7 line height, not tiny legal text. Align these two groups intentionally.
+- Copyright "Globoox © 2026" below the left identity group, readable 13px sans serif. Give the footer a generous bottom margin and make it feel composed, not like content left floating at the bottom.
+- Show no new links, labels, social icons, navigation, statistics, testimonials, feature claims, product screenshots or pricing.
+
+Exact content (copy verbatim; do not shorten, rewrite, omit, or add marketing text):
+CTA heading: "Start reading for free"
+CTA description: "Upload your EPUB and enjoy it in your language."
+CTA button: "Upload your first book"
+Footer wordmark: "Globoox"
+Footer statement: "We are building the world's first global digital ebook store where any reader can discover, buy, read, and listen to any book in their native language."
+Copyright: "Globoox © 2026"
+
+Preserve the original brand icon and all exact strings. The mock should look like a finished, precisely composed section of an exceptional product landing page: paper, typography, whitespace, original icon, one strong action, and meaningful botanical echoes. Never make the illustration or typography compete with the action. This image is a layout reference; final implementation will use live HTML text and the original icon.

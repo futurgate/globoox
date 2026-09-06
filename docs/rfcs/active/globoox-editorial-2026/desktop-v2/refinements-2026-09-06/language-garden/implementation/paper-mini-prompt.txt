@@ -1,0 +1,30 @@
+BUILT-IN IMAGEGEN — MINI PAPER SURFACE
+
+Selected output (third generation):
+/Users/user/.codex/generated_images/01a0786b-66cb-7e93-8ff3-c0ad38427955/exec-25392fd5-9e49-4cf0-bfd6-58c5b5a2d79e.png
+Final asset: public/redesign/language-garden/paper-mini.png
+No raster editing was used. Copied original output unchanged.
+Inspected visually: fresh blank warm-white paper, thin straight rectangular shape with slight edge character; quiet shadow, no words/plants. Generation changed requested ratio; actual canvas 1746×901, paper approx x75..1670 y82..795 (2.24:1). Actual RGBA; alpha extrema 0..254. Original target is a composition/style reference only.
+
+SELECTED GENERATION EXACT PROMPT:
+Create an isolated blank warm-white horizontal paper slip on transparent background. Output a PNG with actual alpha-channel transparency around the paper, suitable for direct use as a website overlay. No checkerboard pattern, no colored background, no floor. One clean contemporary rectangle of thin white paper, square corners, very faint smooth paper grain, no text or decoration. Orthographic front view without perspective. No rotation. Very subtle short soft shadow immediately below the paper edge only. Wide landscape canvas 1984×800 pixels. Paper at x70..1910 and y66..714. Paper color #fffdf7. All exterior space transparent. Avoid aged parchment, stains, yellow paper, tears, curls, rounded corners, heavy shadows. The task is asset generation with transparent alpha, not a mockup scene or displayed transparency checkerboard.
+
+GENERATION 1 (REJECTED: RGB BAKED CHECKERBOARD) EXACT PROMPT:
+Use case: product-mockup
+Asset type: transparent PNG blank miniature paper-card surface for a contemporary literary landing page. Live HTML text will be placed on top later.
+Input image 1 is a STYLE reference only: match the clean warm-white miniature upcoming-language slips near the bottom right, but produce just ONE blank isolated paper slip.
+Primary request: a single pristine thin warm-white paper rectangle, almost perfectly straight sharp corners and extremely fine natural paper grain. A tiny natural edge variation and an almost invisible short contact shadow supply tactility without aged or rustic styling.
+Composition: orthographic/frontal view, horizontal, absolutely no perspective and no rotation. Intended canvas 960×384. Place paper within x35..925 and y32..338, paper width about 890 and height 306, ratio 2.9:1. Centre of paper completely clear and visually even for crisp text overlay. Comfortable transparent padding around all four edges and shadow.
+Color: clean contemporary warm-white #fffdf7 with very subtle neutral texture, matching referenced small slips. At final 112×40 CSS pixels this must look delicate and crisp.
+Background: GENUINELY TRANSPARENT PNG ALPHA outside the paper and its delicate shadow. No background color or background surface; no checkerboard pixels in the artwork. It is an isolated cutout asset.
+No words, letters, numerals, typography, plants, twigs, symbols or other objects.
+Avoid: vintage, stains, parchment, sepia, yellow paper, cream discoloration, torn/deckled edges, curls, folded corners, thick card, rounded pill corners, long shadows, dramatic lighting, dark outlines, bevels, 3D buttons, gradients, visible wrinkles. Paper must be flat, fresh, and almost understated.
+Reference: docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-06/language-garden/implementation/target.png
+Output: /Users/user/.codex/generated_images/01a0786b-66cb-7e93-8ff3-c0ad38427955/exec-c802b4db-2347-48dc-b063-29a05a495fff.png
+
+GENERATION 2 (REJECTED: RGB BAKED CHECKERBOARD) EXACT PROMPT:
+Use case: background-extraction.
+Edit this exact miniature paper surface asset. Preserve the existing paper rectangle, dimensions, shape, fine white paper grain, sharp corners and extremely faint short shadow exactly. The current checkerboard is baked into the RGB image. REMOVE the entire checkerboard and replace it with genuine PNG ALPHA transparency. Required output: RGBA PNG with alpha zero in all empty exterior pixels and fractional alpha only for the delicate shadow; actual transparency, not a rendered checkerboard or white background. Do not recreate any checkerboard squares. Keep the single blank rectangular paper intact and opaque. No new content. No words, letters, botanical elements. This is a production cutout to overlay on an arbitrary website background, not a preview of transparency.
+Reference: generation 1 output
+Output: /Users/user/.codex/generated_images/01a0786b-66cb-7e93-8ff3-c0ad38427955/exec-73513a24-9f92-4314-aaef-a9637bb78a56.png
+

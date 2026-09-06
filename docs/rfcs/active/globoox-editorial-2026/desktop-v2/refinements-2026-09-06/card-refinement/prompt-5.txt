@@ -1,0 +1,16 @@
+Use case: ui-mockup / precise compositing and final art direction.
+Create ONE complete desktop Globoox language-section mockup, canvas1440x800, same wide aspect ratio and visual language as reference1.
+Reference1: SOURCE for the left-column typography, exact words, warm-ivory background and overall two-column section. Do NOT copy its old right-hand cards.
+Reference2: SOURCE for the refined right-hand card composition. Preserve its card proportions, irregular stepped alignment, subtle rotations, tiny clipped leaf linework and readable labels. It is an isolated composition with blank outer margins: fit the ACTUAL CARDS and upcoming note, not the whole image canvas.
+
+LEFT column at aboutx140, width505:
+Small11px tracked uppercase "SUPPORTED LANGUAGES".
+Newsreader-like normal serif58px heading exactly "Read in English, Spanish, Russian, and French" on three balanced lines.
+Below25px gap, full17px DM Sans-like paragraph with1.75line-height exactly "These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue."
+Original words must be verbatim; no omissions, invented supporting copy or changed punctuation.
+
+RIGHT column: actual card group from reference2 occupies approx500–535px width and310px height, centered vertically opposite the heading/paragraph. Four contemporary shallow cards reading "English", "Spanish", "Russian", "French" once each, in top-to-bottom order, 28px serif labels at equal size and weight. Keep an irregular alternating offset so it feels composed, not a menu of aligned input fields or2x2 grid. Leave substantial whitespace between the left copy and cards. No language name should be obscured.
+Refine reference2 only in these small ways: make the card shadows30% weaker and shorter, and make all botanical linework20% smaller and slightly paler. Preserve the clipped-corner placement of the art so it is a small printed detail rather than an icon. One consistent olive-branch line-drawing style. Fresh paper, no texture. English/Russian warm white; Spanish/French only a trace of grey-sage tint. Clean4px radius, no dark border, no physical thickness.
+Below the entire card group, about35px gap, left-align the original note to the group's visual left axis: italic21px "soon", then14px muted sans "German · Portuguese · Italian" and "Japanese · Korean · and dozens more".
+No extra object or graphic. No vintage effect, paperclip, notebook, glows, hatching, flowers, berry ornaments, native-language duplicate text, flags, checkmarks, buttons or app screenshot.
+Judge the WHOLE section: the card group supports the original headline and brings a quiet tactile accent. The refined graphic must feel lighter and less tall than reference1's old cards. Nothing ornamental should overpower a language label. A coherent, beautifully typeset, contemporary literary product landing.

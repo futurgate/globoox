@@ -1,0 +1,4 @@
+Use case: background-extraction
+Edit the attached image. Preserve the ONE blank fresh ivory rectangular paper slip, its very fine texture, square corners, exact shape and delicate short contact shadow.
+Remove the entire gray-white checkerboard that was incorrectly painted as background. Deliver an ACTUAL transparent PNG with an alpha channel, zero alpha outside the paper and its faint shadow. Checkerboard must NOT be painted into RGB pixels. This is a production web cutout asset, not a transparency demonstration.
+Tighten the image canvas to a wide 3:1 aspect ratio with roughly 4% transparent margin around the card; keep the paper frontal, flat, perfectly horizontal and free of all text or illustrations. Do not invent anything. Only extract onto genuine transparency.
