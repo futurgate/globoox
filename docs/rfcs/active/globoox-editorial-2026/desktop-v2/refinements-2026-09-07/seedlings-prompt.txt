@@ -1,0 +1,12 @@
+Seedlings-growth asset provenance — 2026-09-07
+
+Built-in image_gen used. Final output copied unchanged, no raster editing.
+Selected source: /Users/user/.codex/generated_images/01a07867-b2eb-7bb1-8b0f-cd33244aba76/exec-2d38e692-d6ca-4e4d-9417-e6d1c13157ec.png
+Production: public/redesign/language-garden/seedlings-growth.png
+Dimensions: 1402 x 1122, RGBA, alpha extrema 0..255. All four corner pixels RGBA(0,0,0,0).
+Reference image: docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-06/language-garden/orchard.png
+
+Exact selected prompt:
+Extract/recreate only three tiny seedlings in the delicate botanical style of this reference as a transparent-background PNG cutout. Entirely remove the page, tree, cards, text and cream backdrop. Create a compact group of three separate sprouts growing progressively taller from left to right. Display intention: the entire asset will be only128x90pixels beside text, so forms must be simple and subtle. At that display scale heights are20px,40px,64px; tiny stems end on one common baseline. Each sprout has only two small muted sage leaves, the tallest may have one extra leaf. Add one tiny warm taupe-brown seed dot at each stem base. Thin softly curved stems, minimal low-contrast watercolor wash, fresh contemporary editorial botanical art matching the reference. Compact landscape canvas1280x900 with clear space around three plants. True transparent alpha background for website compositing; only the sprouts and three seed dots should be visible. No writing, no cards, no paper, no groundline, no soil, no grass, no pot, no shadows. Natural quiet illustration, not generic clipart.
+
+Visual review: Accepted first attempt. Three progressively growing sprouts share a seed-dot baseline; first two have two leaves, third has three. Soft muted sage, fine taupe curved stems and small warm brown seed dots. No groundline or extra objects. Intended to sit to the LEFT of simple upcoming-language text rows, without miniature cards. Black-background viewer exaggerates very low-alpha colorful fringe pixels; alpha and normal page compositing should be checked at final size. Existing assets untouched.

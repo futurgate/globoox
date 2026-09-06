@@ -1,5 +1,9 @@
 # Languages and founders — active refinement, 6 September 2026
 
+**Superseding revision, 2026-09-07:** user feedback rejected the Orchard composition and miniature “soon” cards documented below. The current block uses a compact canopy and current-language papers, independently aligned copy, and two readable HTML rows of upcoming names with middots beside three small growing sprouts. [New revision record](../refinements-2026-09-07/README.md) · [New QA record](../refinements-2026-09-07/design-qa.md). Final QA approval is not asserted here.
+
+All mini-card layout and QA statements below are historical; preserve them and their assets. Checkpoint `0d22c81` retains the previous editorial state, excluding the unrelated billing RFC. Original copy, block order, and the isolated `/landing-editorial#languages` route remain unchanged; desktop at 1440px remains the focus, with existing project visuals as secondary references. No deploy or push.
+
 **Current implementation, 2026-09-06:** Orchard is implemented at `/landing-editorial#languages` with seven transparent PNG assets: three large paper surfaces, two miniature paper surfaces, a sparse tree, and seedlings. Canonical language names remain live HTML; upcoming names use miniature readable cards. [Implementation record](language-garden/implementation/README.md) · [Current language QA record](language-garden/implementation/design-qa.md). This notice records implementation, not QA sign-off.
 
 All no-implementation and baseline-live statements below are historical and superseded. Keep all baseline snapshots and exploration material. Changes remain isolated to the language block; original copy and block order are locked, existing project visuals are secondary references, and the current focus is 1440px desktop.

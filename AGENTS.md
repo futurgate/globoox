@@ -1,3 +1,9 @@
+# Latest language correction — 2026-09-07
+
+**Implemented; desktop QA passed.** Current screenshot and QA are in `desktop-v2/refinements-2026-09-07/`. Use this correction as current visual authority; keep older mini-card results as history.
+
+User rejects the previous language composition and upcoming mini cards. Checkpoint saved as `0d22c81` before editing, with no push/deploy. Now tighten the tree/current-card composition and replace upcoming cards with two quiet text rows and three small growing sprouts on the left, following the newly attached crop. Read [current correction record](docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-07/README.md). All earlier mini-card approval and QA statements are superseded history. Preserve canonical copy, block order, isolated route and original project as secondary visual reference. Desktop1440 is the target.
+
 # Current language implementation — 2026-09-06
 
 **Orchard is implemented at `/landing-editorial#languages`.** The isolated language block uses seven transparent PNG assets: three large paper surfaces, two miniature paper surfaces, a sparse tree, and seedlings. All available and upcoming language names remain live HTML from the canonical `getLandingMessages('en')` copy; upcoming names are miniature readable cards. Read the [implementation record](docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-06/language-garden/implementation/README.md) and [current language QA record](docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-06/language-garden/implementation/design-qa.md).

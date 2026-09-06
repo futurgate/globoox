@@ -1,5 +1,9 @@
 # Language garden — completed visual exploration
 
+**Superseding revision, 2026-09-07:** the user rejected the prior composition and miniature “soon” cards. The current `/landing-editorial#languages` revision compacts the canopy and current-language papers, aligns copy independently, and replaces upcoming cards with two 18px HTML rows separated by middots beside three small growing sprouts (`seedlings-growth.png`). [New revision record](../../refinements-2026-09-07/README.md) · [New QA record](../../refinements-2026-09-07/design-qa.md). This notice does not claim final QA approval.
+
+The mini-card layout and its QA below are superseded history; preserve every study and asset. The earlier editorial state is retained in local checkpoint `0d22c81`, excluding the unrelated billing RFC. Original copy and block order remain locked, the route stays isolated, existing project visuals remain secondary references, and the focus remains 1440px desktop. No deploy or push.
+
 **Current implementation, 2026-09-06:** the user approved Orchard and its implementation is now at `/landing-editorial#languages`. Seven transparent PNG assets supply three large paper surfaces, two miniature paper surfaces, the sparse tree, and seedlings. All language names remain live canonical HTML; upcoming names sit on miniature readable cards. Read the [implementation record](implementation/README.md) and [current language QA record](implementation/design-qa.md). This status notice does not assert QA sign-off.
 
 The exploration and baseline-preservation statements below describe completed historical rounds; their no-implementation and baseline-live status is superseded. Retain every mock, prompt, and baseline snapshot. Original copy and section order remain locked, existing project visuals stay secondary references, and the implementation focus remains 1440px desktop.

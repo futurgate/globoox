@@ -1,5 +1,9 @@
 # Implemented Orchard language block — 6 September 2026
 
+**Historical implementation; superseded on 2026-09-07.** User feedback rejected this composition and its miniature “soon” cards. The new revision uses a compact 460×420px canopy with 192px current-language papers, copy aligned independently with the crown, and two 18px HTML rows of upcoming names with middots beside three small growing sprouts (`seedlings-growth.png`). Read the [new revision record](../../../refinements-2026-09-07/README.md) and [new QA record](../../../refinements-2026-09-07/design-qa.md); this notice does not claim final QA approval.
+
+All layout and QA results below apply only to the preserved 2026-09-06 mini-card implementation. Local checkpoint `0d22c81` retains that editorial state and excludes the unrelated billing RFC. Preserve all assets, screenshots, and prompts. Original copy, block order, and isolated `/landing-editorial#languages` route remain unchanged. Existing project visuals remain secondary references; the current focus is 1440px desktop. No deploy or push.
+
 **Current state: implemented and desktop QA passed.** Open [the local block](http://127.0.0.1:3000/landing-editorial#languages). The approved tree direction now replaces the live paper-index baseline only in the isolated editorial landing. All earlier baseline snapshots and visual explorations remain preserved.
 
 - [Final browser screenshot, 1440×935](desktop-final.png)

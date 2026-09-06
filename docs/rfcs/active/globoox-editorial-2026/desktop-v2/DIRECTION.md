@@ -7,6 +7,10 @@ last_verified: 2026-09-06
 
 # Desktop V2 — current art direction
 
+**Current revision, 2026-09-07:** the user rejected the weak composition and miniature “soon” cards. The language block now uses a compact 460×420px canopy, 192px current-language paper cards, copy aligned independently with the crown, and two 18px HTML rows of upcoming names with middots beside three small growing sprouts (`seedlings-growth.png`). Read the [revision record](refinements-2026-09-07/README.md) and [new QA record](refinements-2026-09-07/design-qa.md). This notice records the revision without claiming final QA approval.
+
+The 2026-09-06 mini-card layout and its QA below are superseded historical evidence. Keep their assets, screenshots, and decisions. The pre-revision local checkpoint is `0d22c81`; the unrelated billing RFC is excluded. Original copy, block order, and `/landing-editorial#languages` isolation remain unchanged. Existing project visuals stay secondary references; 1440px desktop remains the focus. No deployment or push is authorized for this revision.
+
 ## Current language implementation — 2026-09-06
 
 **Orchard is implemented at `/landing-editorial#languages`.** Seven transparent PNG assets provide three large paper surfaces, two miniature paper surfaces, the tree, and seedlings. Available and upcoming names remain live HTML using canonical `getLandingMessages('en')` copy; upcoming names are miniature readable cards. See the [implementation record](refinements-2026-09-06/language-garden/implementation/README.md) and [current language QA record](refinements-2026-09-06/language-garden/implementation/design-qa.md) for verification status; this notice does not assert QA sign-off.

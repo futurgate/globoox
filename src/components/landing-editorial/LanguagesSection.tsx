@@ -4,6 +4,7 @@ import s from './LanguagesSection.module.css';
 
 const { supportedLanguages: messages } = getLandingMessages('en');
 const paperSurfaces = ['paper-ivory', 'paper-sage', 'paper-soft', 'paper-ivory'];
+const futureRows = [messages.future.slice(0, 3), messages.future.slice(3)];
 
 function PaperSurface({ name }: { name: string }) {
   return <Image src={`/redesign/language-garden/${name}.png`} alt="" aria-hidden="true" fill sizes="220px" className={s.paper} draggable={false} />;
@@ -21,7 +22,7 @@ export default function LanguagesSection() {
         </div>
         <div className={s.garden}>
           <div className={s.canopy}>
-            <Image src="/redesign/language-garden/tree.png" alt="" aria-hidden="true" fill sizes="460px" className={s.tree} draggable={false} />
+            <Image src="/redesign/language-garden/tree.png" alt="" aria-hidden="true" fill sizes="420px" className={s.tree} draggable={false} />
             <ul className={s.currentList} aria-label="Available languages">
               {messages.current.map((language, index) => (
                 <li key={language} className={s.currentCard}>
@@ -32,16 +33,24 @@ export default function LanguagesSection() {
             </ul>
           </div>
           <div className={s.upcoming}>
-            <p id="upcoming-languages-title" className={s.soon}>{messages.soonLabel}</p>
-            <Image src="/redesign/language-garden/seedlings.png" alt="" aria-hidden="true" width={2172} height={724} sizes="440px" className={s.seedlings} draggable={false} />
-            <ul className={s.futureList} aria-labelledby="upcoming-languages-title">
-              {messages.future.map(language => (
-                <li key={language.label} className={`${s.futureCard} ${language.soon ? '' : s.moreCard}`}>
-                  <PaperSurface name={language.soon ? 'paper-mini' : 'paper-mini-wide'} />
-                  <span>{language.label}</span>
-                </li>
-              ))}
-            </ul>
+            <div className={s.seedlingsFrame}>
+              <Image src="/redesign/language-garden/seedlings-growth.png" alt="" aria-hidden="true" fill sizes="116px" className={s.seedlings} draggable={false} />
+            </div>
+            <div className={s.upcomingCopy}>
+              <p id="upcoming-languages-title" className={s.soon}>{messages.soonLabel}</p>
+              <div role="group" aria-labelledby="upcoming-languages-title">
+                {futureRows.map((row, rowIndex) => (
+                  <ul key={rowIndex} className={s.futureList}>
+                    {row.map((language, index) => (
+                      <li key={language.label}>
+                        {index > 0 && <span className={s.separator} aria-hidden="true">·</span>}
+                        <span>{language.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

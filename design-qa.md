@@ -1,3 +1,13 @@
+# Current language composition QA — 7 September 2026
+
+**final result: passed**
+
+User feedback supersedes the previous mini-card composition. The corrected isolated block uses a compact tree/card assembly, independently aligned copy, and two18px upcoming-language rows with small growing sprouts on the left. [Full current QA](docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-07/design-qa.md) records the amended ImageGen source,1440×935CSS/pixel browser evidence atDPR1, normalized full/focused comparison, all five fidelity surfaces, corrected findings and residualP3 notes. [Final screenshot](docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-07/desktop-final.png) · [combined comparison](docs/rfcs/active/globoox-editorial-2026/desktop-v2/refinements-2026-09-07/comparison-final.png).
+
+All current/future names and original copy preserved; six image instances load; Languages anchor works; no1440px horizontal overflow; scoped ESLint/TypeScript pass. NoP0/P1/P2 remain in this revision. Mobile refinement deferred. Prior checkpoint committed as0d22c81 before editing; no push/deploy. Previous reports below remain historical for the language block.
+
+---
+
 # Current language garden QA — 6 September 2026
 
 **final result: passed**

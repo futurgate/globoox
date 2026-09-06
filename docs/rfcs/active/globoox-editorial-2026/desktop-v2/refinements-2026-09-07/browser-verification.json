@@ -1,0 +1,94 @@
+{
+  "available": [
+    "English",
+    "Spanish",
+    "Russian",
+    "French"
+  ],
+  "description": "These four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.",
+  "future": [
+    "German",
+    "Portuguese",
+    "Italian",
+    "Japanese",
+    "Korean",
+    "and dozens more"
+  ],
+  "futureRows": [
+    {
+      "font": "18px",
+      "height": 32.3984375,
+      "text": "German\n·\nPortuguese\n·\nItalian",
+      "width": 311.8671875,
+      "x": 925.5625,
+      "y": 602.828125
+    },
+    {
+      "font": "18px",
+      "height": 32.3984375,
+      "text": "Japanese\n·\nKorean\n·\nand dozens more",
+      "width": 311.8671875,
+      "x": 925.5625,
+      "y": 635.2265625
+    }
+  ],
+  "heading": "Read in English, Spanish, Russian, and French",
+  "images": [
+    {
+      "alt": "",
+      "ariaHidden": "true",
+      "loaded": true,
+      "src": "http://127.0.0.1:3000/_next/image?url=%2Fredesign%2Flanguage-garden%2Ftree.png&w=640&q=75"
+    },
+    {
+      "alt": "",
+      "ariaHidden": "true",
+      "loaded": true,
+      "src": "http://127.0.0.1:3000/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-ivory.png&w=256&q=75"
+    },
+    {
+      "alt": "",
+      "ariaHidden": "true",
+      "loaded": true,
+      "src": "http://127.0.0.1:3000/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-sage.png&w=256&q=75"
+    },
+    {
+      "alt": "",
+      "ariaHidden": "true",
+      "loaded": true,
+      "src": "http://127.0.0.1:3000/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-soft.png&w=256&q=75"
+    },
+    {
+      "alt": "",
+      "ariaHidden": "true",
+      "loaded": true,
+      "src": "http://127.0.0.1:3000/_next/image?url=%2Fredesign%2Flanguage-garden%2Fpaper-ivory.png&w=256&q=75"
+    },
+    {
+      "alt": "",
+      "ariaHidden": "true",
+      "loaded": true,
+      "src": "http://127.0.0.1:3000/_next/image?url=%2Fredesign%2Flanguage-garden%2Fseedlings-growth.png&w=128&q=75"
+    }
+  ],
+  "overflow": false,
+  "section": {
+    "height": 731.59375,
+    "width": 1440,
+    "x": 0,
+    "y": 32.03125
+  },
+  "sectionOrder": [
+    "hero",
+    "how-it-works",
+    "quality",
+    "languages",
+    "team",
+    "start"
+  ],
+  "viewport": {
+    "dpr": 1,
+    "height": 935,
+    "width": 1440
+  }
+}
