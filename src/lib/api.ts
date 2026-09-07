@@ -1113,3 +1113,165 @@ export interface PlaygroundModels {
 export function fetchPlaygroundModels(): Promise<PlaygroundModels> {
   return request<PlaygroundModels>('/api/admin/models')
 }
+
+// ── Admin: translation cost lab ──────────────────────────────────────────────
+
+export const COST_LAB_LANGS = ['EN', 'FR', 'ES', 'RU'] as const
+export type CostLabLang = (typeof COST_LAB_LANGS)[number]
+
+/**
+ * A measured, real first-time translation cost run — one row of
+ * `book_translation_cost_runs`. Mirrors `DbBookTranslationCostRun` in the
+ * backend `types/index.ts`. `cost_per_block` / `cost_per_1k_source_chars` are
+ * DB-generated (present on reads only).
+ */
+export interface DbBookTranslationCostRun {
+  id: string
+  run_id: string
+  created_at: string
+  book_id: string | null
+  book_title: string | null
+  source_language: string | null
+  target_lang: string
+  model: string
+  known_pricing: boolean
+  surface: string | null
+  cost_model: string
+  chapters_total: number | null
+  chapters_translated: number | null
+  blocks_translated: number
+  total_source_chars: number
+  avg_block_chars: number | null
+  median_block_chars: number | null
+  request_size: number | null
+  blocks_per_call: number | null
+  context_blocks: number | null
+  llm_calls: number
+  with_story: boolean
+  tokens_in: number
+  tokens_out: number
+  cached_tokens_in: number
+  thoughts_tokens: number
+  cost_usd: number
+  input_per_m: number | null
+  output_per_m: number | null
+  batch_errors: number
+  duration_ms: number
+  cost_per_block: number | null
+  cost_per_1k_source_chars: number | null
+  notes: string | null
+}
+
+/** Pure-math (no LLM) whole-book cost estimate — the pre-run projection. */
+export interface BookTranslationEstimate {
+  book: {
+    id: string
+    title: string
+    sourceLanguage: string | null
+    fileSizeBytes: number | null
+    chapters: number
+  }
+  model: string
+  pricing: { model: string; known: boolean; inputPerM: number | null; outputPerM: number | null }
+  charsPerToken: number
+  bookStats: {
+    blockCount: number
+    totalChars: number
+    medianBlockChars: number
+    avgBlockChars: number
+  }
+  fromScratch: {
+    llmCalls: number
+    tokens: {
+      rawContent: number
+      promptOverhead: number
+      contextResends: number
+      fullInput: number
+      estimatedOutput: number
+    }
+    cost: { inputUsd: number | null; outputUsd: number | null; totalUsd: number | null }
+  }
+  byLanguage: Array<{
+    lang: string
+    blocksRemaining: number
+    blocksTranslated: number
+    percentTranslated: number
+    llmCalls: number
+    tokens: BookTranslationEstimate['fromScratch']['tokens']
+    cost: BookTranslationEstimate['fromScratch']['cost']
+  }>
+  notes: string
+}
+
+/**
+ * Pure-math whole-book estimate for a book on a given model/lang (instant, no
+ * LLM). `fromScratch` mirrors the real run (empty cache); use it for the pre-run
+ * projection.
+ */
+export function fetchTranslationEstimate(
+  bookId: string,
+  opts: { model?: string; lang?: string; inputPrice?: number; outputPrice?: number } = {}
+): Promise<BookTranslationEstimate> {
+  const params = new URLSearchParams()
+  if (opts.model) params.set('model', opts.model)
+  if (opts.lang) params.set('lang', opts.lang)
+  if (opts.inputPrice != null) params.set('input_price', String(opts.inputPrice))
+  if (opts.outputPrice != null) params.set('output_price', String(opts.outputPrice))
+  const qs = params.toString()
+  return request<BookTranslationEstimate>(
+    `/api/books/${bookId}/translation-estimate${qs ? `?${qs}` : ''}`
+  )
+}
+
+export interface StartCostRunRequest {
+  bookId: string
+  model: string
+  lang: CostLabLang
+  requestSize?: number
+}
+
+export interface StartCostRunResponse {
+  jobId: string
+  runId: string
+}
+
+/** Enqueue a whole-book real-cost measurement (live LLM calls, cache bypassed). */
+export function startCostRun(payload: StartCostRunRequest): Promise<StartCostRunResponse> {
+  return request<StartCostRunResponse>('/api/admin/cost-runs', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export type CostRunState = 'waiting' | 'active' | 'completed' | 'failed'
+
+export interface CostRunStatus {
+  state: CostRunState
+  /** 0–100 */
+  progress: number
+  batchesDone?: number
+  batchesTotal?: number
+  tokensIn?: number
+  tokensOut?: number
+  costUsd?: number
+  result?: DbBookTranslationCostRun
+  failReason?: string
+}
+
+/** Poll a running cost measurement (mirror `/api/jobs/:id`, plus batch/cost). */
+export function getCostRunStatus(jobId: string): Promise<CostRunStatus> {
+  // Cache-bust: the shared GET cache (2s TTL) would otherwise stall progress polling.
+  return request<CostRunStatus>(`/api/admin/cost-runs/status/${jobId}?_t=${Date.now()}`)
+}
+
+/** List measured cost runs, newest first. */
+export function fetchCostRuns(
+  opts: { bookId?: string; model?: string; limit?: number } = {}
+): Promise<{ runs: DbBookTranslationCostRun[] }> {
+  const params = new URLSearchParams()
+  if (opts.bookId) params.set('bookId', opts.bookId)
+  if (opts.model) params.set('model', opts.model)
+  if (opts.limit != null) params.set('limit', String(opts.limit))
+  const qs = params.toString()
+  return request<{ runs: DbBookTranslationCostRun[] }>(`/api/admin/cost-runs${qs ? `?${qs}` : ''}`)
+}
