@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
+// import Script from 'next/script'; // re-enable with Microsoft Clarity below
 import Header from '@/components/ui/Header';
 import PostHogProvider from '@/components/PostHogProvider';
 import SyncCheckClient from '@/components/SyncCheckClient';
@@ -71,6 +71,7 @@ export default function RootLayout({
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: getThemeBootstrapScript() }} />
+      {/* Microsoft Clarity temporarily disabled. Re-enable by uncommenting.
       {process.env.NODE_ENV === 'production' && (
         <Script
           id="microsoft-clarity"
@@ -86,6 +87,7 @@ export default function RootLayout({
           }}
         />
       )}
+      */}
       <div className="antialiased bg-[var(--bg-grouped)]">
         <PostHogProvider />
         <SyncCheckClient />
