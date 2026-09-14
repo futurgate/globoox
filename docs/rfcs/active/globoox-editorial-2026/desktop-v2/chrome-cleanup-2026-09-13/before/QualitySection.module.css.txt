@@ -1,0 +1,153 @@
+@font-face {
+  font-family: 'Editorial Source Serif';
+  /* Static instance: Source Serif 4, weight 450, optical size 60. */
+  src: url('/redesign/fonts/source-serif-4-comparison.woff2') format('woff2');
+  font-weight: 450;
+  font-style: normal;
+  font-display: swap;
+  /* Match the English prose baseline at 19.3px when Cyrillic uses 20.2px.
+     This changes line metrics only; the letterforms retain their proportions. */
+  ascent-override: 70.22%;
+  descent-override: 25.32%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Editorial Source Serif';
+  /* A real 470 instance adds a little ink without synthetic bolding. */
+  src: url('/redesign/fonts/source-serif-4-comparison-w470.woff2') format('woff2');
+  font-weight: 470;
+  font-style: normal;
+  font-display: swap;
+  ascent-override: 70.22%;
+  descent-override: 25.32%;
+  line-gap-override: 0%;
+}
+
+.section {
+  position: relative;
+  isolation: isolate;
+  background: var(--ed-paper, #f7f5ed);
+  padding: 100px 0 108px;
+  color: var(--ed-ink, #20382f);
+  font-family: var(--ed-sans, Arial, sans-serif);
+  scroll-margin-top: 32px;
+}
+
+.section, .section * { box-sizing: border-box; }
+.container { width: min(1160px, calc(100% - 112px)); margin: 0 auto; }
+.introduction { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 90px; margin-bottom: 45px; }
+
+.section .label {
+  margin: 0 0 20px;
+  color: #64735e;
+  font-family: var(--ed-sans, Arial, sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.section .title {
+  max-width: 475px;
+  margin: 0;
+  font-family: var(--ed-serif, Georgia, serif);
+  font-size: 58px;
+  font-weight: 400;
+  letter-spacing: -1.9px;
+  line-height: 1.07;
+  text-wrap: balance;
+}
+
+.section .description {
+  max-width: 495px;
+  margin: 0;
+  padding-top: 34px;
+  color: #5c6b5c;
+  font-family: var(--ed-sans, Arial, sans-serif);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+.comparisonComposition { position: relative; }
+.qualityBotanical { position: absolute; z-index: 0; bottom: -60px; width: 1000px; max-width: none; height: auto; mix-blend-mode: multiply; filter: brightness(1.01); pointer-events: none; user-select: none; }
+.botanicalLeft { left: -150px; clip-path: inset(0 50% 0 0); }
+.botanicalRight { right: -150px; clip-path: inset(0 0 0 50%); }
+.expandButton { position: relative; z-index: 1; }
+.book { position: relative; z-index: 1; overflow: hidden; border: 1px solid var(--ed-frame-border, #c9c7b9); border-radius: var(--ed-frame-radius, 10px); background: #fffdf7; box-shadow: var(--ed-frame-shadow); }
+.bookToolbar { display: flex; min-height: 56px; justify-content: flex-end; align-items: center; padding: 10px 22px 0; }
+.translationToggle { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 8px; padding: 8px 10px; border: 0; border-radius: 4px; background: transparent; color: #445e46; cursor: pointer; font-family: var(--ed-sans, Arial, sans-serif); font-size: 12px; font-weight: 400; line-height: 1.4; }
+.translationToggle:hover { background: #f0f1e8; }
+.metadataPair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 60px; width: min(820px, calc(100% - 92px)); margin: 18px auto 0; }
+.bookMetadata { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; }
+.bookMetadata[data-visible="false"] { visibility: hidden; }
+.bookMetadata .bookTitle { margin: 0; color: #294335; font-family: var(--ed-sans, Arial, sans-serif); font-size: 14px; font-weight: 500; line-height: 1.5; }
+.bookMetadata .author { margin: 5px 0 0; color: #70796c; font-family: var(--ed-sans, Arial, sans-serif); font-size: 12px; font-weight: 400; line-height: 1.5; }
+.language { display: block; margin-top: 12px; color: #6b7b61; font-family: var(--ed-sans, Arial, sans-serif); font-size: 11px; font-weight: 400; letter-spacing: 1px; line-height: 1.4; }
+.bookMetadata .chapter { margin: auto 0 18px; padding-top: 28px; font-family: var(--ed-serif, Georgia, serif); font-size: 26px; font-weight: 400; letter-spacing: -.5px; line-height: 1.2; }
+.bookMetadata:lang(ru) .chapter { font-family: 'Editorial Source Serif', Georgia, serif; font-weight: 450; font-optical-sizing: none; }
+/* The two same-width grid items determine one shared height. The comparison
+   never changes their measure, so dragging and hiding cannot reflow the prose. */
+.pages { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); isolation: isolate; }
+.passage { grid-area: 1 / 1; min-width: 0; padding: 20px 46px 44px; }
+.original { background: #fffdf7; clip-path: inset(0 calc(100% - var(--comparison-position) + var(--comparison-gap)) 0 0); }
+.translated { background: #fffdf7; clip-path: inset(0 0 0 calc(var(--comparison-position) + var(--comparison-gap))); }
+.excerpt[hidden], .remainder[hidden], .comparisonHandle[hidden], .comparisonLine[hidden] { display: none; }
+.prose { max-width: 820px; margin-inline: auto; font-family: var(--ed-serif, Georgia, serif); font-size: 19.3px; font-weight: 360; font-optical-sizing: none; font-variation-settings: 'opsz' 10; line-height: 32px; }
+/* Optically matched lowercase height, cap size and ink density, rather than
+   equal CSS font sizes. Keep a shared baseline and leading through the wipe. */
+.original .prose { font-family: 'Editorial Source Serif', Georgia, serif; font-size: 20.2px; font-weight: 470; font-variation-settings: normal; letter-spacing: -.15px; }
+.passage .excerpt { margin: 0 0 20px; color: #2d3f33; font: inherit; }
+.passage .excerpt:last-child { margin-bottom: 0; }
+.comparisonLine { position: absolute; z-index: 1; top: 0; bottom: 0; left: var(--comparison-position); width: 1px; background: #aebba2; pointer-events: none; }
+.comparisonHandle { position: absolute; z-index: 2; top: 0; bottom: 0; left: clamp(22px, var(--comparison-position), calc(100% - 22px)); width: 44px; transform: translateX(-50%); cursor: ew-resize; touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; }
+.handleGrip { position: absolute; top: min(50%, 180px); left: 4px; display: flex; width: 36px; height: 36px; align-items: center; justify-content: center; transform: translateY(-50%); border: 1px solid #aebba2; border-radius: 50%; background: #fffdf7; color: #496346; box-shadow: 0 2px 7px #20382f0b; }
+.comparisonHandle:hover .handleGrip { border-color: #718168; background: #f4f4e9; }
+.comparisonHandle:focus-visible { outline: none; }
+.comparisonHandle:focus-visible .handleGrip { outline: 2px solid #a16d49; outline-offset: 2px; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.expandButton { display: flex; min-height: 44px; align-items: center; justify-content: center; gap: 18px; margin: 24px auto 0; padding: 8px 12px; border: 0; border-radius: 4px; background: transparent; color: #425b43; cursor: pointer; font-family: var(--ed-sans, Arial, sans-serif); font-size: 13px; font-weight: 400; line-height: 1.4; }
+.expandButton > span { padding-bottom: 2px; border-bottom: 1px solid #9fae95; }
+.expandButton:hover { color: #9e6241; }
+.section button:focus-visible { outline: 2px solid #a16d49; outline-offset: 4px; }
+
+/* Once the outer margins narrow, keep both complete silhouettes below the book. */
+@media (max-width: 1350px) {
+  .section { padding-bottom: 196px; }
+  .comparisonComposition { position: static; }
+  .qualityBotanical { right: auto; bottom: 0; left: 50%; width: min(520px, 100%); transform: translateX(-50%); }
+}
+
+@media (max-width: 1050px) {
+  .container { width: calc(100% - 64px); }
+  .introduction { gap: 50px; }
+  .section .title { font-size: 51px; letter-spacing: -1.6px; }
+  .section .description { font-size: 16px; }
+  .passage { padding-inline: 32px; }
+  .metadataPair { width: calc(100% - 64px); gap: 40px; }
+}
+
+@media (max-width: 800px) {
+  .section { padding: 72px 0 196px; }
+  .container { width: calc(100% - 48px); }
+  .introduction { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-bottom: 32px; }
+  .section .title { font-size: 46px; }
+  .section .description { max-width: 580px; padding-top: 0; }
+  .passage { padding: 20px 26px 36px; }
+  .metadataPair { width: calc(100% - 52px); gap: 24px; }
+  .bookMetadata .chapter { padding-top: 24px; font-size: 24px; }
+  /* Russian word lengths otherwise leave large gaps in the narrow measure.
+     Native language-aware hyphenation preserves the canonical text. */
+  .original .prose .excerpt { hyphens: auto; -webkit-hyphens: auto; hyphenate-limit-chars: 6 3 3; }
+  /* Keep the first complete thought on phones; expansion reveals every slice. */
+  .prose[data-expanded="false"] .previewExtension { display: none; }
+}
+
+@media (max-width: 400px) {
+  .metadataPair { gap: 20px; }
+  .bookMetadata .bookTitle { font-size: 12px; }
+  .bookMetadata .author { font-size: 11px; }
+  .bookMetadata .chapter { font-size: 22px; }
+}

@@ -1,19 +1,35 @@
 .section {
-  padding: 106px 0 112px;
+  --panel-height: min(760px, calc(100svh - var(--ed-header-height, 96px) - 48px));
+  --panel-footprint: max(var(--panel-height), calc(100svh - var(--ed-header-height, 96px) - 184px));
+  height: calc(var(--panel-footprint) + 220svh);
+  margin: 96px 0 112px;
+  padding: 0;
   color: var(--ed-ink, #20382f);
   font-family: var(--ed-sans, Arial, sans-serif);
-  scroll-margin-top: 32px;
+  scroll-margin-top: calc(var(--ed-header-height, 96px) + 24px);
 }
 
 .section, .section * { box-sizing: border-box; }
 
 .layout {
+  position: sticky;
+  top: calc(var(--ed-header-height, 96px) + 24px);
+  height: var(--panel-footprint);
+  /* Extra tail on tall screens keeps the next heading below the fold in both modes.
+     Border-box padding leaves the original panel-height grid content unchanged. */
+  padding-bottom: calc(var(--panel-footprint) - var(--panel-height));
   display: grid;
   width: min(1160px, calc(100% - 112px));
   grid-template-columns: minmax(0, 1fr) 360px;
   align-items: center;
   gap: 100px;
   margin: 0 auto;
+}
+
+/* Menu travel temporarily reads as one ordinary screen, with no sticky runway. */
+@media (min-width: 801px) {
+  .section[data-navigation-compact] { height: var(--panel-footprint); }
+  .section[data-navigation-compact] .layout { position: relative; top: auto; }
 }
 
 .section .label {
@@ -42,7 +58,7 @@
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 143px;
+  min-height: clamp(96px, calc((100svh - 300px) / 3), 143px);
   align-items: center;
   justify-content: space-between;
   gap: 28px;
@@ -56,74 +72,138 @@
 }
 
 .stepButton + .stepButton { border-top: 1px solid #dce0d4; }
-.stepButton::before { position: absolute; top: 27px; bottom: 27px; left: 0; width: 2px; background: transparent; content: ""; }
-.stepButton[aria-selected="true"] { color: #20382f; }
-.stepButton[aria-selected="true"]::before { background: #b27650; }
+.stepButton::before { position: absolute; top: 27px; bottom: 27px; left: 0; width: 3px; background: #a76b49; opacity: 0; content: ""; }
 .stepButton:hover { color: #20382f; }
+.stepButton[aria-selected="true"] { background: #e3e9dc; color: #20382f; }
+.stepButton[aria-selected="true"]::before { opacity: 1; }
 .stepCopy { display: block; max-width: 470px; }
-.stepLabel { display: block; margin-bottom: 12px; font-family: var(--ed-sans, Arial, sans-serif); font-size: 10px; font-weight: 500; letter-spacing: 1.7px; line-height: 1.4; text-transform: uppercase; }
+.stepLabel { display: block; margin-bottom: 12px; font-family: var(--ed-sans, Arial, sans-serif); font-size: 10px; font-weight: 600; letter-spacing: 1.7px; line-height: 1.4; text-transform: uppercase; }
 .description { display: block; font-family: var(--ed-serif, Georgia, serif); font-size: 32px; font-weight: 400; letter-spacing: -.6px; line-height: 1.18; }
 .stepArrow { flex-shrink: 0; color: #8c987f; }
+
 .stepButton[aria-selected="true"] .stepArrow { color: #a76b49; }
 
-.productStage { display: flex; min-width: 0; flex-direction: column; align-items: center; }
-.screenshotFrame { width: min(316px, 100%); overflow: hidden; border: 1px solid #c9c9b9; border-radius: 13px; background: #f6f3e9; box-shadow: 0 18px 36px -25px #263d3138, 0 3px 10px #263d3108; }
-.screenshot { display: block; width: 100%; height: auto; }
-.viewButton { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; padding: 9px 12px; border: 0; border-radius: 4px; background: transparent; color: #60705b; cursor: pointer; font-family: var(--ed-sans, Arial, sans-serif); font-size: 11px; font-weight: 400; line-height: 1.4; }
-.viewButton:hover { color: #9c6141; }
-
-.dialog {
-  width: min(960px, calc(100vw - 64px));
-  max-width: none;
-  height: min(960px, calc(100dvh - 64px));
-  max-height: none;
-  margin: auto;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid #c9cdbf;
-  border-radius: 12px;
-  background: #f7f5ed;
-  color: #20382f;
-  box-shadow: 0 25px 80px #0d251b40;
+.productStage { display: flex; min-width: 0; flex-direction: column; align-items: center; padding-bottom: 28px; }
+.screenshotDeck {
+  position: relative;
+  width: min(316px, 100%, calc((var(--panel-height) - 112px) * 0.46217));
+  aspect-ratio: 788 / 1705;
+  isolation: isolate;
 }
-
-.dialog::backdrop { background: #1a2b24ad; }
-.dialogContent { display: flex; height: 100%; flex-direction: column; }
-.dialogToolbar { display: flex; min-height: 68px; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 20px; padding: 10px 15px 10px 23px; border-bottom: 1px solid #d9ddcf; }
-.dialog .dialogTitle { margin: 0; font-family: var(--ed-sans, Arial, sans-serif); font-size: 13px; font-weight: 500; line-height: 1.4; }
-.viewerControls { display: flex; flex-shrink: 0; align-items: center; gap: 10px; }
-.zoomButton, .closeButton { display: inline-flex; min-height: 44px; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 4px; background: transparent; color: #445b47; cursor: pointer; font-family: var(--ed-sans, Arial, sans-serif); font-size: 11px; font-weight: 400; }
-.zoomButton { min-width: 95px; padding: 9px 10px; }
-.closeButton { width: 44px; }
-.zoomButton:hover, .closeButton:hover { background: #e9ede2; }
-.viewer { min-width: 0; min-height: 0; flex: 1; overflow: auto; padding: 26px; overscroll-behavior: contain; scrollbar-color: #aab59e #edf0e5; }
-.dialogImage { display: block; width: min(440px, 100%); height: auto; margin: 0 auto; }
-.dialogImage.zoomedImage { width: 788px; max-width: none; }
-.section button:focus-visible, .productStage:focus-visible, .viewer:focus-visible { outline: 2px solid #a16d49; outline-offset: 5px; }
+.screenCard {
+  overflow: hidden;
+  border: 1px solid var(--ed-frame-border, #c9c7b9);
+  border-radius: var(--ed-frame-radius, 10px);
+  background: #f3f0e8;
+  box-shadow: var(--ed-frame-shadow);
+}
+.screenCard {
+  position: absolute;
+  inset: 0;
+  transform-origin: center top;
+  pointer-events: none;
+  /* Only the scroll position changes these values; there is no timed easing. */
+}
+.screenshot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.section button:focus-visible, .screenshotDeck:focus-visible { outline: 2px solid #a16d49; outline-offset: 5px; }
 
 @media (max-width: 1050px) {
   .layout { width: calc(100% - 64px); grid-template-columns: minmax(0, 1fr) 280px; gap: 58px; }
   .section .title { font-size: 51px; letter-spacing: -1.6px; }
   .description { font-size: 29px; }
   .stepButton { padding-left: 23px; gap: 15px; }
-  .screenshotFrame { width: 280px; }
+  .screenshotDeck { max-width: 280px; }
 }
 
+@media (max-height: 700px) {
+  .section .title { font-size: 38px; }
+  .section .label { margin-bottom: 12px; }
+  .steps { margin-top: 16px; }
+  .stepButton { min-height: 84px; padding-block: 12px; }
+  .description { font-size: 24px; }
+  .stepLabel { margin-bottom: 6px; }
+}
+
+/* Mobile keeps every portrait in document flow; only its heading sticks. */
+.episodes { display: none; }
+
 @media (max-width: 800px) {
-  .section { padding: 72px 0 78px; }
-  .layout { width: calc(100% - 48px); grid-template-columns: minmax(0, 1fr); gap: 42px; }
-  .explanation { max-width: 620px; width: 100%; margin: 0 auto; }
-  .section .title { font-size: 46px; }
-  .steps { margin-top: 23px; }
-  .stepButton { min-height: 116px; padding-block: 21px; }
-  .description { font-size: 28px; }
-  .stepLabel { margin-bottom: 9px; }
-  .screenshotFrame { width: min(280px, 100%); }
-  .dialog { width: calc(100vw - 28px); height: calc(100dvh - 28px); }
-  .dialogToolbar { min-height: 68px; gap: 9px; padding: 9px 8px 9px 15px; }
-  .dialog .dialogTitle { font-size: 11px; }
-  .viewerControls { gap: 1px; }
-  .zoomButton { min-width: 76px; gap: 3px; padding-inline: 5px; font-size: 10px; }
-  .closeButton { width: 38px; }
-  .viewer { padding: 16px; }
+  .section { --episode-gap: 60px; height: auto; margin: 72px 0 88px; }
+  .layout {
+    position: static;
+    display: block;
+    width: min(420px, calc(100% - 48px));
+    height: auto;
+    padding-bottom: 0;
+  }
+  .explanation { padding-bottom: var(--episode-gap); }
+  .sectionHeading {
+    position: sticky;
+    top: var(--ed-header-height, 84px);
+    z-index: 5;
+    padding: 16px 0 20px;
+    border-bottom: 1px solid var(--ed-rule, #dadccd);
+    background: var(--ed-paper, #f7f5ed);
+  }
+  .steps, .productStage { display: none; }
+  .section .label { margin: 0 0 14px; }
+  .section .title {
+    font-size: 40px;
+    line-height: 1.08;
+    letter-spacing: -1.15px;
+  }
+  .episodes {
+    display: grid;
+    gap: var(--episode-gap);
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .finalEpisode { margin-top: 0; }
+  .episode { min-width: 0; }
+  .section .episodeLabel {
+    margin: 0 0 10px;
+    color: #64735e;
+    font-family: var(--ed-sans, Arial, sans-serif);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.7px;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+  .section .episodeTitle {
+    margin: 0 0 24px;
+    font-family: var(--ed-serif, Georgia, serif);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -.65px;
+    line-height: 1.13;
+    text-wrap: pretty;
+  }
+  .episodeFrame {
+    width: min(300px, 100%);
+    margin-inline: auto;
+    overflow: hidden;
+    border: 1px solid var(--ed-frame-border, #c9c7b9);
+    border-radius: var(--ed-frame-radius, 10px);
+    box-shadow: var(--ed-frame-shadow);
+    background: #f6f3e9;
+  }
+  .episodeScreenshot {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 359px) {
+  .section { --episode-gap: 52px; }
+  .layout { width: calc(100% - 40px); }
+  .section .title { font-size: 35px; letter-spacing: -.85px; }
+  .section .episodeTitle { font-size: 29px; }
 }

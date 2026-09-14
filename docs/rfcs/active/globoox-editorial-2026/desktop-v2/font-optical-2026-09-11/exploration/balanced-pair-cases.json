@@ -1,0 +1,38 @@
+[
+  {
+    "name": "balanced-a",
+    "enSize": 19.836,
+    "enOpsz": 12,
+    "enWeight": 360,
+    "ruSize": 20.017,
+    "ruOpsz": 48,
+    "ruWeight": 440
+  },
+  {
+    "name": "balanced-b",
+    "enSize": 19.836,
+    "enOpsz": 12,
+    "enWeight": 360,
+    "ruSize": 20.333,
+    "ruOpsz": 60,
+    "ruWeight": 440
+  },
+  {
+    "name": "balanced-c",
+    "enSize": 19.272,
+    "enOpsz": 10,
+    "enWeight": 360,
+    "ruSize": 20.311,
+    "ruOpsz": 60,
+    "ruWeight": 460
+  },
+  {
+    "name": "balanced-d",
+    "enSize": 21.072,
+    "enOpsz": 16,
+    "enWeight": 375,
+    "ruSize": 20.034,
+    "ruOpsz": 48,
+    "ruWeight": 425
+  }
+]

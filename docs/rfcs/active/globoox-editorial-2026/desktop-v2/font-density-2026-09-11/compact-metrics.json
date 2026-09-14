@@ -1,0 +1,147 @@
+[
+  {
+    "name": "Текущий: Georgia / Newsreader",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 52,
+          "advance": 12127.765625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 16,
+          "advance": 12127.765625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "STIX Two Text",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 50,
+          "advance": 11810.8125,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11810.8125,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9952.375,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9952.375,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "EB Garamond",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 42,
+          "advance": 10339.53125,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10339.53125,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 35,
+          "advance": 8910.109375,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 12,
+          "advance": 8910.109375,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Tinos",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11095.6875,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11095.6875,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9446.03125,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9446.03125,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Times New Roman",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11095.6875,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11095.6875,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9446.03125,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9446.03125,
+          "chars": 1114
+        }
+      }
+    }
+  }
+]

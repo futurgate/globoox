@@ -1,0 +1,1314 @@
+[
+  {
+    "id": "ru48-20-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.176691729323306,
+      "lowerInk": 9.67,
+      "capInk": 12.178383458646616
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11066.5
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11066.5
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 40,
+          "advance": 10309.65625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10309.65625
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 4,
+    "capDelta": 1.2216165413533844
+  },
+  {
+    "id": "ru48-20-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.53674121405751,
+      "lowerInk": 9.67,
+      "capInk": 12.419616613418533
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11066.5
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11066.5
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10100.171875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10100.171875
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 5,
+    "capDelta": 0.9803833865814671
+  },
+  {
+    "id": "ru48-20-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.911342894393737,
+      "lowerInk": 9.67,
+      "capInk": 12.670599739243805
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11066.5
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11066.5
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9885.15625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9885.15625
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 5,
+    "capDelta": 0.7294002607561954
+  },
+  {
+    "id": "ru48-20-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.301397205588824,
+      "lowerInk": 9.67,
+      "capInk": 12.931936127744512
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11066.5
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11066.5
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 38,
+          "advance": 9658.15625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9658.15625
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 6,
+    "capDelta": 0.4680638722554882
+  },
+  {
+    "id": "ru48-20.2-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.35845864661654,
+      "lowerInk": 9.7667,
+      "capInk": 12.300167293233082
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11177.171875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11177.171875
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 41,
+          "advance": 10411.796875
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10411.796875
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 3,
+    "capDelta": 1.2338327067669184
+  },
+  {
+    "id": "ru48-20.2-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.722108626198086,
+      "lowerInk": 9.7667,
+      "capInk": 12.543812779552718
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11177.171875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11177.171875
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10203.734375
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10203.734375
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 5,
+    "capDelta": 0.9901872204472824
+  },
+  {
+    "id": "ru48-20.2-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 16,
+      "size": 19.100456323337678,
+      "lowerInk": 9.7667,
+      "capInk": 12.797305736636245
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11177.171875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11177.171875
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9984.46875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9984.46875
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 5,
+    "capDelta": 0.7366942633637557
+  },
+  {
+    "id": "ru48-20.2-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.49441117764471,
+      "lowerInk": 9.7667,
+      "capInk": 13.061255489021956
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11177.171875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11177.171875
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9753.25
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9753.25
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 5,
+    "capDelta": 0.4727445109780444
+  },
+  {
+    "id": "ru48-20.388-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.52931954887218,
+      "lowerInk": 9.857598000000001,
+      "capInk": 12.414644097744361
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11276.765625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11276.765625
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 42,
+          "advance": 10508.25
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10508.25
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 3,
+    "capDelta": 1.2453159022556406
+  },
+  {
+    "id": "ru48-20.388-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.896353993610226,
+      "lowerInk": 9.857598000000001,
+      "capInk": 12.660557175718852
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11276.765625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11276.765625
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 40,
+          "advance": 10296.40625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10296.40625
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 5,
+    "capDelta": 0.9994028242811499
+  },
+  {
+    "id": "ru48-20.388-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 16,
+      "size": 19.27822294654498,
+      "lowerInk": 9.857598000000001,
+      "capInk": 12.916409374185136
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11276.765625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11276.765625
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10073.34375
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10073.34375
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 6,
+    "capDelta": 0.7435506258148656
+  },
+  {
+    "id": "ru48-20.388-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.675844311377247,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.182815688622757
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11276.765625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11276.765625
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9843.3125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9843.3125
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 6,
+    "capDelta": 0.4771443113772449
+  },
+  {
+    "id": "ru48-20.4-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.54022556390977,
+      "lowerInk": 9.863399999999999,
+      "capInk": 12.421951127819547
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11287.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11287.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 42,
+          "advance": 10519.59375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10519.59375
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 3,
+    "capDelta": 1.2460488721804523
+  },
+  {
+    "id": "ru48-20.4-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.907476038338658,
+      "lowerInk": 9.863399999999999,
+      "capInk": 12.668008945686902
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11287.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11287.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 40,
+          "advance": 10301.859375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10301.859375
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 5,
+    "capDelta": 0.9999910543130976
+  },
+  {
+    "id": "ru48-20.4-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 16,
+      "size": 19.28956975228161,
+      "lowerInk": 9.863399999999999,
+      "capInk": 12.92401173402868
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11287.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11287.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10078.5625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10078.5625
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 6,
+    "capDelta": 0.7439882659713195
+  },
+  {
+    "id": "ru48-20.4-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.687425149700594,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.190574850299399
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 45,
+          "advance": 11287.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11287.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9848.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9848.328125
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 6,
+    "capDelta": 0.47742514970060057
+  },
+  {
+    "id": "ru60-20-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 8,
+      "size": 17.89473684210526,
+      "lowerInk": 9.52,
+      "capInk": 11.989473684210525
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10723.359375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10723.359375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10150.78125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10150.78125
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 4,
+    "capDelta": 1.4105263157894754
+  },
+  {
+    "id": "ru60-20-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.249201277955272,
+      "lowerInk": 9.52,
+      "capInk": 12.226964856230033
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10723.359375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10723.359375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9942.109375
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9942.109375
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 4,
+    "capDelta": 1.173035143769967
+  },
+  {
+    "id": "ru60-20-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.617992177314207,
+      "lowerInk": 9.52,
+      "capInk": 12.47405475880052
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10723.359375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10723.359375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9728.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9728.328125
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 4,
+    "capDelta": 0.9259452411994804
+  },
+  {
+    "id": "ru60-20-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.00199600798403,
+      "lowerInk": 9.52,
+      "capInk": 12.731337325349301
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10723.359375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10723.359375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9508.03125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9508.03125
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 6,
+    "capDelta": 0.6686626746506992
+  },
+  {
+    "id": "ru60-20.2-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.073684210526313,
+      "lowerInk": 9.6152,
+      "capInk": 12.109368421052631
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10830.59375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10830.59375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 40,
+          "advance": 10252.921875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10252.921875
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 3,
+    "capDelta": 1.4246315789473698
+  },
+  {
+    "id": "ru60-20.2-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.431693290734827,
+      "lowerInk": 9.6152,
+      "capInk": 12.349234504792335
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10830.59375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10830.59375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10045.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10045.671875
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 4,
+    "capDelta": 1.1847654952076656
+  },
+  {
+    "id": "ru60-20.2-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.80417209908735,
+      "lowerInk": 9.6152,
+      "capInk": 12.598795306388524
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10830.59375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10830.59375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9827.640625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9827.640625
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 4,
+    "capDelta": 0.9352046936114764
+  },
+  {
+    "id": "ru60-20.2-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.19201596806387,
+      "lowerInk": 9.6152,
+      "capInk": 12.858650698602794
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10830.59375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10830.59375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9603.125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9603.125
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 6,
+    "capDelta": 0.6753493013972065
+  },
+  {
+    "id": "ru60-20.388-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.241894736842106,
+      "lowerInk": 9.704688,
+      "capInk": 12.222069473684211
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10927.109375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10927.109375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 40,
+          "advance": 10349.375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10349.375
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 3,
+    "capDelta": 1.4378905263157904
+  },
+  {
+    "id": "ru60-20.388-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.603235782747607,
+      "lowerInk": 9.704688,
+      "capInk": 12.464167974440898
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10927.109375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10927.109375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10138.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10138.328125
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 4,
+    "capDelta": 1.1957920255591041
+  },
+  {
+    "id": "ru60-20.388-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.979181225554104,
+      "lowerInk": 9.704688,
+      "capInk": 12.71605142112125
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10927.109375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10927.109375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9916.515625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9916.515625
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 4,
+    "capDelta": 0.9439085788787516
+  },
+  {
+    "id": "ru60-20.388-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.370634730538924,
+      "lowerInk": 9.704688,
+      "capInk": 12.978325269461081
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10927.109375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10927.109375
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9693.1875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9693.1875
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 4,
+    "capDelta": 0.6816347305389208
+  },
+  {
+    "id": "ru60-20.4-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.252631578947366,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.229263157894735
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10937.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10937.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 40,
+          "advance": 10355.046875
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10355.046875
+        }
+      }
+    },
+    "desktopDelta": 1,
+    "mobileDelta": 3,
+    "capDelta": 1.4387368421052642
+  },
+  {
+    "id": "ru60-20.4-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.614185303514375,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.471504153354632
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10937.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10937.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 10143.78125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10143.78125
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 4,
+    "capDelta": 1.1964958466453677
+  },
+  {
+    "id": "ru60-20.4-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.990352020860488,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.723535853976529
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10937.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10937.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9926.96875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9926.96875
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 4,
+    "capDelta": 0.9444641460234706
+  },
+  {
+    "id": "ru60-20.4-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.382035928143708,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.985964071856285
+    },
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10937.828125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10937.828125
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9693.1875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9693.1875
+        }
+      }
+    },
+    "desktopDelta": 2,
+    "mobileDelta": 4,
+    "capDelta": 0.6820359281437138
+  }
+]

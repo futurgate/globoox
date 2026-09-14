@@ -1,3 +1,10 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Languages and founders — active refinement, 6 September 2026
 
 **Superseding revision, 2026-09-07:** user feedback rejected the Orchard composition and miniature “soon” cards documented below. The current block uses a compact canopy and current-language papers, independently aligned copy, and two readable HTML rows of upcoming names with middots beside three small growing sprouts. [New revision record](../refinements-2026-09-07/README.md) · [New QA record](../refinements-2026-09-07/design-qa.md). Final QA approval is not asserted here.
@@ -14,7 +21,7 @@ All no-implementation and baseline-live statements below are historical and supe
 
 ## Latest request — five contemporary card variants
 
-The user preferred the Manuscript slips composition (previous exploration 1), reattached it as `/Users/user/Desktop/download-1.png`, and requested **five more variants**. Keep the staggered card idea, reduce vintage styling, vary the cards meaningfully. One variant should include tasteful decoration on the cards; another should put a lightweight background object behind them. [Current round](card-variations/index.html) · [preserved selected reference](card-variations/selected-reference.png). This is a preference for an exploration direction, not a final implementation selection. The live paper-index baseline remains intact.
+The user preferred the Manuscript slips composition (previous exploration 1), reattached it as `~/Desktop/download-1.png`, and requested **five more variants**. Keep the staggered card idea, reduce vintage styling, vary the cards meaningfully. One variant should include tasteful decoration on the cards; another should put a lightweight background object behind them. [Current round](card-variations/index.html) · [preserved selected reference](card-variations/selected-reference.png). This is a preference for an exploration direction, not a final implementation selection. The live paper-index baseline remains intact.
 
 ## Current authority
 

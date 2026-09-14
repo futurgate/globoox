@@ -1,0 +1,588 @@
+[
+  {
+    "view": [
+      320,
+      780
+    ],
+    "mobile": true,
+    "inset": 84,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "35px",
+    "layoutPosition": "static",
+    "divider": "1px",
+    "episodeDisplay": "grid",
+    "stageDisplay": "none",
+    "images": [
+      {
+        "width": 278,
+        "height": 602,
+        "ratio": 0.46179401993355484,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 278,
+        "height": 602,
+        "ratio": 0.46179401993355484,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 278,
+        "height": 602,
+        "ratio": 0.46179401993355484,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": [
+      {
+        "state": "entry",
+        "scroll": 1077.5,
+        "headingTop": 108.2109375,
+        "headingBottom": 212.40625,
+        "thirdTop": 1757.71875
+      },
+      {
+        "state": "step1-pinned",
+        "scroll": 1430,
+        "headingTop": 84,
+        "headingBottom": 188.1953125,
+        "thirdTop": 1405.21875
+      },
+      {
+        "state": "step2-pinned",
+        "scroll": 1838,
+        "headingTop": 84,
+        "headingBottom": 188.1953125,
+        "thirdTop": 997.21875
+      },
+      {
+        "state": "step3-push",
+        "scroll": 2627,
+        "headingTop": 52.0234375,
+        "headingBottom": 156.21875,
+        "thirdTop": 208.21875
+      },
+      {
+        "state": "step3-push-plus40",
+        "scroll": 2667,
+        "headingTop": 12.0234375,
+        "headingBottom": 116.21875,
+        "thirdTop": 168.21875
+      },
+      {
+        "state": "step3-push-reverse40",
+        "scroll": 2627,
+        "headingTop": 52.0234375,
+        "headingBottom": 156.21875,
+        "thirdTop": 208.21875
+      },
+      {
+        "state": "step3-released",
+        "scroll": 2731,
+        "headingTop": -51.9765625,
+        "headingBottom": 52.21875,
+        "thirdTop": 104.21875
+      }
+    ]
+  },
+  {
+    "view": [
+      390,
+      600
+    ],
+    "mobile": true,
+    "inset": 84,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "40px",
+    "layoutPosition": "static",
+    "divider": "1px",
+    "episodeDisplay": "grid",
+    "stageDisplay": "none",
+    "images": [
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": [
+      {
+        "state": "entry",
+        "scroll": 1035.5,
+        "headingTop": 108.09375,
+        "headingBottom": 217.6875,
+        "thirdTop": 1875.71875
+      },
+      {
+        "state": "step1-pinned",
+        "scroll": 1393,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1518.21875
+      },
+      {
+        "state": "step2-pinned",
+        "scroll": 1850,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1061.21875
+      },
+      {
+        "state": "step3-push",
+        "scroll": 2697,
+        "headingTop": 44.625,
+        "headingBottom": 154.21875,
+        "thirdTop": 214.21875
+      },
+      {
+        "state": "step3-push-plus40",
+        "scroll": 2737,
+        "headingTop": 4.625,
+        "headingBottom": 114.21875,
+        "thirdTop": 174.21875
+      },
+      {
+        "state": "step3-push-reverse40",
+        "scroll": 2697,
+        "headingTop": 44.625,
+        "headingBottom": 154.21875,
+        "thirdTop": 214.21875
+      },
+      {
+        "state": "step3-released",
+        "scroll": 2807,
+        "headingTop": -65.375,
+        "headingBottom": 44.21875,
+        "thirdTop": 104.21875
+      }
+    ]
+  },
+  {
+    "view": [
+      430,
+      932
+    ],
+    "mobile": true,
+    "inset": 84,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "40px",
+    "layoutPosition": "static",
+    "divider": "1px",
+    "episodeDisplay": "grid",
+    "stageDisplay": "none",
+    "images": [
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": [
+      {
+        "state": "entry",
+        "scroll": 993.5,
+        "headingTop": 107.9765625,
+        "headingBottom": 217.5703125,
+        "thirdTop": 1875.6015625
+      },
+      {
+        "state": "step1-pinned",
+        "scroll": 1351,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1518.1015625
+      },
+      {
+        "state": "step2-pinned",
+        "scroll": 1808,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1061.1015625
+      },
+      {
+        "state": "step3-push",
+        "scroll": 2655,
+        "headingTop": 44.5078125,
+        "headingBottom": 154.1015625,
+        "thirdTop": 214.1015625
+      },
+      {
+        "state": "step3-push-plus40",
+        "scroll": 2695,
+        "headingTop": 4.5078125,
+        "headingBottom": 114.1015625,
+        "thirdTop": 174.1015625
+      },
+      {
+        "state": "step3-push-reverse40",
+        "scroll": 2655,
+        "headingTop": 44.5078125,
+        "headingBottom": 154.1015625,
+        "thirdTop": 214.1015625
+      },
+      {
+        "state": "step3-released",
+        "scroll": 2765,
+        "headingTop": -65.4921875,
+        "headingBottom": 44.1015625,
+        "thirdTop": 104.1015625
+      }
+    ]
+  },
+  {
+    "view": [
+      768,
+      1024
+    ],
+    "mobile": true,
+    "inset": 84,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "40px",
+    "layoutPosition": "static",
+    "divider": "1px",
+    "episodeDisplay": "grid",
+    "stageDisplay": "none",
+    "images": [
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": [
+      {
+        "state": "entry",
+        "scroll": 999,
+        "headingTop": 108.2421875,
+        "headingBottom": 217.8359375,
+        "thirdTop": 1875.8671875
+      },
+      {
+        "state": "step1-pinned",
+        "scroll": 1357,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1517.8671875
+      },
+      {
+        "state": "step2-pinned",
+        "scroll": 1814,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1060.8671875
+      },
+      {
+        "state": "step3-push",
+        "scroll": 2661,
+        "headingTop": 44.2734375,
+        "headingBottom": 153.8671875,
+        "thirdTop": 213.8671875
+      },
+      {
+        "state": "step3-push-plus40",
+        "scroll": 2701,
+        "headingTop": 4.2734375,
+        "headingBottom": 113.8671875,
+        "thirdTop": 173.8671875
+      },
+      {
+        "state": "step3-push-reverse40",
+        "scroll": 2661,
+        "headingTop": 44.2734375,
+        "headingBottom": 153.8671875,
+        "thirdTop": 213.8671875
+      },
+      {
+        "state": "step3-released",
+        "scroll": 2771,
+        "headingTop": -65.7265625,
+        "headingBottom": 43.8671875,
+        "thirdTop": 103.8671875
+      }
+    ]
+  },
+  {
+    "view": [
+      800,
+      1000
+    ],
+    "mobile": true,
+    "inset": 84,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "40px",
+    "layoutPosition": "static",
+    "divider": "1px",
+    "episodeDisplay": "grid",
+    "stageDisplay": "none",
+    "images": [
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 298,
+        "height": 645,
+        "ratio": 0.462015503875969,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": [
+      {
+        "state": "entry",
+        "scroll": 999,
+        "headingTop": 108.2421875,
+        "headingBottom": 217.8359375,
+        "thirdTop": 1875.8671875
+      },
+      {
+        "state": "step1-pinned",
+        "scroll": 1357,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1517.8671875
+      },
+      {
+        "state": "step2-pinned",
+        "scroll": 1814,
+        "headingTop": 84,
+        "headingBottom": 193.59375,
+        "thirdTop": 1060.8671875
+      },
+      {
+        "state": "step3-push",
+        "scroll": 2661,
+        "headingTop": 44.2734375,
+        "headingBottom": 153.8671875,
+        "thirdTop": 213.8671875
+      },
+      {
+        "state": "step3-push-plus40",
+        "scroll": 2701,
+        "headingTop": 4.2734375,
+        "headingBottom": 113.8671875,
+        "thirdTop": 173.8671875
+      },
+      {
+        "state": "step3-push-reverse40",
+        "scroll": 2661,
+        "headingTop": 44.2734375,
+        "headingBottom": 153.8671875,
+        "thirdTop": 213.8671875
+      },
+      {
+        "state": "step3-released",
+        "scroll": 2771,
+        "headingTop": -65.7265625,
+        "headingBottom": 43.8671875,
+        "thirdTop": 103.8671875
+      }
+    ]
+  },
+  {
+    "view": [
+      801,
+      1000
+    ],
+    "mobile": false,
+    "inset": 84,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "51px",
+    "layoutPosition": "sticky",
+    "divider": "0px",
+    "episodeDisplay": "none",
+    "stageDisplay": "flex",
+    "images": [
+      {
+        "width": 0,
+        "height": 0,
+        "ratio": null,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 0,
+        "height": 0,
+        "ratio": null,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 0,
+        "height": 0,
+        "ratio": null,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": []
+  },
+  {
+    "view": [
+      1440,
+      1000
+    ],
+    "mobile": false,
+    "inset": 96,
+    "overflow": false,
+    "headingFont": "\"Editorial Newsreader\", Georgia, \"Times New Roman\", serif",
+    "titleSize": "58px",
+    "layoutPosition": "sticky",
+    "divider": "0px",
+    "episodeDisplay": "none",
+    "stageDisplay": "flex",
+    "images": [
+      {
+        "width": 0,
+        "height": 0,
+        "ratio": null,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 0,
+        "height": 0,
+        "ratio": null,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      },
+      {
+        "width": 0,
+        "height": 0,
+        "ratio": null,
+        "natural": [
+          788,
+          1705
+        ],
+        "complete": true
+      }
+    ],
+    "states": []
+  }
+]

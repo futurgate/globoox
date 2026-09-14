@@ -1,0 +1,322 @@
+[
+  {
+    "active": "Step 1Upload your ebook.",
+    "episodeDisplay": "grid",
+    "frames": [
+      {
+        "h": 439,
+        "w": 278
+      },
+      {
+        "h": 439,
+        "w": 278
+      },
+      {
+        "h": 439,
+        "w": 278
+      }
+    ],
+    "height": 844,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "static",
+    "overflow": false,
+    "tabDisplay": "none",
+    "width": 320
+  },
+  {
+    "active": "Step 1Upload your ebook.",
+    "episodeDisplay": "grid",
+    "frames": [
+      {
+        "h": 536,
+        "w": 340
+      },
+      {
+        "h": 536,
+        "w": 340
+      },
+      {
+        "h": 536,
+        "w": 340
+      }
+    ],
+    "height": 844,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "static",
+    "overflow": false,
+    "tabDisplay": "none",
+    "width": 390
+  },
+  {
+    "active": "Step 1Upload your ebook.",
+    "episodeDisplay": "grid",
+    "frames": [
+      {
+        "h": 599,
+        "w": 380
+      },
+      {
+        "h": 599,
+        "w": 380
+      },
+      {
+        "h": 599,
+        "w": 380
+      }
+    ],
+    "height": 844,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "static",
+    "overflow": false,
+    "tabDisplay": "none",
+    "width": 430
+  },
+  {
+    "active": "Step 1Upload your ebook.",
+    "episodeDisplay": "grid",
+    "frames": [
+      {
+        "h": 659,
+        "w": 418
+      },
+      {
+        "h": 659,
+        "w": 418
+      },
+      {
+        "h": 659,
+        "w": 418
+      }
+    ],
+    "height": 844,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "static",
+    "overflow": false,
+    "tabDisplay": "none",
+    "width": 600
+  },
+  {
+    "active": "Step 1Upload your ebook.",
+    "episodeDisplay": "grid",
+    "frames": [
+      {
+        "h": 659,
+        "w": 418
+      },
+      {
+        "h": 659,
+        "w": 418
+      },
+      {
+        "h": 659,
+        "w": 418
+      }
+    ],
+    "height": 844,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "static",
+    "overflow": false,
+    "tabDisplay": "none",
+    "width": 768
+  },
+  {
+    "active": "Step 1Upload your ebook.",
+    "episodeDisplay": "grid",
+    "frames": [
+      {
+        "h": 659,
+        "w": 418
+      },
+      {
+        "h": 659,
+        "w": 418
+      },
+      {
+        "h": 659,
+        "w": 418
+      }
+    ],
+    "height": 844,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "static",
+    "overflow": false,
+    "tabDisplay": "none",
+    "width": 800
+  },
+  {
+    "active": "Step 2Choose your language to translate the book.",
+    "episodeDisplay": "none",
+    "frames": [
+      {
+        "h": 0,
+        "w": 0
+      },
+      {
+        "h": 0,
+        "w": 0
+      },
+      {
+        "h": 0,
+        "w": 0
+      }
+    ],
+    "height": 1000,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "sticky",
+    "overflow": false,
+    "tabDisplay": "block",
+    "width": 801
+  },
+  {
+    "active": "Step 2Choose your language to translate the book.",
+    "episodeDisplay": "none",
+    "frames": [
+      {
+        "h": 0,
+        "w": 0
+      },
+      {
+        "h": 0,
+        "w": 0
+      },
+      {
+        "h": 0,
+        "w": 0
+      }
+    ],
+    "height": 1000,
+    "imgs": [
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/1.1.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/2.1-en.webp"
+      },
+      {
+        "complete": true,
+        "natural": 656,
+        "src": "http://127.0.0.1:3000/images/how-it-works/3-en-es.webp"
+      }
+    ],
+    "layout": "sticky",
+    "overflow": false,
+    "tabDisplay": "block",
+    "width": 1440
+  }
+]

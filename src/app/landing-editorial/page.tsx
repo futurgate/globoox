@@ -1,14 +1,8 @@
-import type { Metadata } from 'next';
-import { getLandingMessages } from '@/lib/landing-i18n';
-import EditorialLanding from '@/components/landing-editorial/EditorialLanding';
+import { EditorialLandingServer } from '@/components/landing-editorial/EditorialLandingServer';
+import { createEditorialLandingMetadata } from '@/components/landing-editorial/editorialMetadata';
 
-export const metadata: Metadata = {
-  title: getLandingMessages('en').metadata.title,
-  description: getLandingMessages('en').metadata.description,
-  robots: { index: false, follow: false },
-  alternates: { canonical: '/landing-editorial' },
-};
+export const metadata = createEditorialLandingMetadata({ locale: 'en', mode: 'preview', previewRoot: true });
 
 export default function EditorialLandingPage() {
-  return <EditorialLanding />;
+  return <EditorialLandingServer locale="en" mode="preview" />;
 }

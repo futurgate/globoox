@@ -1,0 +1,51 @@
+const { chromium } = require(process.cwd() + '/node_modules/playwright');
+const fs = require('fs');
+const out = process.argv[2]; if (!out) throw new Error('Pass an output directory argument');fs.mkdirSync(out,{recursive:true});
+(async () => {
+ const browser = await chromium.launch({channel:'chrome',headless:true});
+ const context = await browser.newContext({viewport:{width:1440,height:1000}});
+ const page = await context.newPage();
+ const errors=[]; page.on('pageerror', e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:3000/landing-editorial',{waitUntil:'networkidle'});
+ await page.evaluate(()=>document.fonts.ready);
+ const consent = page.getByRole('button',{name:/necessary only|essential only|reject|decline/i});
+ if (await consent.count()) await consent.first().click();
+ const records=[];
+ async function geometry() { return page.evaluate(()=>{const s=document.querySelector('#how-it-works'),p=s.querySelector('[data-walkthrough-pin]');const start=scrollY+s.getBoundingClientRect().top-parseFloat(getComputedStyle(p).top);return{start,end:start+s.offsetHeight-p.offsetHeight};});}
+ async function prep(mode,height=1000) {
+  await page.setViewportSize({width:1440,height}); await page.waitForTimeout(120);
+  const g=await geometry();
+  await page.evaluate(({mode,g})=>scrollTo({top:mode==='above'?0:mode==='inside'?(g.start+g.end)/2:document.querySelector('#start').getBoundingClientRect().top+scrollY,behavior:'instant'}),{mode,g});
+  await page.waitForTimeout(100);
+ }
+ async function capture(name,href,action) {
+  await page.evaluate(()=>{
+   window.__navSamples=[];window.__captureNav=true;
+   const sample=()=>{const s=document.querySelector('#how-it-works'),p=s.querySelector('[data-walkthrough-pin]'),q=document.querySelector('#quality');window.__navSamples.push({t:performance.now(),y:scrollY,pinTop:p.getBoundingClientRect().top,pinBottom:p.getBoundingClientRect().bottom,qualityTop:q.getBoundingClientRect().top,qualityInkTop:q.querySelector('h2').getBoundingClientRect().top,nav:!!s.closest('[data-section-navigation]'),compact:s.hasAttribute('data-navigation-compact'),height:s.getBoundingClientRect().height,pinPosition:getComputedStyle(p).position,active:s.querySelector('[aria-selected="true"]')?.innerText,anchoring:document.documentElement.style.overflowAnchor});if(window.__captureNav)requestAnimationFrame(sample);};requestAnimationFrame(sample);
+  });
+  await page.locator('header a[href="'+href+'"]').first().click();
+  if(action) await action();
+  await page.waitForTimeout(1150);
+  const data=await page.evaluate(()=>{window.__captureNav=false;return window.__navSamples;});
+  await page.screenshot({path:out+'/'+name+'.png'});
+  const compact=data.filter(d=>d.compact);
+  const transitions=[];for(let i=1;i<data.length;i++){if(data[i].compact!==data[i-1].compact)transitions.push({from:data[i-1],to:data[i],pinDelta:data[i].pinTop-data[i-1].pinTop,qualityDelta:data[i].qualityTop-data[i-1].qualityTop});}
+  const record={name,data,transitions,compactFrames:compact.length,last:data.at(-1)};
+  records.push(record);fs.writeFileSync(out+'/'+name+'.json',JSON.stringify(record,null,2));
+  console.log(JSON.stringify({name,compactFrames:compact.length,transitions:transitions.map(x=>({pinDelta:x.pinDelta,qualityDelta:x.qualityDelta})),last:record.last}));
+ }
+ await prep('above'); await capture('forward-to-quality','#quality');
+ await prep('below'); await capture('reverse-to-hero','#hero');
+ await prep('inside'); await capture('inside-to-quality','#quality');
+ await prep('below'); await capture('below-to-how','#how-it-works');
+ await prep('above'); await capture('cancel-wheel','#quality',async()=>{await page.waitForTimeout(180);await page.mouse.wheel(0,100);});
+ await prep('inside'); await capture('cancel-escape-inside','#quality',async()=>{await page.waitForTimeout(55);await page.keyboard.press('Escape');});
+ await prep('above',1200); await capture('tall-forward','#quality');
+ await prep('below',1200); await capture('tall-below-to-how','#how-it-works');
+ await prep('inside',1200); await capture('tall-inside-cancel','#quality',async()=>{await page.waitForTimeout(55);await page.keyboard.press('Escape');});
+ await page.evaluate(()=>{const s=document.querySelector('#how-it-works');window.__panelMeasures=[];const m=()=>{const p=s.querySelector('[data-walkthrough-pin]'),a=p.querySelector('[role=tablist]'),d=p.querySelector('[role=tabpanel]');return{footprint:p.offsetHeight,runway:s.offsetHeight-p.offsetHeight,tabsTop:a.getBoundingClientRect().top-p.getBoundingClientRect().top,tabsHeight:a.offsetHeight,deckTop:d.getBoundingClientRect().top-p.getBoundingClientRect().top,deckWidth:d.offsetWidth,deckHeight:d.offsetHeight};};window.__panelMeasures.push(m());s.style.setProperty('--panel-footprint','var(--panel-height)');window.__panelMeasures.push(m());s.style.removeProperty('--panel-footprint');});
+ const panelMeasures=await page.evaluate(()=>window.__panelMeasures);fs.writeFileSync(out+'/panel-measures.json',JSON.stringify(panelMeasures,null,2));console.log('PANEL '+JSON.stringify(panelMeasures));
+ fs.writeFileSync(out+'/all-results.json',JSON.stringify({records,errors},null,2));
+ console.log('ERRORS '+JSON.stringify(errors));
+ await browser.close();
+})().catch(e=>{console.error(e);process.exitCode=1;});

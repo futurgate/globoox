@@ -1,0 +1,30 @@
+.dialog {
+  width: min(480px, calc(100vw - 40px));
+  max-height: calc(100dvh - 40px);
+  margin: auto;
+  padding: 48px 38px 26px;
+  overflow: auto;
+  border: 1px solid var(--ed-frame-border, #c9c7b9);
+  border-radius: var(--ed-frame-radius, 10px);
+  background: var(--ed-paper, #f7f5ed);
+  color: var(--ed-ink, #20382f);
+  box-shadow: 0 24px 90px rgb(24 40 30 / 18%);
+  text-align: center;
+}
+.dialog::backdrop { background: rgb(24 40 30 / 28%); backdrop-filter: blur(4px); }
+.dialog .title { margin: 0; font-family: var(--ed-serif); font-size: 36px; font-weight: 400; letter-spacing: -.6px; line-height: 1.12; text-wrap: balance; }
+.dialog .description { margin: 18px 0 28px; color: var(--ed-muted); font-size: 16px; line-height: 1.65; text-wrap: pretty; }
+.close { position: absolute; top: 8px; right: 8px; display: grid; width: 40px; height: 40px; place-items: center; border: 0; border-radius: 4px; background: transparent; color: var(--ed-muted); }
+.close:hover { background: #e9ecdf; }
+.dialog .continue { display: flex; min-height: 50px; align-items: center; justify-content: center; gap: 10px; padding: 12px 16px; border: 1px solid var(--ed-ink); border-radius: 5px; background: var(--ed-ink); color: #fffdf5; font-size: 15px; line-height: 1.4; text-decoration: none; }
+.dialog .continue:hover { background: #344c3d; }
+.dismiss { min-height: 44px; margin-top: 10px; padding: 8px 12px; border: 0; background: transparent; color: var(--ed-muted); font-size: 14px; }
+.dismiss:hover { color: var(--ed-ink); }
+.spinner { flex-shrink: 0; width: 16px; height: 16px; border: 1.5px solid #fffdf55c; border-top-color: #fffdf5; border-radius: 50%; animation: spin 800ms linear infinite; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 540px) {
+  .dialog { padding: 46px 26px 24px; }
+  .dialog .title { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

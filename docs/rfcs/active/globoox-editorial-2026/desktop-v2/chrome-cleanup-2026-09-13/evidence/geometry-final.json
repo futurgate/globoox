@@ -1,0 +1,1285 @@
+{
+  "errors": [],
+  "results": [
+    {
+      "width": 1440,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "16px",
+          "box": {
+            "x": 518.09375,
+            "y": 24.796875,
+            "width": 93.71875,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 611.8125,
+            "bottom": 71.1875,
+            "left": 518.09375
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "16px",
+          "box": {
+            "x": 636.8125,
+            "y": 24.796875,
+            "width": 52.84375,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 689.65625,
+            "bottom": 71.1875,
+            "left": 636.8125
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "16px",
+          "box": {
+            "x": 714.65625,
+            "y": 24.796875,
+            "width": 78.78125,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 793.4375,
+            "bottom": 71.1875,
+            "left": 714.65625
+          }
+        },
+        {
+          "text": "Team",
+          "font": "16px",
+          "box": {
+            "x": 818.4375,
+            "y": 24.796875,
+            "width": 39.609375,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 858.046875,
+            "bottom": 71.1875,
+            "left": 818.4375
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "16px",
+          "box": {
+            "x": 883.046875,
+            "y": 24.796875,
+            "width": 50.0625,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 933.109375,
+            "bottom": 71.1875,
+            "left": 883.046875
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "16px",
+          "box": {
+            "x": 958.109375,
+            "y": 24.796875,
+            "width": 95.96875,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 1054.078125,
+            "bottom": 71.1875,
+            "left": 958.109375
+          }
+        }
+      ],
+      "brand": {
+        "x": 80,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 224.9375,
+        "bottom": 66.796875,
+        "left": 80
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 1082.078125,
+            "y": 26,
+            "width": 89,
+            "height": 44,
+            "top": 26,
+            "right": 1171.078125,
+            "bottom": 70,
+            "left": 1082.078125
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 1219.078125,
+            "y": 27,
+            "width": 140.921875,
+            "height": 42,
+            "top": 27,
+            "right": 1360,
+            "bottom": 69,
+            "left": 1219.078125
+          }
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "16px",
+          "box": {
+            "x": 390.09375,
+            "y": 24.796875,
+            "width": 93.71875,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 483.8125,
+            "bottom": 71.1875,
+            "left": 390.09375
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "16px",
+          "box": {
+            "x": 508.8125,
+            "y": 24.796875,
+            "width": 52.84375,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 561.65625,
+            "bottom": 71.1875,
+            "left": 508.8125
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "16px",
+          "box": {
+            "x": 586.65625,
+            "y": 24.796875,
+            "width": 78.78125,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 665.4375,
+            "bottom": 71.1875,
+            "left": 586.65625
+          }
+        },
+        {
+          "text": "Team",
+          "font": "16px",
+          "box": {
+            "x": 690.4375,
+            "y": 24.796875,
+            "width": 39.609375,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 730.046875,
+            "bottom": 71.1875,
+            "left": 690.4375
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "16px",
+          "box": {
+            "x": 755.046875,
+            "y": 24.796875,
+            "width": 50.0625,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 805.109375,
+            "bottom": 71.1875,
+            "left": 755.046875
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "16px",
+          "box": {
+            "x": 830.109375,
+            "y": 24.796875,
+            "width": 95.96875,
+            "height": 46.390625,
+            "top": 24.796875,
+            "right": 926.078125,
+            "bottom": 71.1875,
+            "left": 830.109375
+          }
+        }
+      ],
+      "brand": {
+        "x": 48,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 192.9375,
+        "bottom": 66.796875,
+        "left": 48
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 954.078125,
+            "y": 26,
+            "width": 89,
+            "height": 44,
+            "top": 26,
+            "right": 1043.078125,
+            "bottom": 70,
+            "left": 954.078125
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 1091.078125,
+            "y": 27,
+            "width": 140.921875,
+            "height": 42,
+            "top": 27,
+            "right": 1232,
+            "bottom": 69,
+            "left": 1091.078125
+          }
+        }
+      ]
+    },
+    {
+      "width": 1101,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 317.625,
+            "y": 25.5,
+            "width": 87.921875,
+            "height": 45,
+            "top": 25.5,
+            "right": 405.546875,
+            "bottom": 70.5,
+            "left": 317.625
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 421.546875,
+            "y": 25.5,
+            "width": 49.546875,
+            "height": 45,
+            "top": 25.5,
+            "right": 471.09375,
+            "bottom": 70.5,
+            "left": 421.546875
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 487.09375,
+            "y": 25.5,
+            "width": 73.890625,
+            "height": 45,
+            "top": 25.5,
+            "right": 560.984375,
+            "bottom": 70.5,
+            "left": 487.09375
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 576.984375,
+            "y": 25.5,
+            "width": 37.125,
+            "height": 45,
+            "top": 25.5,
+            "right": 614.109375,
+            "bottom": 70.5,
+            "left": 576.984375
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 630.109375,
+            "y": 25.5,
+            "width": 46.953125,
+            "height": 45,
+            "top": 25.5,
+            "right": 677.0625,
+            "bottom": 70.5,
+            "left": 630.109375
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 693.0625,
+            "y": 25.5,
+            "width": 90.015625,
+            "height": 45,
+            "top": 25.5,
+            "right": 783.078125,
+            "bottom": 70.5,
+            "left": 693.0625
+          }
+        }
+      ],
+      "brand": {
+        "x": 32,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 176.9375,
+        "bottom": 66.796875,
+        "left": 32
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 803.078125,
+            "y": 26,
+            "width": 89,
+            "height": 44,
+            "top": 26,
+            "right": 892.078125,
+            "bottom": 70,
+            "left": 803.078125
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 928.078125,
+            "y": 27,
+            "width": 140.921875,
+            "height": 42,
+            "top": 27,
+            "right": 1069,
+            "bottom": 69,
+            "left": 928.078125
+          }
+        }
+      ]
+    },
+    {
+      "width": 1100,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 316.625,
+            "y": 25.5,
+            "width": 87.921875,
+            "height": 45,
+            "top": 25.5,
+            "right": 404.546875,
+            "bottom": 70.5,
+            "left": 316.625
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 420.546875,
+            "y": 25.5,
+            "width": 49.546875,
+            "height": 45,
+            "top": 25.5,
+            "right": 470.09375,
+            "bottom": 70.5,
+            "left": 420.546875
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 486.09375,
+            "y": 25.5,
+            "width": 73.890625,
+            "height": 45,
+            "top": 25.5,
+            "right": 559.984375,
+            "bottom": 70.5,
+            "left": 486.09375
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 575.984375,
+            "y": 25.5,
+            "width": 37.125,
+            "height": 45,
+            "top": 25.5,
+            "right": 613.109375,
+            "bottom": 70.5,
+            "left": 575.984375
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 629.109375,
+            "y": 25.5,
+            "width": 46.953125,
+            "height": 45,
+            "top": 25.5,
+            "right": 676.0625,
+            "bottom": 70.5,
+            "left": 629.109375
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 692.0625,
+            "y": 25.5,
+            "width": 90.015625,
+            "height": 45,
+            "top": 25.5,
+            "right": 782.078125,
+            "bottom": 70.5,
+            "left": 692.0625
+          }
+        }
+      ],
+      "brand": {
+        "x": 32,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 176.9375,
+        "bottom": 66.796875,
+        "left": 32
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 802.078125,
+            "y": 26,
+            "width": 89,
+            "height": 44,
+            "top": 26,
+            "right": 891.078125,
+            "bottom": 70,
+            "left": 802.078125
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 927.078125,
+            "y": 27,
+            "width": 140.921875,
+            "height": 42,
+            "top": 27,
+            "right": 1068,
+            "bottom": 69,
+            "left": 927.078125
+          }
+        }
+      ]
+    },
+    {
+      "width": 1050,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 266.625,
+            "y": 25.5,
+            "width": 87.921875,
+            "height": 45,
+            "top": 25.5,
+            "right": 354.546875,
+            "bottom": 70.5,
+            "left": 266.625
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 370.546875,
+            "y": 25.5,
+            "width": 49.546875,
+            "height": 45,
+            "top": 25.5,
+            "right": 420.09375,
+            "bottom": 70.5,
+            "left": 370.546875
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 436.09375,
+            "y": 25.5,
+            "width": 73.890625,
+            "height": 45,
+            "top": 25.5,
+            "right": 509.984375,
+            "bottom": 70.5,
+            "left": 436.09375
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 525.984375,
+            "y": 25.5,
+            "width": 37.125,
+            "height": 45,
+            "top": 25.5,
+            "right": 563.109375,
+            "bottom": 70.5,
+            "left": 525.984375
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 579.109375,
+            "y": 25.5,
+            "width": 46.953125,
+            "height": 45,
+            "top": 25.5,
+            "right": 626.0625,
+            "bottom": 70.5,
+            "left": 579.109375
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 642.0625,
+            "y": 25.5,
+            "width": 90.015625,
+            "height": 45,
+            "top": 25.5,
+            "right": 732.078125,
+            "bottom": 70.5,
+            "left": 642.0625
+          }
+        }
+      ],
+      "brand": {
+        "x": 32,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 176.9375,
+        "bottom": 66.796875,
+        "left": 32
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 752.078125,
+            "y": 26,
+            "width": 89,
+            "height": 44,
+            "top": 26,
+            "right": 841.078125,
+            "bottom": 70,
+            "left": 752.078125
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 877.078125,
+            "y": 27,
+            "width": 140.921875,
+            "height": 42,
+            "top": 27,
+            "right": 1018,
+            "bottom": 69,
+            "left": 877.078125
+          }
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 240.625,
+            "y": 25.5,
+            "width": 87.921875,
+            "height": 45,
+            "top": 25.5,
+            "right": 328.546875,
+            "bottom": 70.5,
+            "left": 240.625
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 344.546875,
+            "y": 25.5,
+            "width": 49.546875,
+            "height": 45,
+            "top": 25.5,
+            "right": 394.09375,
+            "bottom": 70.5,
+            "left": 344.546875
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 410.09375,
+            "y": 25.5,
+            "width": 73.890625,
+            "height": 45,
+            "top": 25.5,
+            "right": 483.984375,
+            "bottom": 70.5,
+            "left": 410.09375
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 499.984375,
+            "y": 25.5,
+            "width": 37.125,
+            "height": 45,
+            "top": 25.5,
+            "right": 537.109375,
+            "bottom": 70.5,
+            "left": 499.984375
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 553.109375,
+            "y": 25.5,
+            "width": 46.953125,
+            "height": 45,
+            "top": 25.5,
+            "right": 600.0625,
+            "bottom": 70.5,
+            "left": 553.109375
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 616.0625,
+            "y": 25.5,
+            "width": 90.015625,
+            "height": 45,
+            "top": 25.5,
+            "right": 706.078125,
+            "bottom": 70.5,
+            "left": 616.0625
+          }
+        }
+      ],
+      "brand": {
+        "x": 32,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 176.9375,
+        "bottom": 66.796875,
+        "left": 32
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 726.078125,
+            "y": 26,
+            "width": 89,
+            "height": 44,
+            "top": 26,
+            "right": 815.078125,
+            "bottom": 70,
+            "left": 726.078125
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 851.078125,
+            "y": 27,
+            "width": 140.921875,
+            "height": 42,
+            "top": 27,
+            "right": 992,
+            "bottom": 69,
+            "left": 851.078125
+          }
+        }
+      ]
+    },
+    {
+      "width": 901,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "brand": {
+        "x": 32,
+        "y": 29.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 29.203125,
+        "right": 176.9375,
+        "bottom": 66.796875,
+        "left": 32
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 900,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "brand": {
+        "x": 32,
+        "y": 23.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 23.203125,
+        "right": 176.9375,
+        "bottom": 60.796875,
+        "left": 32
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "brand": {
+        "x": 20,
+        "y": 23.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 23.203125,
+        "right": 164.9375,
+        "bottom": 60.796875,
+        "left": 20
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "nav": [
+        {
+          "text": "How it works",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Quality",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Languages",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Team",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Pricing",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Start reading",
+          "font": "15px",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ],
+      "brand": {
+        "x": 20,
+        "y": 23.203125,
+        "width": 144.9375,
+        "height": 37.59375,
+        "top": 23.203125,
+        "right": 164.9375,
+        "bottom": 60.796875,
+        "left": 20
+      },
+      "controls": [
+        {
+          "text": "EnglishFrançaisРусский",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "text": "Open App ",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        }
+      ]
+    }
+  ]
+}

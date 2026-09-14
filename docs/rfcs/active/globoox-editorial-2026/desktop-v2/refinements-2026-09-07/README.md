@@ -1,3 +1,10 @@
+---
+type: rfc
+status: implemented
+owner: design-engineering
+last_verified: 2026-09-07
+---
+
 # Current result — implemented and desktop reviewed
 
 **Language composition corrected; desktop QA passed.** [Open the local block](http://127.0.0.1:3000/landing-editorial#languages) · [final screenshot](desktop-final.png) · [source / implementation / before comparison](comparison-final.png) · [detailed QA](design-qa.md).

@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Сейчас: русский Georgia21 / английский Newsreader21",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 52,
+          "advance": 12127.765625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 16,
+          "advance": 12127.765625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Русский EB Garamond21 / английский Newsreader21",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 42,
+          "advance": 10339.53125,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10339.53125,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Русский EB Garamond22 / английский Newsreader21",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 43,
+          "advance": 10831.890625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10831.890625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Русский Tinos21 / английский Newsreader21",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 44,
+          "advance": 11095.6875,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11095.6875,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875,
+          "chars": 1114
+        }
+      }
+    }
+  }
+]

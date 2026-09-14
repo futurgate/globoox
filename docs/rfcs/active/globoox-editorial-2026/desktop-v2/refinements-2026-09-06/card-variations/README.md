@@ -1,10 +1,17 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Five contemporary language-card variants
 
 Created on 2026-09-06 in response to the user's selected manuscript-slips image.
 
 ## Authority and scope
 
-The user reattached `/Users/user/Desktop/download-1.png` and explicitly preferred that composition. They requested five variants, with contemporary rather than vintage cards; one with pleasant decoration on the cards, another with a lightweight background object. [Selected source](selected-reference.png) is preserved unchanged. It is a visual composition reference; the user's message supplies the instructions.
+The user reattached `~/Desktop/download-1.png` and explicitly preferred that composition. They requested five variants, with contemporary rather than vintage cards; one with pleasant decoration on the cards, another with a lightweight background object. [Selected source](selected-reference.png) is preserved unchanged. It is a visual composition reference; the user's message supplies the instructions.
 
 All five images are exploratory and unimplemented. The live paper-index baseline and its saved component/style snapshots remain untouched. Original source marketing copy, language labels and section order remain authoritative.
 

@@ -1,0 +1,1730 @@
+{
+  "errors": [],
+  "trips": [
+    {
+      "href": "#languages",
+      "y": 5166,
+      "top": 120.109375,
+      "headerBottom": 96,
+      "active": [
+        "#languages"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 2,
+      "name": "Hero → Languages",
+      "samples": [
+        {
+          "y": 0,
+          "travelling": true,
+          "compact": false,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 0,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 21,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 46,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 81,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 124,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 176,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 234,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 301,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 374,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 452,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 536,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 626,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 719,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 817,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 918,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1022,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1127,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1235,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1343,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1453,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1563,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1672,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1781,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1888,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1993,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2095,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2194,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2290,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2382,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2469,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2551,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2626,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2696,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2759,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2815,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2863,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2902,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2933,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2954,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2965,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5166,
+          "travelling": false,
+          "compact": false,
+          "active": [
+            "#languages"
+          ]
+        }
+      ]
+    },
+    {
+      "href": "#pricing",
+      "y": 6738,
+      "top": 120.46875,
+      "headerBottom": 96,
+      "active": [
+        "#pricing"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 2,
+      "name": "Languages → Pricing",
+      "samples": [
+        {
+          "y": 5166,
+          "travelling": true,
+          "compact": false,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 2966,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 2970,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 2982,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3002,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3028,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3061,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3100,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3144,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3193,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3246,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3304,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3365,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3428,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3494,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3562,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3631,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3701,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3772,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3843,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3912,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 3981,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4047,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4112,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4174,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4233,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4289,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4340,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4386,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4427,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4463,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4492,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4515,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4530,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 4538,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#pricing"
+          ]
+        },
+        {
+          "y": 6738,
+          "travelling": false,
+          "compact": false,
+          "active": [
+            "#pricing"
+          ]
+        }
+      ]
+    },
+    {
+      "href": "#start",
+      "y": 7438,
+      "top": 290.125,
+      "headerBottom": 96,
+      "active": [
+        "#start"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 2,
+      "name": "Pricing → Start",
+      "samples": [
+        {
+          "y": 6738,
+          "travelling": true,
+          "compact": false,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4538,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4541,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4549,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4562,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4579,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4601,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4626,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4654,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4685,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4718,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4753,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4790,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4828,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4867,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4905,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4944,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 4982,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5019,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5054,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5088,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5119,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5148,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5173,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5195,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5213,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5226,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5235,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 5238,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#start"
+          ]
+        },
+        {
+          "y": 7438,
+          "travelling": false,
+          "compact": false,
+          "active": [
+            "#start"
+          ]
+        }
+      ]
+    },
+    {
+      "href": "#languages",
+      "y": 5166,
+      "top": 120.109375,
+      "headerBottom": 96,
+      "active": [
+        "#languages"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 2,
+      "name": "Start → Languages",
+      "samples": [
+        {
+          "y": 7438,
+          "travelling": true,
+          "compact": false,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5238,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5233,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5219,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5196,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5165,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5126,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5081,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5028,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4969,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4905,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4836,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4761,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4683,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4602,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4518,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4431,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4342,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4252,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4161,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 4069,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3979,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3888,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3799,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3711,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3626,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3543,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3464,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3389,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3319,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3253,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3192,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3138,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3090,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3049,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 3016,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2991,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2974,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2966,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5166,
+          "travelling": false,
+          "compact": false,
+          "active": [
+            "#languages"
+          ]
+        }
+      ]
+    },
+    {
+      "href": "#languages",
+      "y": 5166,
+      "top": 120.109375,
+      "headerBottom": 96,
+      "active": [
+        "#languages"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 2,
+      "name": "Resized hero → Languages",
+      "samples": [
+        {
+          "y": 0,
+          "travelling": true,
+          "compact": false,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 0,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 21,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 47,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 81,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 124,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 176,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 235,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 301,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 374,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 453,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 537,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 626,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 720,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 817,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 918,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1022,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1128,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1235,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1344,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1454,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1563,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1673,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1781,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1888,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 1993,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2095,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2195,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2290,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2382,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2469,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2551,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2627,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2697,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2759,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2815,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2863,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2902,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2933,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2954,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 2965,
+          "travelling": true,
+          "compact": true,
+          "active": [
+            "#languages"
+          ]
+        },
+        {
+          "y": 5166,
+          "travelling": false,
+          "compact": false,
+          "active": [
+            "#languages"
+          ]
+        }
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "href": "#languages",
+      "y": 1243,
+      "top": 10.046875,
+      "headerBottom": 96,
+      "active": [
+        "#how-it-works"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 0,
+      "progress": 0.05
+    },
+    {
+      "href": "#languages",
+      "y": 2233,
+      "top": -979.953125,
+      "headerBottom": 96,
+      "active": [
+        "#how-it-works"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 1,
+      "progress": 0.5
+    },
+    {
+      "href": "#languages",
+      "y": 3223,
+      "top": -1969.953125,
+      "headerBottom": 96,
+      "active": [
+        "#how-it-works"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 2,
+      "progress": 0.95
+    },
+    {
+      "href": "#languages",
+      "y": 2233,
+      "top": -979.953125,
+      "headerBottom": 96,
+      "active": [
+        "#how-it-works"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 1,
+      "progress": 0.5
+    },
+    {
+      "href": "#languages",
+      "y": 1243,
+      "top": 10.046875,
+      "headerBottom": 96,
+      "active": [
+        "#how-it-works"
+      ],
+      "compact": false,
+      "transit": false,
+      "selectedStep": 0,
+      "progress": 0.05
+    }
+  ],
+  "resize": {
+    "desktopClosed": "false",
+    "mobileClosed": "false",
+    "mobileMenuCount": 0
+  },
+  "locale": {
+    "fr": {
+      "url": "http://localhost:3000/landing-editorial/fr#languages",
+      "lang": "fr",
+      "hero": "Globoox — l’appli de lecture qui traduit instantanément vos e‑books dans votre langue.",
+      "navigation": {
+        "href": "#languages",
+        "y": 5260,
+        "top": 120.15625,
+        "headerBottom": 96,
+        "active": [
+          "#languages"
+        ],
+        "compact": false,
+        "transit": false,
+        "selectedStep": 2
+      }
+    },
+    "ruLink": "/landing-editorial/ru#languages",
+    "ru": {
+      "url": "http://localhost:3000/landing-editorial/ru#languages",
+      "lang": "ru",
+      "hero": "Globoox — приложение для чтения с мгновенным переводом электронных книг на ваш язык.",
+      "navigation": {
+        "href": "#languages",
+        "y": 4884,
+        "top": 107.96875,
+        "headerBottom": 84,
+        "active": [
+          "#languages"
+        ],
+        "compact": false,
+        "transit": false,
+        "selectedStep": 0
+      }
+    }
+  },
+  "cancelled": {
+    "href": "#start",
+    "y": 4159,
+    "top": -2905.953125,
+    "headerBottom": 96,
+    "active": [
+      "#how-it-works"
+    ],
+    "compact": false,
+    "transit": false,
+    "selectedStep": 2
+  },
+  "passed": true
+}

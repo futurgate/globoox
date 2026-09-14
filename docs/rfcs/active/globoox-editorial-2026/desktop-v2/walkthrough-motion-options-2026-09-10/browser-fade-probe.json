@@ -1,0 +1,4647 @@
+{
+  "mode": "fade",
+  "samples": 242,
+  "maxOverlap": 1,
+  "maxReverseDelta": 0,
+  "stopUnchanged": true,
+  "stoppedA": {
+    "y": 1903,
+    "opacity": [
+      0,
+      0.514958,
+      0
+    ],
+    "surfaces": [
+      1,
+      1,
+      1
+    ],
+    "transforms": [
+      "matrix(1, 0, 0, 1, 0, 0)",
+      "matrix(1, 0, 0, 1, 0, 0)",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "active": 1
+  },
+  "stoppedB": {
+    "y": 1903,
+    "opacity": [
+      0,
+      0.514958,
+      0
+    ],
+    "surfaces": [
+      1,
+      1,
+      1
+    ],
+    "transforms": [
+      "matrix(1, 0, 0, 1, 0, 0)",
+      "matrix(1, 0, 0, 1, 0, 0)",
+      "matrix(1, 0, 0, 1, 0, 0)"
+    ],
+    "active": 1
+  },
+  "forward": [
+    {
+      "y": 1133,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1151.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1169.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1188,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1206.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1224.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1243,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1261.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1279.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1298,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1316.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1334.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1353,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1371.5,
+      "opacity": [
+        0.94923,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1389.5,
+      "opacity": [
+        0.899643,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1408,
+      "opacity": [
+        0.848679,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1426.5,
+      "opacity": [
+        0.797714,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1444.5,
+      "opacity": [
+        0.748128,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1463,
+      "opacity": [
+        0.697163,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1481.5,
+      "opacity": [
+        0.646199,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1499.5,
+      "opacity": [
+        0.596612,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1518,
+      "opacity": [
+        0.545648,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1536.5,
+      "opacity": [
+        0.494684,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1554.5,
+      "opacity": [
+        0.445097,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1573,
+      "opacity": [
+        0.394133,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1591.5,
+      "opacity": [
+        0.343169,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1609.5,
+      "opacity": [
+        0.293582,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1628,
+      "opacity": [
+        0.242618,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1646.5,
+      "opacity": [
+        0.191654,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1664.5,
+      "opacity": [
+        0.142067,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1683,
+      "opacity": [
+        0.0911028,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1701.5,
+      "opacity": [
+        0.0401386,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1719.5,
+      "opacity": [
+        0,
+        0.00944818,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1738,
+      "opacity": [
+        0,
+        0.0604124,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1756.5,
+      "opacity": [
+        0,
+        0.111377,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1774.5,
+      "opacity": [
+        0,
+        0.160963,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1793,
+      "opacity": [
+        0,
+        0.211928,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1811.5,
+      "opacity": [
+        0,
+        0.262892,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1829.5,
+      "opacity": [
+        0,
+        0.312478,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1848,
+      "opacity": [
+        0,
+        0.363443,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1866.5,
+      "opacity": [
+        0,
+        0.414407,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1884.5,
+      "opacity": [
+        0,
+        0.463994,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1903,
+      "opacity": [
+        0,
+        0.514958,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1921.5,
+      "opacity": [
+        0,
+        0.565922,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1939.5,
+      "opacity": [
+        0,
+        0.615509,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1958,
+      "opacity": [
+        0,
+        0.666473,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1976.5,
+      "opacity": [
+        0,
+        0.717437,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1994.5,
+      "opacity": [
+        0,
+        0.767024,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2013,
+      "opacity": [
+        0,
+        0.817988,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2031.5,
+      "opacity": [
+        0,
+        0.868952,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2049.5,
+      "opacity": [
+        0,
+        0.918539,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2068,
+      "opacity": [
+        0,
+        0.969503,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2086.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2104.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2123,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2141.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2159.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2178,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2196.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2214.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2233,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2251.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2269.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2288,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2306.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2324.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2343,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2361.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2379.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2398,
+      "opacity": [
+        0,
+        0.969891,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2416.5,
+      "opacity": [
+        0,
+        0.918926,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2434.5,
+      "opacity": [
+        0,
+        0.86934,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2453,
+      "opacity": [
+        0,
+        0.818376,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2471.5,
+      "opacity": [
+        0,
+        0.767411,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2489.5,
+      "opacity": [
+        0,
+        0.717825,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2508,
+      "opacity": [
+        0,
+        0.66686,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2526.5,
+      "opacity": [
+        0,
+        0.615896,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2544.5,
+      "opacity": [
+        0,
+        0.566309,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2563,
+      "opacity": [
+        0,
+        0.515345,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2581.5,
+      "opacity": [
+        0,
+        0.464381,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2599.5,
+      "opacity": [
+        0,
+        0.414794,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2618,
+      "opacity": [
+        0,
+        0.36383,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2636.5,
+      "opacity": [
+        0,
+        0.312866,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2654.5,
+      "opacity": [
+        0,
+        0.263279,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2673,
+      "opacity": [
+        0,
+        0.212315,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2691.5,
+      "opacity": [
+        0,
+        0.161351,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2709.5,
+      "opacity": [
+        0,
+        0.111764,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2728,
+      "opacity": [
+        0,
+        0.0607998,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2746.5,
+      "opacity": [
+        0,
+        0.00983557,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2764.5,
+      "opacity": [
+        0,
+        0,
+        0.0397512
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2783,
+      "opacity": [
+        0,
+        0,
+        0.0907154
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2801.5,
+      "opacity": [
+        0,
+        0,
+        0.14168
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2819.5,
+      "opacity": [
+        0,
+        0,
+        0.191266
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2838,
+      "opacity": [
+        0,
+        0,
+        0.242231
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2856.5,
+      "opacity": [
+        0,
+        0,
+        0.293195
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2874.5,
+      "opacity": [
+        0,
+        0,
+        0.342782
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2893,
+      "opacity": [
+        0,
+        0,
+        0.393746
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2911.5,
+      "opacity": [
+        0,
+        0,
+        0.44471
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2929.5,
+      "opacity": [
+        0,
+        0,
+        0.494297
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2948,
+      "opacity": [
+        0,
+        0,
+        0.545261
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2966.5,
+      "opacity": [
+        0,
+        0,
+        0.596225
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2984.5,
+      "opacity": [
+        0,
+        0,
+        0.645812
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3003,
+      "opacity": [
+        0,
+        0,
+        0.696776
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3021.5,
+      "opacity": [
+        0,
+        0,
+        0.74774
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3039.5,
+      "opacity": [
+        0,
+        0,
+        0.797327
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3058,
+      "opacity": [
+        0,
+        0,
+        0.848291
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3076.5,
+      "opacity": [
+        0,
+        0,
+        0.899255
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3094.5,
+      "opacity": [
+        0,
+        0,
+        0.948842
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3113,
+      "opacity": [
+        0,
+        0,
+        0.999806
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3131.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3149.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3168,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3186.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3204.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3223,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3241.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3259.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3278,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3296.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3314.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3333,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    }
+  ],
+  "reverse": [
+    {
+      "y": 3333,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3314.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3296.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3278,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3259.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3241.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3223,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3204.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3186.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3168,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3149.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3131.5,
+      "opacity": [
+        0,
+        0,
+        1
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3113,
+      "opacity": [
+        0,
+        0,
+        0.999806
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3094.5,
+      "opacity": [
+        0,
+        0,
+        0.948842
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3076.5,
+      "opacity": [
+        0,
+        0,
+        0.899255
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3058,
+      "opacity": [
+        0,
+        0,
+        0.848291
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3039.5,
+      "opacity": [
+        0,
+        0,
+        0.797327
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3021.5,
+      "opacity": [
+        0,
+        0,
+        0.74774
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 3003,
+      "opacity": [
+        0,
+        0,
+        0.696776
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2984.5,
+      "opacity": [
+        0,
+        0,
+        0.645812
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2966.5,
+      "opacity": [
+        0,
+        0,
+        0.596225
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2948,
+      "opacity": [
+        0,
+        0,
+        0.545261
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2929.5,
+      "opacity": [
+        0,
+        0,
+        0.494297
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2911.5,
+      "opacity": [
+        0,
+        0,
+        0.44471
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2893,
+      "opacity": [
+        0,
+        0,
+        0.393746
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2874.5,
+      "opacity": [
+        0,
+        0,
+        0.342782
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2856.5,
+      "opacity": [
+        0,
+        0,
+        0.293195
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2838,
+      "opacity": [
+        0,
+        0,
+        0.242231
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2819.5,
+      "opacity": [
+        0,
+        0,
+        0.191266
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2801.5,
+      "opacity": [
+        0,
+        0,
+        0.14168
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2783,
+      "opacity": [
+        0,
+        0,
+        0.0907154
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2764.5,
+      "opacity": [
+        0,
+        0,
+        0.0397512
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 2
+    },
+    {
+      "y": 2746.5,
+      "opacity": [
+        0,
+        0.00983557,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2728,
+      "opacity": [
+        0,
+        0.0607998,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2709.5,
+      "opacity": [
+        0,
+        0.111764,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2691.5,
+      "opacity": [
+        0,
+        0.161351,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2673,
+      "opacity": [
+        0,
+        0.212315,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2654.5,
+      "opacity": [
+        0,
+        0.263279,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2636.5,
+      "opacity": [
+        0,
+        0.312866,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2618,
+      "opacity": [
+        0,
+        0.36383,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2599.5,
+      "opacity": [
+        0,
+        0.414794,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2581.5,
+      "opacity": [
+        0,
+        0.464381,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2563,
+      "opacity": [
+        0,
+        0.515345,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2544.5,
+      "opacity": [
+        0,
+        0.566309,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2526.5,
+      "opacity": [
+        0,
+        0.615896,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2508,
+      "opacity": [
+        0,
+        0.66686,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2489.5,
+      "opacity": [
+        0,
+        0.717825,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2471.5,
+      "opacity": [
+        0,
+        0.767411,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2453,
+      "opacity": [
+        0,
+        0.818376,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2434.5,
+      "opacity": [
+        0,
+        0.86934,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2416.5,
+      "opacity": [
+        0,
+        0.918926,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2398,
+      "opacity": [
+        0,
+        0.969891,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2379.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2361.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2343,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2324.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2306.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2288,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2269.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2251.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2233,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2214.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2196.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2178,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2159.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2141.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2123,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2104.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2086.5,
+      "opacity": [
+        0,
+        1,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2068,
+      "opacity": [
+        0,
+        0.969503,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2049.5,
+      "opacity": [
+        0,
+        0.918539,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2031.5,
+      "opacity": [
+        0,
+        0.868952,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 2013,
+      "opacity": [
+        0,
+        0.817988,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1994.5,
+      "opacity": [
+        0,
+        0.767024,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1976.5,
+      "opacity": [
+        0,
+        0.717437,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1958,
+      "opacity": [
+        0,
+        0.666473,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1939.5,
+      "opacity": [
+        0,
+        0.615509,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1921.5,
+      "opacity": [
+        0,
+        0.565922,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1903,
+      "opacity": [
+        0,
+        0.514958,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1884.5,
+      "opacity": [
+        0,
+        0.463994,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1866.5,
+      "opacity": [
+        0,
+        0.414407,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1848,
+      "opacity": [
+        0,
+        0.363443,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1829.5,
+      "opacity": [
+        0,
+        0.312478,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1811.5,
+      "opacity": [
+        0,
+        0.262892,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1793,
+      "opacity": [
+        0,
+        0.211928,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1774.5,
+      "opacity": [
+        0,
+        0.160963,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1756.5,
+      "opacity": [
+        0,
+        0.111377,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1738,
+      "opacity": [
+        0,
+        0.0604124,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1719.5,
+      "opacity": [
+        0,
+        0.00944818,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 1
+    },
+    {
+      "y": 1701.5,
+      "opacity": [
+        0.0401386,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1683,
+      "opacity": [
+        0.0911028,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1664.5,
+      "opacity": [
+        0.142067,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1646.5,
+      "opacity": [
+        0.191654,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1628,
+      "opacity": [
+        0.242618,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1609.5,
+      "opacity": [
+        0.293582,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1591.5,
+      "opacity": [
+        0.343169,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1573,
+      "opacity": [
+        0.394133,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1554.5,
+      "opacity": [
+        0.445097,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1536.5,
+      "opacity": [
+        0.494684,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1518,
+      "opacity": [
+        0.545648,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1499.5,
+      "opacity": [
+        0.596612,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1481.5,
+      "opacity": [
+        0.646199,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1463,
+      "opacity": [
+        0.697163,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1444.5,
+      "opacity": [
+        0.748128,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1426.5,
+      "opacity": [
+        0.797714,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1408,
+      "opacity": [
+        0.848679,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1389.5,
+      "opacity": [
+        0.899643,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1371.5,
+      "opacity": [
+        0.94923,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1353,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1334.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1316.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1298,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1279.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1261.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1243,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1224.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1206.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1188,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1169.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1151.5,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    },
+    {
+      "y": 1133,
+      "opacity": [
+        1,
+        0,
+        0
+      ],
+      "surfaces": [
+        1,
+        1,
+        1
+      ],
+      "transforms": [
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)",
+        "matrix(1, 0, 0, 1, 0, 0)"
+      ],
+      "active": 0
+    }
+  ]
+}

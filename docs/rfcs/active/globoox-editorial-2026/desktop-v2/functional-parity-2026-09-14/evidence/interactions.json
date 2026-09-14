@@ -1,0 +1,279 @@
+{
+  "old": {
+    "navigation": {
+      "hash": "#languages",
+      "sectionTop": 0.421875,
+      "active": [
+        {
+          "name": "Languages",
+          "current": "true"
+        }
+      ]
+    },
+    "language": {
+      "url": "http://localhost:3000/fr#languages",
+      "title": "Globoox — l’appli de lecture qui traduit instantanément vos e‑books dans votre langue.\nImporter votre premier livre",
+      "editorial": 0
+    },
+    "mobileMenu": [
+      {
+        "tag": "A",
+        "name": "GlobooxG",
+        "href": "#hero"
+      },
+      {
+        "tag": "A",
+        "name": "Open App",
+        "href": "/my-books"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Toggle navigation",
+        "href": null
+      },
+      {
+        "tag": "A",
+        "name": "How it works",
+        "href": "#how-it-works"
+      },
+      {
+        "tag": "A",
+        "name": "Quality",
+        "href": "#quality"
+      },
+      {
+        "tag": "A",
+        "name": "Languages",
+        "href": "#languages"
+      },
+      {
+        "tag": "A",
+        "name": "Team",
+        "href": "#team"
+      },
+      {
+        "tag": "A",
+        "name": "Start reading",
+        "href": "#start"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Language",
+        "href": null
+      },
+      {
+        "tag": "A",
+        "name": "Open App",
+        "href": "/my-books"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Upload your first book",
+        "href": null
+      },
+      {
+        "tag": "A",
+        "name": "Tanya Melnikova on LinkedIn",
+        "href": "https://www.linkedin.com/in/tanya-melnikova-224b3a191/"
+      },
+      {
+        "tag": "A",
+        "name": "Anton Lomovski on LinkedIn",
+        "href": "https://www.linkedin.com/in/lomovski/"
+      },
+      {
+        "tag": "A",
+        "name": "Kondrat Kondratenko on LinkedIn",
+        "href": "http://linkedin.com/in/kondrat-kondratenko/"
+      },
+      {
+        "tag": "A",
+        "name": "Maksim Ilichev on LinkedIn",
+        "href": "https://www.linkedin.com/in/maksim-ilichev-6a48ba12"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Upload your first book",
+        "href": null
+      }
+    ],
+    "mobileNavigation": {
+      "hash": "#quality",
+      "top": -0.34375
+    }
+  },
+  "new": {
+    "navigation": {
+      "hash": "#languages",
+      "sectionTop": 120.109375,
+      "active": []
+    },
+    "language": {
+      "url": "http://localhost:3000/fr",
+      "title": "Globoox — l’appli de lecture qui traduit instantanément vos e‑books dans votre langue.\nImporter votre premier livre",
+      "editorial": 0
+    },
+    "mobileMenu": [
+      {
+        "tag": "A",
+        "name": "Skip to content",
+        "href": "#main-content"
+      },
+      {
+        "tag": "A",
+        "name": "Globoox home",
+        "href": "#hero"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Close navigation",
+        "href": null
+      },
+      {
+        "tag": "A",
+        "name": "How it works",
+        "href": "#how-it-works"
+      },
+      {
+        "tag": "A",
+        "name": "Quality",
+        "href": "#quality"
+      },
+      {
+        "tag": "A",
+        "name": "Languages",
+        "href": "#languages"
+      },
+      {
+        "tag": "A",
+        "name": "Team",
+        "href": "#team"
+      },
+      {
+        "tag": "A",
+        "name": "Pricing",
+        "href": "#pricing"
+      },
+      {
+        "tag": "A",
+        "name": "Start reading",
+        "href": "#start"
+      },
+      {
+        "tag": "A",
+        "name": "Open App",
+        "href": "/my-books"
+      },
+      {
+        "tag": "A",
+        "name": "English",
+        "href": "/en"
+      },
+      {
+        "tag": "A",
+        "name": "Français",
+        "href": "/fr"
+      },
+      {
+        "tag": "A",
+        "name": "Русский",
+        "href": "/ru"
+      },
+      {
+        "tag": "A",
+        "name": "Upload your first book",
+        "href": "/my-books"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Desktop",
+        "href": null
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Tablet",
+        "href": null
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Phone",
+        "href": null
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Hide translation",
+        "href": null
+      },
+      {
+        "tag": "DIV",
+        "name": "Original and translated excerpt comparison",
+        "href": null
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Read full excerpt",
+        "href": null
+      },
+      {
+        "tag": "A",
+        "name": "Tanya Melnikova on LinkedIn",
+        "href": "https://www.linkedin.com/in/tanya-melnikova-224b3a191/"
+      },
+      {
+        "tag": "A",
+        "name": "Anton Lomovski on LinkedIn",
+        "href": "https://www.linkedin.com/in/lomovski/"
+      },
+      {
+        "tag": "A",
+        "name": "Kondrat Kondratenko on LinkedIn",
+        "href": "http://linkedin.com/in/kondrat-kondratenko/"
+      },
+      {
+        "tag": "A",
+        "name": "Maksim Ilichev on LinkedIn",
+        "href": "https://www.linkedin.com/in/maksim-ilichev-6a48ba12"
+      },
+      {
+        "tag": "A",
+        "name": "Start for free",
+        "href": "/my-books"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Get Started",
+        "href": null
+      },
+      {
+        "tag": "A",
+        "name": "Contact Us",
+        "href": "mailto:support@globoox.co?subject=Globoox%20Editorial"
+      },
+      {
+        "tag": "A",
+        "name": "Upload your first book",
+        "href": "/my-books"
+      },
+      {
+        "tag": "A",
+        "name": "Back to top",
+        "href": "#hero"
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Necessary only",
+        "href": null
+      },
+      {
+        "tag": "BUTTON",
+        "name": "Accept all",
+        "href": null
+      }
+    ],
+    "mobileNavigation": {
+      "hash": "#quality",
+      "top": 108.21875,
+      "openMenu": "false"
+    }
+  }
+}

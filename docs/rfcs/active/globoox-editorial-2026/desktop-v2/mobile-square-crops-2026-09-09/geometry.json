@@ -1,0 +1,146 @@
+[
+  {
+    "frame": {
+      "h": 280,
+      "w": 280,
+      "x": 20,
+      "y": 189.171875
+    },
+    "overflow": false,
+    "position": "50% 100%",
+    "step": 1,
+    "width": 320
+  },
+  {
+    "frame": {
+      "h": 280,
+      "w": 280,
+      "x": 20,
+      "y": 221.703125
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 2,
+    "width": 320
+  },
+  {
+    "frame": {
+      "h": 280,
+      "w": 280,
+      "x": 20,
+      "y": 188.46875
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 3,
+    "width": 320
+  },
+  {
+    "frame": {
+      "h": 342,
+      "w": 342,
+      "x": 24,
+      "y": 191.84375
+    },
+    "overflow": false,
+    "position": "50% 100%",
+    "step": 1,
+    "width": 390
+  },
+  {
+    "frame": {
+      "h": 342,
+      "w": 342,
+      "x": 24,
+      "y": 228.15625
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 2,
+    "width": 390
+  },
+  {
+    "frame": {
+      "h": 342,
+      "w": 342,
+      "x": 24,
+      "y": 192.3125
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 3,
+    "width": 390
+  },
+  {
+    "frame": {
+      "h": 382,
+      "w": 382,
+      "x": 24,
+      "y": 191.7265625
+    },
+    "overflow": false,
+    "position": "50% 100%",
+    "step": 1,
+    "width": 430
+  },
+  {
+    "frame": {
+      "h": 382,
+      "w": 382,
+      "x": 24,
+      "y": 228.0390625
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 2,
+    "width": 430
+  },
+  {
+    "frame": {
+      "h": 382,
+      "w": 382,
+      "x": 24,
+      "y": 192.1953125
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 3,
+    "width": 430
+  },
+  {
+    "frame": {
+      "h": 420,
+      "w": 420,
+      "x": 174,
+      "y": 192.4921875
+    },
+    "overflow": false,
+    "position": "50% 100%",
+    "step": 1,
+    "width": 768
+  },
+  {
+    "frame": {
+      "h": 420,
+      "w": 420,
+      "x": 174,
+      "y": 228.8046875
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 2,
+    "width": 768
+  },
+  {
+    "frame": {
+      "h": 420,
+      "w": 420,
+      "x": 174,
+      "y": 191.9609375
+    },
+    "overflow": false,
+    "position": "50% 0%",
+    "step": 3,
+    "width": 768
+  }
+]

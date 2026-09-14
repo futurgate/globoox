@@ -1,0 +1,30 @@
+{
+  "checks": {
+    "upperAssetSha256": "1c854142f02c20b4da734bb5cc90793bed476cc479125183193dbfd6bc0d317d",
+    "upperCssByteIdentical": true,
+    "allOtherCssByteIdentical": true,
+    "onlyLowerSrcAndSizesChanged": true
+  },
+  "assets": [
+    {
+      "variant": "a",
+      "width": 1536,
+      "height": 1024,
+      "channels": 3,
+      "hasAlpha": false,
+      "bytes": 1353705,
+      "nearWhitePercent": 85.98,
+      "sha256": "4899825ffb4689756ee6e251bdadb7a6b76097525b9eaac2e434767dcf8aa935"
+    },
+    {
+      "variant": "b",
+      "width": 1536,
+      "height": 1024,
+      "channels": 3,
+      "hasAlpha": false,
+      "bytes": 1316208,
+      "nearWhitePercent": 87.55,
+      "sha256": "cedab9dd40a13215f3ab967aea9ed212c04094ccee7d201f94deb4bbb2ba0fc2"
+    }
+  ]
+}

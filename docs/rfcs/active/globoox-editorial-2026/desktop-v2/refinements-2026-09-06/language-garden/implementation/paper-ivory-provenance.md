@@ -1,9 +1,16 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Paper ivory asset attempts
 
 Tool: built-in ImageGen. Reference: `target.png`, inspected before generation.
 
-- Initial: `/Users/user/.codex/generated_images/01a07869-7913-7fd2-ba61-4872b223039d/exec-9c7977ab-a92e-4e7b-bcb0-4214f35d0d96.png`, 1774×887, RGB, no alpha. Paper is visually clean but generated checkerboard is baked into pixels.
-- Correction: `/Users/user/.codex/generated_images/01a07869-7913-7fd2-ba61-4872b223039d/exec-aeaff2b1-e257-462f-bfa3-aadf0ef2ca79.png`, 1774×887, RGB, no alpha. Explicit transparency correction still produced baked checkerboard.
+- Initial: `~/.codex/generated_images/01a07869-7913-7fd2-ba61-4872b223039d/exec-9c7977ab-a92e-4e7b-bcb0-4214f35d0d96.png`, 1774×887, RGB, no alpha. Paper is visually clean but generated checkerboard is baked into pixels.
+- Correction: `~/.codex/generated_images/01a07869-7913-7fd2-ba61-4872b223039d/exec-aeaff2b1-e257-462f-bfa3-aadf0ef2ca79.png`, 1774×887, RGB, no alpha. Explicit transparency correction still produced baked checkerboard.
 
 Neither initial attempt is approved as the transparent production asset. No raster postprocessing performed. Pillow used only for read-only size/mode/alpha inspection.
 

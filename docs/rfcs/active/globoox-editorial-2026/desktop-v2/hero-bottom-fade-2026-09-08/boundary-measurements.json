@@ -1,0 +1,506 @@
+[
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "width": 480
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "width": 480
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "width": 480
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "width": 481
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "width": 481
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "width": 481
+  },
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 600
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "width": 600
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "width": 600
+  },
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 601
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 601
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 601
+  },
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240.00003051757812
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 900
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 900
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 900
+  },
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240.00003051757812
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 901
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 901
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 901
+  },
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240.00003051757812
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 1100
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 1100
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 1100
+  },
+  {
+    "device": "desktop",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 1101
+  },
+  {
+    "device": "tablet",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 1101
+  },
+  {
+    "device": "phone",
+    "fadeEndsAtFrameBottom": true,
+    "mask": "linear-gradient(rgb(0, 0, 0) calc(100% - 100px), rgba(0, 0, 0, 0) 100%)",
+    "overflow": false,
+    "plants": [
+      {
+        "display": "block",
+        "height": 480,
+        "topClear": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "topClear": true,
+        "width": 320
+      }
+    ],
+    "width": 1101
+  }
+]

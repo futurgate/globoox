@@ -1,0 +1,514 @@
+[
+  {
+    "id": "ru48-20-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.176691729323306,
+      "lowerInk": 9.67,
+      "capInk": 12.178383458646616
+    }
+  },
+  {
+    "id": "ru48-20-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.53674121405751,
+      "lowerInk": 9.67,
+      "capInk": 12.419616613418533
+    }
+  },
+  {
+    "id": "ru48-20-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.911342894393737,
+      "lowerInk": 9.67,
+      "capInk": 12.670599739243805
+    }
+  },
+  {
+    "id": "ru48-20-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20,
+      "lowerInk": 9.67,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.301397205588824,
+      "lowerInk": 9.67,
+      "capInk": 12.931936127744512
+    }
+  },
+  {
+    "id": "ru48-20.2-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.35845864661654,
+      "lowerInk": 9.7667,
+      "capInk": 12.300167293233082
+    }
+  },
+  {
+    "id": "ru48-20.2-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.722108626198086,
+      "lowerInk": 9.7667,
+      "capInk": 12.543812779552718
+    }
+  },
+  {
+    "id": "ru48-20.2-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 16,
+      "size": 19.100456323337678,
+      "lowerInk": 9.7667,
+      "capInk": 12.797305736636245
+    }
+  },
+  {
+    "id": "ru48-20.2-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.2,
+      "lowerInk": 9.7667,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.49441117764471,
+      "lowerInk": 9.7667,
+      "capInk": 13.061255489021956
+    }
+  },
+  {
+    "id": "ru48-20.388-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.52931954887218,
+      "lowerInk": 9.857598000000001,
+      "capInk": 12.414644097744361
+    }
+  },
+  {
+    "id": "ru48-20.388-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.896353993610226,
+      "lowerInk": 9.857598000000001,
+      "capInk": 12.660557175718852
+    }
+  },
+  {
+    "id": "ru48-20.388-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 16,
+      "size": 19.27822294654498,
+      "lowerInk": 9.857598000000001,
+      "capInk": 12.916409374185136
+    }
+  },
+  {
+    "id": "ru48-20.388-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.388,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.675844311377247,
+      "lowerInk": 9.857598000000001,
+      "capInk": 13.182815688622757
+    }
+  },
+  {
+    "id": "ru48-20.4-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.54022556390977,
+      "lowerInk": 9.863399999999999,
+      "capInk": 12.421951127819547
+    }
+  },
+  {
+    "id": "ru48-20.4-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.907476038338658,
+      "lowerInk": 9.863399999999999,
+      "capInk": 12.668008945686902
+    }
+  },
+  {
+    "id": "ru48-20.4-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 16,
+      "size": 19.28956975228161,
+      "lowerInk": 9.863399999999999,
+      "capInk": 12.92401173402868
+    }
+  },
+  {
+    "id": "ru48-20.4-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 48,
+      "size": 20.4,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.687425149700594,
+      "lowerInk": 9.863399999999999,
+      "capInk": 13.190574850299399
+    }
+  },
+  {
+    "id": "ru60-20-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 8,
+      "size": 17.89473684210526,
+      "lowerInk": 9.52,
+      "capInk": 11.989473684210525
+    }
+  },
+  {
+    "id": "ru60-20-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.249201277955272,
+      "lowerInk": 9.52,
+      "capInk": 12.226964856230033
+    }
+  },
+  {
+    "id": "ru60-20-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.617992177314207,
+      "lowerInk": 9.52,
+      "capInk": 12.47405475880052
+    }
+  },
+  {
+    "id": "ru60-20-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20,
+      "lowerInk": 9.52,
+      "capInk": 13.4
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.00199600798403,
+      "lowerInk": 9.52,
+      "capInk": 12.731337325349301
+    }
+  },
+  {
+    "id": "ru60-20.2-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.073684210526313,
+      "lowerInk": 9.6152,
+      "capInk": 12.109368421052631
+    }
+  },
+  {
+    "id": "ru60-20.2-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.431693290734827,
+      "lowerInk": 9.6152,
+      "capInk": 12.349234504792335
+    }
+  },
+  {
+    "id": "ru60-20.2-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.80417209908735,
+      "lowerInk": 9.6152,
+      "capInk": 12.598795306388524
+    }
+  },
+  {
+    "id": "ru60-20.2-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.2,
+      "lowerInk": 9.6152,
+      "capInk": 13.534
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.19201596806387,
+      "lowerInk": 9.6152,
+      "capInk": 12.858650698602794
+    }
+  },
+  {
+    "id": "ru60-20.388-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.241894736842106,
+      "lowerInk": 9.704688,
+      "capInk": 12.222069473684211
+    }
+  },
+  {
+    "id": "ru60-20.388-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.603235782747607,
+      "lowerInk": 9.704688,
+      "capInk": 12.464167974440898
+    }
+  },
+  {
+    "id": "ru60-20.388-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.979181225554104,
+      "lowerInk": 9.704688,
+      "capInk": 12.71605142112125
+    }
+  },
+  {
+    "id": "ru60-20.388-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.388,
+      "lowerInk": 9.704688,
+      "capInk": 13.659960000000002
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.370634730538924,
+      "lowerInk": 9.704688,
+      "capInk": 12.978325269461081
+    }
+  },
+  {
+    "id": "ru60-20.4-en8",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 8,
+      "size": 18.252631578947366,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.229263157894735
+    }
+  },
+  {
+    "id": "ru60-20.4-en12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 12,
+      "size": 18.614185303514375,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.471504153354632
+    }
+  },
+  {
+    "id": "ru60-20.4-en16",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 16,
+      "size": 18.990352020860488,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.723535853976529
+    }
+  },
+  {
+    "id": "ru60-20.4-en20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "ru": {
+      "opsz": 60,
+      "size": 20.4,
+      "lowerInk": 9.710399999999998,
+      "capInk": 13.668
+    },
+    "en": {
+      "opsz": 20,
+      "size": 19.382035928143708,
+      "lowerInk": 9.710399999999998,
+      "capInk": 12.985964071856285
+    }
+  }
+]

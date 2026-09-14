@@ -1,0 +1,671 @@
+[
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 818.703125,
+          "height": 480,
+          "width": 239.99998474121097,
+          "x": -79.19999694824219,
+          "y": 338.703125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 810.703125,
+          "height": 640,
+          "width": 320.0000305175781,
+          "x": 168.39999389648438,
+          "y": 170.703125
+        }
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 706.703125,
+      "height": 204.4375,
+      "width": 318,
+      "x": 36,
+      "y": 502.265625
+    },
+    "hero": {
+      "bottom": 736.703125,
+      "height": 652.703125,
+      "width": 390,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1046.265625,
+          "height": 480,
+          "width": 239.99998474121097,
+          "x": -75.19999694824219,
+          "y": 566.265625
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1138.265625,
+          "height": 640,
+          "width": 320.0000305175781,
+          "x": 164.39999389648438,
+          "y": 498.265625
+        }
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 973.484375,
+      "height": 471.21875,
+      "width": 310,
+      "x": 40,
+      "y": 502.265625
+    },
+    "hero": {
+      "bottom": 1003.484375,
+      "height": 919.484375,
+      "width": 390,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1046.265625,
+          "height": 480,
+          "width": 240,
+          "x": -83.5999984741211,
+          "y": 566.265625
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1138.265625,
+          "height": 640,
+          "width": 319.9999694824219,
+          "x": 185.6000061035156,
+          "y": 498.265625
+        }
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1041.59375,
+      "height": 539.328125,
+      "width": 250,
+      "x": 70,
+      "y": 502.265625
+    },
+    "hero": {
+      "bottom": 1071.59375,
+      "height": 987.59375,
+      "width": 390,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 390,
+    "width": 390
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 820.953125,
+          "height": 480,
+          "left": -71.69999694824219,
+          "right": 168.29998779296875,
+          "top": 340.953125,
+          "width": 239.99998474121097,
+          "x": -71.69999694824219,
+          "y": 340.953125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 812.953125,
+          "height": 640,
+          "left": 310.9000244140625,
+          "right": 630.9000244140625,
+          "top": 172.953125,
+          "width": 320,
+          "x": 310.9000244140625,
+          "y": 172.953125
+        }
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 708.953125,
+      "height": 290.921875,
+      "left": 43.5,
+      "right": 496.5,
+      "top": 418.03125,
+      "width": 453,
+      "x": 43.5,
+      "y": 418.03125
+    },
+    "hero": {
+      "bottom": 738.953125,
+      "height": 654.953125,
+      "left": 0,
+      "right": 540,
+      "top": 84,
+      "width": 540,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 540,
+    "width": 540
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 962.03125,
+          "height": 480,
+          "width": 239.99998474121097,
+          "x": -20.199996948242188,
+          "y": 482.03125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1054.03125,
+          "height": 640,
+          "width": 320.0000305175781,
+          "x": 259.3999938964844,
+          "y": 414.03125
+        }
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 950.1875,
+      "height": 532.15625,
+      "width": 350,
+      "x": 95,
+      "y": 418.03125
+    },
+    "hero": {
+      "bottom": 980.1875,
+      "height": 896.1875,
+      "width": 540,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 540,
+    "width": 540
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 962.03125,
+          "height": 480,
+          "width": 240,
+          "x": -8.599998474121094,
+          "y": 482.03125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1054.03125,
+          "height": 640,
+          "width": 319.9999694824219,
+          "x": 260.6000061035156,
+          "y": 414.03125
+        }
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 957.359375,
+      "height": 539.328125,
+      "width": 250,
+      "x": 145,
+      "y": 418.03125
+    },
+    "hero": {
+      "bottom": 987.359375,
+      "height": 903.359375,
+      "width": 540,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 540,
+    "width": 540
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 874.3828125,
+          "height": 480,
+          "left": -81.60000610351562,
+          "right": 158.39999389648438,
+          "top": 394.3828125,
+          "width": 240,
+          "x": -81.60000610351562,
+          "y": 394.3828125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 866.3828125,
+          "height": 640,
+          "left": 568,
+          "right": 888,
+          "top": 226.3828125,
+          "width": 320,
+          "x": 568,
+          "y": 226.3828125
+        }
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 818.3828125,
+      "height": 400.46875,
+      "left": 72,
+      "right": 696,
+      "top": 417.9140625,
+      "width": 624,
+      "x": 72,
+      "y": 417.9140625
+    },
+    "hero": {
+      "bottom": 896.3828125,
+      "height": 812.3828125,
+      "left": 0,
+      "right": 768,
+      "top": 84,
+      "width": 768,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1003.390625,
+          "height": 480,
+          "width": 239.99998474121097,
+          "x": -7.6999969482421875,
+          "y": 523.390625
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1003.390625,
+          "height": 640,
+          "width": 320,
+          "x": 496.5,
+          "y": 363.390625
+        }
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1003.390625,
+      "height": 585.4765625,
+      "width": 385,
+      "x": 191.5,
+      "y": 417.9140625
+    },
+    "hero": {
+      "bottom": 1081.390625,
+      "height": 997.390625,
+      "width": 768,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 957.2421875,
+          "height": 480,
+          "width": 239.99998474121097,
+          "x": 59.80000305175781,
+          "y": 477.2421875
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 957.2421875,
+          "height": 640,
+          "width": 320,
+          "x": 429,
+          "y": 317.2421875
+        }
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 957.2421875,
+      "height": 539.328125,
+      "width": 250,
+      "x": 259,
+      "y": 417.9140625
+    },
+    "hero": {
+      "bottom": 1035.2421875,
+      "height": 951.2421875,
+      "width": 768,
+      "x": 0,
+      "y": 84
+    },
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1013.2421875,
+          "height": 480,
+          "width": 240.00003051757812,
+          "x": -73.60000610351562,
+          "y": 533.2421875
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1083.0234375,
+          "height": 640,
+          "width": 320,
+          "x": 784,
+          "y": 443.0234375
+        }
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 1013.2421875,
+      "height": 554.21875,
+      "width": 864,
+      "x": 80,
+      "y": 459.0234375
+    },
+    "hero": {
+      "bottom": 1091.2421875,
+      "height": 995.2421875,
+      "width": 1024,
+      "x": 0,
+      "y": 96
+    },
+    "scrollWidth": 1024,
+    "width": 1024
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1044.5,
+          "height": 480,
+          "width": 240,
+          "x": 120.29998779296876,
+          "y": 564.5
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1044.5,
+          "height": 640,
+          "width": 320,
+          "x": 624.5,
+          "y": 404.5
+        }
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1044.5,
+      "height": 585.4765625,
+      "width": 385,
+      "x": 319.5,
+      "y": 459.0234375
+    },
+    "hero": {
+      "bottom": 1122.5,
+      "height": 1026.5,
+      "width": 1024,
+      "x": 0,
+      "y": 96
+    },
+    "scrollWidth": 1024,
+    "width": 1024
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 998.3515625,
+          "height": 480,
+          "width": 240,
+          "x": 187.79998779296875,
+          "y": 518.3515625
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 998.3515625,
+          "height": 640,
+          "width": 320,
+          "x": 557,
+          "y": 358.3515625
+        }
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 998.3515625,
+      "height": 539.328125,
+      "width": 250,
+      "x": 387,
+      "y": 459.0234375
+    },
+    "hero": {
+      "bottom": 1076.3515625,
+      "height": 980.3515625,
+      "width": 1024,
+      "x": 0,
+      "y": 96
+    },
+    "scrollWidth": 1024,
+    "width": 1024
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1079.0703125,
+          "height": 480,
+          "width": 240,
+          "x": 40.79998779296875,
+          "y": 599.0703125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1079.0703125,
+          "height": 640,
+          "width": 320,
+          "x": 1120,
+          "y": 439.0703125
+        }
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 1079.0703125,
+      "height": 615.71875,
+      "width": 960,
+      "x": 240,
+      "y": 463.3515625
+    },
+    "hero": {
+      "bottom": 1157.0703125,
+      "height": 1061.0703125,
+      "width": 1440,
+      "x": 0,
+      "y": 96
+    },
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 480,
+          "width": 240,
+          "x": 328.29998779296875,
+          "y": 568.828125
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 640,
+          "width": 320,
+          "x": 832.5,
+          "y": 408.828125
+        }
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1048.828125,
+      "height": 585.4765625,
+      "width": 385,
+      "x": 527.5,
+      "y": 463.3515625
+    },
+    "hero": {
+      "bottom": 1126.828125,
+      "height": 1030.828125,
+      "width": 1440,
+      "x": 0,
+      "y": 96
+    },
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 480,
+          "width": 240,
+          "x": 395.7999877929687,
+          "y": 522.6796875
+        }
+      },
+      {
+        "display": "block",
+        "loaded": true,
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 640,
+          "width": 320,
+          "x": 765,
+          "y": 362.6796875
+        }
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1002.6796875,
+      "height": 539.328125,
+      "width": 250,
+      "x": 595,
+      "y": 463.3515625
+    },
+    "hero": {
+      "bottom": 1080.6796875,
+      "height": 984.6796875,
+      "width": 1440,
+      "x": 0,
+      "y": 96
+    },
+    "scrollWidth": 1440,
+    "width": 1440
+  }
+]

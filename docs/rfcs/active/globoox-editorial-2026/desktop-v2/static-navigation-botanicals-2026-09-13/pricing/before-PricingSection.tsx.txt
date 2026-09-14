@@ -1,0 +1,104 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import styles from './PricingSection.module.css';
+
+// Approved working pricing copy: billing-entitlements-and-translation-access.md.
+// This marketing preview does not infer or change a visitor's entitlement.
+const plans = [
+  { name: 'Free', price: '$0', period: '/ forever', allowance: '2 books per month', action: 'Start for free' },
+  { name: 'Premium', price: '€5.90', period: '/ month', allowance: '6 books per month', action: 'Get Started' },
+  { name: 'Editorial', price: 'Custom pricing', period: '', allowance: 'Unlimited books', action: 'Contact Us' },
+] as const;
+
+export default function PricingSection() {
+  const [showPremiumNotice, setShowPremiumNotice] = useState(false);
+
+  return (
+    <section id="pricing" className={styles.section} aria-labelledby="pricing-title">
+      <div className={styles.introduction}>
+        <p className={styles.eyebrow}>Reading without borders</p>
+        <h2 id="pricing-title" className={styles.title}>A plan for <em>every reader</em></h2>
+        <p className={styles.description}>
+          From the occasional reader to the professional editor,<br className={styles.descriptionBreak} />{' '}
+          find the plan that fits how you read.
+        </p>
+      </div>
+
+      <div className={styles.tableWrap}>
+        <Image
+          className={styles.sprig}
+          src="/redesign/pricing/sprig.png"
+          width={512}
+          height={768}
+          sizes="110px"
+          alt=""
+          aria-hidden="true"
+        />
+        <div className={styles.plans}>
+          {plans.map((plan) => (
+            <article key={plan.name} className={`${styles.plan} ${plan.name === 'Premium' ? styles.premium : ''}`} aria-labelledby={`pricing-${plan.name.toLowerCase()}`}>
+              {plan.name === 'Free' && (
+                <Image
+                  className={styles.freeSprig}
+                  src="/redesign/pricing/free-sprig-v2-b-refined.png"
+                  width={1536}
+                  height={1024}
+                  sizes="(max-width: 800px) 140px, 180px"
+                  alt=""
+                  aria-hidden="true"
+                />
+              )}
+              <h3 id={`pricing-${plan.name.toLowerCase()}`} className={styles.planName}>{plan.name}</h3>
+              <div className={styles.priceArea}>
+                <p className={`${styles.price} ${plan.name === 'Editorial' ? styles.customPrice : ''}`}>
+                  {plan.price}
+                </p>
+                {plan.period && <p className={styles.period}>{plan.period}</p>}
+              </div>
+              <p className={styles.allowance}>{plan.allowance}</p>
+              {plan.name === 'Premium' ? (
+                <>
+                  <button
+                    className={`${styles.action} ${styles.primaryAction}`}
+                    type="button"
+                    aria-expanded={showPremiumNotice}
+                    aria-controls="pricing-premium-notice"
+                    onClick={(event) => {
+                      setShowPremiumNotice(true);
+                      if (event.detail > 0) event.currentTarget.blur();
+                    }}
+                  >
+                    {plan.action}
+                  </button>
+                  <div id="pricing-premium-notice" className={styles.notice} aria-live="polite">
+                    {showPremiumNotice && (
+                      <p>
+                        Premium checkout is coming soon.{' '}
+                        <Link href="/my-books">Start reading for free</Link>
+                      </p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <Link
+                  className={styles.action}
+                  href={plan.name === 'Free' ? '/my-books' : 'mailto:support@globoox.co?subject=Globoox%20Editorial'}
+                  prefetch={false}
+                >
+                  {plan.action}
+                </Link>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <p className={styles.note}>
+        Book allowances use a rolling 30-day reading window, starting when you first open a translated book.
+      </p>
+    </section>
+  );
+}

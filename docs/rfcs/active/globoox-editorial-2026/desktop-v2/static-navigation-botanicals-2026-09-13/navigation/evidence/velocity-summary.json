@@ -1,0 +1,58 @@
+[
+  {
+    "name": "forward-to-quality",
+    "compactFrames": 36,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "reverse-to-hero",
+    "compactFrames": 50,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "inside-to-quality",
+    "compactFrames": 29,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "below-to-how",
+    "compactFrames": 45,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "cancel-wheel",
+    "compactFrames": 11,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "cancel-escape-inside",
+    "compactFrames": 2,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "tall-forward",
+    "compactFrames": 37,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  },
+  {
+    "name": "tall-below-to-how",
+    "compactFrames": 46,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0,
+    "lastCompactQualityHeadingTop": 1286.4375,
+    "viewportHeight": 1200
+  },
+  {
+    "name": "tall-inside-cancel",
+    "compactFrames": 3,
+    "stationaryCompactFrames": 0,
+    "maxPanelVsScrollDisagreementPx": 0.0
+  }
+]

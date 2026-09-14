@@ -1,3 +1,10 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Language cards — autonomous art-direction loop
 
 ## Follow-up: single twig behind the cards

@@ -1,0 +1,79 @@
+type StickyInterval = { start: number; end: number };
+type SectionScrollRoute = { distance: number; position: (progress: number) => number };
+
+const RAMP_FRACTION = 0.1;
+const CORE_DENSITY = 1 / 3;
+const INTERVAL_DENSITY = CORE_DENSITY + (1 - CORE_DENSITY) * RAMP_FRACTION;
+
+// Integral of smoothstep: the density and its slope join continuously.
+const integratedSmoothstep = (value: number) => value ** 3 - value ** 4 / 2;
+
+/** Virtual distance through a normalized sticky interval, with 3x cruising speed. */
+function compressedDistance(value: number): number {
+  const edgeArea = RAMP_FRACTION * (1 + CORE_DENSITY) / 2;
+  if (value < RAMP_FRACTION) {
+    return value - (1 - CORE_DENSITY) * RAMP_FRACTION
+      * integratedSmoothstep(value / RAMP_FRACTION);
+  }
+  if (value <= 1 - RAMP_FRACTION) {
+    return edgeArea + CORE_DENSITY * (value - RAMP_FRACTION);
+  }
+  const exit = value - (1 - RAMP_FRACTION);
+  return edgeArea + CORE_DENSITY * (1 - 2 * RAMP_FRACTION + exit)
+    + (1 - CORE_DENSITY) * RAMP_FRACTION * integratedSmoothstep(exit / RAMP_FRACTION);
+}
+
+/**
+ * Map eased progress to real scroll coordinates without changing document geometry.
+ * Only the sticky interval is compressed: 3x in its core, with smooth edge ramps.
+ * The same coordinate map supports either direction and partial interval crossings.
+ */
+export function createSectionScrollRoute(
+  from: number,
+  to: number,
+  interval?: StickyInterval,
+): SectionScrollRoute {
+  const linear = () => ({
+    distance: Math.abs(to - from),
+    position: (progress: number) => progress <= 0 ? from : progress >= 1 ? to : from + (to - from) * progress,
+  });
+
+  if (!interval || !Number.isFinite(interval.start) || !Number.isFinite(interval.end)
+    || interval.end <= interval.start || from === to
+    || Math.max(from, to) <= interval.start || Math.min(from, to) >= interval.end) return linear();
+
+  const { start, end } = interval;
+  const length = end - start;
+  const savedDistance = length * (1 - INTERVAL_DENSITY);
+  const virtualEnd = end - savedDistance;
+  const toVirtual = (position: number) => {
+    if (position <= start) return position;
+    if (position >= end) return position - savedDistance;
+    return start + length * compressedDistance((position - start) / length);
+  };
+  const toActual = (position: number) => {
+    if (position <= start) return position;
+    if (position >= virtualEnd) return position + savedDistance;
+    const target = (position - start) / length;
+    let low = 0;
+    let high = 1;
+    // Positive density makes this inverse unique; 40 iterations give subpixel precision.
+    for (let iteration = 0; iteration < 40; iteration++) {
+      const middle = (low + high) / 2;
+      if (compressedDistance(middle) < target) low = middle;
+      else high = middle;
+    }
+    return start + length * (low + high) / 2;
+  };
+  const virtualFrom = toVirtual(from);
+  const virtualTravel = toVirtual(to) - virtualFrom;
+
+  return {
+    distance: Math.abs(virtualTravel),
+    position: (progress) => {
+      if (progress <= 0) return from;
+      if (progress >= 1) return to;
+      return toActual(virtualFrom + virtualTravel * progress);
+    },
+  };
+}

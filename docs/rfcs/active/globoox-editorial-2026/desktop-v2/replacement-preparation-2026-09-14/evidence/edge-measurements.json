@@ -1,0 +1,226 @@
+[
+  {
+    "locale": "en",
+    "width": 1440,
+    "selector": "en",
+    "overlaps": [],
+    "right": 1360,
+    "overflow": false
+  },
+  {
+    "locale": "en",
+    "width": 1200,
+    "selector": "en",
+    "overlaps": [],
+    "right": 1168,
+    "overflow": false
+  },
+  {
+    "locale": "en",
+    "width": 1100,
+    "selector": "en",
+    "overlaps": [],
+    "right": 1068,
+    "overflow": false
+  },
+  {
+    "locale": "en",
+    "width": 1001,
+    "selector": "en",
+    "overlaps": [],
+    "right": 969,
+    "overflow": false
+  },
+  {
+    "locale": "en",
+    "width": 901,
+    "selector": "en",
+    "overlaps": [],
+    "right": 869,
+    "overflow": false
+  },
+  {
+    "locale": "en",
+    "width": 801,
+    "selector": "en",
+    "overlaps": [],
+    "right": 769,
+    "overflow": false
+  },
+  {
+    "locale": "en",
+    "width": 320,
+    "selector": "en",
+    "overlaps": [],
+    "right": 300,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 1440,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 1360,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 1200,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 1168,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 1100,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 1068,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 1001,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 969,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 901,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 869,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 801,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 769,
+    "overflow": false
+  },
+  {
+    "locale": "fr",
+    "width": 320,
+    "selector": "fr",
+    "overlaps": [],
+    "right": 300,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 1440,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 1360,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 1200,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 1168,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 1100,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 1068,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 1001,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 969,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 901,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 869,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 801,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 769,
+    "overflow": false
+  },
+  {
+    "locale": "ru",
+    "width": 320,
+    "selector": "ru",
+    "overlaps": [],
+    "right": 300,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 1440,
+    "selector": "es",
+    "overlaps": [],
+    "right": 1360,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 1200,
+    "selector": "es",
+    "overlaps": [],
+    "right": 1168,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 1100,
+    "selector": "es",
+    "overlaps": [],
+    "right": 1068,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 1001,
+    "selector": "es",
+    "overlaps": [],
+    "right": 969,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 901,
+    "selector": "es",
+    "overlaps": [],
+    "right": 869,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 801,
+    "selector": "es",
+    "overlaps": [],
+    "right": 769,
+    "overflow": false
+  },
+  {
+    "locale": "es",
+    "width": 320,
+    "selector": "es",
+    "overlaps": [],
+    "right": 300,
+    "overflow": false
+  }
+]

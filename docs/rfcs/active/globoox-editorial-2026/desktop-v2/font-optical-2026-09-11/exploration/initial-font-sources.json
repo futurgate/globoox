@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Literata",
+    "path": "source-fonts/Literata-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/literata/Literata%5Bopsz%2Cwght%5D.ttf",
+    "bytes": 955132,
+    "signature": "00010000"
+  },
+  {
+    "name": "SourceSerif4",
+    "path": "source-fonts/SourceSerif4-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/SourceSerif4%5Bopsz%2Cwght%5D.ttf",
+    "bytes": 1209508,
+    "signature": "00010000"
+  },
+  {
+    "name": "Lora",
+    "path": "source-fonts/Lora-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/Lora%5Bwght%5D.ttf",
+    "bytes": 212196,
+    "signature": "00010000"
+  },
+  {
+    "name": "PTSerif",
+    "path": "source-fonts/PTSerif-Regular.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ptserif/PT_Serif-Web-Regular.ttf",
+    "bytes": 359048,
+    "signature": "00010000"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Quality",
+    "focused": "quality",
+    "hash": "#quality",
+    "headerBottom": 96,
+    "targetTop": 120.0703125,
+    "y": 3105
+  },
+  {
+    "name": "Languages",
+    "focused": "languages",
+    "hash": "#languages",
+    "headerBottom": 96,
+    "targetTop": 120.0078125,
+    "y": 4023.5
+  },
+  {
+    "name": "Team",
+    "focused": "team",
+    "hash": "#team",
+    "headerBottom": 96,
+    "targetTop": 120.1015625,
+    "y": 4755
+  },
+  {
+    "name": "Start reading",
+    "focused": "start",
+    "hash": "#start",
+    "headerBottom": 96,
+    "targetTop": 339.3984375,
+    "y": 5280.5
+  },
+  {
+    "name": "How it works",
+    "focused": "how-it-works",
+    "hash": "#how-it-works",
+    "headerBottom": 96,
+    "targetTop": 120.0703125,
+    "y": 1133
+  }
+]

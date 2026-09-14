@@ -1,0 +1,109 @@
+{
+  "viewport": "390x844",
+  "browser": "152.0.7977.84",
+  "method": "Fresh anonymous headless installed Chrome via Playwright; native CDP Input.dispatchTouchEvent, not synthetic DOM pointer events",
+  "beforeHorizontal": {
+    "value": 50,
+    "scrollY": 4101
+  },
+  "afterHorizontal": {
+    "value": 79,
+    "scrollY": 4101
+  },
+  "beforeVertical": {
+    "value": 50,
+    "scrollY": 4101
+  },
+  "afterVertical": {
+    "value": 50,
+    "scrollY": 4245
+  },
+  "verticalEvents": [
+    {
+      "type": "pointerdown",
+      "pointerId": 3,
+      "hasCapture": false
+    },
+    {
+      "type": "gotpointercapture",
+      "pointerId": 3,
+      "hasCapture": true
+    },
+    {
+      "type": "lostpointercapture",
+      "pointerId": 3,
+      "hasCapture": false
+    },
+    {
+      "type": "pointercancel",
+      "pointerId": 3,
+      "hasCapture": false
+    }
+  ],
+  "beforeCancel": {
+    "value": 50,
+    "scrollY": 4101
+  },
+  "afterCancel": {
+    "value": 29,
+    "scrollY": 4102
+  },
+  "cancelEvents": [
+    {
+      "type": "pointerdown",
+      "pointerId": 4,
+      "hasCapture": false
+    },
+    {
+      "type": "gotpointercapture",
+      "pointerId": 4,
+      "hasCapture": true
+    },
+    {
+      "type": "pointercancel",
+      "pointerId": 4,
+      "hasCapture": true
+    },
+    {
+      "type": "lostpointercapture",
+      "pointerId": 4,
+      "hasCapture": false
+    }
+  ],
+  "afterRecovery": {
+    "value": 43,
+    "scrollY": 4102
+  },
+  "recoveryEvents": [
+    {
+      "type": "pointerdown",
+      "pointerId": 5,
+      "hasCapture": false
+    },
+    {
+      "type": "gotpointercapture",
+      "pointerId": 5,
+      "hasCapture": true
+    },
+    {
+      "type": "pointerup",
+      "pointerId": 5,
+      "hasCapture": true
+    },
+    {
+      "type": "lostpointercapture",
+      "pointerId": 5,
+      "hasCapture": false
+    }
+  ],
+  "errors": [],
+  "pass": {
+    "horizontalChangesSplit": true,
+    "horizontalKeepsPage": true,
+    "verticalKeepsSplit": true,
+    "verticalScrollsPage": true,
+    "cancelDelivered": true,
+    "captureReleased": true,
+    "dragWorksAfterCancel": true
+  }
+}

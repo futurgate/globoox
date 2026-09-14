@@ -1,0 +1,50 @@
+[
+  {
+    "locale": "en",
+    "desktop": {
+      "tabs": [
+        "Step 1Upload your ebook.",
+        "Step 2Choose your language to translate the book.",
+        "Step 3Enjoy your book!"
+      ],
+      "extraNotes": 0
+    },
+    "mobile": "STEP 2\n\nChoose your language to translate the book."
+  },
+  {
+    "locale": "fr",
+    "desktop": {
+      "tabs": [
+        "Étape 1Ajoutez votre e‑book.",
+        "Étape 2Choisissez la langue de traduction.",
+        "Étape 3Bonne lecture !"
+      ],
+      "extraNotes": 0
+    },
+    "mobile": "ÉTAPE 2\n\nChoisissez la langue de traduction."
+  },
+  {
+    "locale": "ru",
+    "desktop": {
+      "tabs": [
+        "Шаг 1Загрузите электронную книгу",
+        "Шаг 2Выберите язык перевода.",
+        "Шаг 3Приятного чтения!"
+      ],
+      "extraNotes": 0
+    },
+    "mobile": "ШАГ 2\n\nВыберите язык перевода."
+  },
+  {
+    "locale": "es",
+    "desktop": {
+      "tabs": [
+        "Paso 1Sube tu ebook",
+        "Paso 2Elige tu idioma",
+        "Paso 3Disfruta tu libro"
+      ],
+      "extraNotes": 0
+    },
+    "mobile": "PASO 2\n\nElige tu idioma"
+  }
+]

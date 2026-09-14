@@ -1,0 +1,58 @@
+[
+  {
+    "name": "forward-to-quality",
+    "compactDurationMs": 556.6999999284744,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "reverse-to-hero",
+    "compactDurationMs": 817.0999999046326,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "inside-to-quality",
+    "compactDurationMs": 465.8000000715256,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "below-to-how",
+    "compactDurationMs": 750.7999999523163,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "cancel-wheel",
+    "compactDurationMs": 167.39999997615814,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "cancel-escape-inside",
+    "compactDurationMs": 16.0,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "tall-forward",
+    "compactDurationMs": 583.8999999761581,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  },
+  {
+    "name": "tall-inside-cancel",
+    "compactDurationMs": 16.59999990463257,
+    "stationaryCompactFrameCount": 0,
+    "maxDisagreementPinVsScrollPx": 0.0,
+    "directionChanges": 0
+  }
+]

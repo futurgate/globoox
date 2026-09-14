@@ -1,0 +1,111 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, Menu, X } from 'lucide-react';
+import { getLandingMessages } from '@/lib/landing-i18n';
+import ProductRecording from './ProductRecording';
+import { useSectionNavigation } from './useSectionNavigation';
+import HowItWorksSection from './HowItWorksSection';
+import QualitySection from './QualitySection';
+import TeamSection from './TeamSection';
+import LanguagesSection from './LanguagesSection';
+import PricingSection from './PricingSection';
+import s from './EditorialLanding.module.css';
+import posthog from 'posthog-js';
+import { readCookieConsent, saveCookieConsent, type CookieConsentChoice } from '@/lib/cookieConsent';
+
+const messages = getLandingMessages('en');
+const nav = messages.header.nav.flatMap(({ label, href }) =>
+  href === '#start' ? [['Pricing', '#pricing'], [label, href]] : [[label, href]]
+);
+const subscribe = () => () => {};
+// Slice the original sentence without changing its words or punctuation.
+const heroLeadStart = messages.hero.title.indexOf('instantly');
+const heroLastLineStart = messages.hero.title.indexOf('into your');
+const heroEmphasisStart = messages.hero.title.indexOf('your native language.');
+
+function Wordmark() {
+  return <span className={s.wordmark}><Image src="/icon.svg" width={35} height={35} alt="" aria-hidden="true" /><span>Globoox</span></span>;
+}
+
+// Reuse the existing consent contract with an isolated presentation. The shared
+// before_send gate recognizes this new route before client hydration.
+function PreviewConsent() {
+  const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
+  const [sessionChoice, setSessionChoice] = useState<CookieConsentChoice | null>(null);
+  const choice = sessionChoice ?? (hydrated ? readCookieConsent() : null);
+  useEffect(() => {
+    if (choice === 'accepted') posthog.opt_in_capturing();
+    else posthog.opt_out_capturing();
+  }, [choice]);
+  const choose = (value: CookieConsentChoice) => {
+    try { saveCookieConsent(value); } catch { /* Keep the choice for this session. */ }
+    setSessionChoice(value);
+  };
+  if (!hydrated || choice) return null;
+  return <aside className={s.consent} aria-label={messages.cookies.title}>
+    <div><strong>{messages.cookies.title}</strong><p>{messages.cookies.description}</p></div>
+    <div className={s.consentActions}>
+      <button type="button" onClick={() => choose('necessary')}>{messages.cookies.necessary}</button>
+      <button type="button" onClick={() => choose('accepted')}>{messages.cookies.accept} <Check size={13} /></button>
+    </div>
+  </aside>;
+}
+
+export default function EditorialLanding() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { pageRef, navigateSection } = useSectionNavigation(() => setMenuOpen(false));
+
+  return <div ref={pageRef} className={s.page}>
+    <a href="#main-content" className={s.skipLink}>Skip to content</a>
+    <header className={s.header}>
+      <div className={s.headerInner}>
+      <Link href="#hero" aria-label="Globoox home" onClick={(event) => navigateSection(event, "#hero")}><Wordmark /></Link>
+      <nav className={s.desktopNav} aria-label="Main navigation">{nav.map(([label, href]) => <a key={href} href={href} onClick={(event) => navigateSection(event, href)}>{label}</a>)}</nav>
+      <div className={s.localeSelect}><label htmlFor="editorial-locale" className={s.srOnly}>{messages.header.languageLabel}</label><select id="editorial-locale" defaultValue="en" onPointerDown={e => { e.currentTarget.dataset.pointerFocus = "true"; }} onKeyDown={e => { if (e.key === "Escape" && e.currentTarget.dataset.pointerFocus) e.currentTarget.blur(); else delete e.currentTarget.dataset.pointerFocus; }} onBlur={e => { delete e.currentTarget.dataset.pointerFocus; }} onChange={e => { window.location.href = `/${e.target.value}`; }}>{messages.header.languages.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}</select><ChevronDown size={12} aria-hidden="true" /></div>
+      <Link href="/my-books" className={s.headerCta}>{messages.header.openApp} <ArrowUpRight size={16} strokeWidth={1.5} /></Link>
+      <button type="button" className={s.menuButton} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} aria-controls="editorial-mobile-nav" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
+      {menuOpen && <nav id="editorial-mobile-nav" className={s.mobileNav} aria-label="Mobile navigation">{nav.map(([label, href]) => <a key={href} href={href} onClick={(event) => navigateSection(event, href)}>{label}<ArrowUpRight size={15} /></a>)}<Link href="/my-books">{messages.header.openApp} <ArrowRight size={15} /></Link><div className={s.mobileLocales} aria-label={messages.header.languageLabel}>{messages.header.languages.map(l => <Link key={l.value} href={`/${l.value}`} lang={l.value} aria-current={l.value === "en" ? "page" : undefined}>{l.label}</Link>)}</div></nav>}
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section id="hero" className={s.hero} aria-labelledby="editorial-title">
+        <div className={s.heroCopy}>
+          <h1 id="editorial-title">
+            <span className={s.heroIntro}>{messages.hero.title.slice(0, heroLeadStart)}</span>
+            <span className={s.heroLead}>
+              {messages.hero.title.slice(heroLeadStart, heroLastLineStart)}
+              <span className={s.heroLastLine}>{messages.hero.title.slice(heroLastLineStart, heroEmphasisStart)}<em>{messages.hero.title.slice(heroEmphasisStart)}</em></span>
+            </span>
+          </h1>
+          
+          <div className={s.heroActions}><Link className={s.primaryButton} href="/my-books">{messages.hero.button}</Link></div>
+        </div>
+        <div className={s.productStage}>
+          <div className={s.readerWrap}><ProductRecording /></div>
+        </div>
+        
+      </section>
+
+      <HowItWorksSection />
+      <QualitySection />
+
+      <LanguagesSection />
+
+      <TeamSection messages={messages.founders} />
+
+      <PricingSection />
+
+      <section id="start" className={s.start} aria-labelledby="start-title">
+        <div className={s.startInner}><Image src="/icon.svg" alt="" width={56} height={56} aria-hidden="true" /><h2 id="start-title">{messages.cta.heading}</h2><p>{messages.cta.description}</p><Link href="/my-books" className={s.primaryButton}>{messages.cta.button} <ArrowRight size={17} strokeWidth={1.5} /></Link></div>
+        {['left', 'right'].map((side) => <Image key={side} className={`${s.closingBotanical} ${side === 'left' ? s.closingBotanicalLeft : s.closingBotanicalRight}`} src="/redesign/closing/closing-v2-b-refined.png" alt="" aria-hidden="true" width={1536} height={1024} sizes="(max-width: 900px) 100vw, (max-width: 1100px) 900px, 1150px" />)}
+      </section>
+    </main>
+
+    <footer className={s.footer}><div className={s.footerTop}><p>{messages.footer.tagline}</p></div><div className={s.footerBottom}><span>{messages.footer.copyright}</span><a href="#hero" className={s.backTop} onClick={(event) => navigateSection(event, "#hero")}>Back to top <ArrowUpRight size={15} /></a></div></footer>
+    <PreviewConsent />
+  </div>;
+}

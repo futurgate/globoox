@@ -1,0 +1,371 @@
+[
+  {
+    "name": "Current",
+    "file": "public/redesign/fonts/newsreader-roman.woff2",
+    "axes": {
+      "opsz": 15.75,
+      "wght": 400
+    },
+    "size": 21
+  },
+  {
+    "name": "Source Serif 4 12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 12
+    },
+    "size": 18.603,
+    "inkHeight": 9.704625,
+    "capHeight": 12.464087060702877
+  },
+  {
+    "name": "Source Serif 4 20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 20
+    },
+    "size": 19.371,
+    "inkHeight": 9.704625,
+    "capHeight": 12.978241017964073
+  },
+  {
+    "name": "Source Serif 4 32",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 32
+    },
+    "size": 19.665,
+    "inkHeight": 9.704625,
+    "capHeight": 13.175478723404257
+  },
+  {
+    "name": "Source Serif 4 48",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 48
+    },
+    "size": 20.072,
+    "inkHeight": 9.704625,
+    "capHeight": 13.447980868665978
+  },
+  {
+    "name": "Source Serif 4 60",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 60
+    },
+    "size": 20.388,
+    "inkHeight": 9.704625,
+    "capHeight": 13.659871323529412
+  },
+  {
+    "name": "Literata 12",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 12
+    },
+    "size": 18.139,
+    "inkHeight": 9.704625,
+    "capHeight": 12.697640186915887
+  },
+  {
+    "name": "Literata 24",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 24
+    },
+    "size": 18.105,
+    "inkHeight": 9.704625,
+    "capHeight": 12.764971440160243
+  },
+  {
+    "name": "Literata 36",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 36
+    },
+    "size": 18.071,
+    "inkHeight": 9.704625,
+    "capHeight": 12.83205008031038
+  },
+  {
+    "name": "Literata 48",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 48
+    },
+    "size": 18.027,
+    "inkHeight": 9.704625,
+    "capHeight": 12.920119284363922
+  },
+  {
+    "name": "Literata 72",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 72
+    },
+    "size": 17.938,
+    "inkHeight": 9.704625,
+    "capHeight": 13.094965341959332
+  },
+  {
+    "name": "Noto Serif 100",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034
+  },
+  {
+    "name": "Noto Serif 95",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034
+  },
+  {
+    "name": "Noto Serif 90",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034
+  },
+  {
+    "name": "Noto Serif 85",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 85
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034
+  },
+  {
+    "name": "STIX Two Text",
+    "file": "source-fonts/STIXTwoText-Variable.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 19.605,
+    "inkHeight": 9.704625,
+    "capHeight": 12.880684090909092
+  },
+  {
+    "name": "Lora",
+    "file": "source-fonts/Lora-Variable.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 18.242,
+    "inkHeight": 9.704625,
+    "capHeight": 12.76924342105263
+  },
+  {
+    "name": "PT Serif",
+    "file": "source-fonts/PTSerif-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 18.52,
+    "inkHeight": 9.704625,
+    "capHeight": 12.964193702290075
+  },
+  {
+    "name": "Tinos",
+    "file": "source-fonts/Tinos-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 20.178,
+    "inkHeight": 9.704625,
+    "capHeight": 13.212083375634517
+  },
+  {
+    "name": "Roboto Serif 90 16",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 16
+    },
+    "size": 17.709,
+    "inkHeight": 9.704625,
+    "capHeight": 12.573510492700729
+  },
+  {
+    "name": "Roboto Serif 90 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 20
+    },
+    "size": 18.38,
+    "inkHeight": 9.704625,
+    "capHeight": 13.049779829545454
+  },
+  {
+    "name": "Roboto Serif 90 32",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 32
+    },
+    "size": 18.346,
+    "inkHeight": 9.704625,
+    "capHeight": 13.025905369557263
+  },
+  {
+    "name": "Roboto Serif 95 16",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 16
+    },
+    "size": 17.709,
+    "inkHeight": 9.704625,
+    "capHeight": 12.573510492700729
+  },
+  {
+    "name": "Roboto Serif 95 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 20
+    },
+    "size": 18.38,
+    "inkHeight": 9.704625,
+    "capHeight": 13.049779829545454
+  },
+  {
+    "name": "Roboto Serif 95 32",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 32
+    },
+    "size": 18.346,
+    "inkHeight": 9.704625,
+    "capHeight": 13.025905369557263
+  },
+  {
+    "name": "Roboto Serif 100 16",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 16
+    },
+    "size": 17.709,
+    "inkHeight": 9.704625,
+    "capHeight": 12.573510492700729
+  },
+  {
+    "name": "Roboto Serif 100 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 20
+    },
+    "size": 18.38,
+    "inkHeight": 9.704625,
+    "capHeight": 13.049779829545454
+  },
+  {
+    "name": "Roboto Serif 100 32",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 32
+    },
+    "size": 18.346,
+    "inkHeight": 9.704625,
+    "capHeight": 13.025905369557263
+  },
+  {
+    "name": "Merriweather 95 18",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 18
+    },
+    "size": 16.703,
+    "inkHeight": 9.704625,
+    "capHeight": 12.410561746987952
+  },
+  {
+    "name": "Merriweather 95 32",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 32
+    },
+    "size": 16.865,
+    "inkHeight": 9.704625,
+    "capHeight": 12.530890620355933
+  },
+  {
+    "name": "Merriweather 100 18",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 18
+    },
+    "size": 16.703,
+    "inkHeight": 9.704625,
+    "capHeight": 12.410561746987952
+  },
+  {
+    "name": "Merriweather 100 32",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 32
+    },
+    "size": 16.865,
+    "inkHeight": 9.704625,
+    "capHeight": 12.530890620355933
+  },
+  {
+    "name": "IBM Plex Serif",
+    "file": "source-fonts/IBMPlexSerif-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 17.972,
+    "inkHeight": 9.704625,
+    "capHeight": 12.544126388888888
+  }
+]

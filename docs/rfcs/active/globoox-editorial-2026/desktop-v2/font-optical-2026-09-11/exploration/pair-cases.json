@@ -1,0 +1,34 @@
+[
+  {
+    "name": "newsreader-8",
+    "enSize": 18.747,
+    "enOpsz": 8,
+    "ruSize": 20.388,
+    "ruOpsz": 60,
+    "ruWeight": 400
+  },
+  {
+    "name": "newsreader-10",
+    "enSize": 19.281,
+    "enOpsz": 10,
+    "ruSize": 20.388,
+    "ruOpsz": 60,
+    "ruWeight": 400
+  },
+  {
+    "name": "newsreader-12",
+    "enSize": 19.846,
+    "enOpsz": 12,
+    "ruSize": 20.388,
+    "ruOpsz": 60,
+    "ruWeight": 400
+  },
+  {
+    "name": "newsreader-16",
+    "enSize": 21.082,
+    "enOpsz": 16,
+    "ruSize": 20.388,
+    "ruOpsz": 60,
+    "ruWeight": 400
+  }
+]

@@ -1,0 +1,796 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "section": {
+        "x": 0,
+        "y": 120.109375,
+        "width": 1440,
+        "height": 731.578125
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 795.1282958984375,
+            "y": 267.1060485839844,
+            "width": 192.743408203125,
+            "height": 74.00662231445312
+          },
+          "label": {
+            "x": 847.97021484375,
+            "y": 287.1562194824219,
+            "width": 87.0595703125,
+            "height": 33.90631103515625
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 1053.2509765625,
+            "y": 347.46099853515625,
+            "width": 186.498046875,
+            "height": 73.2967529296875
+          },
+          "label": {
+            "x": 1100.651611328125,
+            "y": 367.2904968261719,
+            "width": 91.69677734375,
+            "height": 33.63775634765625
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 793.189453125,
+            "y": 417.29046630859375,
+            "width": 188.62109375,
+            "height": 73.6378173828125
+          },
+          "label": {
+            "x": 843.185791015625,
+            "y": 437.22454833984375,
+            "width": 88.62841796875,
+            "height": 33.7696533203125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 1041.128173828125,
+            "y": 485.1374816894531,
+            "width": 186.74365234375,
+            "height": 73.94381713867188
+          },
+          "label": {
+            "x": 1093.9857177734375,
+            "y": 505.18780517578125,
+            "width": 81.028564453125,
+            "height": 33.8431396484375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 789.5625,
+          "y": 652.109375,
+          "width": 447.875,
+          "height": 103.578125
+        },
+        "children": [
+          {
+            "box": {
+              "x": 789.5625,
+              "y": 663.6875,
+              "width": 116,
+              "height": 92
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 925.5625,
+              "y": 652.109375,
+              "width": 311.875,
+              "height": 103.578125
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    },
+    {
+      "width": 1100,
+      "section": {
+        "x": 0,
+        "y": 119.984375,
+        "width": 1100,
+        "height": 720.796875
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 586.62841796875,
+            "y": 266.9507141113281,
+            "width": 198.5400390625,
+            "height": 74.06735229492188
+          },
+          "label": {
+            "x": 645.6211547851562,
+            "y": 288.0653076171875,
+            "width": 80.5389404296875,
+            "height": 31.83831787109375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 853.5635375976562,
+            "y": 347.3109130859375,
+            "width": 193.68548583984375,
+            "height": 73.346923828125
+          },
+          "label": {
+            "x": 908.002197265625,
+            "y": 368.189453125,
+            "width": 84.80810546875,
+            "height": 31.58984375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 586.6896362304688,
+            "y": 417.1227111816406,
+            "width": 198.41766357421875,
+            "height": 73.72332763671875
+          },
+          "label": {
+            "x": 644.9600219726562,
+            "y": 438.1288757324219,
+            "width": 81.8768310546875,
+            "height": 31.71099853515625
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 853.4407958984375,
+            "y": 484.974853515625,
+            "width": 193.930908203125,
+            "height": 74.01904296875
+          },
+          "label": {
+            "x": 912.9334716796875,
+            "y": 506.094482421875,
+            "width": 74.929931640625,
+            "height": 31.77960205078125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 640.9375,
+          "y": 651.984375,
+          "width": 352.109375,
+          "height": 92.796875
+        },
+        "children": [
+          {
+            "box": {
+              "x": 640.9375,
+              "y": 668.78125,
+              "width": 82,
+              "height": 76
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 736.9375,
+              "y": 651.984375,
+              "width": 256.109375,
+              "height": 92.796875
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    },
+    {
+      "width": 901,
+      "section": {
+        "x": 0,
+        "y": 119.53125,
+        "width": 901,
+        "height": 720.796875
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 466.12774658203125,
+            "y": 266.6270751953125,
+            "width": 173.8070068359375,
+            "height": 73.808349609375
+          },
+          "label": {
+            "x": 512.7617797851562,
+            "y": 287.6120910644531,
+            "width": 80.5389404296875,
+            "height": 31.83831787109375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 699.703857421875,
+            "y": 346.9420471191406,
+            "width": 169.54541015625,
+            "height": 73.17840576171875
+          },
+          "label": {
+            "x": 742.064697265625,
+            "y": 367.73626708984375,
+            "width": 84.80810546875,
+            "height": 31.58984375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 466.18914794921875,
+            "y": 416.7774963378906,
+            "width": 173.6842041015625,
+            "height": 73.50750732421875
+          },
+          "label": {
+            "x": 512.0850219726562,
+            "y": 437.67584228515625,
+            "width": 81.8768310546875,
+            "height": 31.710968017578125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 699.580810546875,
+            "y": 484.6481018066406,
+            "width": 169.79150390625,
+            "height": 73.76632690429688
+          },
+          "label": {
+            "x": 747.0115966796875,
+            "y": 505.6414489746094,
+            "width": 74.929931640625,
+            "height": 31.779571533203125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 491.6875,
+          "y": 651.53125,
+          "width": 352.109375,
+          "height": 92.796875
+        },
+        "children": [
+          {
+            "box": {
+              "x": 491.6875,
+              "y": 668.328125,
+              "width": 82,
+              "height": 76
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 587.6875,
+              "y": 651.53125,
+              "width": 256.109375,
+              "height": 92.796875
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    },
+    {
+      "width": 801,
+      "section": {
+        "x": 0,
+        "y": 119.78125,
+        "width": 801,
+        "height": 720.796875
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 416.1271667480469,
+            "y": 266.9896545410156,
+            "width": 152.30813598632812,
+            "height": 73.58319091796875
+          },
+          "label": {
+            "x": 452.0117492675781,
+            "y": 287.8620910644531,
+            "width": 80.53897094726562,
+            "height": 31.83831787109375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 620.70361328125,
+            "y": 347.2653503417969,
+            "width": 148.5458984375,
+            "height": 73.03179931640625
+          },
+          "label": {
+            "x": 652.564697265625,
+            "y": 367.98626708984375,
+            "width": 84.80810546875,
+            "height": 31.58984375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 416.188720703125,
+            "y": 417.1213073730469,
+            "width": 152.18505859375,
+            "height": 73.31988525390625
+          },
+          "label": {
+            "x": 451.3350524902344,
+            "y": 437.92584228515625,
+            "width": 81.87680053710938,
+            "height": 31.710968017578125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 620.5802001953125,
+            "y": 485.008056640625,
+            "width": 148.792724609375,
+            "height": 73.54638671875
+          },
+          "label": {
+            "x": 657.5115966796875,
+            "y": 505.8914489746094,
+            "width": 74.929931640625,
+            "height": 31.779571533203125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 416.6875,
+          "y": 651.78125,
+          "width": 352.109375,
+          "height": 92.796875
+        },
+        "children": [
+          {
+            "box": {
+              "x": 416.6875,
+              "y": 668.578125,
+              "width": 82,
+              "height": 76
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 512.6875,
+              "y": 651.78125,
+              "width": 256.109375,
+              "height": 92.796875
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    },
+    {
+      "width": 800,
+      "section": {
+        "x": 0,
+        "y": 120.296875,
+        "width": 800,
+        "height": 1012.09375
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 169.62843322753906,
+            "y": 576.56005859375,
+            "width": 198.54002380371094,
+            "height": 74.0673828125
+          },
+          "label": {
+            "x": 228.6211395263672,
+            "y": 597.6746826171875,
+            "width": 80.53895568847656,
+            "height": 31.83831787109375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 436.56353759765625,
+            "y": 656.9202880859375,
+            "width": 193.6854248046875,
+            "height": 73.346923828125
+          },
+          "label": {
+            "x": 491.002197265625,
+            "y": 677.798828125,
+            "width": 84.80810546875,
+            "height": 31.58984375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 169.68960571289062,
+            "y": 726.7320556640625,
+            "width": 198.41766357421875,
+            "height": 73.723388671875
+          },
+          "label": {
+            "x": 227.9600372314453,
+            "y": 747.73828125,
+            "width": 81.87681579589844,
+            "height": 31.7109375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 436.4408264160156,
+            "y": 794.584228515625,
+            "width": 193.93087768554688,
+            "height": 74.01904296875
+          },
+          "label": {
+            "x": 495.9334716796875,
+            "y": 815.703857421875,
+            "width": 74.929931640625,
+            "height": 31.77960205078125
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 223.9375,
+          "y": 961.59375,
+          "width": 352.109375,
+          "height": 92.796875
+        },
+        "children": [
+          {
+            "box": {
+              "x": 223.9375,
+              "y": 978.390625,
+              "width": 82,
+              "height": 76
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 319.9375,
+              "y": 961.59375,
+              "width": 256.109375,
+              "height": 92.796875
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "section": {
+        "x": 0,
+        "y": 120.328125,
+        "width": 390,
+        "height": 1014
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 15.684830665588379,
+            "y": 637.9456787109375,
+            "width": 154.56784057617188,
+            "height": 62.608642578125
+          },
+          "label": {
+            "x": 57.54283142089844,
+            "y": 654.8814697265625,
+            "width": 70.83621215820312,
+            "height": 28.73724365234375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 223.42953491210938,
+            "y": 707.2258911132812,
+            "width": 150.78155517578125,
+            "height": 62.0482177734375
+          },
+          "label": {
+            "x": 261.5437927246094,
+            "y": 723.9907836914062,
+            "width": 74.53741455078125,
+            "height": 28.518310546875
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 15.736771583557129,
+            "y": 767.0794677734375,
+            "width": 154.46395874023438,
+            "height": 62.341064453125
+          },
+          "label": {
+            "x": 57.03544235229492,
+            "y": 783.93798828125,
+            "width": 71.86662292480469,
+            "height": 28.6240234375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 223.3253631591797,
+            "y": 824.9644165039062,
+            "width": 150.9899139404297,
+            "height": 62.5711669921875
+          },
+          "label": {
+            "x": 265.8864440917969,
+            "y": 841.9074096679688,
+            "width": 65.86773681640625,
+            "height": 28.6851806640625
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 46.765625,
+          "y": 970.75,
+          "width": 296.46875,
+          "height": 85.578125
+        },
+        "children": [
+          {
+            "box": {
+              "x": 46.765625,
+              "y": 988.328125,
+              "width": 66,
+              "height": 68
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 122.765625,
+              "y": 970.75,
+              "width": 220.46875,
+              "height": 85.578125
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "section": {
+        "x": 0,
+        "y": 120.1875,
+        "width": 320,
+        "height": 1102.171875
+      },
+      "text": "SUPPORTED LANGUAGES\n\nRead in English, Spanish, Russian, and French\n\nThese four languages are available now, with more European languages, along with Arabic, Chinese, and Hindi, coming soon. Because every book deserves to reach every reader in their mother tongue.\n\nEnglish\nSpanish\nRussian\nFrench\n\nsoon\n\nGerman\n·\nPortuguese\n·\nItalian\nJapanese\n·\nKorean\n·\nand dozens more",
+      "cards": [
+        {
+          "box": {
+            "x": 15.684005737304688,
+            "y": 702.7439575195312,
+            "width": 124.46011352539062,
+            "height": 62.2933349609375
+          },
+          "label": {
+            "x": 42.49595642089844,
+            "y": 719.5220336914062,
+            "width": 70.83621215820312,
+            "height": 28.7371826171875
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 182.83541870117188,
+            "y": 771.9691772460938,
+            "width": 121.37603759765625,
+            "height": 61.8428955078125
+          },
+          "label": {
+            "x": 206.24691772460938,
+            "y": 788.6314086914062,
+            "width": 74.53741455078125,
+            "height": 28.518310546875
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 15.736198425292969,
+            "y": 831.8515014648438,
+            "width": 124.35572052001953,
+            "height": 62.0782470703125
+          },
+          "label": {
+            "x": 41.97294235229492,
+            "y": 848.5787353515625,
+            "width": 71.86662292480469,
+            "height": 28.62396240234375
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        },
+        {
+          "box": {
+            "x": 182.73080444335938,
+            "y": 889.759033203125,
+            "width": 121.58526611328125,
+            "height": 62.26318359375
+          },
+          "label": {
+            "x": 210.58956909179688,
+            "y": 906.5480346679688,
+            "width": 65.86773681640625,
+            "height": 28.6851806640625
+          },
+          "labelStyle": {
+            "paddingBottom": "4px",
+            "transform": "none"
+          }
+        }
+      ],
+      "upcoming": {
+        "box": {
+          "x": 16,
+          "y": 1035.390625,
+          "width": 288,
+          "height": 108.96875
+        },
+        "children": [
+          {
+            "box": {
+              "x": 16,
+              "y": 1076.359375,
+              "width": 66,
+              "height": 68
+            },
+            "text": ""
+          },
+          {
+            "box": {
+              "x": 92,
+              "y": 1035.390625,
+              "width": 212,
+              "height": 108.96875
+            },
+            "text": "soonGerman·Portuguese·ItalianJapanese·Korean·and dozens more"
+          }
+        ]
+      },
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

@@ -1,3 +1,10 @@
+---
+type: postmortem
+status: complete
+owner: design-engineering
+last_verified: 2026-09-07
+---
+
 # Language composition correction — design QA, 7 September 2026
 
 **final result: passed**

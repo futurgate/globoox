@@ -1,0 +1,198 @@
+.section {
+  --panel-height: min(760px, calc(100svh - var(--ed-header-height, 96px) - 48px));
+  height: calc(var(--panel-height) + 220svh);
+  margin: 96px 0 112px;
+  padding: 0;
+  color: var(--ed-ink, #20382f);
+  font-family: var(--ed-sans, Arial, sans-serif);
+  scroll-margin-top: calc(var(--ed-header-height, 96px) + 24px);
+}
+
+.section, .section * { box-sizing: border-box; }
+
+.layout {
+  position: sticky;
+  top: calc(var(--ed-header-height, 96px) + 24px);
+  height: var(--panel-height);
+  display: grid;
+  width: min(1160px, calc(100% - 112px));
+  grid-template-columns: minmax(0, 1fr) 360px;
+  align-items: center;
+  gap: 100px;
+  margin: 0 auto;
+}
+
+.section .label {
+  margin: 0 0 20px;
+  color: #64735e;
+  font-family: var(--ed-sans, Arial, sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.section .title {
+  margin: 0;
+  font-family: var(--ed-serif, Georgia, serif);
+  font-size: 58px;
+  font-weight: 400;
+  letter-spacing: -1.9px;
+  line-height: 1.07;
+}
+
+.steps { margin-top: 35px; }
+
+.stepButton {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: clamp(96px, calc((100svh - 300px) / 3), 143px);
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 24px 14px 25px 29px;
+  border: 0;
+  border-radius: 0;
+  background: color-mix(in srgb, #e3e9dc calc(var(--step-weight, 0) * 100%), transparent);
+  color: color-mix(in srgb, #20382f calc(var(--step-weight, 0) * 100%), #62705d);
+  text-align: left;
+  cursor: pointer;
+}
+
+.stepButton + .stepButton { border-top: 1px solid #dce0d4; }
+.stepButton::before { position: absolute; top: 27px; bottom: 27px; left: 0; width: 3px; background: #a76b49; opacity: var(--step-weight, 0); content: ""; }
+.stepButton:hover { color: #20382f; }
+.stepCopy { display: block; max-width: 470px; }
+.stepLabel { display: block; margin-bottom: 12px; font-family: var(--ed-sans, Arial, sans-serif); font-size: 10px; font-weight: 600; letter-spacing: 1.7px; line-height: 1.4; text-transform: uppercase; }
+.description { display: block; font-family: var(--ed-serif, Georgia, serif); font-size: 32px; font-weight: 400; letter-spacing: -.6px; line-height: 1.18; }
+.stepArrow { flex-shrink: 0; color: color-mix(in srgb, #a76b49 calc(var(--step-weight, 0) * 100%), #8c987f); }
+
+.productStage { display: flex; min-width: 0; flex-direction: column; align-items: center; padding-bottom: 28px; }
+.motionControls { display: flex; gap: 4px; margin-bottom: 44px; padding: 3px; border: 1px solid #cbd3c3; border-radius: 6px; }
+.motionControls button { min-width: 68px; padding: 7px 14px; border: 0; border-radius: 3px; background: transparent; color: #62705d; font: inherit; font-size: 12px; font-weight: 500; line-height: 18px; cursor: pointer; }
+.motionControls button[aria-pressed="true"] { background: #20382f; color: #faf8ef; }
+.motionControls button[aria-pressed="false"]:hover { color: #20382f; background: #e6e9df; }
+.motionControls button[aria-pressed="true"]:hover { background: #29473b; }
+.screenshotDeck {
+  position: relative;
+  width: min(316px, 100%, calc((var(--panel-height) - 112px) * 0.46217));
+  aspect-ratio: 788 / 1705;
+  isolation: isolate;
+}
+.screenshotDeck[data-motion="fade"], .screenshotDeck[data-motion="stack"] .screenCard {
+  overflow: hidden;
+  border: 1px solid #c9c9b9;
+  border-radius: 13px;
+  background: #f3f0e8;
+  box-shadow: 0 18px 36px -25px #263d3138, 0 3px 10px #263d3108;
+}
+.screenCard {
+  position: absolute;
+  inset: 0;
+  transform-origin: center top;
+  pointer-events: none;
+  /* Only the scroll position changes these values; there is no timed easing. */
+}
+.screenshot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.section button:focus-visible, .screenshotDeck:focus-visible { outline: 2px solid #a16d49; outline-offset: 5px; }
+
+@media (max-width: 1050px) {
+  .layout { width: calc(100% - 64px); grid-template-columns: minmax(0, 1fr) 280px; gap: 58px; }
+  .section .title { font-size: 51px; letter-spacing: -1.6px; }
+  .description { font-size: 29px; }
+  .stepButton { padding-left: 23px; gap: 15px; }
+  .screenshotDeck { max-width: 280px; }
+}
+
+@media (max-height: 700px) {
+  .section .title { font-size: 38px; }
+  .section .label { margin-bottom: 12px; }
+  .steps { margin-top: 16px; }
+  .stepButton { min-height: 84px; padding-block: 12px; }
+  .description { font-size: 24px; }
+  .stepLabel { margin-bottom: 6px; }
+}
+
+/* Mobile keeps every portrait in document flow; only its heading sticks. */
+.episodes { display: none; }
+
+@media (max-width: 800px) {
+  .section { --episode-gap: 60px; height: auto; margin: 72px 0 88px; }
+  .layout {
+    position: static;
+    display: block;
+    width: min(420px, calc(100% - 48px));
+    height: auto;
+  }
+  .explanation { padding-bottom: var(--episode-gap); }
+  .sectionHeading {
+    position: sticky;
+    top: var(--ed-header-height, 84px);
+    z-index: 5;
+    padding: 16px 0 20px;
+    border-bottom: 1px solid var(--ed-rule, #dadccd);
+    background: var(--ed-paper, #f7f5ed);
+  }
+  .steps, .productStage { display: none; }
+  .section .label { margin: 0 0 14px; }
+  .section .title {
+    font-size: 40px;
+    line-height: 1.08;
+    letter-spacing: -1.15px;
+  }
+  .episodes {
+    display: grid;
+    gap: var(--episode-gap);
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .finalEpisode { margin-top: 0; }
+  .episode { min-width: 0; }
+  .section .episodeLabel {
+    margin: 0 0 10px;
+    color: #64735e;
+    font-family: var(--ed-sans, Arial, sans-serif);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.7px;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+  .section .episodeTitle {
+    margin: 0 0 24px;
+    font-family: var(--ed-serif, Georgia, serif);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -.65px;
+    line-height: 1.13;
+    text-wrap: pretty;
+  }
+  .episodeFrame {
+    width: min(300px, 100%);
+    margin-inline: auto;
+    overflow: hidden;
+    border: 1px solid #c9c9b9;
+    border-radius: 9px;
+    background: #f6f3e9;
+  }
+  .episodeScreenshot {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-width: 359px) {
+  .section { --episode-gap: 52px; }
+  .layout { width: calc(100% - 40px); }
+  .section .title { font-size: 35px; letter-spacing: -.85px; }
+  .section .episodeTitle { font-size: 29px; }
+}

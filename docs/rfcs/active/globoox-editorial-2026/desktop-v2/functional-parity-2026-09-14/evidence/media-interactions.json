@@ -1,0 +1,142 @@
+{
+  "oldSteps": [
+    {
+      "step": 0,
+      "progress": 0.1,
+      "imgs": [
+        {
+          "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F1.1.webp&w=3840&q=75",
+          "alt": ""
+        },
+        {
+          "src": "/_next/image?url=%2FDeviceMockups%2FiPhone%2FiPhone%2013%20Pro%20-%20Midnight%20-%20%20Portrait.webp&w=3840&q=75",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "step": 0,
+      "progress": 0.65,
+      "imgs": [
+        {
+          "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F1.2-es.webp&w=3840&q=75",
+          "alt": ""
+        },
+        {
+          "src": "/_next/image?url=%2FDeviceMockups%2FiPhone%2FiPhone%2013%20Pro%20-%20Midnight%20-%20%20Portrait.webp&w=3840&q=75",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "step": 1,
+      "progress": 0.1,
+      "imgs": [
+        {
+          "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F2.1-es.webp&w=3840&q=75",
+          "alt": ""
+        },
+        {
+          "src": "/_next/image?url=%2FDeviceMockups%2FiPhone%2FiPhone%2013%20Pro%20-%20Midnight%20-%20%20Portrait.webp&w=3840&q=75",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "step": 1,
+      "progress": 0.65,
+      "imgs": [
+        {
+          "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F2.2.webp&w=3840&q=75",
+          "alt": ""
+        },
+        {
+          "src": "/_next/image?url=%2FDeviceMockups%2FiPhone%2FiPhone%2013%20Pro%20-%20Midnight%20-%20%20Portrait.webp&w=3840&q=75",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "progress": 0.3,
+      "imgs": [
+        {
+          "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F3-es-en.webp&w=3840&q=75",
+          "alt": ""
+        },
+        {
+          "src": "/_next/image?url=%2FDeviceMockups%2FiPhone%2FiPhone%2013%20Pro%20-%20Midnight%20-%20%20Portrait.webp&w=3840&q=75",
+          "alt": ""
+        }
+      ]
+    }
+  ],
+  "oldQualityClip": "inset(0px 22.0361% 0px 0px)",
+  "newVideo": [
+    {
+      "device": "Desktop",
+      "before": {
+        "src": "http://localhost:3000/screenrecordings/mac_screen_record_1280w_h264.mp4",
+        "time": 0.695578,
+        "paused": false,
+        "muted": true
+      },
+      "after": 1.199622,
+      "advanced": true
+    },
+    {
+      "device": "Tablet",
+      "before": {
+        "src": "http://localhost:3000/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+        "time": 0.570761,
+        "paused": false,
+        "muted": true
+      },
+      "after": 1.082567,
+      "advanced": true
+    },
+    {
+      "device": "Phone",
+      "before": {
+        "src": "http://localhost:3000/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+        "time": 0.5719,
+        "paused": false,
+        "muted": true
+      },
+      "after": 1.080888,
+      "advanced": true
+    }
+  ],
+  "newSteps": [
+    {
+      "progress": 0,
+      "selected": "STEP 1\nUpload your ebook."
+    },
+    {
+      "progress": 0.5,
+      "selected": "STEP 2\nChoose your language to translate the book."
+    },
+    {
+      "progress": 1,
+      "selected": "STEP 3\nEnjoy your book!"
+    },
+    {
+      "progress": 0.5,
+      "selected": "STEP 2\nChoose your language to translate the book."
+    },
+    {
+      "progress": 0,
+      "selected": "STEP 1\nUpload your ebook."
+    }
+  ],
+  "newQuality": {
+    "home": "0",
+    "end": "100",
+    "stored": "90",
+    "hidden": true,
+    "restored": "90",
+    "expanded": false
+  },
+  "pricingNotice": "Premium checkout is coming soon. Start reading for free",
+  "oldLegalHidden": true
+}

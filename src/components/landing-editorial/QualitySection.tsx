@@ -1,24 +1,45 @@
 "use client";
 
-import { useId, useState } from "react";
-import { ArrowDown, ArrowUp, Eye, EyeOff } from "lucide-react";
-import { getLandingMessages, type LandingMessages } from "@/lib/landing-i18n";
+import { useId, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { ArrowDown, ArrowUp, ChevronsLeftRight, Eye, EyeOff } from "lucide-react";
+import { type LandingMessages } from "@/lib/landing-i18n";
+import { useEditorialLocale } from "./EditorialLocale";
 import styles from "./QualitySection.module.css";
 
-const { quality } = getLandingMessages("en");
 type Passage = LandingMessages["quality"]["compare"]["original"];
+const luriaPreview = {
+  ru: { boundary: "этого замечательного человека.", compactBoundary: "литературе." },
+  en: { boundary: "this remarkable man.", compactBoundary: "in the literature." },
+};
+const darwinPreview: Record<string, { boundary: string; compactBoundary: string }> = {
+  en: { boundary: "round the world.", compactBoundary: "1831." },
+  es: { boundary: "alrededor del mundo.", compactBoundary: "1831." },
+  fr: { boundary: "à travers le globe.", compactBoundary: "1831." },
+  ru: { boundary: "земного шара.", compactBoundary: "штормов." },
+};
+type Drag = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  startPosition: number;
+  width: number;
+  direction: "pending" | "horizontal";
+};
+const clamp = (value: number) => Math.max(0, Math.min(100, value));
 
-function Excerpt({ passage, expanded, boundary, id }: { passage: Passage; expanded: boolean; boundary: string; id: string }) {
+function Excerpt({ passage, expanded, boundary, compactBoundary, id }: { passage: Passage; expanded: boolean; boundary: string; compactBoundary: string; id: string }) {
   return (
-    <div id={id} className={styles.prose}>
+    <div id={id} className={styles.prose} data-expanded={expanded}>
       {passage.paragraphs.map((paragraph, index) => {
         // Slice the canonical text without trimming, normalizing whitespace,
         // rewriting punctuation or replacing the remaining passage with a summary.
         const boundaryIndex = paragraph.indexOf(boundary);
         const cutoff = index === 0 ? (boundaryIndex < 0 ? paragraph.length : boundaryIndex + boundary.length) : 0;
+        const compactBoundaryIndex = paragraph.indexOf(compactBoundary);
+        const compactCutoff = Math.min(cutoff, compactBoundaryIndex < 0 ? cutoff : compactBoundaryIndex + compactBoundary.length);
         return (
           <p key={paragraph} className={styles.excerpt} hidden={index > 0 && !expanded}>
-            {paragraph.slice(0, cutoff)}<span className={styles.remainder} hidden={!expanded}>{paragraph.slice(cutoff)}</span>
+            {paragraph.slice(0, compactCutoff)}<span className={styles.previewExtension}>{paragraph.slice(compactCutoff, cutoff)}</span><span className={styles.remainder} hidden={!expanded}>{paragraph.slice(cutoff)}</span>
           </p>
         );
       })}
@@ -28,10 +49,74 @@ function Excerpt({ passage, expanded, boundary, id }: { passage: Passage; expand
 
 /** A shared expansion state preserves the complete original comparison copy. */
 export default function QualitySection() {
-  const [showOriginal, setShowOriginal] = useState(true);
+  const { locale, messages: { quality }, ui: { quality: qualityUi } } = useEditorialLocale();
+  const [showTranslation, setShowTranslation] = useState(true);
+  const [position, setPosition] = useState(50);
   const [expanded, setExpanded] = useState(false);
+  const pagesRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<Drag | null>(null);
   const id = useId();
   const { original, translated } = quality.compare;
+  const originalPreview = locale === "en" ? luriaPreview.ru : darwinPreview[original.lang];
+  const translatedPreview = locale === "en" ? luriaPreview.en : darwinPreview[translated.lang];
+  const originalVisible = !showTranslation || position > 0;
+  const translationVisible = showTranslation && position < 100;
+
+  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || event.button !== 0 || !pagesRef.current) return;
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startPosition: position,
+      width: pagesRef.current.getBoundingClientRect().width,
+      direction: event.pointerType === "touch" ? "pending" : "horizontal",
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const moveDrag = (event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const dx = event.clientX - drag.startX;
+    const dy = event.clientY - drag.startY;
+    if (drag.direction === "pending") {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 8) return;
+      if (Math.abs(dy) >= Math.abs(dx)) {
+        dragRef.current = null;
+        event.currentTarget.releasePointerCapture(event.pointerId);
+        return;
+      }
+      drag.direction = "horizontal";
+    }
+    event.preventDefault();
+    setPosition(clamp(drag.startPosition + (dx / drag.width) * 100));
+  };
+
+  const finishDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    dragRef.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    event.currentTarget.blur();
+  };
+
+  const moveWithKeyboard = (event: KeyboardEvent<HTMLDivElement>) => {
+    const increment = event.shiftKey ? 10 : 2;
+    let next: number;
+    switch (event.key) {
+      case "ArrowLeft": case "ArrowDown": next = position - increment; break;
+      case "ArrowRight": case "ArrowUp": next = position + increment; break;
+      case "PageDown": next = position - 10; break;
+      case "PageUp": next = position + 10; break;
+      case "Home": next = 0; break;
+      case "End": next = 100; break;
+      default: return;
+    }
+    event.preventDefault();
+    setPosition(clamp(next));
+  };
 
   return (
     <section id="quality" className={styles.section} aria-labelledby={`${id}-title`}>
@@ -44,41 +129,81 @@ export default function QualitySection() {
           <p className={styles.description}>{quality.description}</p>
         </div>
 
-        <div className={`${styles.book} ${showOriginal ? "" : styles.translationOnly}`}>
+        <div className={styles.book}>
           <div className={styles.bookToolbar}>
             <button
-              className={styles.originalToggle}
+              className={styles.translationToggle}
               type="button"
-              aria-pressed={showOriginal}
-              aria-controls={`${id}-original`}
-              onClick={() => setShowOriginal((value) => !value)}
+              aria-expanded={showTranslation}
+              aria-controls={`${id}-translated ${id}-comparison`}
+              onClick={(event) => {
+                dragRef.current = null;
+                setShowTranslation((value) => !value);
+                if (event.detail > 0) event.currentTarget.blur();
+              }}
             >
-              {showOriginal ? <Eye size={17} strokeWidth={1.4} aria-hidden="true" /> : <EyeOff size={17} strokeWidth={1.4} aria-hidden="true" />}
-              Show original
+              {showTranslation ? <EyeOff size={17} strokeWidth={1.4} aria-hidden="true" /> : <Eye size={17} strokeWidth={1.4} aria-hidden="true" />}
+              {showTranslation ? qualityUi.hideTranslation : qualityUi.showTranslation}
             </button>
           </div>
 
-          <div className={styles.pages}>
-            <article id={`${id}-original`} className={styles.passage} lang={original.lang} hidden={!showOriginal} aria-label="Original Russian excerpt">
-              <header className={styles.bookMetadata}>
+          <div className={styles.metadataPair}>
+            <header className={styles.bookMetadata} lang={original.lang}>
                 <p className={styles.bookTitle}>{original.title}</p>
                 <p className={styles.author}>{original.author}</p>
                 <span className={styles.language}>{original.languageLabel}</span>
-              </header>
-              <h3 className={styles.chapter}>{original.heading}</h3>
-              <Excerpt passage={original} expanded={expanded} boundary="литературе." id={`${id}-original-excerpt`} />
-            </article>
-
-            <article className={styles.passage} lang={translated.lang} aria-label="Translated English excerpt">
-              <header className={styles.bookMetadata}>
+                <h3 className={styles.chapter}>{original.heading}</h3>
+            </header>
+            <header className={styles.bookMetadata} lang={translated.lang} aria-hidden={!showTranslation} data-visible={showTranslation}>
                 <p className={styles.bookTitle}>{translated.title}</p>
                 <p className={styles.author}>{translated.author}</p>
                 <span className={styles.language}>{translated.languageLabel}</span>
-              </header>
-              <h3 className={styles.chapter}>{translated.heading}</h3>
-              <Excerpt passage={translated} expanded={expanded} boundary="in the literature." id={`${id}-translated-excerpt`} />
-            </article>
+                <h3 className={styles.chapter}>{translated.heading}</h3>
+            </header>
           </div>
+
+          <div
+            ref={pagesRef}
+            className={styles.pages}
+            style={{
+              "--comparison-position": `${showTranslation ? position : 100}%`,
+              "--comparison-gap": showTranslation && position > 0 && position < 100 ? "6px" : "0px",
+            } as CSSProperties}
+          >
+            {/* Both layers retain their full width and height; only their clipping changes. */}
+            <article id={`${id}-original`} className={`${styles.passage} ${styles.original}`} lang={original.lang} aria-hidden={!originalVisible} aria-label={qualityUi.originalExcerpt(original.lang)}>
+              <Excerpt passage={original} expanded={expanded} {...originalPreview} id={`${id}-original-excerpt`} />
+            </article>
+
+            <article id={`${id}-translated`} className={`${styles.passage} ${styles.translated}`} lang={translated.lang} aria-hidden={!translationVisible} aria-label={qualityUi.translatedExcerpt(translated.lang)}>
+              <Excerpt passage={translated} expanded={expanded} {...translatedPreview} id={`${id}-translated-excerpt`} />
+            </article>
+
+            <div className={styles.comparisonLine} hidden={!showTranslation} aria-hidden="true" />
+            <div
+              id={`${id}-comparison`}
+              className={styles.comparisonHandle}
+              role="slider"
+              tabIndex={0}
+              hidden={!showTranslation}
+              aria-label={qualityUi.comparisonLabel}
+              aria-describedby={`${id}-comparison-instructions`}
+              aria-orientation="horizontal"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(position)}
+              aria-valuetext={qualityUi.comparisonValue(position, original.lang, translated.lang)}
+              onPointerDown={startDrag}
+              onPointerMove={moveDrag}
+              onPointerUp={finishDrag}
+              onPointerCancel={finishDrag}
+              onLostPointerCapture={() => { dragRef.current = null; }}
+              onKeyDown={moveWithKeyboard}
+            >
+              <span className={styles.handleGrip} aria-hidden="true"><ChevronsLeftRight size={20} strokeWidth={1.4} /></span>
+            </div>
+          </div>
+          <p id={`${id}-comparison-instructions`} className={styles.srOnly}>{qualityUi.comparisonInstructions}</p>
         </div>
 
         <button
@@ -88,7 +213,7 @@ export default function QualitySection() {
           aria-controls={`${id}-original-excerpt ${id}-translated-excerpt`}
           onClick={() => setExpanded((value) => !value)}
         >
-          <span>{expanded ? "Collapse excerpt" : "Read full excerpt"}</span>
+          <span>{expanded ? qualityUi.collapseExcerpt : qualityUi.readFullExcerpt}</span>
           {expanded ? <ArrowUp size={17} strokeWidth={1.4} aria-hidden="true" /> : <ArrowDown size={17} strokeWidth={1.4} aria-hidden="true" />}
         </button>
       </div>

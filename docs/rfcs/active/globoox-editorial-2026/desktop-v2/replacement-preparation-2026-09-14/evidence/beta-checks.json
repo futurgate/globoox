@@ -1,0 +1,10 @@
+{
+  "scrollLocked": true,
+  "focusContained": true,
+  "dismissWorks": true,
+  "backdropWorks": true,
+  "noAutoRedirect": true,
+  "destination": "http://localhost:3000/my-books",
+  "loaderOnlyAfterClick": true,
+  "testNetworkDelayMs": 500
+}

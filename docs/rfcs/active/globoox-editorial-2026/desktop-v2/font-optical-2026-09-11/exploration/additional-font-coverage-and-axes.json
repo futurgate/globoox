@@ -1,0 +1,83 @@
+[
+  {
+    "font": "IBMPlexSerif-Regular.ttf",
+    "glyphs": 754,
+    "missing_ru_en_alphabet": [],
+    "axes": []
+  },
+  {
+    "font": "Merriweather-Variable.ttf",
+    "glyphs": 1423,
+    "missing_ru_en_alphabet": [],
+    "axes": [
+      {
+        "tag": "wght",
+        "min": 300.0,
+        "default": 300.0,
+        "max": 900.0
+      },
+      {
+        "tag": "wdth",
+        "min": 87.0,
+        "default": 100.0,
+        "max": 112.0
+      },
+      {
+        "tag": "opsz",
+        "min": 18.0,
+        "default": 18.0,
+        "max": 144.0
+      }
+    ]
+  },
+  {
+    "font": "NotoSerif-Variable.ttf",
+    "glyphs": 2965,
+    "missing_ru_en_alphabet": [],
+    "axes": [
+      {
+        "tag": "wght",
+        "min": 100.0,
+        "default": 400.0,
+        "max": 900.0
+      },
+      {
+        "tag": "wdth",
+        "min": 62.5,
+        "default": 100.0,
+        "max": 100.0
+      }
+    ]
+  },
+  {
+    "font": "RobotoSerif-Variable.ttf",
+    "glyphs": 919,
+    "missing_ru_en_alphabet": [],
+    "axes": [
+      {
+        "tag": "wdth",
+        "min": 50.0,
+        "default": 100.0,
+        "max": 150.0
+      },
+      {
+        "tag": "opsz",
+        "min": 8.0,
+        "default": 20.0,
+        "max": 144.0
+      },
+      {
+        "tag": "wght",
+        "min": 100.0,
+        "default": 400.0,
+        "max": 900.0
+      },
+      {
+        "tag": "GRAD",
+        "min": -50.0,
+        "default": 0.0,
+        "max": 100.0
+      }
+    ]
+  }
+]

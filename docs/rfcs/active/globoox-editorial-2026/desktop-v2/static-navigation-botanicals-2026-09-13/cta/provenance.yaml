@@ -1,0 +1,75 @@
+date: "2026-09-13"
+mode: "built-in image_gen.imagegen"
+status: "Integrated in closing CTA; root and independent visual review complete. Parent README and evidence directory are current implementation authority."
+source_authority: "docs/rfcs/active/globoox-editorial-2026/desktop-v2/hero-exploration-2026-09-07/compact-centered.png"
+scope: "Reconstruct the exact two small bottom-margin subjects from the user-selected early hero mock as independent closing CTA assets."
+secondary_palette_reference: "public/redesign/closing/closing-v2-b-refined.png"
+preserved:
+  - "All previous closing assets and generated original files."
+  - "Current components, CSS, wording, root documentation and unrelated work; no source edits."
+selected:
+  conifer:
+    path: "public/redesign/closing/cta-conifer-v3.png"
+    candidate: "conifer-candidate-03-selected.png"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-5742479d-9457-4a85-965e-da7ed813b33e.png"
+    dimensions: [1254, 1254]
+    format: "PNG RGB, near-white background, NO alpha."
+    critique: "Retains the reference's compact diagonal conifer twig, pale attached immature cone and separate mature cone. Third iteration is substantially quieter than the second, using gray-olive needles and taupe cones, without the gold/orange cast. Whole silhouette is visible with clear margins. Generated margin is around5% at its closest point rather than requested8%, so keep complete image bounds in CSS."
+    intended_display: "Approximately220–280px wide with natural1:1 ratio. Multiply against current ivory."
+  seed_sprig:
+    path: "public/redesign/closing/cta-seed-sprig-v3.png"
+    candidate: "seed-candidate-01-selected.png"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-beaf2112-f030-430e-aac3-3be4cdd4aea2.png"
+    dimensions: [1024, 1536]
+    format: "PNG RGB, near-white background, NO alpha."
+    critique: "Faithful narrow upright seedpod branch with delicate warm-gray stalks, pale papery capsules and three pointed lower leaves. Matches the selected original subject and contemporary muted botanical palette. Entire top and lower stem are present. Smallest margin is about5%, so keep complete image bounds in CSS."
+    intended_display: "Approximately220–240px wide with natural2:3 ratio; root may adjust visual size to fit CTA. Multiply against current ivory."
+selection_history:
+  - id: "conifer-01"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-ec933381-d31e-43e3-9ad5-61e1746ed7e3.png"
+    candidate: "conifer-candidate-01-checker-rejected.png"
+    verdict: "REJECTED. Composition good, but ImageGen baked a gray checkerboard into RGB despite asking for genuine alpha. Never use this candidate in page."
+    prompt: |
+      Use case: style-transfer.
+      Asset type: single standalone production botanical PNG asset for the left side of Globoox landing-page closing CTA.
+      PRIMARY AUTHORITY is input image1, the full-page approved early mock. Recreate and render ONLY its small CONIFER TWIG illustration at the bottom LEFT of that page (approximately x20–225,y850–1055). The webpage itself must not be reproduced. Input image2 is only a loose palette reference; do not use its broad-leaf plant shapes.
+      Subject and silhouette: a short naturally branching conifer twig, cut stem angled from lower-left towards upper-right, with several separated sprays of fine short gray-olive needles. One small pale green immature cone nestled near the low-left branch junction; one separate warm gray-brown mature pine cone close to its lower-right side, exactly as the primary reference. The compact arrangement is about as tall as wide, airy asymmetric, not a bouquet or tree. Match the reference's direction, sparseness and delicate botanical pencil-watercolor handling.
+      Style: restrained contemporary editorial botanical drawing, warm-gray fine pencil lines, desaturated olive/sage needles with very light watercolor wash, pale umber cone scales. Readable fine detail at final displayed width220–280px. Crisp silhouettes, naturally varied needles; no heavy engraving, exaggerated vintage shading, photorealism or plastic3D.
+      Canvas: square1024x1024. Whole twig, every needle tip and both cones visible; at least8% breathing room on each edge. Center subject optically. Genuine transparent background with alpha, clean antialiased edges. If transparency is not supported, use perfectly uniform pure white instead, never fake checkerboard or beige texture.
+      No text, UI, frame, logo, page, shadow, soil, roots, detached needle debris, decorative flourishes, fern, fern frond, flowers or extra plants. Keep the small detached brown cone because it is present in the user's chosen reference. Output one finished asset only.
+  - id: "seed-01"
+    verdict: "SELECTED. No further refinement necessary."
+    prompt: |
+      Use case: style-transfer.
+      Asset type: single standalone production botanical PNG asset for the right side of Globoox landing-page closing CTA.
+      PRIMARY AUTHORITY is input image1, the approved early full-page mock. Recreate and render ONLY its small FLOWER/SEEDPOD BRANCH illustration at the bottom RIGHT of that page (approximately x1230–1380,y830–1065). Do not reproduce any webpage. Input image2 is only a supporting palette reference, never its broad-leaf branch structure.
+      Subject and silhouette: one complete slender vertical wildflower seed stem, gently leaning to the right near the top; thin natural branching stalks carry about12–16 small pale beige closed papery seed capsules / spent flower buds. The pods are tiny, spaced individually with plenty of air. At the base are exactly a few long pointed gray-sage leaves: a large leaf extending low-left, another rising upper-right, a small lower-right leaf. Reproduce the original quiet narrow silhouette, credible stem joints, pointed leaf venation and small oval papery capsules. No large blooming flowers.
+      Style: refined fine warm-gray graphite contours plus restrained pale olive/sage watercolor, small beige/umber capsule shading, understated contemporary editorial botanical drawing. Subtle natural irregularities, crisp detailed silhouette suited to final display width220–240px. Same light, faithful, almost field-study manner as the exact primary reference, without antiqued paper or heavy engraving.
+      Canvas: portrait1024x1536. Whole plant visible from natural trimmed stem end to topmost seedpod; at least8% completely clear margin all around. Center optically. Genuine transparent PNG alpha, clean antialiased edges. If transparency is unsupported, use perfectly uniform pure white; never fake checkerboard or paper background.
+      No wording, UI, logo, border, page, pot, ground, roots, shadows, extra detached seeds, bouquet, dense grass, fern, bright flowers or ornamental flourishes. Output one finished asset only.
+  - id: "conifer-02"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-d3e328df-07a5-454d-b983-ec527312d5f0.png"
+    candidate: "conifer-candidate-02-white-too-warm.png"
+    legacy_duplicate: "conifer-candidate-02-selected.png"
+    verdict: "SUPERSEDED. Removed checkerboard successfully but became too golden and high contrast. Legacy filename selected is historical; final authority is03."
+    prompt: |
+      Use case: precise-object-edit.
+      This image is a production botanical asset whose BACKGROUND is defective: the gray-white checkerboard has been baked into RGB pixels. Correct the background, not the botanical composition.
+      Replace EVERY checkerboard tile and every empty gap between needles and cone scales with ONE FLAT SOLID PURE WHITE RGB255,255,255 background. The white must be uniform and opaque. Do NOT make transparency, do NOT draw a checkerboard, do NOT add shadows or any paper grain/background gradients. Remove the small stray gray sliver at the extreme top-left corner.
+      Preserve the exact conifer twig, both cones, muted olive needle color, warm gray-brown scales, fine pencil and watercolor detail, positions, orientation and overall silhouette. Keep every needle tip and both cone tips complete. Add quiet8% white breathing room around the overall botanical silhouette if needed; no plant part should touch any image edge. Square canvas, ideally1024x1024.
+      Return one clean white-background botanical PNG only. No text, extra object, UI or frame. The existing botanical artwork is the asset to preserve faithfully.
+  - id: "conifer-03"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-5742479d-9457-4a85-965e-da7ed813b33e.png"
+    candidate: "conifer-candidate-03-selected.png"
+    verdict: "SELECTED. Gray-olive/taupe palette and restrained contrast fit primary reference and companion asset."
+    prompt: |
+      Use case: style-transfer.
+      Input1 is the exact conifer composition to preserve. Input2 is the original approved webpage with the small conifer drawing at its bottom LEFT; that tiny drawing is the authoritative COLOUR AND MARK-MAKING reference. Input3 is the companion right-side seedpod plant to match in restrained rendering.
+      Refine ONLY the artistic treatment of input1: the present branch is too dark, glossy and golden-orange. Make it about25% quieter in saturation and contrast, closer to the PALE WARM-GRAY pencil and restrained SAGE/OLIVE watercolor conifer at the bottom-left of input2. The cone must be light gray-brown/taupe, not golden/orange; stem also muted gray-brown. Needles gray-olive with fine graphite strokes, not glossy dark green with sharp yellow highlights. Match the visual softness and thin contour character of input3. Preserve natural structure and fine readable detail, not a ghostly opacity fade. No photographic lighting, no dark deep shadows.
+      Keep EXACTLY the twig shape, needle arrangement, the small attached green cone and one separate brown cone, whole silhouette, and all objects' positions. Keep the square1254x1254 framing and all clear margins. Do NOT use the webpage UI or its background.
+      BACKGROUND MUST STAY uniformly near-pure white RGB253–255 with no checkerboard, no transparency, no vignette, no paper texture, no halo or shadow. No extra objects. Produce the same asset with more restrained pale graphite and sage watercolor treatment only.
+technical_notes:
+  - "Both tools fulfilled successfully. Transparency was requested initially but neither image delivered alpha; opaque near-white output accepted per task."
+  - "No raster pixels drawn, edited, recolored or background-removed with code. All generation and corrections used built-in ImageGen."
+  - "Read-only Sharp metadata/raw-pixel checks used to detect fake alpha and background quality. Plain file copying preserves original output."
+  - "Root owns actual browser composition, typography/CTA overlap and breakpoint validation."

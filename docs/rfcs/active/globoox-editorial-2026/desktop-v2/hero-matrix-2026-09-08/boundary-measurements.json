@@ -1,0 +1,542 @@
+[
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 248,
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 240,
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 408,
+    "overflow": false,
+    "width": 480
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 350,
+    "overflow": false,
+    "width": 480
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 480
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 408.75,
+    "overflow": false,
+    "width": 481
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 350,
+    "overflow": false,
+    "width": 481
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 481
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 498,
+    "overflow": false,
+    "width": 600
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320.0000305175781
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 350,
+    "overflow": false,
+    "width": 600
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 319.9999694824219
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 600
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 498.75,
+    "overflow": false,
+    "width": 601
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 385,
+    "overflow": false,
+    "width": 601
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 601
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240.00003051757812
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 740,
+    "overflow": false,
+    "width": 900
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 385,
+    "overflow": false,
+    "width": 900
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 900
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240.00003051757812
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 741,
+    "overflow": false,
+    "width": 901
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 385,
+    "overflow": false,
+    "width": 901
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 239.99998474121097
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 901
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240.00003051757812
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 940,
+    "overflow": false,
+    "width": 1100
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 385,
+    "overflow": false,
+    "width": 1100
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 1100
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "desktop",
+    "frameWidth": 941,
+    "overflow": false,
+    "width": 1101
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "tablet",
+    "frameWidth": 385,
+    "overflow": false,
+    "width": 1101
+  },
+  {
+    "art": [
+      {
+        "display": "block",
+        "height": 480,
+        "loaded": true,
+        "width": 240
+      },
+      {
+        "display": "block",
+        "height": 640,
+        "loaded": true,
+        "width": 320
+      }
+    ],
+    "device": "phone",
+    "frameWidth": 250,
+    "overflow": false,
+    "width": 1101
+  }
+]

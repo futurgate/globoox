@@ -1,0 +1,90 @@
+.section {
+  padding: 100px 0 108px;
+  color: var(--ed-ink, #20382f);
+  font-family: var(--ed-sans, Arial, sans-serif);
+  scroll-margin-top: 32px;
+}
+
+.section, .section * { box-sizing: border-box; }
+.container { width: min(1160px, calc(100% - 112px)); margin: 0 auto; }
+.introduction { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 90px; margin-bottom: 45px; }
+
+.section .label {
+  margin: 0 0 20px;
+  color: #64735e;
+  font-family: var(--ed-sans, Arial, sans-serif);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.section .title {
+  max-width: 475px;
+  margin: 0;
+  font-family: var(--ed-serif, Georgia, serif);
+  font-size: 58px;
+  font-weight: 400;
+  letter-spacing: -1.9px;
+  line-height: 1.07;
+  text-wrap: balance;
+}
+
+.section .description {
+  max-width: 495px;
+  margin: 0;
+  padding-top: 34px;
+  color: #5c6b5c;
+  font-family: var(--ed-sans, Arial, sans-serif);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+.book { overflow: hidden; border: 1px solid var(--ed-frame-border, #c9c7b9); border-radius: var(--ed-frame-radius, 10px); background: #fffdf7; box-shadow: var(--ed-frame-shadow); }
+.bookToolbar { display: flex; min-height: 56px; justify-content: flex-end; align-items: center; padding: 10px 22px 0; }
+.originalToggle { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 8px; padding: 8px 10px; border: 0; border-radius: 4px; background: transparent; color: #445e46; cursor: pointer; font-family: var(--ed-sans, Arial, sans-serif); font-size: 12px; font-weight: 400; line-height: 1.4; }
+.originalToggle:hover { background: #f0f1e8; }
+.originalToggle[aria-pressed="false"] { color: #7b8172; }
+.pages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.passage { min-width: 0; padding: 18px 46px 44px; }
+.passage + .passage { border-left: 1px solid #e9e5da; }
+.passage[hidden], .excerpt[hidden], .remainder[hidden] { display: none; }
+.bookMetadata { min-height: 78px; }
+.passage .bookTitle { margin: 0; color: #294335; font-family: var(--ed-sans, Arial, sans-serif); font-size: 14px; font-weight: 500; line-height: 1.5; }
+.passage .author { margin: 5px 0 0; color: #70796c; font-family: var(--ed-sans, Arial, sans-serif); font-size: 12px; font-weight: 400; line-height: 1.5; }
+.language { display: block; margin-top: 12px; color: #6b7b61; font-family: var(--ed-sans, Arial, sans-serif); font-size: 11px; font-weight: 400; letter-spacing: 1px; line-height: 1.4; }
+.passage .chapter { margin: 28px 0 18px; font-family: var(--ed-serif, Georgia, serif); font-size: 26px; font-weight: 400; letter-spacing: -.5px; line-height: 1.2; }
+.prose { font-family: var(--ed-serif, Georgia, serif); font-size: 21px; font-weight: 400; line-height: 1.55; }
+.passage .excerpt { margin: 0 0 20px; color: #2d3f33; font: inherit; }
+.passage .excerpt:last-child { margin-bottom: 0; }
+.translationOnly .pages { grid-template-columns: minmax(0, 760px); justify-content: center; }
+.translationOnly .passage { border-left: 0; }
+.expandButton { display: flex; min-height: 44px; align-items: center; justify-content: center; gap: 18px; margin: 24px auto 0; padding: 8px 12px; border: 0; border-radius: 4px; background: transparent; color: #425b43; cursor: pointer; font-family: var(--ed-sans, Arial, sans-serif); font-size: 13px; font-weight: 400; line-height: 1.4; }
+.expandButton > span { padding-bottom: 2px; border-bottom: 1px solid #9fae95; }
+.expandButton:hover { color: #9e6241; }
+.section button:focus-visible { outline: 2px solid #a16d49; outline-offset: 4px; }
+
+@media (max-width: 1050px) {
+  .container { width: calc(100% - 64px); }
+  .introduction { gap: 50px; }
+  .section .title { font-size: 51px; letter-spacing: -1.6px; }
+  .section .description { font-size: 16px; }
+  .passage { padding-inline: 32px; }
+}
+
+@media (max-width: 800px) {
+  .section { padding: 72px 0 78px; }
+  .container { width: calc(100% - 48px); }
+  .introduction { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-bottom: 32px; }
+  .section .title { font-size: 46px; }
+  .section .description { max-width: 580px; padding-top: 0; }
+  .pages { grid-template-columns: minmax(0, 1fr); }
+  .passage { padding: 20px 26px 36px; }
+  .passage + .passage { border-left: 0; border-top: 1px solid #e9e5da; }
+  .translationOnly .passage { border-top: 0; }
+  .bookMetadata { min-height: 0; }
+  .passage .chapter { margin-top: 24px; }
+  .prose { font-size: 21px; }
+}

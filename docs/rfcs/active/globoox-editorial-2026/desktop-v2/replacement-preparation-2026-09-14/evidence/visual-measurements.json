@@ -1,0 +1,182 @@
+{
+  "en": {
+    "beta": "Globoox is in beta\n\nWe’re not collecting payments during the beta. You can start reading for free.\n\nGo to my library\nKeep exploring",
+    "closedOnEscape": true,
+    "focusReturned": true,
+    "desktop": {
+      "htmlLang": "en",
+      "title": "Globoox — reading app that instantly translates e‑books into your native language.",
+      "overflow": false,
+      "navBounds": [
+        {
+          "text": "How it works",
+          "right": 611.8125
+        },
+        {
+          "text": "Quality",
+          "right": 689.65625
+        },
+        {
+          "text": "Languages",
+          "right": 793.4375
+        },
+        {
+          "text": "Team",
+          "right": 858.046875
+        },
+        {
+          "text": "Pricing",
+          "right": 933.109375
+        },
+        {
+          "text": "Start reading",
+          "right": 1054.078125
+        }
+      ]
+    },
+    "noAutoRedirect": true,
+    "mobile": {
+      "overflow": false,
+      "dialog": {
+        "w": 350,
+        "h": 308.375
+      }
+    },
+    "errors": []
+  },
+  "fr": {
+    "beta": "Globoox est en bêta\n\nAucun paiement n’est demandé pendant la bêta. Vous pouvez commencer à lire gratuitement.\n\nAccéder à ma bibliothèque\nContinuer la visite",
+    "closedOnEscape": true,
+    "focusReturned": true,
+    "desktop": {
+      "htmlLang": "fr",
+      "title": "Globoox — l’appli de lecture qui traduit instantanément vos e‑books dans votre langue.",
+      "overflow": false,
+      "navBounds": [
+        {
+          "text": "Fonctionnement",
+          "right": 622.96875
+        },
+        {
+          "text": "Qualité",
+          "right": 700.78125
+        },
+        {
+          "text": "Langues",
+          "right": 787.28125
+        },
+        {
+          "text": "Équipe",
+          "right": 863.484375
+        },
+        {
+          "text": "Tarifs",
+          "right": 927.84375
+        },
+        {
+          "text": "Commencer",
+          "right": 1044.765625
+        }
+      ]
+    },
+    "noAutoRedirect": true,
+    "mobile": {
+      "overflow": false,
+      "dialog": {
+        "w": 350,
+        "h": 334.765625
+      }
+    },
+    "errors": []
+  },
+  "ru": {
+    "beta": "Globoox сейчас в бете\n\nВо время беты мы не взимаем плату. Можно начать читать бесплатно.\n\nПерейти в библиотеку\nОстаться на сайте",
+    "closedOnEscape": true,
+    "focusReturned": true,
+    "desktop": {
+      "htmlLang": "ru",
+      "title": "Globoox — приложение для чтения с мгновенным переводом электронных книг на ваш язык.",
+      "overflow": false,
+      "navBounds": [
+        {
+          "text": "Как это работает",
+          "right": 506.609375
+        },
+        {
+          "text": "Качество",
+          "right": 599.265625
+        },
+        {
+          "text": "Языки",
+          "right": 670.59375
+        },
+        {
+          "text": "Команда",
+          "right": 760.78125
+        },
+        {
+          "text": "Тарифы",
+          "right": 846.234375
+        },
+        {
+          "text": "Начать читать",
+          "right": 976.78125
+        }
+      ]
+    },
+    "noAutoRedirect": true,
+    "mobile": {
+      "overflow": false,
+      "dialog": {
+        "w": 350,
+        "h": 308.375
+      }
+    },
+    "errors": []
+  },
+  "es": {
+    "beta": "Globoox está en beta\n\nNo cobramos durante la beta. Puedes empezar a leer gratis.\n\nIr a mi biblioteca\nSeguir explorando",
+    "closedOnEscape": true,
+    "focusReturned": true,
+    "desktop": {
+      "htmlLang": "es",
+      "title": "Globoox — app de lectura que traduce e‑books al instante a tu idioma nativo",
+      "overflow": false,
+      "navBounds": [
+        {
+          "text": "Cómo funciona",
+          "right": 650.15625
+        },
+        {
+          "text": "Calidad",
+          "right": 731.515625
+        },
+        {
+          "text": "Idiomas",
+          "right": 814.609375
+        },
+        {
+          "text": "Equipo",
+          "right": 891.203125
+        },
+        {
+          "text": "Precios",
+          "right": 970.671875
+        },
+        {
+          "text": "Empezar",
+          "right": 1060.015625
+        }
+      ]
+    },
+    "noAutoRedirect": true,
+    "mobile": {
+      "overflow": false,
+      "dialog": {
+        "w": 350,
+        "h": 308.375
+      }
+    },
+    "errors": []
+  }
+}

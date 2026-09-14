@@ -1,0 +1,806 @@
+{
+  "errors": [],
+  "results": [
+    {
+      "width": 1440,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 120,
+            "y": 666.046875,
+            "width": 388,
+            "height": 365.796875,
+            "top": 666.046875,
+            "right": 508,
+            "bottom": 1031.84375,
+            "left": 120
+          },
+          "priceSize": "56px",
+          "action": {
+            "x": 153,
+            "y": 946.84375,
+            "width": 322,
+            "height": 50,
+            "top": 946.84375,
+            "right": 475,
+            "bottom": 996.84375,
+            "left": 153
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 526,
+            "y": 666.046875,
+            "width": 388,
+            "height": 365.796875,
+            "top": 666.046875,
+            "right": 914,
+            "bottom": 1031.84375,
+            "left": 526
+          },
+          "priceSize": "56px",
+          "action": {
+            "x": 559,
+            "y": 946.84375,
+            "width": 322,
+            "height": 50,
+            "top": 946.84375,
+            "right": 881,
+            "bottom": 996.84375,
+            "left": 559
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 932,
+            "y": 666.046875,
+            "width": 388,
+            "height": 365.796875,
+            "top": 666.046875,
+            "right": 1320,
+            "bottom": 1031.84375,
+            "left": 932
+          },
+          "priceSize": "38px",
+          "action": {
+            "x": 965,
+            "y": 946.84375,
+            "width": 322,
+            "height": 50,
+            "top": 946.84375,
+            "right": 1287,
+            "bottom": 996.84375,
+            "left": 965
+          }
+        }
+      ],
+      "lower": {
+        "x": 78,
+        "y": 939.84375,
+        "width": 168,
+        "height": 112,
+        "top": 939.84375,
+        "right": 246,
+        "bottom": 1051.84375,
+        "left": 78
+      },
+      "gap": "18px"
+    },
+    {
+      "width": 1280,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 56,
+            "y": 666.046875,
+            "width": 377.328125,
+            "height": 365.796875,
+            "top": 666.046875,
+            "right": 433.328125,
+            "bottom": 1031.84375,
+            "left": 56
+          },
+          "priceSize": "56px",
+          "action": {
+            "x": 89,
+            "y": 946.84375,
+            "width": 311.328125,
+            "height": 50,
+            "top": 946.84375,
+            "right": 400.328125,
+            "bottom": 996.84375,
+            "left": 89
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 451.328125,
+            "y": 666.046875,
+            "width": 377.328125,
+            "height": 365.796875,
+            "top": 666.046875,
+            "right": 828.65625,
+            "bottom": 1031.84375,
+            "left": 451.328125
+          },
+          "priceSize": "56px",
+          "action": {
+            "x": 484.328125,
+            "y": 946.84375,
+            "width": 311.328125,
+            "height": 50,
+            "top": 946.84375,
+            "right": 795.65625,
+            "bottom": 996.84375,
+            "left": 484.328125
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 846.65625,
+            "y": 666.046875,
+            "width": 377.34375,
+            "height": 365.796875,
+            "top": 666.046875,
+            "right": 1224,
+            "bottom": 1031.84375,
+            "left": 846.65625
+          },
+          "priceSize": "38px",
+          "action": {
+            "x": 879.65625,
+            "y": 946.84375,
+            "width": 311.34375,
+            "height": 50,
+            "top": 946.84375,
+            "right": 1191,
+            "bottom": 996.84375,
+            "left": 879.65625
+          }
+        }
+      ],
+      "lower": {
+        "x": 14,
+        "y": 939.84375,
+        "width": 168,
+        "height": 112,
+        "top": 939.84375,
+        "right": 182,
+        "bottom": 1051.84375,
+        "left": 14
+      },
+      "gap": "18px"
+    },
+    {
+      "width": 1100,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 32,
+            "y": 666.1875,
+            "width": 333.328125,
+            "height": 365.796875,
+            "top": 666.1875,
+            "right": 365.328125,
+            "bottom": 1031.984375,
+            "left": 32
+          },
+          "priceSize": "52px",
+          "action": {
+            "x": 57,
+            "y": 946.984375,
+            "width": 283.328125,
+            "height": 50,
+            "top": 946.984375,
+            "right": 340.328125,
+            "bottom": 996.984375,
+            "left": 57
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 383.328125,
+            "y": 666.1875,
+            "width": 333.328125,
+            "height": 365.796875,
+            "top": 666.1875,
+            "right": 716.65625,
+            "bottom": 1031.984375,
+            "left": 383.328125
+          },
+          "priceSize": "52px",
+          "action": {
+            "x": 408.328125,
+            "y": 946.984375,
+            "width": 283.328125,
+            "height": 50,
+            "top": 946.984375,
+            "right": 691.65625,
+            "bottom": 996.984375,
+            "left": 408.328125
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 734.65625,
+            "y": 666.1875,
+            "width": 333.34375,
+            "height": 365.796875,
+            "top": 666.1875,
+            "right": 1068,
+            "bottom": 1031.984375,
+            "left": 734.65625
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 759.65625,
+            "y": 946.984375,
+            "width": 283.34375,
+            "height": 50,
+            "top": 946.984375,
+            "right": 1043,
+            "bottom": 996.984375,
+            "left": 759.65625
+          }
+        }
+      ],
+      "lower": {
+        "x": -2,
+        "y": 939.984375,
+        "width": 168,
+        "height": 112,
+        "top": 939.984375,
+        "right": 166,
+        "bottom": 1051.984375,
+        "left": -2
+      },
+      "gap": "18px"
+    },
+    {
+      "width": 901,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 32,
+            "y": 666.25,
+            "width": 267,
+            "height": 365.796875,
+            "top": 666.25,
+            "right": 299,
+            "bottom": 1032.046875,
+            "left": 32
+          },
+          "priceSize": "52px",
+          "action": {
+            "x": 57,
+            "y": 947.046875,
+            "width": 217,
+            "height": 50,
+            "top": 947.046875,
+            "right": 274,
+            "bottom": 997.046875,
+            "left": 57
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 317,
+            "y": 666.25,
+            "width": 267,
+            "height": 365.796875,
+            "top": 666.25,
+            "right": 584,
+            "bottom": 1032.046875,
+            "left": 317
+          },
+          "priceSize": "52px",
+          "action": {
+            "x": 342,
+            "y": 947.046875,
+            "width": 217,
+            "height": 50,
+            "top": 947.046875,
+            "right": 559,
+            "bottom": 997.046875,
+            "left": 342
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 602,
+            "y": 666.25,
+            "width": 267,
+            "height": 365.796875,
+            "top": 666.25,
+            "right": 869,
+            "bottom": 1032.046875,
+            "left": 602
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 627,
+            "y": 947.046875,
+            "width": 217,
+            "height": 50,
+            "top": 947.046875,
+            "right": 844,
+            "bottom": 997.046875,
+            "left": 627
+          }
+        }
+      ],
+      "lower": {
+        "x": -2,
+        "y": 940.046875,
+        "width": 168,
+        "height": 112,
+        "top": 940.046875,
+        "right": 166,
+        "bottom": 1052.046875,
+        "left": -2
+      },
+      "gap": "18px"
+    },
+    {
+      "width": 801,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 32,
+            "y": 681.5,
+            "width": 233.65625,
+            "height": 365.796875,
+            "top": 681.5,
+            "right": 265.65625,
+            "bottom": 1047.296875,
+            "left": 32
+          },
+          "priceSize": "52px",
+          "action": {
+            "x": 57,
+            "y": 962.296875,
+            "width": 183.65625,
+            "height": 50,
+            "top": 962.296875,
+            "right": 240.65625,
+            "bottom": 1012.296875,
+            "left": 57
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 283.65625,
+            "y": 681.5,
+            "width": 233.671875,
+            "height": 365.796875,
+            "top": 681.5,
+            "right": 517.328125,
+            "bottom": 1047.296875,
+            "left": 283.65625
+          },
+          "priceSize": "52px",
+          "action": {
+            "x": 308.65625,
+            "y": 962.296875,
+            "width": 183.671875,
+            "height": 50,
+            "top": 962.296875,
+            "right": 492.328125,
+            "bottom": 1012.296875,
+            "left": 308.65625
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 535.328125,
+            "y": 681.5,
+            "width": 233.671875,
+            "height": 365.796875,
+            "top": 681.5,
+            "right": 769,
+            "bottom": 1047.296875,
+            "left": 535.328125
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 560.328125,
+            "y": 962.296875,
+            "width": 183.671875,
+            "height": 50,
+            "top": 962.296875,
+            "right": 744,
+            "bottom": 1012.296875,
+            "left": 560.328125
+          }
+        }
+      ],
+      "lower": {
+        "x": -2,
+        "y": 955.296875,
+        "width": 168,
+        "height": 112,
+        "top": 955.296875,
+        "right": 166,
+        "bottom": 1067.296875,
+        "left": -2
+      },
+      "gap": "18px"
+    },
+    {
+      "width": 800,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 100,
+            "y": 362.09375,
+            "width": 600,
+            "height": 335.984375,
+            "top": 362.09375,
+            "right": 700,
+            "bottom": 698.078125,
+            "left": 100
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 230,
+            "y": 607.078125,
+            "width": 340,
+            "height": 50,
+            "top": 607.078125,
+            "right": 570,
+            "bottom": 657.078125,
+            "left": 230
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 100,
+            "y": 720.078125,
+            "width": 600,
+            "height": 335.984375,
+            "top": 720.078125,
+            "right": 700,
+            "bottom": 1056.0625,
+            "left": 100
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 230,
+            "y": 965.0625,
+            "width": 340,
+            "height": 50,
+            "top": 965.0625,
+            "right": 570,
+            "bottom": 1015.0625,
+            "left": 230
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 100,
+            "y": 1078.0625,
+            "width": 600,
+            "height": 335.984375,
+            "top": 1078.0625,
+            "right": 700,
+            "bottom": 1414.046875,
+            "left": 100
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 230,
+            "y": 1323.046875,
+            "width": 340,
+            "height": 50,
+            "top": 1323.046875,
+            "right": 570,
+            "bottom": 1373.046875,
+            "left": 230
+          }
+        }
+      ],
+      "lower": {
+        "x": 78,
+        "y": 1346.046875,
+        "width": 126,
+        "height": 84,
+        "top": 1346.046875,
+        "right": 204,
+        "bottom": 1430.046875,
+        "left": 78
+      },
+      "gap": "22px"
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 84,
+            "y": 361.953125,
+            "width": 600,
+            "height": 335.984375,
+            "top": 361.953125,
+            "right": 684,
+            "bottom": 697.9375,
+            "left": 84
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 214,
+            "y": 606.9375,
+            "width": 340,
+            "height": 50,
+            "top": 606.9375,
+            "right": 554,
+            "bottom": 656.9375,
+            "left": 214
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 84,
+            "y": 719.9375,
+            "width": 600,
+            "height": 335.984375,
+            "top": 719.9375,
+            "right": 684,
+            "bottom": 1055.921875,
+            "left": 84
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 214,
+            "y": 964.921875,
+            "width": 340,
+            "height": 50,
+            "top": 964.921875,
+            "right": 554,
+            "bottom": 1014.921875,
+            "left": 214
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 84,
+            "y": 1077.921875,
+            "width": 600,
+            "height": 335.984375,
+            "top": 1077.921875,
+            "right": 684,
+            "bottom": 1413.90625,
+            "left": 84
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 214,
+            "y": 1322.90625,
+            "width": 340,
+            "height": 50,
+            "top": 1322.90625,
+            "right": 554,
+            "bottom": 1372.90625,
+            "left": 214
+          }
+        }
+      ],
+      "lower": {
+        "x": 62,
+        "y": 1345.90625,
+        "width": 126,
+        "height": 84,
+        "top": 1345.90625,
+        "right": 188,
+        "bottom": 1429.90625,
+        "left": 62
+      },
+      "gap": "22px"
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 20,
+            "y": 351.515625,
+            "width": 350,
+            "height": 335.984375,
+            "top": 351.515625,
+            "right": 370,
+            "bottom": 687.5,
+            "left": 20
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 45,
+            "y": 596.5,
+            "width": 300,
+            "height": 50,
+            "top": 596.5,
+            "right": 345,
+            "bottom": 646.5,
+            "left": 45
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 20,
+            "y": 709.5,
+            "width": 350,
+            "height": 335.984375,
+            "top": 709.5,
+            "right": 370,
+            "bottom": 1045.484375,
+            "left": 20
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 45,
+            "y": 954.484375,
+            "width": 300,
+            "height": 50,
+            "top": 954.484375,
+            "right": 345,
+            "bottom": 1004.484375,
+            "left": 45
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 20,
+            "y": 1067.484375,
+            "width": 350,
+            "height": 335.984375,
+            "top": 1067.484375,
+            "right": 370,
+            "bottom": 1403.46875,
+            "left": 20
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 45,
+            "y": 1312.46875,
+            "width": 300,
+            "height": 50,
+            "top": 1312.46875,
+            "right": 345,
+            "bottom": 1362.46875,
+            "left": 45
+          }
+        }
+      ],
+      "lower": {
+        "x": -2,
+        "y": 1335.46875,
+        "width": 126,
+        "height": 84,
+        "top": 1335.46875,
+        "right": 124,
+        "bottom": 1419.46875,
+        "left": -2
+      },
+      "gap": "22px"
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "cards": [
+        {
+          "title": "Free",
+          "box": {
+            "x": 20,
+            "y": 420.25,
+            "width": 280,
+            "height": 335.984375,
+            "top": 420.25,
+            "right": 300,
+            "bottom": 756.234375,
+            "left": 20
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 45,
+            "y": 665.234375,
+            "width": 230,
+            "height": 50,
+            "top": 665.234375,
+            "right": 275,
+            "bottom": 715.234375,
+            "left": 45
+          }
+        },
+        {
+          "title": "Premium",
+          "box": {
+            "x": 20,
+            "y": 778.234375,
+            "width": 280,
+            "height": 335.984375,
+            "top": 778.234375,
+            "right": 300,
+            "bottom": 1114.21875,
+            "left": 20
+          },
+          "priceSize": "48px",
+          "action": {
+            "x": 45,
+            "y": 1023.21875,
+            "width": 230,
+            "height": 50,
+            "top": 1023.21875,
+            "right": 275,
+            "bottom": 1073.21875,
+            "left": 45
+          }
+        },
+        {
+          "title": "Editorial",
+          "box": {
+            "x": 20,
+            "y": 1136.21875,
+            "width": 280,
+            "height": 335.984375,
+            "top": 1136.21875,
+            "right": 300,
+            "bottom": 1472.203125,
+            "left": 20
+          },
+          "priceSize": "36px",
+          "action": {
+            "x": 45,
+            "y": 1381.203125,
+            "width": 230,
+            "height": 50,
+            "top": 1381.203125,
+            "right": 275,
+            "bottom": 1431.203125,
+            "left": 45
+          }
+        }
+      ],
+      "lower": {
+        "x": -2,
+        "y": 1404.203125,
+        "width": 126,
+        "height": 84,
+        "top": 1404.203125,
+        "right": 124,
+        "bottom": 1488.203125,
+        "left": -2
+      },
+      "gap": "22px"
+    }
+  ]
+}

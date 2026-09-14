@@ -1,0 +1,156 @@
+{
+  "samples": [
+    {
+      "kind": "click 1→2",
+      "screens": [
+        {
+          "active": "false",
+          "duration": "0.28s, 0s",
+          "opacity": "0.00659959",
+          "visibility": "visible"
+        },
+        {
+          "active": "true",
+          "duration": "0.28s, 0s",
+          "opacity": "0.9934",
+          "visibility": "visible"
+        },
+        {
+          "active": "false",
+          "duration": "0.28s, 0s",
+          "opacity": "0",
+          "visibility": "hidden"
+        }
+      ]
+    },
+    {
+      "kind": "scroll 350",
+      "screens": [
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0",
+          "visibility": "hidden"
+        },
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0.92071",
+          "visibility": "visible"
+        },
+        {
+          "active": "true",
+          "loaded": true,
+          "opacity": "0.0792901",
+          "visibility": "visible"
+        }
+      ]
+    },
+    {
+      "kind": "scroll -350",
+      "screens": [
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0",
+          "visibility": "hidden"
+        },
+        {
+          "active": "true",
+          "loaded": true,
+          "opacity": "0.888457",
+          "visibility": "visible"
+        },
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0.111543",
+          "visibility": "visible"
+        }
+      ]
+    },
+    {
+      "kind": "scroll -350",
+      "screens": [
+        {
+          "active": "true",
+          "loaded": true,
+          "opacity": "0.319576",
+          "visibility": "visible"
+        },
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0.603489",
+          "visibility": "visible"
+        },
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0",
+          "visibility": "visible"
+        }
+      ]
+    },
+    {
+      "kind": "scroll 700",
+      "screens": [
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0.157728",
+          "visibility": "visible"
+        },
+        {
+          "active": "false",
+          "loaded": true,
+          "opacity": "0.0426017",
+          "visibility": "visible"
+        },
+        {
+          "active": "true",
+          "loaded": true,
+          "opacity": "0.252399",
+          "visibility": "visible"
+        }
+      ]
+    }
+  ],
+  "settled": [
+    {
+      "active": "false",
+      "opacity": "0",
+      "visibility": "hidden"
+    },
+    {
+      "active": "false",
+      "opacity": "0",
+      "visibility": "hidden"
+    },
+    {
+      "active": "true",
+      "opacity": "1",
+      "visibility": "visible"
+    }
+  ],
+  "mobile": {
+    "images": [
+      {
+        "opacity": "1",
+        "ratio": "1 / 1",
+        "transition": "0s"
+      },
+      {
+        "opacity": "1",
+        "ratio": "1 / 1",
+        "transition": "0s"
+      },
+      {
+        "opacity": "1",
+        "ratio": "1 / 1",
+        "transition": "0s"
+      }
+    ],
+    "stageDisplay": "none"
+  }
+}

@@ -1,0 +1,2386 @@
+[
+  {
+    "name": "Current",
+    "file": "public/redesign/fonts/newsreader-roman.woff2",
+    "axes": {
+      "opsz": 21,
+      "wght": 400
+    },
+    "size": 21,
+    "alias": "Test0",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 72,
+          "advance": 12127.765625
+        },
+        "288": {
+          "lines": 52,
+          "advance": 12127.765625
+        },
+        "328": {
+          "lines": 43,
+          "advance": 12127.765625
+        },
+        "440": {
+          "lines": 30,
+          "advance": 12127.765625
+        },
+        "672": {
+          "lines": 20,
+          "advance": 12127.765625
+        },
+        "820": {
+          "lines": 16,
+          "advance": 12127.765625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 12
+    },
+    "size": 18.146,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.158038338658148,
+    "alias": "Test1",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11545.6875
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11545.6875
+        },
+        "328": {
+          "lines": 41,
+          "advance": 11545.6875
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11545.6875
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11545.6875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11545.6875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 20
+    },
+    "size": 18.895,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.65956753160346,
+    "alias": "Test2",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 65,
+          "advance": 11208.59375
+        },
+        "288": {
+          "lines": 45,
+          "advance": 11208.59375
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11208.59375
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11208.59375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11208.59375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11208.59375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 32",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 32
+    },
+    "size": 19.182,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.851962174940898,
+    "alias": "Test3",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 64,
+          "advance": 11051.59375
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11051.59375
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11051.59375
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11051.59375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11051.59375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11051.59375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 48",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 48
+    },
+    "size": 19.579,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 13.117773181661498,
+    "alias": "Test4",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 63,
+          "advance": 10828.578125
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10828.578125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10828.578125
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10828.578125
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10828.578125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10828.578125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 60",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 60
+    },
+    "size": 19.887,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 13.324460784313725,
+    "alias": "Test5",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 61,
+          "advance": 10659.015625
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10659.015625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10659.015625
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10659.015625
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10659.015625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10659.015625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 12",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 12
+    },
+    "size": 17.694,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.385856697819312,
+    "alias": "Test6",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 67,
+          "advance": 11142.078125
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11142.078125
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11142.078125
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11142.078125
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11142.078125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11142.078125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 24",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 24
+    },
+    "size": 17.661,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.451534669607215,
+    "alias": "Test7",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 67,
+          "advance": 11098.8125
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11098.8125
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11098.8125
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11098.8125
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11098.8125
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11098.8125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 36",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 36
+    },
+    "size": 17.628,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.516966231074855,
+    "alias": "Test8",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 66,
+          "advance": 11049.359375
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11049.359375
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11049.359375
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11049.359375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11049.359375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11049.359375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 48",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 48
+    },
+    "size": 17.584,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.602872944829606,
+    "alias": "Test9",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 64,
+          "advance": 10992.296875
+        },
+        "288": {
+          "lines": 44,
+          "advance": 10992.296875
+        },
+        "328": {
+          "lines": 38,
+          "advance": 10992.296875
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10992.296875
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10992.296875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10992.296875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 72",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 72
+    },
+    "size": 17.498,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.773425754775108,
+    "alias": "Test10",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 64,
+          "advance": 10872.359375
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10872.359375
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10872.359375
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10872.359375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10872.359375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10872.359375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 100",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100
+    },
+    "size": 17.026,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.156406474820143,
+    "alias": "Test11",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 63,
+          "advance": 10822.078125
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10822.078125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10822.078125
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10822.078125
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10822.078125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10822.078125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 95",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95
+    },
+    "size": 17.026,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.156406474820143,
+    "alias": "Test12",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10495.203125
+        },
+        "288": {
+          "lines": 42,
+          "advance": 10495.203125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10495.203125
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10495.203125
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10495.203125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10495.203125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 90",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90
+    },
+    "size": 17.026,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.156406474820143,
+    "alias": "Test13",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 57,
+          "advance": 10168.328125
+        },
+        "288": {
+          "lines": 41,
+          "advance": 10168.328125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10168.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 10168.328125
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10168.328125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10168.328125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 85",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 85
+    },
+    "size": 17.026,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.156406474820143,
+    "alias": "Test14",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 55,
+          "advance": 9856.40625
+        },
+        "288": {
+          "lines": 40,
+          "advance": 9856.40625
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9856.40625
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9856.40625
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9856.40625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9856.40625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 80",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 80
+    },
+    "size": 17.026,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.156406474820143,
+    "alias": "Test15",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 52,
+          "advance": 9559.1875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9559.1875
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9559.1875
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9559.1875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9559.1875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9559.1875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "STIX Two Text",
+    "file": "source-fonts/STIXTwoText-Variable.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 19.124,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.56440606060606,
+    "alias": "Test16",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 62,
+          "advance": 10753.46875
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10753.46875
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10753.46875
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10753.46875
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10753.46875
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10753.46875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Lora",
+    "file": "source-fonts/Lora-Variable.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 17.794,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.455701754385963,
+    "alias": "Test17",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 62,
+          "advance": 10791.765625
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10791.765625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10791.765625
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10791.765625
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10791.765625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10791.765625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "PT Serif",
+    "file": "source-fonts/PTSerif-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 18.066,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.645865139949107,
+    "alias": "Test18",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10533.8125
+        },
+        "288": {
+          "lines": 42,
+          "advance": 10533.8125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10533.8125
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10533.8125
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10533.8125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10533.8125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Tinos",
+    "file": "source-fonts/Tinos-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 19.682,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.887668020304568,
+    "alias": "Test19",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10398.234375
+        },
+        "288": {
+          "lines": 42,
+          "advance": 10398.234375
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10398.234375
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10398.234375
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10398.234375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10398.234375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 65 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 65,
+      "opsz": 20
+    },
+    "size": 17.929,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.729349747474746,
+    "alias": "Test20",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 57,
+          "advance": 10025.3125
+        },
+        "288": {
+          "lines": 40,
+          "advance": 10025.3125
+        },
+        "328": {
+          "lines": 36,
+          "advance": 10025.3125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 10025.3125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 10025.3125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10025.3125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 65 48",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 65,
+      "opsz": 48
+    },
+    "size": 17.852,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.67514275864866,
+    "alias": "Test21",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 54,
+          "advance": 9723.140625
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9723.140625
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9723.140625
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9723.140625
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9723.140625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9723.140625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 65 96",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 65,
+      "opsz": 96
+    },
+    "size": 17.723,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.583282803881303,
+    "alias": "Test22",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 52,
+          "advance": 9204.796875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9204.796875
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9204.796875
+        },
+        "440": {
+          "lines": 23,
+          "advance": 9204.796875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9204.796875
+        },
+        "820": {
+          "lines": 12,
+          "advance": 9204.796875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 75 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 75,
+      "opsz": 20
+    },
+    "size": 17.929,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.729349747474746,
+    "alias": "Test23",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10465.484375
+        },
+        "288": {
+          "lines": 42,
+          "advance": 10465.484375
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10465.484375
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10465.484375
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10465.484375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10465.484375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 75 48",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 75,
+      "opsz": 48
+    },
+    "size": 17.852,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.67514275864866,
+    "alias": "Test24",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 57,
+          "advance": 10208.890625
+        },
+        "288": {
+          "lines": 41,
+          "advance": 10208.890625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10208.890625
+        },
+        "440": {
+          "lines": 26,
+          "advance": 10208.890625
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10208.890625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10208.890625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 75 96",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 75,
+      "opsz": 96
+    },
+    "size": 17.723,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.583282803881303,
+    "alias": "Test25",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 55,
+          "advance": 9767.484375
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9767.484375
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9767.484375
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9767.484375
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9767.484375
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9767.484375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 85 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 85,
+      "opsz": 20
+    },
+    "size": 17.929,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.729349747474746,
+    "alias": "Test26",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 64,
+          "advance": 10905.65625
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10905.65625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10905.65625
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10905.65625
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10905.65625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10905.65625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 85 48",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 85,
+      "opsz": 48
+    },
+    "size": 17.852,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.67514275864866,
+    "alias": "Test27",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 62,
+          "advance": 10694.640625
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10694.640625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10694.640625
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10694.640625
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10694.640625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10694.640625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 85 96",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 85,
+      "opsz": 96
+    },
+    "size": 17.723,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.583282803881303,
+    "alias": "Test28",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10330.171875
+        },
+        "288": {
+          "lines": 41,
+          "advance": 10330.171875
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10330.171875
+        },
+        "440": {
+          "lines": 26,
+          "advance": 10330.171875
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10330.171875
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10330.171875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 90 18",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 18
+    },
+    "size": 16.293,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.105827309236949,
+    "alias": "Test29",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 53,
+          "advance": 9504.078125
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9504.078125
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9504.078125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9504.078125
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9504.078125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9504.078125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 90 32",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 32
+    },
+    "size": 16.451,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.223201574077244,
+    "alias": "Test30",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 52,
+          "advance": 9452.234375
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9452.234375
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9452.234375
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9452.234375
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9452.234375
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9452.234375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 90 60",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 60
+    },
+    "size": 16.776,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.46491327111742,
+    "alias": "Test31",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 52,
+          "advance": 9340
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9340
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9340
+        },
+        "440": {
+          "lines": 23,
+          "advance": 9340
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9340
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9340
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 95 18",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 18
+    },
+    "size": 16.293,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.105827309236949,
+    "alias": "Test32",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 56,
+          "advance": 9988.3125
+        },
+        "288": {
+          "lines": 40,
+          "advance": 9988.3125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9988.3125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9988.3125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9988.3125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9988.3125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 95 32",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 32
+    },
+    "size": 16.451,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.223201574077244,
+    "alias": "Test33",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 56,
+          "advance": 9920.765625
+        },
+        "288": {
+          "lines": 40,
+          "advance": 9920.765625
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9920.765625
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9920.765625
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9920.765625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9920.765625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 95 60",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 60
+    },
+    "size": 16.776,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.46491327111742,
+    "alias": "Test34",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 55,
+          "advance": 9775.90625
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9775.90625
+        },
+        "328": {
+          "lines": 33,
+          "advance": 9775.90625
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9775.90625
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9775.90625
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9775.90625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  },
+  {
+    "name": "IBM Plex Serif",
+    "file": "source-fonts/IBMPlexSerif-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 17.53,
+    "inkHeight": 9.466333333333333,
+    "capHeight": 12.236112345679011,
+    "alias": "Test35",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 63,
+          "advance": 10895.15625
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10895.15625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10895.15625
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10895.15625
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10895.15625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10895.15625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 50,
+          "advance": 9483.671875
+        },
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875
+        },
+        "328": {
+          "lines": 32,
+          "advance": 9483.671875
+        },
+        "440": {
+          "lines": 24,
+          "advance": 9483.671875
+        },
+        "672": {
+          "lines": 15,
+          "advance": 9483.671875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875
+        }
+      }
+    }
+  }
+]

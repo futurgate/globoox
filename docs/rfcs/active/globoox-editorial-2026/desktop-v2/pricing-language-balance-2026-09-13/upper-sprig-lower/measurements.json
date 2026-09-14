@@ -1,0 +1,26 @@
+[
+  {
+    "width": 1440,
+    "top": "-64px",
+    "rotation": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+    "overflow": false
+  },
+  {
+    "width": 801,
+    "top": "-64px",
+    "rotation": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+    "overflow": false
+  },
+  {
+    "width": 800,
+    "top": "-43px",
+    "rotation": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "top": "-43px",
+    "rotation": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+    "overflow": false
+  }
+]

@@ -1,0 +1,2108 @@
+[
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 724.4765625,
+      "height": 180.09375,
+      "right": 300,
+      "width": 280,
+      "x": 20,
+      "y": 544.3828125
+    },
+    "scrollWidth": 320,
+    "video": {
+      "height": 178.09375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 278
+    },
+    "width": 320
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 969.8984375,
+      "height": 425.515625,
+      "right": 300,
+      "width": 280,
+      "x": 20,
+      "y": 544.3828125
+    },
+    "scrollWidth": 320,
+    "video": {
+      "height": 423.515625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 278
+    },
+    "width": 320
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1083.7109375,
+      "height": 539.328125,
+      "right": 285,
+      "width": 250,
+      "x": 35,
+      "y": 544.3828125
+    },
+    "scrollWidth": 320,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 320
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 707.984375,
+      "height": 205.71875,
+      "right": 340,
+      "width": 320,
+      "x": 20,
+      "y": 502.265625
+    },
+    "scrollWidth": 360,
+    "video": {
+      "height": 203.71875,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 318
+    },
+    "width": 360
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 988.71875,
+      "height": 486.453125,
+      "right": 340,
+      "width": 320,
+      "x": 20,
+      "y": 502.265625
+    },
+    "scrollWidth": 360,
+    "video": {
+      "height": 484.453125,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 318
+    },
+    "width": 360
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1041.59375,
+      "height": 539.328125,
+      "right": 305,
+      "width": 250,
+      "x": 55,
+      "y": 502.265625
+    },
+    "scrollWidth": 360,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 360
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 708.625,
+      "height": 206.359375,
+      "right": 341,
+      "width": 321,
+      "x": 20,
+      "y": 502.265625
+    },
+    "scrollWidth": 361,
+    "video": {
+      "height": 204.359375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 319
+    },
+    "width": 361
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 990.2421875,
+      "height": 487.9765625,
+      "right": 341,
+      "width": 321,
+      "x": 20,
+      "y": 502.265625
+    },
+    "scrollWidth": 361,
+    "video": {
+      "height": 485.9765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 319
+    },
+    "width": 361
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1041.59375,
+          "height": 123.375,
+          "right": 65.98687744140625,
+          "width": 61.687503814697266,
+          "x": 4.299373626708984,
+          "y": 918.21875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1041.59375,
+          "height": 158.328125,
+          "right": 364.873046875,
+          "width": 79.1640625,
+          "x": 285.708984375,
+          "y": 883.265625
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1041.59375,
+      "height": 539.328125,
+      "right": 305.5,
+      "width": 250,
+      "x": 55.5,
+      "y": 502.265625
+    },
+    "scrollWidth": 361,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 361
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 727.203125,
+      "height": 224.9375,
+      "right": 370,
+      "width": 350,
+      "x": 20,
+      "y": 502.265625
+    },
+    "scrollWidth": 390,
+    "video": {
+      "height": 222.9375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 348
+    },
+    "width": 390
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1034.421875,
+      "height": 532.15625,
+      "right": 370,
+      "width": 350,
+      "x": 20,
+      "y": 502.265625
+    },
+    "scrollWidth": 390,
+    "video": {
+      "height": 530.15625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 348
+    },
+    "width": 390
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1041.59375,
+          "height": 160,
+          "right": 83.5999984741211,
+          "width": 80,
+          "x": 3.5999984741210938,
+          "y": 881.59375
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1041.59375,
+          "height": 200,
+          "right": 395,
+          "width": 100,
+          "x": 295,
+          "y": 841.59375
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1041.59375,
+      "height": 539.328125,
+      "right": 320,
+      "width": 250,
+      "x": 70,
+      "y": 502.265625
+    },
+    "scrollWidth": 390,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 390
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 700.625,
+      "height": 282.59375,
+      "right": 460,
+      "width": 440,
+      "x": 20,
+      "y": 418.03125
+    },
+    "scrollWidth": 480,
+    "video": {
+      "height": 280.59375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 438
+    },
+    "width": 480
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 950.1875,
+      "height": 532.15625,
+      "right": 415,
+      "width": 350,
+      "x": 65,
+      "y": 418.03125
+    },
+    "scrollWidth": 480,
+    "video": {
+      "height": 530.15625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 348
+    },
+    "width": 480
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 957.359375,
+          "height": 160,
+          "right": 128.60000610351562,
+          "width": 80.00000762939453,
+          "x": 48.599998474121094,
+          "y": 797.359375
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 957.359375,
+          "height": 200,
+          "right": 440,
+          "width": 100,
+          "x": 340,
+          "y": 757.359375
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 957.359375,
+      "height": 539.328125,
+      "right": 365,
+      "width": 250,
+      "x": 115,
+      "y": 418.03125
+    },
+    "scrollWidth": 480,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 480
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 701.265625,
+      "height": 283.234375,
+      "right": 461,
+      "width": 441,
+      "x": 20,
+      "y": 418.03125
+    },
+    "scrollWidth": 481,
+    "video": {
+      "height": 281.234375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 439
+    },
+    "width": 481
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 950.1875,
+          "height": 149.34375,
+          "right": 78.19421768188477,
+          "width": 74.671875,
+          "x": 3.5223426818847656,
+          "y": 800.84375
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 950.1875,
+          "height": 191.65625,
+          "right": 487.37109375,
+          "width": 95.828125,
+          "x": 391.54296875,
+          "y": 758.53125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 950.1875,
+      "height": 532.15625,
+      "right": 415.5,
+      "width": 350,
+      "x": 65.5,
+      "y": 418.03125
+    },
+    "scrollWidth": 481,
+    "video": {
+      "height": 530.15625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 348
+    },
+    "width": 481
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 950.1875,
+          "height": 149.34375,
+          "right": 78.19421768188477,
+          "width": 74.671875,
+          "x": 3.5223426818847656,
+          "y": 800.84375
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 950.1875,
+          "height": 191.65625,
+          "right": 487.37109375,
+          "width": 95.828125,
+          "x": 391.54296875,
+          "y": 758.53125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 950.1875,
+      "height": 532.15625,
+      "right": 415.5,
+      "width": 350,
+      "x": 65.5,
+      "y": 418.03125
+    },
+    "scrollWidth": 481,
+    "video": {
+      "height": 530.15625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 348
+    },
+    "width": 481
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "none",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 0,
+          "height": 0,
+          "right": 0,
+          "width": 0,
+          "x": 0,
+          "y": 0
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 768.0078125,
+      "height": 344.09375,
+      "right": 568,
+      "width": 536,
+      "x": 32,
+      "y": 423.9140625
+    },
+    "scrollWidth": 600,
+    "video": {
+      "height": 342.09375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 534
+    },
+    "width": 600
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 956.0703125,
+          "height": 200,
+          "right": 142,
+          "width": 100,
+          "x": 42,
+          "y": 756.0703125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 956.0703125,
+          "height": 260,
+          "right": 572.5,
+          "width": 130,
+          "x": 442.5,
+          "y": 696.0703125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 956.0703125,
+      "height": 532.15625,
+      "right": 475,
+      "width": 350,
+      "x": 125,
+      "y": 423.9140625
+    },
+    "scrollWidth": 600,
+    "video": {
+      "height": 530.15625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 348
+    },
+    "width": 600
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 963.2421875,
+          "height": 160,
+          "right": 188.6000061035156,
+          "width": 80.00000762939453,
+          "x": 108.5999984741211,
+          "y": 803.2421875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 963.2421875,
+          "height": 200,
+          "right": 500,
+          "width": 100,
+          "x": 400,
+          "y": 763.2421875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 963.2421875,
+      "height": 539.328125,
+      "right": 425,
+      "width": 250,
+      "x": 175,
+      "y": 423.9140625
+    },
+    "scrollWidth": 600,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 600
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 711.3984375,
+          "height": 166.21875,
+          "right": 86.12859344482422,
+          "width": 83.109375,
+          "x": 3.0192184448242188,
+          "y": 545.1796875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 711.3984375,
+          "height": 213.328125,
+          "right": 608.998046875,
+          "width": 106.6640625,
+          "x": 502.333984375,
+          "y": 498.0703125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 711.3984375,
+      "height": 293.484375,
+      "right": 529,
+      "width": 457,
+      "x": 72,
+      "y": 417.9140625
+    },
+    "scrollWidth": 601,
+    "video": {
+      "height": 291.484375,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 455
+    },
+    "width": 601
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1003.390625,
+          "height": 259.734375,
+          "right": 130.07742309570312,
+          "width": 129.8671875,
+          "x": 0.210235595703125,
+          "y": 743.65625
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1003.390625,
+          "height": 333.328125,
+          "right": 617.998046875,
+          "width": 166.6640625,
+          "x": 451.333984375,
+          "y": 670.0625
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1003.390625,
+      "height": 585.4765625,
+      "right": 493,
+      "width": 385,
+      "x": 108,
+      "y": 417.9140625
+    },
+    "scrollWidth": 601,
+    "video": {
+      "height": 583.4765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 383
+    },
+    "width": 601
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 957.2421875,
+          "height": 220,
+          "right": 194.1999969482422,
+          "width": 110,
+          "x": 84.19999694824219,
+          "y": 737.2421875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 957.2421875,
+          "height": 290,
+          "right": 534.25,
+          "width": 145,
+          "x": 389.25,
+          "y": 667.2421875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 957.2421875,
+      "height": 539.328125,
+      "right": 425.5,
+      "width": 250,
+      "x": 175.5,
+      "y": 417.9140625
+    },
+    "scrollWidth": 601,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 601
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 860.6640625,
+          "height": 166.21875,
+          "right": 86.12859344482422,
+          "width": 83.109375,
+          "x": 3.0192184448242188,
+          "y": 694.4453125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 860.6640625,
+          "height": 213.328125,
+          "right": 841.998046875,
+          "width": 106.6640625,
+          "x": 735.333984375,
+          "y": 647.3359375
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 860.6640625,
+      "height": 442.75,
+      "right": 762,
+      "width": 690,
+      "x": 72,
+      "y": 417.9140625
+    },
+    "scrollWidth": 834,
+    "video": {
+      "height": 440.75,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 688
+    },
+    "width": 834
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1003.390625,
+          "height": 300,
+          "right": 250,
+          "width": 150,
+          "x": 100,
+          "y": 703.390625
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1003.390625,
+          "height": 360,
+          "right": 744.5,
+          "width": 180,
+          "x": 564.5,
+          "y": 643.390625
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1003.390625,
+      "height": 585.4765625,
+      "right": 609.5,
+      "width": 385,
+      "x": 224.5,
+      "y": 417.9140625
+    },
+    "scrollWidth": 834,
+    "video": {
+      "height": 583.4765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 383
+    },
+    "width": 834
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 957.2421875,
+          "height": 220,
+          "right": 310.70001220703125,
+          "width": 110.00001525878906,
+          "x": 200.6999969482422,
+          "y": 737.2421875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 957.2421875,
+          "height": 290,
+          "right": 650.75,
+          "width": 145,
+          "x": 505.75,
+          "y": 667.2421875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 957.2421875,
+      "height": 539.328125,
+      "right": 542,
+      "width": 250,
+      "x": 292,
+      "y": 417.9140625
+    },
+    "scrollWidth": 834,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 834
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1061.9296875,
+          "height": 187,
+          "right": 95.89500427246094,
+          "width": 93.5,
+          "x": 2.3950042724609375,
+          "y": 874.9296875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1061.9296875,
+          "height": 240,
+          "right": 1110,
+          "width": 120,
+          "x": 990,
+          "y": 821.9296875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 1061.9296875,
+      "height": 602.90625,
+      "right": 1020,
+      "width": 940,
+      "x": 80,
+      "y": 459.0234375
+    },
+    "scrollWidth": 1100,
+    "video": {
+      "height": 600.90625,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 938
+    },
+    "width": 1100
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1044.5,
+          "height": 300,
+          "right": 383,
+          "width": 150,
+          "x": 233,
+          "y": 744.5
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1044.5,
+          "height": 360,
+          "right": 877.5,
+          "width": 180,
+          "x": 697.5,
+          "y": 684.5
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1044.5,
+      "height": 585.4765625,
+      "right": 742.5,
+      "width": 385,
+      "x": 357.5,
+      "y": 459.0234375
+    },
+    "scrollWidth": 1100,
+    "video": {
+      "height": 583.4765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 383
+    },
+    "width": 1100
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 998.3515625,
+          "height": 220,
+          "right": 443.7000122070313,
+          "width": 110,
+          "x": 333.70001220703125,
+          "y": 778.3515625
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 998.3515625,
+          "height": 290,
+          "right": 783.75,
+          "width": 145,
+          "x": 638.75,
+          "y": 708.3515625
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 998.3515625,
+      "height": 539.328125,
+      "right": 675,
+      "width": 250,
+      "x": 425,
+      "y": 459.0234375
+    },
+    "scrollWidth": 1100,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 1100
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1066.8984375,
+          "height": 187,
+          "right": 95.89500427246094,
+          "width": 93.5,
+          "x": 2.3950042724609375,
+          "y": 879.8984375
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1066.8984375,
+          "height": 240,
+          "right": 1111,
+          "width": 120,
+          "x": 991,
+          "y": 826.8984375
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 1066.8984375,
+      "height": 603.546875,
+      "right": 1021,
+      "width": 941,
+      "x": 80,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1101,
+    "video": {
+      "height": 601.546875,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 939
+    },
+    "width": 1101
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 330,
+          "right": 386.0499877929687,
+          "width": 164.99998474121094,
+          "x": 221.0500030517578,
+          "y": 718.828125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 400,
+          "right": 893,
+          "width": 200,
+          "x": 693,
+          "y": 648.828125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1048.828125,
+      "height": 585.4765625,
+      "right": 743,
+      "width": 385,
+      "x": 358,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1101,
+    "video": {
+      "height": 583.4765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 383
+    },
+    "width": 1101
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 260,
+          "right": 447.6000061035156,
+          "width": 130,
+          "x": 317.6000061035156,
+          "y": 742.6796875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 330,
+          "right": 799.25,
+          "width": 165,
+          "x": 634.25,
+          "y": 672.6796875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1002.6796875,
+      "height": 539.328125,
+      "right": 675.5,
+      "width": 250,
+      "x": 425.5,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1101,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 1101
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1079.0703125,
+          "height": 480,
+          "right": 280.79998779296875,
+          "width": 239.99998474121097,
+          "x": 40.80000305175781,
+          "y": 599.0703125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1079.0703125,
+          "height": 640,
+          "right": 1440,
+          "width": 320,
+          "x": 1120,
+          "y": 439.0703125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 1079.0703125,
+      "height": 615.71875,
+      "right": 1200,
+      "width": 960,
+      "x": 240,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1440,
+    "video": {
+      "height": 613.71875,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 958
+    },
+    "width": 1440
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 330,
+          "right": 555.5499877929688,
+          "width": 165,
+          "x": 390.5499877929687,
+          "y": 718.828125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 400,
+          "right": 1062.5,
+          "width": 200,
+          "x": 862.5,
+          "y": 648.828125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1048.828125,
+      "height": 585.4765625,
+      "right": 912.5,
+      "width": 385,
+      "x": 527.5,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1440,
+    "video": {
+      "height": 583.4765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 383
+    },
+    "width": 1440
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 260,
+          "right": 617.0999755859375,
+          "width": 129.99996948242188,
+          "x": 487.1000061035156,
+          "y": 742.6796875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 330,
+          "right": 968.75,
+          "width": 165,
+          "x": 803.75,
+          "y": 672.6796875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1002.6796875,
+      "height": 539.328125,
+      "right": 845,
+      "width": 250,
+      "x": 595,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1440,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 1440
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1079.0703125,
+          "height": 480,
+          "right": 520.7999877929688,
+          "width": 240,
+          "x": 280.79998779296875,
+          "y": 599.0703125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1079.0703125,
+          "height": 640,
+          "right": 1680,
+          "width": 320,
+          "x": 1360,
+          "y": 439.0703125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "desktop",
+    "frame": {
+      "bottom": 1079.0703125,
+      "height": 615.71875,
+      "right": 1440,
+      "width": 960,
+      "x": 480,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1920,
+    "video": {
+      "height": 613.71875,
+      "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "width": 958
+    },
+    "width": 1920
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 330,
+          "right": 795.5499877929688,
+          "width": 165,
+          "x": 630.5499877929688,
+          "y": 718.828125
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1048.828125,
+          "height": 400,
+          "right": 1302.5,
+          "width": 200,
+          "x": 1102.5,
+          "y": 648.828125
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "tablet",
+    "frame": {
+      "bottom": 1048.828125,
+      "height": 585.4765625,
+      "right": 1152.5,
+      "width": 385,
+      "x": 767.5,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1920,
+    "video": {
+      "height": 583.4765625,
+      "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "width": 383
+    },
+    "width": 1920
+  },
+  {
+    "art": [
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 260,
+          "right": 857.0999755859375,
+          "width": 130,
+          "x": 727.0999755859375,
+          "y": 742.6796875
+        },
+        "transform": "matrix(-1, 0, 0, 1, 0, 0)",
+        "translate": "17%"
+      },
+      {
+        "bottom": "0px",
+        "display": "block",
+        "hidden": "true",
+        "loaded": true,
+        "pointerEvents": "none",
+        "rect": {
+          "bottom": 1002.6796875,
+          "height": 330,
+          "right": 1208.75,
+          "width": 165,
+          "x": 1043.75,
+          "y": 672.6796875
+        },
+        "transform": "none",
+        "translate": "-25%"
+      }
+    ],
+    "device": "phone",
+    "frame": {
+      "bottom": 1002.6796875,
+      "height": 539.328125,
+      "right": 1085,
+      "width": 250,
+      "x": 835,
+      "y": 463.3515625
+    },
+    "scrollWidth": 1920,
+    "video": {
+      "height": 537.328125,
+      "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "width": 248
+    },
+    "width": 1920
+  }
+]

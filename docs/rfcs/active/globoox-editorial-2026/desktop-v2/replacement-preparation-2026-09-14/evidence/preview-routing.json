@@ -1,0 +1,89 @@
+[
+  {
+    "path": "/landing-editorial",
+    "status": 200,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+    ],
+    "canonical": "<link rel=\"canonical\" href=\"https://globoox.co/landing-editorial\"/>",
+    "alternates": [
+      "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://globoox.co/landing-editorial/en\"/>",
+      "<link rel=\"alternate\" hrefLang=\"es\" href=\"https://globoox.co/landing-editorial/es\"/>",
+      "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://globoox.co/landing-editorial/fr\"/>",
+      "<link rel=\"alternate\" hrefLang=\"ru\" href=\"https://globoox.co/landing-editorial/ru\"/>"
+    ],
+    "webApplication": false
+  },
+  {
+    "path": "/landing-editorial/en",
+    "status": 200,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+    ],
+    "canonical": "<link rel=\"canonical\" href=\"https://globoox.co/landing-editorial/en\"/>",
+    "alternates": [
+      "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://globoox.co/landing-editorial/en\"/>",
+      "<link rel=\"alternate\" hrefLang=\"es\" href=\"https://globoox.co/landing-editorial/es\"/>",
+      "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://globoox.co/landing-editorial/fr\"/>",
+      "<link rel=\"alternate\" hrefLang=\"ru\" href=\"https://globoox.co/landing-editorial/ru\"/>"
+    ],
+    "webApplication": false
+  },
+  {
+    "path": "/landing-editorial/fr",
+    "status": 200,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+    ],
+    "canonical": "<link rel=\"canonical\" href=\"https://globoox.co/landing-editorial/fr\"/>",
+    "alternates": [
+      "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://globoox.co/landing-editorial/en\"/>",
+      "<link rel=\"alternate\" hrefLang=\"es\" href=\"https://globoox.co/landing-editorial/es\"/>",
+      "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://globoox.co/landing-editorial/fr\"/>",
+      "<link rel=\"alternate\" hrefLang=\"ru\" href=\"https://globoox.co/landing-editorial/ru\"/>"
+    ],
+    "webApplication": false
+  },
+  {
+    "path": "/landing-editorial/ru",
+    "status": 200,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+    ],
+    "canonical": "<link rel=\"canonical\" href=\"https://globoox.co/landing-editorial/ru\"/>",
+    "alternates": [
+      "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://globoox.co/landing-editorial/en\"/>",
+      "<link rel=\"alternate\" hrefLang=\"es\" href=\"https://globoox.co/landing-editorial/es\"/>",
+      "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://globoox.co/landing-editorial/fr\"/>",
+      "<link rel=\"alternate\" hrefLang=\"ru\" href=\"https://globoox.co/landing-editorial/ru\"/>"
+    ],
+    "webApplication": false
+  },
+  {
+    "path": "/landing-editorial/es",
+    "status": 200,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex, nofollow\"/>"
+    ],
+    "canonical": "<link rel=\"canonical\" href=\"https://globoox.co/landing-editorial/es\"/>",
+    "alternates": [
+      "<link rel=\"alternate\" hrefLang=\"en\" href=\"https://globoox.co/landing-editorial/en\"/>",
+      "<link rel=\"alternate\" hrefLang=\"es\" href=\"https://globoox.co/landing-editorial/es\"/>",
+      "<link rel=\"alternate\" hrefLang=\"fr\" href=\"https://globoox.co/landing-editorial/fr\"/>",
+      "<link rel=\"alternate\" hrefLang=\"ru\" href=\"https://globoox.co/landing-editorial/ru\"/>"
+    ],
+    "webApplication": false
+  },
+  {
+    "path": "/landing-editorial/unknown",
+    "status": 404,
+    "robots": [
+      "<meta name=\"robots\" content=\"noindex\"/>",
+      "<meta name=\"robots\" content=\"index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1\"/>"
+    ],
+    "canonical": "<link rel=\"canonical\" href=\"https://globoox.co\"/>",
+    "alternates": [],
+    "webApplication": false,
+    "error": "NEXT_HTTP_ERROR_FALLBACK;404"
+  }
+]

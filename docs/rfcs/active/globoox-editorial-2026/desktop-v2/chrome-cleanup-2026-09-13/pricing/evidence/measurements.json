@@ -1,0 +1,366 @@
+[
+  {
+    "width": 1440,
+    "section": {
+      "x": 120,
+      "y": 116.0625,
+      "width": 1200,
+      "height": 927.5625,
+      "top": 116.0625,
+      "right": 1320,
+      "bottom": 1043.625,
+      "left": 120
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 1211.86865234375,
+          "y": 333.188720703125,
+          "width": 170.2626953125,
+          "height": 184.90380859375,
+          "top": 333.188720703125,
+          "right": 1382.13134765625,
+          "bottom": 518.092529296875,
+          "left": 1211.86865234375
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "110px",
+        "height": "150px",
+        "top": "-80px",
+        "right": "-32px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 85,
+          "y": 786.4375,
+          "width": 168,
+          "height": 112,
+          "top": 786.4375,
+          "right": 253,
+          "bottom": 898.4375,
+          "left": 85
+        },
+        "transform": "none",
+        "width": "168px",
+        "height": "112px",
+        "top": "354.797px",
+        "right": "267.328px"
+      }
+    ]
+  },
+  {
+    "width": 1100,
+    "section": {
+      "x": 32,
+      "y": 116.203125,
+      "width": 1036,
+      "height": 927.5625,
+      "top": 116.203125,
+      "right": 1068,
+      "bottom": 1043.765625,
+      "left": 32
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 959.8685913085938,
+          "y": 333.329345703125,
+          "width": 170.26275634765625,
+          "height": 184.90380859375,
+          "top": 333.329345703125,
+          "right": 1130.13134765625,
+          "bottom": 518.233154296875,
+          "left": 959.8685913085938
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "110px",
+        "height": "150px",
+        "top": "-80px",
+        "right": "-32px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 3,
+          "y": 786.578125,
+          "width": 168,
+          "height": 112,
+          "top": 786.578125,
+          "right": 171,
+          "bottom": 898.578125,
+          "left": 3
+        },
+        "transform": "none",
+        "width": "168px",
+        "height": "112px",
+        "top": "354.797px",
+        "right": "206.656px"
+      }
+    ]
+  },
+  {
+    "width": 901,
+    "section": {
+      "x": 32,
+      "y": 116.265625,
+      "width": 837,
+      "height": 927.5625,
+      "top": 116.265625,
+      "right": 869,
+      "bottom": 1043.828125,
+      "left": 32
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 760.8685913085938,
+          "y": 333.391845703125,
+          "width": 170.2628173828125,
+          "height": 184.90380859375,
+          "top": 333.391845703125,
+          "right": 931.1314086914062,
+          "bottom": 518.295654296875,
+          "left": 760.8685913085938
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "110px",
+        "height": "150px",
+        "top": "-80px",
+        "right": "-32px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 3,
+          "y": 786.640625,
+          "width": 168,
+          "height": 112,
+          "top": 786.640625,
+          "right": 171,
+          "bottom": 898.640625,
+          "left": 3
+        },
+        "transform": "none",
+        "width": "168px",
+        "height": "112px",
+        "top": "354.797px",
+        "right": "140.328px"
+      }
+    ]
+  },
+  {
+    "width": 801,
+    "section": {
+      "x": 32,
+      "y": 115.515625,
+      "width": 737,
+      "height": 927.5625,
+      "top": 115.515625,
+      "right": 769,
+      "bottom": 1043.078125,
+      "left": 32
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 660.8685913085938,
+          "y": 332.641845703125,
+          "width": 170.2628173828125,
+          "height": 184.90380859375,
+          "top": 332.641845703125,
+          "right": 831.1314086914062,
+          "bottom": 517.545654296875,
+          "left": 660.8685913085938
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "110px",
+        "height": "150px",
+        "top": "-80px",
+        "right": "-32px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 3,
+          "y": 785.890625,
+          "width": 168,
+          "height": 112,
+          "top": 785.890625,
+          "right": 171,
+          "bottom": 897.890625,
+          "left": 3
+        },
+        "transform": "none",
+        "width": "168px",
+        "height": "112px",
+        "top": "354.797px",
+        "right": "107px"
+      }
+    ]
+  },
+  {
+    "width": 800,
+    "section": {
+      "x": 100,
+      "y": 115.734375,
+      "width": 600,
+      "height": 1502.328125,
+      "top": 115.734375,
+      "right": 700,
+      "bottom": 1618.0625,
+      "left": 100
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 623.841064453125,
+          "y": 291.1274108886719,
+          "width": 118.31787109375,
+          "height": 128.93267822265625,
+          "top": 291.1274108886719,
+          "right": 742.158935546875,
+          "bottom": 420.0600891113281,
+          "left": 623.841064453125
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "76px",
+        "height": "105px",
+        "top": "-55px",
+        "right": "-21px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 83,
+          "y": 671.6875,
+          "width": 126,
+          "height": 84,
+          "top": 671.6875,
+          "right": 209,
+          "bottom": 755.6875,
+          "left": 83
+        },
+        "transform": "none",
+        "width": "126px",
+        "height": "84px",
+        "top": "312.594px",
+        "right": "490px"
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "section": {
+      "x": 20,
+      "y": 116.046875,
+      "width": 350,
+      "height": 1491.4375,
+      "top": 116.046875,
+      "right": 370,
+      "bottom": 1607.484375,
+      "left": 20
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 293.8410339355469,
+          "y": 280.5492858886719,
+          "width": 118.31793212890625,
+          "height": 128.93267822265625,
+          "top": 280.5492858886719,
+          "right": 412.1589660644531,
+          "bottom": 409.4819641113281,
+          "left": 293.8410339355469
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "76px",
+        "height": "105px",
+        "top": "-55px",
+        "right": "-21px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 3,
+          "y": 661.109375,
+          "width": 126,
+          "height": 84,
+          "top": 661.109375,
+          "right": 129,
+          "bottom": 745.109375,
+          "left": 3
+        },
+        "transform": "none",
+        "width": "126px",
+        "height": "84px",
+        "top": "312.594px",
+        "right": "240px"
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "section": {
+      "x": 20,
+      "y": 116.296875,
+      "width": 280,
+      "height": 1583.015625,
+      "top": 116.296875,
+      "right": 300,
+      "bottom": 1699.3125,
+      "left": 20
+    },
+    "overflow": false,
+    "images": [
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Fsprig.png&w=3840&q=75",
+        "bounds": {
+          "x": 223.84103393554688,
+          "y": 349.2836608886719,
+          "width": 118.31793212890625,
+          "height": 128.93267822265625,
+          "top": 349.2836608886719,
+          "right": 342.1589660644531,
+          "bottom": 478.2163391113281,
+          "left": 223.84103393554688
+        },
+        "transform": "matrix(0.866025, -0.5, 0.5, 0.866025, 0, 0)",
+        "width": "76px",
+        "height": "105px",
+        "top": "-55px",
+        "right": "-21px"
+      },
+      {
+        "src": "/_next/image?url=%2Fredesign%2Fpricing%2Ffree-sprig-v3-b.png&w=3840&q=75",
+        "bounds": {
+          "x": 3,
+          "y": 729.84375,
+          "width": 126,
+          "height": 84,
+          "top": 729.84375,
+          "right": 129,
+          "bottom": 813.84375,
+          "left": 3
+        },
+        "transform": "none",
+        "width": "126px",
+        "height": "84px",
+        "top": "312.594px",
+        "right": "170px"
+      }
+    ]
+  }
+]

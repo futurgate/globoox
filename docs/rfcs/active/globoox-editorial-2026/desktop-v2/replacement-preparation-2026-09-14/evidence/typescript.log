@@ -1,0 +1,12 @@
+.next/types/routes.d 2.ts(89,13): error TS2428: All declarations of 'PageProps' must have identical type parameters.
+.next/types/routes.d 2.ts(90,5): error TS2717: Subsequent property declarations must have the same type.  Property 'params' must be of type 'Promise<ParamMap[AppRoute]>', but here has type 'Promise<ParamMap[AppRoute]>'.
+.next/types/routes.d 2.ts(90,21): error TS2536: Type 'AppRoute' cannot be used to index type 'ParamMap'.
+.next/types/routes.d 2.ts(103,8): error TS2300: Duplicate identifier 'LayoutProps'.
+.next/types/routes.d 2.ts(121,5): error TS2717: Subsequent property declarations must have the same type.  Property 'params' must be of type 'Promise<ParamMap[AppRouteHandlerRoute]>', but here has type 'Promise<ParamMap[AppRouteHandlerRoute]>'.
+src/app/landing-backup-2/page.tsx(66,12): error TS2741: Property 'compare' is missing in type '{ label: string; heading: string; description: string; }' but required in type 'QualityAssuranceV2Props'.
+src/app/landing-backup-2/page.tsx(74,12): error TS2740: Type '{}' is missing the following properties from type 'SupportedLanguagesProps': label, heading, description, currentLangs, and 3 more.
+src/app/landing-backup-2/page.tsx(82,12): error TS2741: Property 'floatingScripts' is missing in type '{ heading: string; description: string; buttonText: string; }' but required in type 'CTAProps'.
+src/app/landing-backup-2/page.tsx(89,10): error TS2739: Type '{ tagline: string; }' is missing the following properties from type 'FooterProps': legalLabel, termsLabel, privacyLabel, copyright
+src/app/landing-backup/page.tsx(140,12): error TS2741: Property 'compare' is missing in type '{ label: string; heading: string; description: string; }' but required in type 'QualityAssuranceV2Props'.
+src/app/landing-backup/page.tsx(186,10): error TS2739: Type '{ heading: string; buttonText: string; }' is missing the following properties from type 'CTAProps': description, floatingScripts
+src/app/landing-backup/page.tsx(192,10): error TS2739: Type '{ tagline: string; }' is missing the following properties from type 'FooterProps': legalLabel, termsLabel, privacyLabel, copyright

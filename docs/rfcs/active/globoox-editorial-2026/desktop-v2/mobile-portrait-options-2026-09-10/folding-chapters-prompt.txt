@@ -1,0 +1,25 @@
+Use case: ui-mockup.
+Create a realistic, production-quality MOBILE WEB LANDING SECTION for Globoox, an ebook reading and translation product. This is a design study of its existing How it Works block, not a redesign of the app pictured inside it.
+
+REFERENCE ROLES: image1 = existing mobile landing, supplied ONLY for brand/header/type/color. Its square screenshot framing is explicitly REJECTED; do not reproduce squares. Image2 = exact real upload screenshot. Image3 = exact real language-choice screenshot. Image4 = exact real translated-reader screenshot. Use the relevant real screenshot as a coherent unchanged image insert. All sources have portrait ratio788:1705. Do not square-crop, widen, shorten, zoom into, recombine, repaint, or invent product screens. Scale proportionally to show every edge. No invented perfect app.
+
+ART DIRECTION: contemporary quiet literary/editorial web design. Warm almost-white paper #f7f5ed, forest ink #20382f, muted sage #64735e, tiny restrained terracotta accents. Newsreader regular for landing headings, DM Sans for small labels/navigation. No heavy vintage effects, parchment grain, torn paper, decorative serif gimmicks, gradients, glossy 3D, ornamental frames or random leaves. Product evidence has priority. Simple spacing/grouping first; fine1px rules and a fine9px-radius screenshot contour only. Softest possible shadow. No large nested cards. Do not retype any product text over the screenshot.
+
+HEADER: retain compact sticky Globoox header with existing app icon and wordmark left, hamburger right,84 CSS-px high, inset1px divider; match the style reference. No outer device bezel, mock phone body, browser chrome, added status bar or notch. The status indicators already embedded in the supplied product screenshot belong INSIDE that image; preserve them there only.
+
+CANONICAL LANDING COPY ONLY, exactly spelled:
+"HOW IT WORKS"
+"Three simple steps"
+"STEP 1" / "Upload your ebook."
+"STEP 2" / "Choose your language to translate the book."
+"STEP 3" / "Enjoy your book!"
+A state shows the appropriate subset; remaining steps can be offscreen or represented by their selectors. Do not rewrite wording, add a CTA, slogans, descriptive prose or made-up features. Simple navigation numbers/chevrons are allowed when specified. All captions must fit naturally without ellipsis.
+Current date2026-09-10, no visible date needed.
+
+Output ONE coherent layout concept, one mobile webpage canvas, no moodboard, no collage, no multiple alternatives, no annotation text or option title outside the webpage. Pixel-accurate visual hierarchy, purposeful whitespace. Preserve fonts and brand; vary the structural interaction concept described below.
+CONCEPT: FOLDING CHAPTERS. Target:390 CSS-px wide ×1120 CSS-px tall mobile WEB SECTION, rendered at780×2240. Single coherent accordion composition showing the second chapter expanded and the first and third collapsed. Main gutters24px.
+Sticky brand header at top, HOW IT WORKS at y108, "Three simple steps" in Newsreader36px at y136.
+First collapsed row from y211 to279: tiny STEP1 then exact "Upload your ebook." in Newsreader24px; plus icon right, fine separator below. This is a simple page row, NOT a pill.
+Second expanded chapter starts y298: tiny STEP2 and exact "Choose your language to translate the book." in Newsreader26px, two lines; minus icon right. Selected text forest, optional2px terracotta marginal stroke only; no colored container. At y405 place image3, complete language-choice portrait, x65,width260,height563. The whole image fits and remains accurate. Below image,24px spacing then a thin rule and third collapsed row at y998 with STEP3 and exact "Enjoy your book!" in24px plus a plus sign on the right. All three titles must be clearly visible in this one long mobile view.
+Calm editorial index, generous hierarchy, no enclosing accordion card, no heavy borders, no added CTA or arrows. Only the expanded chapter shows a screenshot. Preserve the full portrait rather than square cropping or stretching. No scrolling pinning implied.
+

@@ -1,0 +1,32 @@
+[
+  {
+    "variant": "a",
+    "width": 1088,
+    "height": 1445,
+    "channels": 3,
+    "hasAlpha": false,
+    "nearWhitePercent": 87.82,
+    "bytes": 1087878,
+    "sha256": "a9da0ce2ca877dfe572159cc0cbd23becabe83aaaec19aaa31974bf23aa5743c"
+  },
+  {
+    "variant": "b",
+    "width": 1536,
+    "height": 1024,
+    "channels": 3,
+    "hasAlpha": false,
+    "nearWhitePercent": 94.02,
+    "bytes": 1154866,
+    "sha256": "22f7c706aaa206457d1900e67c59a49d9a87dab1472337c247b8138b8cd33b2b"
+  },
+  {
+    "variant": "b-refined",
+    "width": 1536,
+    "height": 1024,
+    "channels": 3,
+    "hasAlpha": false,
+    "nearWhitePercent": 94.66,
+    "bytes": 1051977,
+    "sha256": "d86a61e6543382915904f2515b65bce3d2bb850169a8af5e4cf0b712396860c7"
+  }
+]

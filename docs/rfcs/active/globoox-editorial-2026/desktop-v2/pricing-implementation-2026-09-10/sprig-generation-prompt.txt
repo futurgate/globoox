@@ -1,0 +1,9 @@
+Use case: stylized-concept.
+Asset type: a single transparent PNG botanical accent for the upper-right corner of a calm editorial pricing section, rendered at approximately 82 by 120 CSS pixels.
+Reference image: the attached landing-page mock is STYLE AND SUBJECT REFERENCE ONLY. Recreate only the tiny three-leaf botanical sprig shown above the far-right corner of its pricing panel. Do not reproduce any web UI, text, cards, borders or background.
+
+Subject: one slender upright naturally bending warm grey-brown stem, splitting into three delicate short stalks, carrying exactly THREE muted sage-green lance-shaped leaves. One leaf reaches up and left, one stands near the upper middle slightly right, one points up and right lower down. Sparse asymmetrical silhouette; graceful upward movement; fine taper at the lower cut end. Fine leaf veins drawn with restrained botanical ink and light translucent watercolor wash.
+Style: contemporary quiet botanical drawing, like the reference sprig and Globoox language-tree illustration; natural imperfect detail, soft olive-grey greens, not yellowed/vintage, not lush, not cartoon, not a generic vector icon.
+Canvas: portrait approximately 512 by 768 pixels, full uncropped sprig centered, all edges and lower stem intact, 8–12% clear margin around silhouette. Deliberately sparse, no extra leaves.
+BACKGROUND: genuinely fully TRANSPARENT alpha background, clean isolated cutout with smooth alpha edges. No white or cream paper, no baked checkerboard, no ground, no cast shadow, no frame, no texture outside the plant. The website supplies the warm #f7f5ed background.
+Output: PNG with preserved alpha. No lettering, watermark, UI, container, tree, ginkgo fan leaves, bouquet, flower or seed heads.

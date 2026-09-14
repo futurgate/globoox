@@ -1,0 +1,1 @@
+Remove the background from this image. Return a transparent PNG cutout of just the botanical sprig.

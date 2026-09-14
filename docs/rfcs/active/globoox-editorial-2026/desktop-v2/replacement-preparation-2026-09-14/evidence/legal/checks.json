@@ -1,0 +1,110 @@
+[
+  {
+    "kind": "terms",
+    "width": 1440,
+    "statusCode": 200,
+    "title": "Terms of Use — Review draft | Globoox",
+    "robots": "noindex, nofollow",
+    "canonical": "https://globoox.co/landing-editorial/legal/terms",
+    "overflow": false,
+    "sections": 8,
+    "heading": "Terms of Use",
+    "status": "Draft for review · Not yet published",
+    "sticky": {
+      "top": 0,
+      "height": 96
+    },
+    "crosslink": "/landing-editorial/legal/privacy",
+    "authRequests": []
+  },
+  {
+    "kind": "terms",
+    "width": 390,
+    "statusCode": 200,
+    "title": "Terms of Use — Review draft | Globoox",
+    "robots": "noindex, nofollow",
+    "canonical": "https://globoox.co/landing-editorial/legal/terms",
+    "overflow": false,
+    "sections": 8,
+    "heading": "Terms of Use",
+    "status": "Draft for review · Not yet published",
+    "sticky": {
+      "top": 0,
+      "height": 84
+    },
+    "crosslink": "/landing-editorial/legal/privacy",
+    "authRequests": []
+  },
+  {
+    "kind": "terms",
+    "width": 320,
+    "statusCode": 200,
+    "title": "Terms of Use — Review draft | Globoox",
+    "robots": "noindex, nofollow",
+    "canonical": "https://globoox.co/landing-editorial/legal/terms",
+    "overflow": false,
+    "sections": 8,
+    "heading": "Terms of Use",
+    "status": "Draft for review · Not yet published",
+    "sticky": {
+      "top": 0,
+      "height": 84
+    },
+    "crosslink": "/landing-editorial/legal/privacy",
+    "authRequests": []
+  },
+  {
+    "kind": "privacy",
+    "width": 1440,
+    "statusCode": 200,
+    "title": "Privacy Policy — Review draft | Globoox",
+    "robots": "noindex, nofollow",
+    "canonical": "https://globoox.co/landing-editorial/legal/privacy",
+    "overflow": false,
+    "sections": 8,
+    "heading": "Privacy Policy",
+    "status": "Draft for review · Not yet published",
+    "sticky": {
+      "top": 0,
+      "height": 96
+    },
+    "crosslink": "/landing-editorial/legal/terms",
+    "authRequests": []
+  },
+  {
+    "kind": "privacy",
+    "width": 390,
+    "statusCode": 200,
+    "title": "Privacy Policy — Review draft | Globoox",
+    "robots": "noindex, nofollow",
+    "canonical": "https://globoox.co/landing-editorial/legal/privacy",
+    "overflow": false,
+    "sections": 8,
+    "heading": "Privacy Policy",
+    "status": "Draft for review · Not yet published",
+    "sticky": {
+      "top": 0,
+      "height": 84
+    },
+    "crosslink": "/landing-editorial/legal/terms",
+    "authRequests": []
+  },
+  {
+    "kind": "privacy",
+    "width": 320,
+    "statusCode": 200,
+    "title": "Privacy Policy — Review draft | Globoox",
+    "robots": "noindex, nofollow",
+    "canonical": "https://globoox.co/landing-editorial/legal/privacy",
+    "overflow": false,
+    "sections": 8,
+    "heading": "Privacy Policy",
+    "status": "Draft for review · Not yet published",
+    "sticky": {
+      "top": 0,
+      "height": 84
+    },
+    "crosslink": "/landing-editorial/legal/terms",
+    "authRequests": []
+  }
+]

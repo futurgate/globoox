@@ -1,0 +1,116 @@
+[
+  {
+    "overflow": false,
+    "selected": "Phone",
+    "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+    "titleHeight": 141.9140625,
+    "video": {
+      "bottom": 962.2421875,
+      "height": 537.328125,
+      "left": 176,
+      "right": 424,
+      "top": 424.9140625,
+      "width": 248,
+      "x": 176,
+      "y": 424.9140625
+    },
+    "videoCount": 1,
+    "width": 600,
+    "expected": "Phone"
+  },
+  {
+    "overflow": false,
+    "selected": "Tablet",
+    "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+    "titleHeight": 141.9140625,
+    "video": {
+      "bottom": 1002.390625,
+      "height": 583.4765625,
+      "left": 109,
+      "right": 492,
+      "top": 418.9140625,
+      "width": 383,
+      "x": 109,
+      "y": 418.9140625
+    },
+    "videoCount": 1,
+    "width": 601,
+    "expected": "Tablet"
+  },
+  {
+    "overflow": false,
+    "selected": "Tablet",
+    "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+    "titleHeight": 163.0234375,
+    "video": {
+      "bottom": 1043.5,
+      "height": 583.4765625,
+      "left": 358.5,
+      "right": 741.5,
+      "top": 460.0234375,
+      "width": 383,
+      "x": 358.5,
+      "y": 460.0234375
+    },
+    "videoCount": 1,
+    "width": 1100,
+    "expected": "Tablet"
+  },
+  {
+    "overflow": false,
+    "selected": "Desktop",
+    "src": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+    "titleHeight": 167.3515625,
+    "video": {
+      "bottom": 1065.8984375,
+      "height": 601.546875,
+      "left": 81,
+      "right": 1020,
+      "top": 464.3515625,
+      "width": 939,
+      "x": 81,
+      "y": 464.3515625
+    },
+    "videoCount": 1,
+    "width": 1101,
+    "expected": "Desktop"
+  },
+  {
+    "overflow": false,
+    "selected": "Phone",
+    "src": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+    "titleHeight": 209.265625,
+    "video": {
+      "bottom": 1040.59375,
+      "height": 537.328125,
+      "left": 71,
+      "right": 319,
+      "top": 503.265625,
+      "width": 248,
+      "x": 71,
+      "y": 503.265625
+    },
+    "videoCount": 1,
+    "width": 390,
+    "expected": "Phone"
+  },
+  {
+    "overflow": false,
+    "selected": "Tablet",
+    "src": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+    "titleHeight": 141.9140625,
+    "video": {
+      "bottom": 1002.390625,
+      "height": 583.4765625,
+      "left": 225.5,
+      "right": 608.5,
+      "top": 418.9140625,
+      "width": 383,
+      "x": 225.5,
+      "y": 418.9140625
+    },
+    "videoCount": 1,
+    "width": 834,
+    "expected": "Tablet"
+  }
+]

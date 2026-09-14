@@ -1,0 +1,14 @@
+Use case: background-extraction / precise-object-edit.
+Asset type: production transparent PNG botanical accent for a modern reading-app landing page.
+
+Input image 1 is the SELECTED HERO MOCK: extract and faithfully recreate ONLY its ginkgo twig visible at the lower left. Its specific silhouette, four fan-shaped leaves, desaturated sage-and-ivory colors and quiet natural drawing are the subject authority. Discard every other part of this screenshot.
+Input image 2 is a TRANSPARENT BOTANICAL TREE: use only as supporting drawing-manner reference (thin graphite/brown contours and restrained watercolor washes). Do not reproduce this tree or its almond-shaped leaves.
+
+Produce one isolated tall ginkgo twig on a GENUINELY TRANSPARENT PNG BACKGROUND with a real alpha channel. No opaque cream, white, black or checkerboard backdrop. All area outside the twig and leaves must be transparent.
+
+Faithfully keep the selected twig: a slender slightly curved warm gray-brown stem beginning at lower left, curving gently toward the upper middle, with EXACTLY FOUR widely separated fan-shaped ginkgo leaves. One large leaf high at the top, one medium leaf to the left at middle height, one somewhat smaller leaf to the right slightly above that middle leaf, and one large leaf on the lower right. Each leaf is a simple fan with fine radiating veins, gently irregular scalloped edge and muted sage-green / warm ivory watercolor pigment. Fine graphite line work, light organic material detail, natural asymmetry. Match the reference's restrained saturation and delicate hand-drawn finish. Keep the dark stem crisp enough to remain visible on an ivory website. No fuzzy halo.
+
+Composition/framing: portrait canvas approximately 600 by 1200 pixels, natural 1:2 ratio. Entire twig and every leaf must be intact and uncut, including the lower stem tip. Leave roughly 5 percent fully transparent clearance all around. Stem rises diagonally from the lower-left part of the canvas; leaves occupy the upper and right areas with plenty of transparent gaps. Intended use is a 230 by 480 CSS-pixel accent beside a real product screen.
+
+Do not add any further leaves, flowers, seeds, roots, soil, pot, ground, cast shadow, paper surface, light bloom, mist, ornamental flourishes, text, watermark, UI, frame or book. No photographed plant, no photorealism, no whole tree, no thick vintage engraving. Return ONLY this one transparent botanical asset.
+

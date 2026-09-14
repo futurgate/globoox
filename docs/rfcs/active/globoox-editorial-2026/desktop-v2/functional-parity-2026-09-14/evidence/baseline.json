@@ -1,0 +1,459 @@
+{
+  "old": {
+    "route": "/en",
+    "controls": [
+      {
+        "tag": "A",
+        "role": null,
+        "name": "GlobooxG",
+        "href": "#hero",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "How it works",
+        "href": "#how-it-works",
+        "current": "true",
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Quality",
+        "href": "#quality",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Languages",
+        "href": "#languages",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Team",
+        "href": "#team",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Start reading",
+        "href": "#start",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Language",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Open App",
+        "href": "/my-books",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Upload your first book",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Tanya Melnikova on LinkedIn",
+        "href": "https://www.linkedin.com/in/tanya-melnikova-224b3a191/",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Anton Lomovski on LinkedIn",
+        "href": "https://www.linkedin.com/in/lomovski/",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Kondrat Kondratenko on LinkedIn",
+        "href": "http://linkedin.com/in/kondrat-kondratenko/",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Maksim Ilichev on LinkedIn",
+        "href": "https://www.linkedin.com/in/maksim-ilichev-6a48ba12",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Upload your first book",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Necessary only",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Accept all",
+        "href": null,
+        "current": null,
+        "selected": null
+      }
+    ],
+    "footer": "We are building the world's first global digital ebook store where any reader can discover, buy, read, and listen to any book in their native language.\n❧\nGloboox © 2026",
+    "footerControls": [
+      {
+        "text": "Terms",
+        "visible": false,
+        "href": null
+      },
+      {
+        "text": "Privacy Policy",
+        "visible": false,
+        "href": null
+      }
+    ],
+    "meta": {
+      "title": "Globoox",
+      "robots": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://globoox.co/en",
+          "lang": ""
+        },
+        {
+          "rel": "alternate",
+          "href": "https://globoox.co/en",
+          "lang": "en"
+        },
+        {
+          "rel": "alternate",
+          "href": "https://globoox.co/es",
+          "lang": "es"
+        },
+        {
+          "rel": "alternate",
+          "href": "https://globoox.co/fr",
+          "lang": "fr"
+        },
+        {
+          "rel": "alternate",
+          "href": "https://globoox.co/ru",
+          "lang": "ru"
+        }
+      ],
+      "jsonLd": [
+        "{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"Globoox\",\"url\":\"https://globoox.co\",\"logo\":\"https://globoox.co/icon-512.png\",\"description\":\"Reading app that instantly translates ebooks into your native language with Al. Upload EPUBs and read in English, French, Spanish or Russian.\",\"sameAs\":[]}"
+      ]
+    },
+    "errors": []
+  },
+  "new": {
+    "route": "/landing-editorial",
+    "controls": [
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Skip to content",
+        "href": "#main-content",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Globoox home",
+        "href": "#hero",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "How it works",
+        "href": "#how-it-works",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Quality",
+        "href": "#quality",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Languages",
+        "href": "#languages",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Team",
+        "href": "#team",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Pricing",
+        "href": "#pricing",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Start reading",
+        "href": "#start",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "SELECT",
+        "role": null,
+        "name": "EnglishFrançaisРусский",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Open App",
+        "href": "/my-books",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Upload your first book",
+        "href": "/my-books",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": "tab",
+        "name": "Desktop",
+        "href": null,
+        "current": null,
+        "selected": "true"
+      },
+      {
+        "tag": "BUTTON",
+        "role": "tab",
+        "name": "Tablet",
+        "href": null,
+        "current": null,
+        "selected": "false"
+      },
+      {
+        "tag": "BUTTON",
+        "role": "tab",
+        "name": "Phone",
+        "href": null,
+        "current": null,
+        "selected": "false"
+      },
+      {
+        "tag": "BUTTON",
+        "role": "tab",
+        "name": "Step 1Upload your ebook.",
+        "href": null,
+        "current": null,
+        "selected": "true"
+      },
+      {
+        "tag": "BUTTON",
+        "role": "tab",
+        "name": "Step 2Choose your language to translate the book.",
+        "href": null,
+        "current": null,
+        "selected": "false"
+      },
+      {
+        "tag": "BUTTON",
+        "role": "tab",
+        "name": "Step 3Enjoy your book!",
+        "href": null,
+        "current": null,
+        "selected": "false"
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Hide translation",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "DIV",
+        "role": "slider",
+        "name": "Original and translated excerpt comparison",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Read full excerpt",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Tanya Melnikova on LinkedIn",
+        "href": "https://www.linkedin.com/in/tanya-melnikova-224b3a191/",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Anton Lomovski on LinkedIn",
+        "href": "https://www.linkedin.com/in/lomovski/",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Kondrat Kondratenko on LinkedIn",
+        "href": "http://linkedin.com/in/kondrat-kondratenko/",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Maksim Ilichev on LinkedIn",
+        "href": "https://www.linkedin.com/in/maksim-ilichev-6a48ba12",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Start for free",
+        "href": "/my-books",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Get Started",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Contact Us",
+        "href": "mailto:support@globoox.co?subject=Globoox%20Editorial",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Upload your first book",
+        "href": "/my-books",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "A",
+        "role": null,
+        "name": "Back to top",
+        "href": "#hero",
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Necessary only",
+        "href": null,
+        "current": null,
+        "selected": null
+      },
+      {
+        "tag": "BUTTON",
+        "role": null,
+        "name": "Accept all",
+        "href": null,
+        "current": null,
+        "selected": null
+      }
+    ],
+    "footer": "We are building the world's first global digital ebook store where any reader can discover, buy, read, and listen to any book in their native language.\n\nGloboox © 2026\nBack to top",
+    "footerControls": [
+      {
+        "text": "Back to top",
+        "visible": true,
+        "href": "#hero"
+      }
+    ],
+    "meta": {
+      "title": "Globoox",
+      "robots": "noindex, nofollow",
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://globoox.co/landing-editorial",
+          "lang": ""
+        }
+      ],
+      "jsonLd": [
+        "{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"Globoox\",\"url\":\"https://globoox.co\",\"logo\":\"https://globoox.co/icon-512.png\",\"description\":\"Reading app that instantly translates ebooks into your native language with Al. Upload EPUBs and read in English, French, Spanish or Russian.\",\"sameAs\":[]}"
+      ]
+    },
+    "errors": []
+  }
+}

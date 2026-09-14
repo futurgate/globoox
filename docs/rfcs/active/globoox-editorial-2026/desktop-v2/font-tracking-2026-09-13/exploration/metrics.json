@@ -1,0 +1,1046 @@
+[
+  {
+    "width": 1440,
+    "weight": 450,
+    "spacing": 0,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 7,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 450,
+    "spacing": -0.1,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 450,
+    "spacing": -0.15,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 450,
+    "spacing": -0.2,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 450,
+    "spacing": -0.25,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 450,
+    "spacing": -0.3,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 470,
+    "spacing": 0,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 7,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 15,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 470,
+    "spacing": -0.1,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 470,
+    "spacing": -0.15,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 470,
+    "spacing": -0.2,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 470,
+    "spacing": -0.25,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 470,
+    "spacing": -0.3,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 480,
+    "spacing": 0,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 7,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 15,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 480,
+    "spacing": -0.1,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 480,
+    "spacing": -0.15,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 480,
+    "spacing": -0.2,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 480,
+    "spacing": -0.25,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "weight": 480,
+    "spacing": -0.3,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 6,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 6,
+        "width": 820
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 14,
+        "width": 820
+      },
+      {
+        "lang": "en",
+        "lines": 13,
+        "width": 820
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 450,
+    "spacing": 0,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 41,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 450,
+    "spacing": -0.1,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 450,
+    "spacing": -0.15,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 450,
+    "spacing": -0.2,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 450,
+    "spacing": -0.25,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 450,
+    "spacing": -0.3,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 470,
+    "spacing": 0,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 41,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 470,
+    "spacing": -0.1,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 470,
+    "spacing": -0.15,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 470,
+    "spacing": -0.2,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 470,
+    "spacing": -0.25,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 470,
+    "spacing": -0.3,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 480,
+    "spacing": 0,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 41,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 480,
+    "spacing": -0.1,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 41,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 480,
+    "spacing": -0.15,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 480,
+    "spacing": -0.2,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 480,
+    "spacing": -0.25,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "weight": 480,
+    "spacing": -0.3,
+    "collapsed": [
+      {
+        "lang": "ru",
+        "lines": 8,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 8,
+        "width": 288
+      }
+    ],
+    "expanded": [
+      {
+        "lang": "ru",
+        "lines": 40,
+        "width": 288
+      },
+      {
+        "lang": "en",
+        "lines": 40,
+        "width": 288
+      }
+    ]
+  }
+]

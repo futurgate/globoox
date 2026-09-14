@@ -1,0 +1,263 @@
+[
+  {
+    "name": "Текущий: Georgia / Newsreader",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 52,
+          "advance": 12127.765625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 16,
+          "advance": 12127.765625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 37,
+          "advance": 9483.671875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9483.671875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 52,
+          "advance": 12430.515625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 17,
+          "advance": 12430.515625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 42,
+          "advance": 10485.15625,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10485.15625,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 56,
+          "advance": 13205.15625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 18,
+          "advance": 13205.15625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 45,
+          "advance": 11138.890625,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 14,
+          "advance": 11138.890625,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Lora",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 54,
+          "advance": 12739.015625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 17,
+          "advance": 12739.015625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 44,
+          "advance": 10967.734375,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10967.734375,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "PT Serif",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 52,
+          "advance": 12248.625,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 17,
+          "advance": 12248.625,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 41,
+          "advance": 10474.953125,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10474.953125,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "STIX Two Text",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 50,
+          "advance": 11810.8125,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11810.8125,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9952.375,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9952.375,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "IBM Plex Serif",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 56,
+          "advance": 13051.8125,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 17,
+          "advance": 13051.8125,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 45,
+          "advance": 11070.71875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 14,
+          "advance": 11070.71875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 87.5",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 52,
+          "advance": 12344.53125,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 17,
+          "advance": 12344.53125,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 41,
+          "advance": 10487.6875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10487.6875,
+          "chars": 1114
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 75",
+    "metrics": {
+      "ru": {
+        "288": {
+          "lines": 48,
+          "advance": 11427.96875,
+          "chars": 1143
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11427.96875,
+          "chars": 1143
+        }
+      },
+      "en": {
+        "288": {
+          "lines": 39,
+          "advance": 9755.71875,
+          "chars": 1114
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9755.71875,
+          "chars": 1114
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,56 @@
+date: "2026-09-10"
+status: "two generated candidates visually reviewed; root selects integration"
+mode: "built-in image_gen.imagegen"
+intent: "New production botanical closing artwork derived from existing approved drawing manner."
+invariants:
+  - "Original closing copy, app icon, section order, and page typography remain unchanged."
+  - "No code or root-document changes in this delegated asset task."
+  - "Preserve original botanical-frame.png and original generated outputs."
+references:
+  - path: "public/redesign/language-garden/tree.png"
+    role: "Primary style reference: sparse credible graphite stems and restrained sage watercolor leaves."
+  - path: "public/redesign/pricing/sprig.png"
+    role: "Supporting leaf handling reference."
+  - path: "docs/rfcs/active/globoox-editorial-2026/desktop-v2/pricing-refinements-2026-09-10/footer-desktop.png"
+    role: "Reviewed current page composition; not passed as an imagegen reference."
+  - path: "public/redesign/botanical-frame.png"
+    role: "Reviewed old dense artwork to replace; not passed as an imagegen reference."
+candidates:
+  - id: "a"
+    path: "public/redesign/closing/closing-v2-a.png"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-611179c5-e35f-4768-85fd-90c3b67e7ebd.png"
+    dimensions: [1536, 1024]
+    format: "PNG RGB, near-white background; no alpha."
+    critique: "Preferred drawing: thin delicate graphite, two complete asymmetrical young stems, many breathing gaps. Matches the Languages manner and avoids dense ferns/flowers. Plants occupy approximately the outer21%/22%, slightly wider than requested17%, leaving a continuous clean central57% band. Taller left specimen offers a more composed closing frame; total canvas must be positioned without cutting its natural top."
+    background_check: "Actual raw centre pixels x500–999 over all1024 rows: per-channel minimum253, maximum255. Near-white is suitable for CSS multiply over ivory. No pixel editing performed."
+    prompt: |
+      Use case: style-transfer.
+      Asset type: production botanical illustration background for the closing call-to-action of a refined digital book reading website.
+      Input image1 is the approved Languages tree: STYLE reference only. Input image2 is a leaf sprig: leaf drawing reference only. Create a completely NEW sparse wide composition; do not reproduce the tree shape or huge leaves from either input.
+      Canvas: landscape 1536x1024, exact pure white RGB background, no texture or cast shadows; intended for CSS multiply over ivory.
+      Drawing manner: fine natural graphite stems with a faint muted sage watercolor wash inside individual small leaves, quiet contemporary botanical field drawing. Credible plant anatomy, delicate visible pencil veins, restraint and air. Pale gray-brown stems, gray sage leaves, no black outlines.
+      Composition A — airy bookends: one complete slender olive-like young branching stem on far LEFT, from x8% y89% up to x13% y19%, carrying only 10–13 small spaced leaves; one different complete slender stem on far RIGHT, from x92% y90% up to x89% y34%, carrying 7–10 leaves. Subtle asymmetry, left slightly taller and narrower. All marks limited to outer 17% bands; middle 66% of canvas entirely untouched white from top to bottom. Each whole specimen is detached from soil, natural tapering bottom stems visible with no root structure. Leave at least 5% white breathing room around every side, topmost leaf and bottom stem. Neither plant touches an image edge. Lower corners also airy, NOT dense.
+      This is an artwork asset, not a webpage mockup. No typography, letters, logo, frame, button, card, book, flower, fern, grass seedhead, root, planter, ground line, vignette, beige paper, grain background or glow. Avoid mirrored matching pair and decorative wedding-wreath symmetry. Output a single finished clean botanical illustration.
+  - id: "b"
+    path: "public/redesign/closing/closing-v2-b.png"
+    original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-29d73f25-9c92-4a68-97ff-9a306ae90bb2.png"
+    dimensions: [1536, 1024]
+    format: "PNG RGB, near-white background; no alpha."
+    critique: "Useful low-composition alternative: shorter open diagonal branches and large clean upper third. Leaves are slightly greener and broader than A; the drawing remains within the same family. Both complete stems have visible ends. Leftmost stem clearance is about36px, smaller than the requested5%, so preserve its uncut extent in CSS. Central lower whitespace is somewhat narrower than A. Can shift the canvas upward through its blank upper third to fit a shorter closing region."
+    background_check: "Actual raw centre pixels x500–999 over all1024 rows: per-channel minimum253, maximum255. Near-white is suitable for CSS multiply over ivory. No pixel editing performed."
+    prompt: |
+      Use case: style-transfer.
+      Asset type: production botanical illustration background for the closing call-to-action of a refined digital book reading website.
+      Input image1 is the approved Languages tree: STYLE reference only. Input image2 is a leaf sprig: pencil and watercolor handling reference only. Create a NEW composition, not the original tree shape.
+      Canvas: landscape 1536x1024, exact pure white RGB background, no paper texture or shadows, intended for CSS multiply over ivory.
+      Drawing manner: refined botanical pencil drawing with gentle muted sage watercolor washes, gray-brown fine stems, small almond-shaped sage leaves with delicate pencil veins. Natural imperfect hand-drawn spacing. Understated contemporary editorial accent, not Victorian illustration.
+      Composition B — low open margin branches: a complete thin bay-like branch rests diagonally in the bottom LEFT margin, curved gracefully upward, with a bare tapered cut end at x7% y89%, two light offshoots reaching x13% y42% and x18% y68%. Only 10 small leaves spaced far apart. A shorter and slightly wider complete companion branch in the bottom RIGHT margin, rooted visually at x93% y90%, its fine stem bending toward x87% y63%, a second tiny offshoot at x94% y54%, only 7 small leaves. Both forms completely contained in their own outer 19% strips. Central 62% is completely blank white, top 35% completely blank white. Whole shapes uncut, all tips at least 5% from canvas edges. Detached studies, no roots or soil. Give the overall image more untouched white than any ornament.
+      Artwork only: no page layout, text, logo, cards, button, book, decorative border, full wreath, flowers, ferns, grasses, roots, dense bottom tangle, vignette, gray halo, beige tint, watercolor background cloud, or rough distressed paper. Do not mirror plants. Generate a single finished illustration.
+integration_notes:
+  - "Do not copy the old opacity0.24 or dense fern fade treatment by default; begin around0.8–1 so pencil lines retain their character."
+  - "Use multiply against the existing ivory, maintaining source aspect ratio."
+  - "Keep the CTA text and button within clean central space. Artwork is subordinate to content."
+  - "Keep plants whole; crop or offset only blank portions of the source canvas."
+  - "A is the reviewer preference for style. B offers easier vertical positioning for a shorter closing block."
+  - "Root must visually verify integrated desktop and mobile composition before declaring page QA passed."
+

@@ -1,0 +1,32 @@
+[
+  {
+    "number": 1,
+    "title": "Последовательные секции",
+    "filename": "01-vertical-episodes.png",
+    "source": "/Users/user/.codex/generated_images/01a07109-a720-7981-ada1-2f1ba712a484/exec-c9e1691f-f1ad-481e-8861-7234f19269ba.png"
+  },
+  {
+    "number": 2,
+    "title": "Большой экран с табами",
+    "filename": "02-top-stepper.png",
+    "source": "/Users/user/.codex/generated_images/01a07109-a720-7981-ada1-2f1ba712a484/exec-ec45d2ac-fa7f-4e30-a346-cc981e6bdcfc.png"
+  },
+  {
+    "number": 3,
+    "title": "Аккордеон",
+    "filename": "03-accordion.png",
+    "source": "/Users/user/.codex/generated_images/01a07109-a720-7981-ada1-2f1ba712a484/exec-2cf65d00-6347-4a58-9df5-164ab7392adb.png"
+  },
+  {
+    "number": 4,
+    "title": "Свайп-карточки",
+    "filename": "04-swipe-cards.png",
+    "source": "/Users/user/.codex/generated_images/01a07109-a720-7981-ada1-2f1ba712a484/exec-2f7e5b33-589f-4d3b-ae05-0ffd0ae38e32.png"
+  },
+  {
+    "number": 5,
+    "title": "Экран сначала, описание снизу",
+    "filename": "05-product-first.png",
+    "source": "/Users/user/.codex/generated_images/01a07109-a720-7981-ada1-2f1ba712a484/exec-4258fb5e-da69-4746-8202-09af732518a2.png"
+  }
+]

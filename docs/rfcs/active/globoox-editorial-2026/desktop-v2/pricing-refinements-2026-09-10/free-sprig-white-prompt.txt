@@ -1,0 +1,1 @@
+Edit only the background: replace the entire checkerboard and crumpled texture with perfectly flat pure white #FFFFFF. Preserve the illustrated twig and every leaf exactly as in the reference. No shadow, no paper texture, no gradients. Isolated sage watercolor botanical on clean uniform white.

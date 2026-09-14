@@ -1,0 +1,9 @@
+Use case: precise-object-edit.
+Asset type: isolated ginkgo illustration for web composition.
+
+The input has an unwanted pale checkered pattern behind the plant. Change ONLY that background into perfectly uniform opaque pure white, RGB 255,255,255 (#FFFFFF), across every area outside the plant silhouette and between its leaves and stem.
+
+Preserve exactly the supplied botanical drawing: the complete thin curved brown stem and its FOUR fan-shaped ginkgo leaves, all positions and proportions, restrained sage/ivory watercolor washes, fine radiating veins and light graphite detail. Keep the complete uncut plant with a generous margin on all four sides.
+
+The background must be absolutely flat PURE WHITE. No checkerboard, no paper texture or grain, no gradients, no gray cast, no drop shadow, no ground contact, no vignette. Do not draw or imply transparency. Return a regular opaque RGB PNG of the same tall 1:2 composition. This white background will be blended into the website by CSS. No UI, label, text, logo, extra leaf or additional object.
+

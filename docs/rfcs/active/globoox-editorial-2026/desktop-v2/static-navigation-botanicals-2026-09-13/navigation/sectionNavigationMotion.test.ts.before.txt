@@ -1,0 +1,80 @@
+import { describe, expect, it } from 'vitest';
+import { createSectionScrollRoute } from '@/components/landing-editorial/sectionNavigationMotion';
+
+const interval = { start: 1000, end: 4000 };
+
+describe('section navigation route', () => {
+  it('keeps travel linear when no valid interval overlaps it', () => {
+    for (const [from, to, bounds] of [
+      [100, 700, undefined],
+      [100, 700, interval],
+      [5500, 4500, interval],
+      [0, 5000, { start: 1000, end: 1000 }],
+      [0, 5000, { start: Number.NaN, end: 4000 }],
+    ] as const) {
+      const route = createSectionScrollRoute(from, to, bounds);
+      expect(route.distance).toBe(Math.abs(to - from));
+      expect(route.position(0.25)).toBe(from + (to - from) / 4);
+    }
+  });
+
+  it('compresses the entire interval to 40% while preserving outside travel', () => {
+    expect(createSectionScrollRoute(1000, 4000, interval).distance).toBeCloseTo(1200, 8);
+    expect(createSectionScrollRoute(0, 5000, interval).distance).toBeCloseTo(3200, 8);
+  });
+
+  it('has exact endpoints, clamps overshoot, and supports a zero-length route', () => {
+    for (const [from, to] of [[0, 5000], [3500, 1400], [1700, 1700]]) {
+      const route = createSectionScrollRoute(from, to, interval);
+      expect(route.position(-0.1)).toBe(from);
+      expect(route.position(0)).toBe(from);
+      expect(route.position(1)).toBe(to);
+      expect(route.position(1.1)).toBe(to);
+      if (from === to) {
+        expect(route.distance).toBe(0);
+        expect(route.position(0.5)).toBe(from);
+      }
+    }
+  });
+
+  it('retraces the same route in reverse, including partial crossings and interior targets', () => {
+    for (const [from, to] of [[0, 5000], [0, 2500], [2000, 5000], [1150, 3850], [1300, 2500]]) {
+      const forward = createSectionScrollRoute(from, to, interval);
+      const reverse = createSectionScrollRoute(to, from, interval);
+      expect(reverse.distance).toBe(forward.distance);
+      let previous = from;
+      for (let index = 0; index <= 100; index++) {
+        const progress = index / 100;
+        const position = forward.position(progress);
+        expect(position).toBeGreaterThanOrEqual(previous);
+        expect(position).toBeLessThanOrEqual(to);
+        expect(reverse.position(1 - progress)).toBeCloseTo(position, 6);
+        previous = position;
+      }
+    }
+  });
+
+  it('accounts for partial crossings without counting unused runway', () => {
+    const full = createSectionScrollRoute(0, 5000, interval);
+    const first = createSectionScrollRoute(0, 2500, interval);
+    const second = createSectionScrollRoute(2500, 5000, interval);
+    expect(first.distance + second.distance).toBeCloseTo(full.distance, 8);
+    expect(full.position(first.distance / full.distance)).toBeCloseTo(2500, 6);
+    expect(createSectionScrollRoute(1300, 3700, interval).distance).toBeCloseTo(800, 8);
+  });
+
+  it('keeps velocity continuous at both outer boundaries and both ramp/core joins', () => {
+    const route = createSectionScrollRoute(0, 5000, interval);
+    const increment = 0.000001;
+    for (const boundary of [1000, 1300, 3700, 4000]) {
+      const progress = createSectionScrollRoute(0, boundary, interval).distance / route.distance;
+      const center = route.position(progress);
+      const leftVelocity = (center - route.position(progress - increment)) / increment;
+      const rightVelocity = (route.position(progress + increment) - center) / increment;
+      expect(Math.abs(leftVelocity - rightVelocity) / leftVelocity).toBeLessThan(0.00001);
+    }
+    const coreProgress = createSectionScrollRoute(0, 2500, interval).distance / route.distance;
+    const coreVelocity = (route.position(coreProgress + increment) - route.position(coreProgress - increment)) / (2 * increment);
+    expect(coreVelocity / route.distance).toBeCloseTo(3, 5);
+  });
+});

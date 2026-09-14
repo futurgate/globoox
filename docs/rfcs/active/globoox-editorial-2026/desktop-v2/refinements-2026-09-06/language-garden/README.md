@@ -1,3 +1,10 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Language garden — completed visual exploration
 
 **Superseding revision, 2026-09-07:** the user rejected the prior composition and miniature “soon” cards. The current `/landing-editorial#languages` revision compacts the canopy and current-language papers, aligns copy independently, and replaces upcoming cards with two 18px HTML rows separated by middots beside three small growing sprouts (`seedlings-growth.png`). [New revision record](../../refinements-2026-09-07/README.md) · [New QA record](../../refinements-2026-09-07/design-qa.md). This notice does not claim final QA approval.

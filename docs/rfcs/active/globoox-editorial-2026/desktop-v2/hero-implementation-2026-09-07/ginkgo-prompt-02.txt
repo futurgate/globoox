@@ -1,0 +1,5 @@
+Use case: background-extraction.
+Edit the supplied ginkgo asset ONLY to remove the artificial checkered background. Keep the existing four-leaf twig, its shape, placement, colors, dimensions, fine vein detail and every visible plant pixel unchanged.
+
+Deliver a PNG FILE WITH AN ACTUAL ALPHA CHANNEL and empty transparent pixels everywhere outside the plant silhouette. Use genuine image transparency, not a picture of a transparency grid. The source is an RGB file with a painted grid, so its background must be removed. Preserve antialiased plant edges and the complete uncut thin stem. No new backdrop, no colors behind the plant, no shadow, no graphic grid. This is a production isolated web asset. The only visible subject in the output is the exact existing ginkgo twig.
+

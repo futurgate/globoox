@@ -1,0 +1,178 @@
+[
+  {
+    "locale": "en",
+    "width": 1440,
+    "text": "We are building the world's first global digital ebook store where any reader can discover, buy, read, and listen to any book in their native language.",
+    "alignment": "center",
+    "center": 720,
+    "viewport": 1440,
+    "links": [
+      {
+        "text": "Terms",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Privacy Policy",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Back to top ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "width": 320,
+    "text": "We are building the world's first global digital ebook store where any reader can discover, buy, read, and listen to any book in their native language.",
+    "alignment": "center",
+    "center": 160,
+    "viewport": 320,
+    "links": [
+      {
+        "text": "Terms",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Privacy Policy",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Back to top ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "fr",
+    "width": 1440,
+    "text": "Nous créons la première plateforme globale de livres numériques, permettant à chaque lecteur de découvrir, acheter, lire et écouter le livre de son choix dans sa langue maternelle.",
+    "alignment": "center",
+    "center": 720,
+    "viewport": 1440,
+    "links": [
+      {
+        "text": "Conditions",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Confidentialité",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Retour en haut ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "fr",
+    "width": 320,
+    "text": "Nous créons la première plateforme globale de livres numériques, permettant à chaque lecteur de découvrir, acheter, lire et écouter le livre de son choix dans sa langue maternelle.",
+    "alignment": "center",
+    "center": 160,
+    "viewport": 320,
+    "links": [
+      {
+        "text": "Conditions",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Confidentialité",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Retour en haut ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "ru",
+    "width": 1440,
+    "text": "Мы создаём первый в мире глобальный цифровой магазин электронных книг, где любой читатель может находить, покупать, читать и слушать любую книгу на своём родном языке.",
+    "alignment": "center",
+    "center": 720,
+    "viewport": 1440,
+    "links": [
+      {
+        "text": "Условия",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Политика конфиденциальности",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Наверх ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "ru",
+    "width": 320,
+    "text": "Мы создаём первый в мире глобальный цифровой магазин электронных книг, где любой читатель может находить, покупать, читать и слушать любую книгу на своём родном языке.",
+    "alignment": "center",
+    "center": 160,
+    "viewport": 320,
+    "links": [
+      {
+        "text": "Условия",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Политика конфиденциальности",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Наверх ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "es",
+    "width": 1440,
+    "text": "Estamos creando la primera tienda digital global de ebooks del mundo, donde cualquier lector pueda descubrir, comprar, leer y escuchar cualquier libro en su idioma nativo.",
+    "alignment": "center",
+    "center": 720,
+    "viewport": 1440,
+    "links": [
+      {
+        "text": "Términos",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Privacidad",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Volver arriba ",
+        "href": "#hero"
+      }
+    ]
+  },
+  {
+    "locale": "es",
+    "width": 320,
+    "text": "Estamos creando la primera tienda digital global de ebooks del mundo, donde cualquier lector pueda descubrir, comprar, leer y escuchar cualquier libro en su idioma nativo.",
+    "alignment": "center",
+    "center": 160,
+    "viewport": 320,
+    "links": [
+      {
+        "text": "Términos",
+        "href": "/landing-editorial/legal/terms"
+      },
+      {
+        "text": "Privacidad",
+        "href": "/landing-editorial/legal/privacy"
+      },
+      {
+        "text": "Volver arriba ",
+        "href": "#hero"
+      }
+    ]
+  }
+]

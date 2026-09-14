@@ -1,3 +1,10 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Orchard language block — desktop design QA
 
 **final result: passed**

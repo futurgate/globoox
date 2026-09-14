@@ -1,0 +1,210 @@
+[
+  {
+    "label": "step-2",
+    "active": "Step 2Choose your language to translate the book.",
+    "hash": "#how-it-works",
+    "header": {
+      "bottom": 96,
+      "height": 96,
+      "left": 0,
+      "right": 1440,
+      "top": 0,
+      "width": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "image": [
+      {
+        "loaded": true,
+        "rect": {
+          "bottom": 839.7578125,
+          "height": 679.515625,
+          "left": 963,
+          "right": 1277,
+          "top": 160.2421875,
+          "width": 314,
+          "x": 963,
+          "y": 160.2421875
+        },
+        "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F2.1-en.webp&w=3840&q=75"
+      }
+    ],
+    "layout": {
+      "bottom": 880,
+      "height": 760,
+      "left": 140,
+      "right": 1300,
+      "top": 120,
+      "width": 1160,
+      "x": 140,
+      "y": 120
+    },
+    "section": {
+      "bottom": 1540.0703125,
+      "height": 1860,
+      "left": 0,
+      "right": 1440,
+      "top": -319.9296875,
+      "width": 1440,
+      "x": 0,
+      "y": -319.9296875
+    },
+    "y": 1573
+  },
+  {
+    "label": "step-3",
+    "active": "Step 3Enjoy your book!",
+    "hash": "#how-it-works",
+    "header": {
+      "bottom": 96,
+      "height": 96,
+      "left": 0,
+      "right": 1440,
+      "top": 0,
+      "width": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "image": [
+      {
+        "loaded": true,
+        "rect": {
+          "bottom": 839.7578125,
+          "height": 679.515625,
+          "left": 963,
+          "right": 1277,
+          "top": 160.2421875,
+          "width": 314,
+          "x": 963,
+          "y": 160.2421875
+        },
+        "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F3-en-es.webp&w=3840&q=75"
+      }
+    ],
+    "layout": {
+      "bottom": 880,
+      "height": 760,
+      "left": 140,
+      "right": 1300,
+      "top": 120,
+      "width": 1160,
+      "x": 140,
+      "y": 120
+    },
+    "section": {
+      "bottom": 1140.0703125,
+      "height": 1860,
+      "left": 0,
+      "right": 1440,
+      "top": -719.9296875,
+      "width": 1440,
+      "x": 0,
+      "y": -719.9296875
+    },
+    "y": 1973
+  },
+  {
+    "label": "back-step-2",
+    "active": "Step 2Choose your language to translate the book.",
+    "hash": "#how-it-works",
+    "header": {
+      "bottom": 96,
+      "height": 96,
+      "left": 0,
+      "right": 1440,
+      "top": 0,
+      "width": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "image": [
+      {
+        "loaded": true,
+        "rect": {
+          "bottom": 839.7578125,
+          "height": 679.515625,
+          "left": 963,
+          "right": 1277,
+          "top": 160.2421875,
+          "width": 314,
+          "x": 963,
+          "y": 160.2421875
+        },
+        "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F2.1-en.webp&w=3840&q=75"
+      }
+    ],
+    "layout": {
+      "bottom": 880,
+      "height": 760,
+      "left": 140,
+      "right": 1300,
+      "top": 120,
+      "width": 1160,
+      "x": 140,
+      "y": 120
+    },
+    "section": {
+      "bottom": 1540.0703125,
+      "height": 1860,
+      "left": 0,
+      "right": 1440,
+      "top": -319.9296875,
+      "width": 1440,
+      "x": 0,
+      "y": -319.9296875
+    },
+    "y": 1573
+  },
+  {
+    "label": "back-step-1",
+    "active": "Step 1Upload your ebook.",
+    "hash": "#how-it-works",
+    "header": {
+      "bottom": 96,
+      "height": 96,
+      "left": 0,
+      "right": 1440,
+      "top": 0,
+      "width": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "image": [
+      {
+        "loaded": true,
+        "rect": {
+          "bottom": 839.828125,
+          "height": 679.515625,
+          "left": 963,
+          "right": 1277,
+          "top": 160.3125,
+          "width": 314,
+          "x": 963,
+          "y": 160.3125
+        },
+        "src": "/_next/image?url=%2Fimages%2Fhow-it-works%2F1.1.webp&w=3840&q=75"
+      }
+    ],
+    "layout": {
+      "bottom": 880.0703125,
+      "height": 760,
+      "left": 140,
+      "right": 1300,
+      "top": 120.0703125,
+      "width": 1160,
+      "x": 140,
+      "y": 120.0703125
+    },
+    "section": {
+      "bottom": 1980.0703125,
+      "height": 1860,
+      "left": 0,
+      "right": 1440,
+      "top": 120.0703125,
+      "width": 1440,
+      "x": 0,
+      "y": 120.0703125
+    },
+    "y": 1133
+  }
+]

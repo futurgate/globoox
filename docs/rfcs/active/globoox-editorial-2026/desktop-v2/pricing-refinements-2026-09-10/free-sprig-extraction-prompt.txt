@@ -1,0 +1,5 @@
+Use case: background-extraction.
+Edit target: the attached botanical illustration of a diagonal sprig with two large sage leaves and one small leaf at its upper tip.
+Preserve exactly the current plant's shape, size, position, detailed warm brown stem, leaf veins and sage watercolor colors. Change ONLY the background.
+REMOVE the entire light grey checkerboard and all crumpled-paper texture outside the botanical. The last image incorrectly drew a checkerboard in RGB. Produce ACTUAL PNG TRANSPARENCY with a real alpha channel, just like a clean isolated product cutout. Every empty pixel around the plant must be fully transparent alpha=0. Keep only the plant silhouette with smooth antialiased alpha edges. No baked checkerboard, white, black, cream, gradients, paper, shadows, outline or glow. Do not replace transparency with a visual representation.
+Keep the whole canvas and uncropped silhouette including all three leaves and the stem's bottom tip. This asset will be placed directly over a #f7f5ed website surface; that background is supplied by the website and must not be in this image.

@@ -1,0 +1,98 @@
+[
+  {
+    "name": "RobotoSerif",
+    "license": "SIL Open Font License1.1",
+    "files": [
+      {
+        "path": "source-fonts/RobotoSerif-Variable.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotoserif/RobotoSerif%5BGRAD%2Copsz%2Cwdth%2Cwght%5D.ttf",
+        "bytes": 3944924,
+        "sha256": "351ced75f3851806aa6d846b669361521eb1925cfc530396df9c1a1b77061ddb"
+      },
+      {
+        "path": "RobotoSerif-OFL.txt",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotoserif/OFL.txt",
+        "bytes": 4489,
+        "sha256": "34dbfbb43e0b4fdeef445d77b9ac0b988e5ad7a9bbf16808c97b66c66d51f553"
+      },
+      {
+        "path": "RobotoSerif-METADATA.pb",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/robotoserif/METADATA.pb",
+        "bytes": 1744,
+        "sha256": "5f5893410acc682cefc0eef3c6be921fde33c6e78a052fc763ca949ddb102eee"
+      }
+    ]
+  },
+  {
+    "name": "NotoSerif",
+    "license": "SIL Open Font License1.1",
+    "files": [
+      {
+        "path": "source-fonts/NotoSerif-Variable.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserif/NotoSerif%5Bwdth%2Cwght%5D.ttf",
+        "bytes": 1887192,
+        "sha256": "4d8e6761424656867019081a1a01336f3cb086982682698714054fc33f782713"
+      },
+      {
+        "path": "NotoSerif-OFL.txt",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserif/OFL.txt",
+        "bytes": 4396,
+        "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a"
+      },
+      {
+        "path": "NotoSerif-METADATA.pb",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/notoserif/METADATA.pb",
+        "bytes": 29397,
+        "sha256": "659cf6a2475eabfa3e3bbb92e3ed15c604e6fb035b3b1057d469cc88e67357bb"
+      }
+    ]
+  },
+  {
+    "name": "Merriweather",
+    "license": "SIL Open Font License1.1",
+    "files": [
+      {
+        "path": "source-fonts/Merriweather-Variable.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/merriweather/Merriweather%5Bopsz%2Cwdth%2Cwght%5D.ttf",
+        "bytes": 4628080,
+        "sha256": "d0ed0e359e396af7ad05e73dffd11a3a4c326ea0d0283c56bd9361cb2cc86a96"
+      },
+      {
+        "path": "Merriweather-OFL.txt",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/merriweather/OFL.txt",
+        "bytes": 4438,
+        "sha256": "715bd349bfa6116f99e351e1548321dcfa25b91df65502d22ca8d624557697d2"
+      },
+      {
+        "path": "Merriweather-METADATA.pb",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/merriweather/METADATA.pb",
+        "bytes": 5391,
+        "sha256": "50aa12ab94b75275eb90b6353dd3f9b187c101ce0a89071f5456c052490a4345"
+      }
+    ]
+  },
+  {
+    "name": "IBMPlexSerif",
+    "license": "SIL Open Font License1.1",
+    "files": [
+      {
+        "path": "source-fonts/IBMPlexSerif-Regular.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexserif/IBMPlexSerif-Regular.ttf",
+        "bytes": 163068,
+        "sha256": "e882efa9c41949a528ac2369079ec5ef050c1c996bbd0bacce3c3326d44cf80d"
+      },
+      {
+        "path": "IBMPlexSerif-OFL.txt",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexserif/OFL.txt",
+        "bytes": 4456,
+        "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+      },
+      {
+        "path": "IBMPlexSerif-METADATA.pb",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/ibmplexserif/METADATA.pb",
+        "bytes": 6404,
+        "sha256": "abe4d1c45c123aba1988cd20f98fccd5cecaf8c6ff2746b34e7b0ecc1364c3a3"
+      }
+    ]
+  }
+]

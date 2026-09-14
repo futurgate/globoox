@@ -1,0 +1,2186 @@
+[
+  {
+    "name": "Current",
+    "file": "public/redesign/fonts/newsreader-roman.woff2",
+    "axes": {
+      "opsz": 15.75,
+      "wght": 400
+    },
+    "size": 21,
+    "alias": "Test0",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 72,
+          "advance": 12157.203125
+        },
+        "288": {
+          "lines": 52,
+          "advance": 12157.203125
+        },
+        "328": {
+          "lines": 43,
+          "advance": 12157.203125
+        },
+        "440": {
+          "lines": 30,
+          "advance": 12157.203125
+        },
+        "672": {
+          "lines": 20,
+          "advance": 12157.203125
+        },
+        "820": {
+          "lines": 16,
+          "advance": 12157.203125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 12",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 12
+    },
+    "size": 18.603,
+    "inkHeight": 9.704625,
+    "capHeight": 12.464087060702877,
+    "alias": "Test1",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11838.453125
+        },
+        "288": {
+          "lines": 49,
+          "advance": 11838.453125
+        },
+        "328": {
+          "lines": 42,
+          "advance": 11838.453125
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11838.453125
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11838.453125
+        },
+        "820": {
+          "lines": 16,
+          "advance": 11838.453125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 20",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 20
+    },
+    "size": 19.371,
+    "inkHeight": 9.704625,
+    "capHeight": 12.978241017964073,
+    "alias": "Test2",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11493.40625
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11493.40625
+        },
+        "328": {
+          "lines": 41,
+          "advance": 11493.40625
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11493.40625
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11493.40625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11493.40625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 32",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 32
+    },
+    "size": 19.665,
+    "inkHeight": 9.704625,
+    "capHeight": 13.175478723404257,
+    "alias": "Test3",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11328.171875
+        },
+        "288": {
+          "lines": 46,
+          "advance": 11328.171875
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11328.171875
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11328.171875
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11328.171875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11328.171875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 48",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 48
+    },
+    "size": 20.072,
+    "inkHeight": 9.704625,
+    "capHeight": 13.447980868665978,
+    "alias": "Test4",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 65,
+          "advance": 11105.234375
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11105.234375
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11105.234375
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11105.234375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11105.234375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11105.234375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Source Serif 4 60",
+    "file": "source-fonts/SourceSerif4-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 60
+    },
+    "size": 20.388,
+    "inkHeight": 9.704625,
+    "capHeight": 13.659871323529412,
+    "alias": "Test5",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 64,
+          "advance": 10927.109375
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10927.109375
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10927.109375
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10927.109375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10927.109375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 10927.109375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 12",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 12
+    },
+    "size": 18.139,
+    "inkHeight": 9.704625,
+    "capHeight": 12.697640186915887,
+    "alias": "Test6",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11419.21875
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11419.21875
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11419.21875
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11419.21875
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11419.21875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11419.21875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 24",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 24
+    },
+    "size": 18.105,
+    "inkHeight": 9.704625,
+    "capHeight": 12.764971440160243,
+    "alias": "Test7",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11375.34375
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11375.34375
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11375.34375
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11375.34375
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11375.34375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11375.34375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 36",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 36
+    },
+    "size": 18.071,
+    "inkHeight": 9.704625,
+    "capHeight": 12.83205008031038,
+    "alias": "Test8",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11331.546875
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11331.546875
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11331.546875
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11331.546875
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11331.546875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11331.546875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 48",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 48
+    },
+    "size": 18.027,
+    "inkHeight": 9.704625,
+    "capHeight": 12.920119284363922,
+    "alias": "Test9",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 68,
+          "advance": 11267.40625
+        },
+        "288": {
+          "lines": 46,
+          "advance": 11267.40625
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11267.40625
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11267.40625
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11267.40625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11267.40625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Literata 72",
+    "file": "source-fonts/Literata-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "opsz": 72
+    },
+    "size": 17.938,
+    "inkHeight": 9.704625,
+    "capHeight": 13.094965341959332,
+    "alias": "Test10",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 67,
+          "advance": 11145.875
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11145.875
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11145.875
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11145.875
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11145.875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11145.875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 100",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034,
+    "alias": "Test11",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 65,
+          "advance": 11095.5
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11095.5
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11095.5
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11095.5
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11095.5
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11095.5
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 95",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034,
+    "alias": "Test12",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 62,
+          "advance": 10760.359375
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10760.359375
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10760.359375
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10760.359375
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10760.359375
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10760.359375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 90",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034,
+    "alias": "Test13",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10425.21875
+        },
+        "288": {
+          "lines": 42,
+          "advance": 10425.21875
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10425.21875
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10425.21875
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10425.21875
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10425.21875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Noto Serif 85",
+    "file": "source-fonts/NotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 85
+    },
+    "size": 17.454,
+    "inkHeight": 9.704625,
+    "capHeight": 12.462414118705034,
+    "alias": "Test14",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 57,
+          "advance": 10105.421875
+        },
+        "288": {
+          "lines": 41,
+          "advance": 10105.421875
+        },
+        "328": {
+          "lines": 36,
+          "advance": 10105.421875
+        },
+        "440": {
+          "lines": 25,
+          "advance": 10105.421875
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10105.421875
+        },
+        "820": {
+          "lines": 13,
+          "advance": 10105.421875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "STIX Two Text",
+    "file": "source-fonts/STIXTwoText-Variable.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 19.605,
+    "inkHeight": 9.704625,
+    "capHeight": 12.880684090909092,
+    "alias": "Test15",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 65,
+          "advance": 11023.421875
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11023.421875
+        },
+        "328": {
+          "lines": 38,
+          "advance": 11023.421875
+        },
+        "440": {
+          "lines": 28,
+          "advance": 11023.421875
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11023.421875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11023.421875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Lora",
+    "file": "source-fonts/Lora-Variable.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 18.242,
+    "inkHeight": 9.704625,
+    "capHeight": 12.76924342105263,
+    "alias": "Test16",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 65,
+          "advance": 11064.75
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11064.75
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11064.75
+        },
+        "440": {
+          "lines": 28,
+          "advance": 11064.75
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11064.75
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11064.75
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "PT Serif",
+    "file": "source-fonts/PTSerif-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 18.52,
+    "inkHeight": 9.704625,
+    "capHeight": 12.964193702290075,
+    "alias": "Test17",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 62,
+          "advance": 10802.125
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10802.125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10802.125
+        },
+        "440": {
+          "lines": 28,
+          "advance": 10802.125
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10802.125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10802.125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Tinos",
+    "file": "source-fonts/Tinos-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 20.178,
+    "inkHeight": 9.704625,
+    "capHeight": 13.212083375634517,
+    "alias": "Test18",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 59,
+          "advance": 10657.140625
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10657.140625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10657.140625
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10657.140625
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10657.140625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10657.140625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 90 16",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 16
+    },
+    "size": 17.709,
+    "inkHeight": 9.704625,
+    "capHeight": 12.573510492700729,
+    "alias": "Test19",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11343.234375
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11343.234375
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11343.234375
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11343.234375
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11343.234375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11343.234375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 90 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 20
+    },
+    "size": 18.38,
+    "inkHeight": 9.704625,
+    "capHeight": 13.049779829545454,
+    "alias": "Test20",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11405.046875
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11405.046875
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11405.046875
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11405.046875
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11405.046875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11405.046875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 90 32",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 90,
+      "opsz": 32
+    },
+    "size": 18.346,
+    "inkHeight": 9.704625,
+    "capHeight": 13.025905369557263,
+    "alias": "Test21",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11322.671875
+        },
+        "288": {
+          "lines": 47,
+          "advance": 11322.671875
+        },
+        "328": {
+          "lines": 40,
+          "advance": 11322.671875
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11322.671875
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11322.671875
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11322.671875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 95 16",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 16
+    },
+    "size": 17.709,
+    "inkHeight": 9.704625,
+    "capHeight": 12.573510492700729,
+    "alias": "Test22",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11557.734375
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11557.734375
+        },
+        "328": {
+          "lines": 41,
+          "advance": 11557.734375
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11557.734375
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11557.734375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11557.734375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 95 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 20
+    },
+    "size": 18.38,
+    "inkHeight": 9.704625,
+    "capHeight": 13.049779829545454,
+    "alias": "Test23",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11630.734375
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11630.734375
+        },
+        "328": {
+          "lines": 41,
+          "advance": 11630.734375
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11630.734375
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11630.734375
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11630.734375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 95 32",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 32
+    },
+    "size": 18.346,
+    "inkHeight": 9.704625,
+    "capHeight": 13.025905369557263,
+    "alias": "Test24",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11558.390625
+        },
+        "288": {
+          "lines": 48,
+          "advance": 11558.390625
+        },
+        "328": {
+          "lines": 41,
+          "advance": 11558.390625
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11558.390625
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11558.390625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11558.390625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 100 16",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 16
+    },
+    "size": 17.709,
+    "inkHeight": 9.704625,
+    "capHeight": 12.573510492700729,
+    "alias": "Test25",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11772.109375
+        },
+        "288": {
+          "lines": 49,
+          "advance": 11772.109375
+        },
+        "328": {
+          "lines": 41,
+          "advance": 11772.109375
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11772.109375
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11772.109375
+        },
+        "820": {
+          "lines": 16,
+          "advance": 11772.109375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 100 20",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 20
+    },
+    "size": 18.38,
+    "inkHeight": 9.704625,
+    "capHeight": 13.049779829545454,
+    "alias": "Test26",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 70,
+          "advance": 11856.265625
+        },
+        "288": {
+          "lines": 49,
+          "advance": 11856.265625
+        },
+        "328": {
+          "lines": 42,
+          "advance": 11856.265625
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11856.265625
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11856.265625
+        },
+        "820": {
+          "lines": 16,
+          "advance": 11856.265625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Roboto Serif 100 32",
+    "file": "source-fonts/RobotoSerif-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 32
+    },
+    "size": 18.346,
+    "inkHeight": 9.704625,
+    "capHeight": 13.025905369557263,
+    "alias": "Test27",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 69,
+          "advance": 11793.984375
+        },
+        "288": {
+          "lines": 49,
+          "advance": 11793.984375
+        },
+        "328": {
+          "lines": 42,
+          "advance": 11793.984375
+        },
+        "440": {
+          "lines": 30,
+          "advance": 11793.984375
+        },
+        "672": {
+          "lines": 19,
+          "advance": 11793.984375
+        },
+        "820": {
+          "lines": 16,
+          "advance": 11793.984375
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 95 18",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 18
+    },
+    "size": 16.703,
+    "inkHeight": 9.704625,
+    "capHeight": 12.410561746987952,
+    "alias": "Test28",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 58,
+          "advance": 10239.703125
+        },
+        "288": {
+          "lines": 41,
+          "advance": 10239.703125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10239.703125
+        },
+        "440": {
+          "lines": 26,
+          "advance": 10239.703125
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10239.703125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10239.703125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 95 32",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 95,
+      "opsz": 32
+    },
+    "size": 16.865,
+    "inkHeight": 9.704625,
+    "capHeight": 12.530890620355933,
+    "alias": "Test29",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 57,
+          "advance": 10168.03125
+        },
+        "288": {
+          "lines": 41,
+          "advance": 10168.03125
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10168.03125
+        },
+        "440": {
+          "lines": 26,
+          "advance": 10168.03125
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10168.03125
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10168.03125
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 100 18",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 18
+    },
+    "size": 16.703,
+    "inkHeight": 9.704625,
+    "capHeight": 12.410561746987952,
+    "alias": "Test30",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 62,
+          "advance": 10736.046875
+        },
+        "288": {
+          "lines": 43,
+          "advance": 10736.046875
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10736.046875
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10736.046875
+        },
+        "672": {
+          "lines": 18,
+          "advance": 10736.046875
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10736.046875
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "Merriweather 100 32",
+    "file": "source-fonts/Merriweather-Variable.ttf",
+    "axes": {
+      "wght": 400,
+      "wdth": 100,
+      "opsz": 32
+    },
+    "size": 16.865,
+    "inkHeight": 9.704625,
+    "capHeight": 12.530890620355933,
+    "alias": "Test31",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 61,
+          "advance": 10648.15625
+        },
+        "288": {
+          "lines": 42,
+          "advance": 10648.15625
+        },
+        "328": {
+          "lines": 37,
+          "advance": 10648.15625
+        },
+        "440": {
+          "lines": 27,
+          "advance": 10648.15625
+        },
+        "672": {
+          "lines": 17,
+          "advance": 10648.15625
+        },
+        "820": {
+          "lines": 14,
+          "advance": 10648.15625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  },
+  {
+    "name": "IBM Plex Serif",
+    "file": "source-fonts/IBMPlexSerif-Regular.ttf",
+    "axes": {
+      "wght": 400
+    },
+    "size": 17.972,
+    "inkHeight": 9.704625,
+    "capHeight": 12.544126388888888,
+    "alias": "Test32",
+    "metrics": {
+      "ru": {
+        "218": {
+          "lines": 65,
+          "advance": 11168.625
+        },
+        "288": {
+          "lines": 44,
+          "advance": 11168.625
+        },
+        "328": {
+          "lines": 39,
+          "advance": 11168.625
+        },
+        "440": {
+          "lines": 29,
+          "advance": 11168.625
+        },
+        "672": {
+          "lines": 18,
+          "advance": 11168.625
+        },
+        "820": {
+          "lines": 15,
+          "advance": 11168.625
+        }
+      },
+      "en": {
+        "218": {
+          "lines": 53,
+          "advance": 9954.328125
+        },
+        "288": {
+          "lines": 39,
+          "advance": 9954.328125
+        },
+        "328": {
+          "lines": 34,
+          "advance": 9954.328125
+        },
+        "440": {
+          "lines": 25,
+          "advance": 9954.328125
+        },
+        "672": {
+          "lines": 16,
+          "advance": 9954.328125
+        },
+        "820": {
+          "lines": 13,
+          "advance": 9954.328125
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,26 @@
+date: "2026-09-10"
+status: "One requested B refinement generated and visually reviewed; recommended over original B."
+mode: "built-in image_gen.imagegen"
+path: "public/redesign/closing/closing-v2-b-refined.png"
+original: "/Users/user/.codex/generated_images/01a08bce-dce8-7bf3-b79a-d501f4e214bf/exec-69633954-d5ab-40f8-bb7c-6a66efc18a57.png"
+edit_target: "public/redesign/closing/closing-v2-b.png"
+supporting_style_reference: "public/redesign/closing/closing-v2-a.png"
+dimensions: [1536, 1024]
+format: "PNG RGB, near-white background."
+critique: "Successful precise refinement: noticeably thinner and more gently tapered pencil stems, slightly quieter sage washes, open lower composition retained. Leaves remain readable and are not faded to ghosts. The plant anatomy and main leaf positions are intentionally preserved, so the change is restrained rather than an entirely different leaf composition."
+placement_check:
+  method: "Raw RGB read-only scan, illustration pixels threshold min(R,G,B)<220, separate left and right500px strips."
+  original_b_left: [35, 323, 412, 950]
+  refined_left: [36, 323, 411, 949]
+  original_b_right: [1160, 420, 1510, 949]
+  refined_right: [1160, 420, 1510, 950]
+  conclusion: "Bounding boxes stay within1px. Existing B CSS positioning can be retained."
+integration_note: "Root preferred B geometry for the actual closing region. Use refined B as the current recommended production candidate; preserve A and original B as history. Integrated browser QA remains root's responsibility."
+prompt: |
+  Use case: precise-object-edit.
+  Asset type: production botanical background for a quiet ebook website closing call-to-action.
+  Image1 is the EXACT composition to refine (closing-v2-b). Image2 is a supporting drawing-treatment reference (closing-v2-a), NOT a layout reference.
+  Keep Image1's 1536x1024 canvas, white background, large completely blank upper third, completely blank central region, lower left and lower right plant placement and total branch bounding boxes EXACTLY unchanged. Do not move, rotate, enlarge or shrink either specimen. Preserve whole visible tapered lower stem ends and every plant tip inside the canvas. The lower-left specimen begins around y32%; the right around y41%. These vertical coordinates and the blank space must not change.
+  Change only the illustrated treatment of the two existing specimens: main stems about25% thinner and more delicately tapering, gray-brown pencil instead of dark stout outline. Make the sage leaf washes lighter and less saturated, with fine graphite veins rather than heavy outlines, matching Image2 and the approved Languages drawing manner. Allow tiny natural differences in each leaf's contour/angle to avoid a repeated stamp look, but keep all the original leaf positions and the same open sparse massing. Retain legible botanical drawing, do not turn it into a faint ghost or blur.
+  No additional plants, leaves, flowers, ferns, roots, seeds, ground, cast shadow, decoration, wording or texture in the white background. All background RGB253–255. Do not fill empty regions. This is a surgical visual refinement of Image1, not a new composition.
+

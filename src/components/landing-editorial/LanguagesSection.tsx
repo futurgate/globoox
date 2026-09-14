@@ -1,10 +1,10 @@
+'use client';
+
 import Image from 'next/image';
-import { getLandingMessages } from '@/lib/landing-i18n';
+import { useEditorialLocale } from './EditorialLocale';
 import s from './LanguagesSection.module.css';
 
-const { supportedLanguages: messages } = getLandingMessages('en');
 const paperSurfaces = ['paper-ivory', 'paper-sage', 'paper-soft', 'paper-ivory'];
-const futureRows = [messages.future.slice(0, 3), messages.future.slice(3)];
 
 function PaperSurface({ name }: { name: string }) {
   return <Image src={`/redesign/language-garden/${name}.png`} alt="" aria-hidden="true" fill sizes="220px" className={s.paper} draggable={false} />;
@@ -12,6 +12,8 @@ function PaperSurface({ name }: { name: string }) {
 
 /** Generated paper and botanical artwork, with canonical, selectable HTML labels. */
 export default function LanguagesSection() {
+  const { messages: { supportedLanguages: messages }, ui } = useEditorialLocale();
+  const futureRows = [messages.future.slice(0, 3), messages.future.slice(3)];
   return (
     <section id="languages" className={s.section} aria-labelledby="languages-title">
       <div className={s.layout}>
@@ -23,7 +25,7 @@ export default function LanguagesSection() {
         <div className={s.garden}>
           <div className={s.canopy}>
             <Image src="/redesign/language-garden/tree.png" alt="" aria-hidden="true" fill sizes="420px" className={s.tree} draggable={false} />
-            <ul className={s.currentList} aria-label="Available languages">
+            <ul className={s.currentList} aria-label={ui.languages.available}>
               {messages.current.map((language, index) => (
                 <li key={language} className={s.currentCard}>
                   <PaperSurface name={paperSurfaces[index % paperSurfaces.length]} />
@@ -33,9 +35,6 @@ export default function LanguagesSection() {
             </ul>
           </div>
           <div className={s.upcoming}>
-            <div className={s.seedlingsFrame}>
-              <Image src="/redesign/language-garden/seedlings-growth.png" alt="" aria-hidden="true" fill sizes="116px" className={s.seedlings} draggable={false} />
-            </div>
             <div className={s.upcomingCopy}>
               <p id="upcoming-languages-title" className={s.soon}>{messages.soonLabel}</p>
               <div role="group" aria-labelledby="upcoming-languages-title">
@@ -50,6 +49,9 @@ export default function LanguagesSection() {
                   </ul>
                 ))}
               </div>
+            </div>
+            <div className={s.seedlingsFrame}>
+              <Image src="/redesign/language-garden/seedlings-growth.png" alt="" aria-hidden="true" fill sizes="116px" className={s.seedlings} draggable={false} />
             </div>
           </div>
         </div>

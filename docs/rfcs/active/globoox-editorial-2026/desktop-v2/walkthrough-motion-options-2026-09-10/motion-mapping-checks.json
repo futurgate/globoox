@@ -1,0 +1,161 @@
+{
+  "date": "2026-09-10",
+  "revision": "Final mapping after visual QA: retired stack screenshots fade out, leaving opaque paper edges.",
+  "source": "src/components/landing-editorial/walkthroughMotion.ts",
+  "sourceSha256": "7f4ca7563a096b776fe519b15d982f8749b5db80597d1e5c68bfb9ca2fa09e3f",
+  "method": "Actual TypeScript helper transpiled with installed typescript.transpileModule and evaluated in a fresh VM; node:assert invariants. Not browser or visual evidence.",
+  "status": "passed",
+  "results": [
+    {
+      "name": "finite bounded outputs across [-1,2]",
+      "status": "passed",
+      "detail": {
+        "samplesPerMode": 30001,
+        "modes": 2
+      }
+    },
+    {
+      "name": "fade has zero simultaneous screenshot overlap",
+      "status": "passed",
+      "detail": {
+        "maximumSimultaneouslyVisibleScreens": 1,
+        "zeroThreshold": 1e-10
+      }
+    },
+    {
+      "name": "stack has zero simultaneous screenshot overlap",
+      "status": "passed",
+      "detail": {
+        "maximumSimultaneouslyVisibleScreens": 1,
+        "zeroThreshold": 1e-10
+      }
+    },
+    {
+      "name": "fade opacity slopes are linear within all four fade segments",
+      "status": "passed",
+      "detail": [
+        {
+          "start": 0.1,
+          "end": 0.265,
+          "index": 0,
+          "slope": -6.0606060606060606,
+          "maxSlopeError": 2.0757262575443747e-10
+        },
+        {
+          "start": 0.265,
+          "end": 0.43,
+          "index": 1,
+          "slope": 6.0606060606060606,
+          "maxSlopeError": 2.630837769856953e-10
+        },
+        {
+          "start": 0.57,
+          "end": 0.735,
+          "index": 1,
+          "slope": -6.0606060606060606,
+          "maxSlopeError": 1.8100543286436732e-10
+        },
+        {
+          "start": 0.735,
+          "end": 0.9,
+          "index": 2,
+          "slope": 6.0606060606060606,
+          "maxSlopeError": 1.8100543286436732e-10
+        }
+      ]
+    },
+    {
+      "name": "stack screenshot is invisible until its surface is opaque",
+      "status": "passed",
+      "detail": {
+        "samples": 30001
+      }
+    },
+    {
+      "name": "both modes hold exact stable selected steps",
+      "status": "passed"
+    },
+    {
+      "name": "stack final geometry and step2 geometry match specification",
+      "status": "passed",
+      "detail": {
+        "middle": [
+          {
+            "opacity": 1,
+            "imageOpacity": 0,
+            "y": -14,
+            "scale": 0.955
+          },
+          {
+            "opacity": 1,
+            "imageOpacity": 1,
+            "y": 0,
+            "scale": 1
+          },
+          {
+            "opacity": 0,
+            "imageOpacity": 0,
+            "y": 28,
+            "scale": 1
+          }
+        ],
+        "end": [
+          {
+            "opacity": 1,
+            "imageOpacity": 0,
+            "y": -28,
+            "scale": 0.9199999999999999
+          },
+          {
+            "opacity": 1,
+            "imageOpacity": 0,
+            "y": -14,
+            "scale": 0.955
+          },
+          {
+            "opacity": 1,
+            "imageOpacity": 1,
+            "y": 0,
+            "scale": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "retired stack screenshots clear while opaque paper survives",
+      "status": "passed",
+      "detail": {
+        "clearedByLocalProgress": 0.3,
+        "retiredSurfaceOpacity": 1
+      }
+    },
+    {
+      "name": "logical active step stays correct through blank fade midpoints",
+      "status": "passed",
+      "detail": {
+        "firstBlank": 1,
+        "secondBlank": 2,
+        "indices": "zero-based"
+      }
+    },
+    {
+      "name": "forward/reverse evaluation gives identical output without stored state",
+      "status": "passed",
+      "detail": {
+        "samplesPerMode": 30001
+      }
+    },
+    {
+      "name": "outside-runway progress clamps to stable endpoints",
+      "status": "passed"
+    },
+    {
+      "name": "continuous values at all mapping boundaries",
+      "status": "passed",
+      "detail": {
+        "maxDelta": 0.000001696969707865037,
+        "excluded": "activeStep is intentionally discrete; DOM visibility and rendered behavior need browser QA"
+      }
+    }
+  ]
+}

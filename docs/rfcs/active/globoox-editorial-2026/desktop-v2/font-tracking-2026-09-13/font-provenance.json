@@ -1,0 +1,21 @@
+{
+  "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/SourceSerif4%5Bopsz%2Cwght%5D.ttf",
+  "source_sha256": "97b2d4da6e3cb494b5a1e66ae176914d852ccabef49e0c02c0df25f3e39aca0b",
+  "output": "public/redesign/fonts/source-serif-4-comparison-w470.woff2",
+  "bytes": 58372,
+  "sha256": "7f8eded50d8131cb434f1806118f02a9898c6f21f2c3479e13406ad44718d42c",
+  "ranges": [
+    "0020-024F",
+    "0400-052F",
+    "2000-206F",
+    "20AC",
+    "2116",
+    "FEFF"
+  ],
+  "license_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/sourceserif4/OFL.txt",
+  "axes": [],
+  "instantiated_axes": {
+    "wght": 470,
+    "opsz": 60
+  }
+}

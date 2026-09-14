@@ -1,0 +1,20 @@
+[
+  {
+    "footprint": 920,
+    "runway": 2640,
+    "tabsTop": 227.46875,
+    "tabsHeight": 438,
+    "deckTop": 42,
+    "deckWidth": 299,
+    "deckHeight": 648
+  },
+  {
+    "footprint": 760,
+    "runway": 2640,
+    "tabsTop": 227.46875,
+    "tabsHeight": 438,
+    "deckTop": 42,
+    "deckWidth": 299,
+    "deckHeight": 648
+  }
+]

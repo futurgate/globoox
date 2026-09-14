@@ -1,0 +1,86 @@
+[
+  {
+    "width": 1440,
+    "before": {
+      "lowerOffset": 20,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 365.796875,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "after": {
+      "lowerOffset": 20,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 427.984375,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "ctaArrowAbsent": true,
+    "linksPreserved": true
+  },
+  {
+    "width": 800,
+    "before": {
+      "lowerOffset": 16,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 1051.953125,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "after": {
+      "lowerOffset": 16,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 1091.046875,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "ctaArrowAbsent": true,
+    "linksPreserved": true
+  },
+  {
+    "width": 390,
+    "before": {
+      "lowerOffset": 16,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 1051.953125,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "after": {
+      "lowerOffset": 16,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 1114.140625,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "ctaArrowAbsent": true,
+    "linksPreserved": true
+  },
+  {
+    "width": 320,
+    "before": {
+      "lowerOffset": 16,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 1051.953125,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "after": {
+      "lowerOffset": 16,
+      "lastCardOffset": 0,
+      "anchoredToArticle": false,
+      "height": 1114.140625,
+      "pointerEvents": "none",
+      "overflow": false
+    },
+    "ctaArrowAbsent": true,
+    "linksPreserved": true
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "width": 320,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"width\":320,\"scrollWidth\":320,\"columns\":\"278px\",\"cards\":[{\"x\":21,\"y\":384.8046875,\"width\":278,\"height\":358.59375,\"top\":384.8046875,\"right\":299,\"bottom\":743.3984375,\"left\":21},{\"x\":21,\"y\":743.3984375,\"width\":278,\"height\":359.59375,\"top\":743.3984375,\"right\":299,\"bottom\":1102.9921875,\"left\":21},{\"x\":21,\"y\":1102.9921875,\"width\":278,\"height\":359.59375,\"top\":1102.9921875,\"right\":299,\"bottom\":1462.5859375,\"left\":21}],\"buttons\":[{\"x\":49,\"y\":653.3984375,\"width\":222,\"height\":54,\"top\":653.3984375,\"right\":271,\"bottom\":707.3984375,\"left\":49},{\"x\":49,\"y\":1012.9921875,\"width\":222,\"height\":54,\"top\":1012.9921875,\"right\":271,\"bottom\":1066.9921875,\"left\":49},{\"x\":49,\"y\":1372.5859375,\"width\":222,\"height\":54,\"top\":1372.5859375,\"right\":271,\"bottom\":1426.5859375,\"left\":49}],\"nav\":[{\"text\":\"How it works\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Quality\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Languages\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Team\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Pricing\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Start reading\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}}],\"overflow\":[]}\n```"
+        }
+      ]
+    }
+  },
+  {
+    "width": 768,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"width\":768,\"scrollWidth\":768,\"columns\":\"598px\",\"cards\":[{\"x\":85,\"y\":327.3046875,\"width\":598,\"height\":358.59375,\"top\":327.3046875,\"right\":683,\"bottom\":685.8984375,\"left\":85},{\"x\":85,\"y\":685.8984375,\"width\":598,\"height\":359.59375,\"top\":685.8984375,\"right\":683,\"bottom\":1045.4921875,\"left\":85},{\"x\":85,\"y\":1045.4921875,\"width\":598,\"height\":359.59375,\"top\":1045.4921875,\"right\":683,\"bottom\":1405.0859375,\"left\":85}],\"buttons\":[{\"x\":214,\"y\":595.8984375,\"width\":340,\"height\":54,\"top\":595.8984375,\"right\":554,\"bottom\":649.8984375,\"left\":214},{\"x\":214,\"y\":955.4921875,\"width\":340,\"height\":54,\"top\":955.4921875,\"right\":554,\"bottom\":1009.4921875,\"left\":214},{\"x\":214,\"y\":1315.0859375,\"width\":340,\"height\":54,\"top\":1315.0859375,\"right\":554,\"bottom\":1369.0859375,\"left\":214}],\"nav\":[{\"text\":\"How it works\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Quality\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Languages\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Team\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Pricing\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Start reading\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}}],\"overflow\":[]}\n```"
+        }
+      ]
+    }
+  },
+  {
+    "width": 800,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"width\":800,\"scrollWidth\":800,\"columns\":\"598px\",\"cards\":[{\"x\":101,\"y\":327.5703125,\"width\":598,\"height\":358.59375,\"top\":327.5703125,\"right\":699,\"bottom\":686.1640625,\"left\":101},{\"x\":101,\"y\":686.1640625,\"width\":598,\"height\":359.59375,\"top\":686.1640625,\"right\":699,\"bottom\":1045.7578125,\"left\":101},{\"x\":101,\"y\":1045.7578125,\"width\":598,\"height\":359.59375,\"top\":1045.7578125,\"right\":699,\"bottom\":1405.3515625,\"left\":101}],\"buttons\":[{\"x\":230,\"y\":596.1640625,\"width\":340,\"height\":54,\"top\":596.1640625,\"right\":570,\"bottom\":650.1640625,\"left\":230},{\"x\":230,\"y\":955.7578125,\"width\":340,\"height\":54,\"top\":955.7578125,\"right\":570,\"bottom\":1009.7578125,\"left\":230},{\"x\":230,\"y\":1315.3515625,\"width\":340,\"height\":54,\"top\":1315.3515625,\"right\":570,\"bottom\":1369.3515625,\"left\":230}],\"nav\":[{\"text\":\"How it works\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Quality\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Languages\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Team\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Pricing\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Start reading\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}}],\"overflow\":[]}\n```"
+        }
+      ]
+    }
+  },
+  {
+    "width": 801,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"width\":801,\"scrollWidth\":801,\"columns\":\"245px 245px 245px\",\"cards\":[{\"x\":33,\"y\":399.578125,\"width\":245,\"height\":452.796875,\"top\":399.578125,\"right\":278,\"bottom\":852.375,\"left\":33},{\"x\":278,\"y\":399.578125,\"width\":245,\"height\":452.796875,\"top\":399.578125,\"right\":523,\"bottom\":852.375,\"left\":278},{\"x\":523,\"y\":399.578125,\"width\":245,\"height\":452.796875,\"top\":399.578125,\"right\":768,\"bottom\":852.375,\"left\":523}],\"buttons\":[{\"x\":59,\"y\":752.375,\"width\":193,\"height\":54,\"top\":752.375,\"right\":252,\"bottom\":806.375,\"left\":59},{\"x\":305,\"y\":752.375,\"width\":192,\"height\":54,\"top\":752.375,\"right\":497,\"bottom\":806.375,\"left\":305},{\"x\":550,\"y\":752.375,\"width\":192,\"height\":54,\"top\":752.375,\"right\":742,\"bottom\":806.375,\"left\":550}],\"nav\":[{\"text\":\"How it works\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Quality\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Languages\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Team\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Pricing\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}},{\"text\":\"Start reading\",\"rect\":{\"x\":0,\"y\":0,\"width\":0,\"height\":0,\"top\":0,\"right\":0,\"bottom\":0,\"left\":0}}],\"overflow\":[]}\n```"
+        }
+      ]
+    }
+  },
+  {
+    "width": 901,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"width\":901,\"scrollWidth\":901,\"columns\":\"278.328px 278.336px 278.336px\",\"cards\":[{\"x\":33,\"y\":423.6171875,\"width\":278.328125,\"height\":452.796875,\"top\":423.6171875,\"right\":311.328125,\"bottom\":876.4140625,\"left\":33},{\"x\":311.328125,\"y\":423.6171875,\"width\":278.3359375,\"height\":452.796875,\"top\":423.6171875,\"right\":589.6640625,\"bottom\":876.4140625,\"left\":311.328125},{\"x\":589.6640625,\"y\":423.6171875,\"width\":278.3359375,\"height\":452.796875,\"top\":423.6171875,\"right\":868,\"bottom\":876.4140625,\"left\":589.6640625}],\"buttons\":[{\"x\":59,\"y\":776.4140625,\"width\":226.328125,\"height\":54,\"top\":776.4140625,\"right\":285.328125,\"bottom\":830.4140625,\"left\":59},{\"x\":338.328125,\"y\":776.4140625,\"width\":225.3359375,\"height\":54,\"top\":776.4140625,\"right\":563.6640625,\"bottom\":830.4140625,\"left\":338.328125},{\"x\":616.6640625,\"y\":776.4140625,\"width\":225.3359375,\"height\":54,\"top\":776.4140625,\"right\":842,\"bottom\":830.4140625,\"left\":616.6640625}],\"nav\":[{\"text\":\"How it works\",\"rect\":{\"x\":207.2734375,\"y\":26.8984375,\"width\":76.53125,\"height\":42.1953125,\"top\":26.8984375,\"right\":283.8046875,\"bottom\":69.09375,\"left\":207.2734375}},{\"text\":\"Quality\",\"rect\":{\"x\":297.8046875,\"y\":26.8984375,\"width\":42.9375,\"height\":42.1953125,\"top\":26.8984375,\"right\":340.7421875,\"bottom\":69.09375,\"left\":297.8046875}},{\"text\":\"Languages\",\"rect\":{\"x\":354.7421875,\"y\":26.8984375,\"width\":64.234375,\"height\":42.1953125,\"top\":26.8984375,\"right\":418.9765625,\"bottom\":69.09375,\"left\":354.7421875}},{\"text\":\"Team\",\"rect\":{\"x\":432.9765625,\"y\":26.8984375,\"width\":32.1640625,\"height\":42.1953125,\"top\":26.8984375,\"right\":465.140625,\"bottom\":69.09375,\"left\":432.9765625}},{\"text\":\"Pricing\",\"rect\":{\"x\":479.140625,\"y\":26.8984375,\"width\":40.859375,\"height\":42.1953125,\"top\":26.8984375,\"right\":520,\"bottom\":69.09375,\"left\":479.140625}},{\"text\":\"Start reading\",\"rect\":{\"x\":534,\"y\":26.8984375,\"width\":78.3359375,\"height\":42.1953125,\"top\":26.8984375,\"right\":612.3359375,\"bottom\":69.09375,\"left\":534}}],\"overflow\":[]}\n```"
+        }
+      ]
+    }
+  },
+  {
+    "width": 1100,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Script ran on page and returned:\n```json\n{\"width\":1100,\"scrollWidth\":1100,\"columns\":\"344.664px 344.664px 344.664px\",\"cards\":[{\"x\":33,\"y\":423.59375,\"width\":344.6640625,\"height\":452.796875,\"top\":423.59375,\"right\":377.6640625,\"bottom\":876.390625,\"left\":33},{\"x\":377.6640625,\"y\":423.59375,\"width\":344.6640625,\"height\":452.796875,\"top\":423.59375,\"right\":722.328125,\"bottom\":876.390625,\"left\":377.6640625},{\"x\":722.328125,\"y\":423.59375,\"width\":344.6640625,\"height\":452.796875,\"top\":423.59375,\"right\":1066.9921875,\"bottom\":876.390625,\"left\":722.328125}],\"buttons\":[{\"x\":59,\"y\":776.390625,\"width\":292.6640625,\"height\":54,\"top\":776.390625,\"right\":351.6640625,\"bottom\":830.390625,\"left\":59},{\"x\":404.6640625,\"y\":776.390625,\"width\":291.6640625,\"height\":54,\"top\":776.390625,\"right\":696.328125,\"bottom\":830.390625,\"left\":404.6640625},{\"x\":749.328125,\"y\":776.390625,\"width\":291.6640625,\"height\":54,\"top\":776.390625,\"right\":1040.9921875,\"bottom\":830.390625,\"left\":749.328125}],\"nav\":[{\"text\":\"How it works\",\"rect\":{\"x\":406.2734375,\"y\":26.8984375,\"width\":76.53125,\"height\":42.1953125,\"top\":26.8984375,\"right\":482.8046875,\"bottom\":69.09375,\"left\":406.2734375}},{\"text\":\"Quality\",\"rect\":{\"x\":496.8046875,\"y\":26.8984375,\"width\":42.9375,\"height\":42.1953125,\"top\":26.8984375,\"right\":539.7421875,\"bottom\":69.09375,\"left\":496.8046875}},{\"text\":\"Languages\",\"rect\":{\"x\":553.7421875,\"y\":26.8984375,\"width\":64.234375,\"height\":42.1953125,\"top\":26.8984375,\"right\":617.9765625,\"bottom\":69.09375,\"left\":553.7421875}},{\"text\":\"Team\",\"rect\":{\"x\":631.9765625,\"y\":26.8984375,\"width\":32.1640625,\"height\":42.1953125,\"top\":26.8984375,\"right\":664.140625,\"bottom\":69.09375,\"left\":631.9765625}},{\"text\":\"Pricing\",\"rect\":{\"x\":678.140625,\"y\":26.8984375,\"width\":40.859375,\"height\":42.1953125,\"top\":26.8984375,\"right\":719,\"bottom\":69.09375,\"left\":678.140625}},{\"text\":\"Start reading\",\"rect\":{\"x\":733,\"y\":26.8984375,\"width\":78.3359375,\"height\":42.1953125,\"top\":26.8984375,\"right\":811.3359375,\"bottom\":69.09375,\"left\":733}}],\"overflow\":[]}\n```"
+        }
+      ]
+    }
+  }
+]

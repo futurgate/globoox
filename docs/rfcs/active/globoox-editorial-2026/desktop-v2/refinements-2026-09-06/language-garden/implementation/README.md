@@ -1,3 +1,10 @@
+---
+type: archive
+status: archived
+owner: design-engineering
+last_verified: 2026-09-06
+---
+
 # Implemented Orchard language block — 6 September 2026
 
 **Historical implementation; superseded on 2026-09-07.** User feedback rejected this composition and its miniature “soon” cards. The new revision uses a compact 460×420px canopy with 192px current-language papers, copy aligned independently with the crown, and two 18px HTML rows of upcoming names with middots beside three small growing sprouts (`seedlings-growth.png`). Read the [new revision record](../../../refinements-2026-09-07/README.md) and [new QA record](../../../refinements-2026-09-07/design-qa.md); this notice does not claim final QA approval.

@@ -1,0 +1,22 @@
+[
+  {
+    "href": "#team",
+    "y": 5898,
+    "expected": 5897.6875
+  },
+  {
+    "href": "#pricing",
+    "y": 6738,
+    "expected": 6738.46875
+  },
+  {
+    "href": "#start",
+    "y": 7547,
+    "expected": 7547
+  },
+  {
+    "href": "#hero",
+    "y": 0,
+    "expected": 0
+  }
+]

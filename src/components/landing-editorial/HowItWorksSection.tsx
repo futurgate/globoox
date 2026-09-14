@@ -1,37 +1,109 @@
 "use client";
 
 import Image from "next/image";
-import { useId, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowRight, Maximize2, Minus, Plus, X } from "lucide-react";
-import { getLandingMessages } from "@/lib/landing-i18n";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { ArrowRight } from "lucide-react";
+import { useEditorialLocale } from "./EditorialLocale";
+import { getEditorialWalkthroughScreens } from "./editorialUi";
 import styles from "./HowItWorksSection.module.css";
+import { SECTION_NAVIGATION_END, SECTION_NAVIGATION_START } from "./useSectionNavigation";
+import { getWalkthroughMotion, stepPositions } from "./walkthroughMotion";
 
-const { usage } = getLandingMessages("en");
-const screenshots = [
-  {
-    src: "/images/how-it-works/1.1.webp",
-    alt: "Globoox library with the Upload Book dialog open and the option to choose an EPUB file.",
-  },
-  {
-    src: "/images/how-it-works/2.1-en.webp",
-    alt: "The Voyage of the Beagle in Globoox, with the language menu showing English, Russian, Spanish and French.",
-  },
-  {
-    src: "/images/how-it-works/3-en-es.webp",
-    alt: "The Spanish translation of The Voyage of the Beagle displayed in the Globoox reader.",
-  },
-] as const;
+function WalkthroughEpisode({ index }: { index: number }) {
+  const { locale, messages: { usage } } = useEditorialLocale();
+  const screenshots = getEditorialWalkthroughScreens(locale);
+  const item = usage.steps[index];
+  return (
+    <li className={styles.episode}>
+      <p className={styles.episodeLabel}>{item.step}</p>
+      <h3 className={styles.episodeTitle}>{item.description}</h3>
+      <div className={styles.episodeFrame} data-step={index + 1}>
+        <Image
+          src={screenshots[index].src}
+          alt={screenshots[index].alt}
+          width={788}
+          height={1705}
+          unoptimized
+          className={styles.episodeScreenshot}
+        />
+      </div>
+    </li>
+  );
+}
 
-/** Original copy and untouched product screenshots in a directly selectable walkthrough. */
+/** Desktop follows scroll; narrow screens read all three episodes in normal document flow. */
 export default function HowItWorksSection() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [zoomed, setZoomed] = useState(false);
+  const { locale, messages: { usage } } = useEditorialLocale();
+  const screenshots = getEditorialWalkthroughScreens(locale);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const { activeStep, cards } = getWalkthroughMotion(scrollProgress);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const viewerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const layoutRef = useRef<HTMLDivElement>(null);
   const id = useId();
-  const screenshot = screenshots[activeStep];
-  const step = usage.steps[activeStep];
+
+  function scrollGeometry() {
+    const section = sectionRef.current;
+    const layout = layoutRef.current;
+    if (!section || !layout || getComputedStyle(layout).position !== "sticky") return null;
+    const inset = parseFloat(getComputedStyle(layout).top) || 0;
+    return {
+      start: window.scrollY + section.getBoundingClientRect().top - inset,
+      distance: Math.max(1, section.offsetHeight - layout.offsetHeight),
+    };
+  }
+
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 800px)");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      if (mobile.matches) return;
+      if (sectionRef.current?.closest("[data-section-navigation]")) return;
+      const geometry = scrollGeometry();
+      if (!geometry) return;
+      const progress = (window.scrollY - geometry.start) / geometry.distance;
+      setScrollProgress(Math.max(0, Math.min(1, progress)));
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const resume = () => {
+      window.cancelAnimationFrame(frame);
+      update();
+    };
+    const prepareDestination = (event: Event) => {
+      // A menu visit starts at Step 1. Prepare it before bringing the section
+      // into view, instead of replacing a frozen Step 3 after arrival.
+      if ((event as CustomEvent<string>).detail === '#how-it-works') setScrollProgress(0);
+    };
+    const observer = new ResizeObserver(schedule);
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    if (layoutRef.current) observer.observe(layoutRef.current);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    // Navigation flushes this with geometry restoration, avoiding a stale card paint.
+    window.addEventListener(SECTION_NAVIGATION_END, resume);
+    window.addEventListener(SECTION_NAVIGATION_START, prepareDestination);
+    mobile.addEventListener('change', schedule);
+    schedule();
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener(SECTION_NAVIGATION_END, resume);
+      window.removeEventListener(SECTION_NAVIGATION_START, prepareDestination);
+      mobile.removeEventListener('change', schedule);
+    };
+  }, []);
+
+  function selectStep(index: number) {
+    const geometry = scrollGeometry();
+    if (geometry) {
+      window.scrollTo({ top: geometry.start + geometry.distance * stepPositions[index], behavior: 'smooth' });
+    }
+  }
 
   function navigateSteps(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next = index;
@@ -42,22 +114,18 @@ export default function HowItWorksSection() {
     else return;
 
     event.preventDefault();
-    setActiveStep(next);
-    tabRefs.current[next]?.focus();
-  }
-
-  function openScreenshot() {
-    setZoomed(false);
-    dialogRef.current?.showModal();
-    viewerRef.current?.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    selectStep(next);
+    tabRefs.current[next]?.focus({ preventScroll: true });
   }
 
   return (
-    <section id="how-it-works" className={styles.section} aria-labelledby={`${id}-title`}>
-      <div className={styles.layout}>
+    <section ref={sectionRef} id="how-it-works" className={styles.section} aria-labelledby={`${id}-title`}>
+      <div ref={layoutRef} className={styles.layout} data-walkthrough-pin>
         <div className={styles.explanation}>
-          <p className={styles.label}>{usage.label}</p>
-          <h2 id={`${id}-title`} className={styles.title}>{usage.heading}</h2>
+          <div className={styles.sectionHeading}>
+            <p className={styles.label}>{usage.label}</p>
+            <h2 id={`${id}-title`} className={styles.title}>{usage.heading}</h2>
+          </div>
 
           <div className={styles.steps} role="tablist" aria-label={usage.label} aria-orientation="vertical">
             {usage.steps.map((item, index) => (
@@ -71,7 +139,10 @@ export default function HowItWorksSection() {
                 aria-selected={activeStep === index}
                 aria-controls={`${id}-screen`}
                 tabIndex={activeStep === index ? 0 : -1}
-                onClick={() => setActiveStep(index)}
+                onClick={(event) => {
+                  selectStep(index);
+                  if (event.detail > 0) event.currentTarget.blur();
+                }}
                 onKeyDown={(event) => navigateSteps(event, index)}
               >
                 <span className={styles.stepCopy}>
@@ -82,71 +153,57 @@ export default function HowItWorksSection() {
               </button>
             ))}
           </div>
+
+          {/* This wrapper ends before Step 3, providing the native sticky boundary. */}
+          <ol className={styles.episodes} role="list" aria-label={usage.label}>
+            <WalkthroughEpisode index={0} />
+            <WalkthroughEpisode index={1} />
+          </ol>
         </div>
 
-        <div
-          id={`${id}-screen`}
-          className={styles.productStage}
-          role="tabpanel"
-          aria-labelledby={`${id}-step-${activeStep}`}
-          tabIndex={0}
-        >
-          <div className={styles.screenshotFrame}>
-            <Image
-              key={screenshot.src}
-              src={screenshot.src}
-              alt={screenshot.alt}
-              width={788}
-              height={1705}
-              sizes="(max-width: 1050px) 280px, 316px"
-              className={styles.screenshot}
-            />
+        <div className={styles.productStage}>
+          <div
+            id={`${id}-screen`}
+            className={styles.screenshotDeck}
+            role="tabpanel"
+            aria-labelledby={`${id}-step-${activeStep}`}
+            tabIndex={0}
+          >
+            {screenshots.map((screenshot, index) => {
+              const card = cards[index];
+              return (
+                <div
+                  key={screenshot.src}
+                  className={styles.screenCard}
+                  style={{
+                    opacity: card.opacity,
+                    visibility: card.opacity > 0 ? "visible" : "hidden",
+                    transform: `translateY(${card.y}px) scale(${card.scale})`,
+                    zIndex: index,
+                  }}
+                  aria-hidden={activeStep !== index}
+                >
+                  <Image
+                    src={screenshot.src}
+                    alt={screenshot.alt}
+                    width={788}
+                    height={1705}
+                    sizes="(max-width: 800px) 1px, (max-width: 1050px) 280px, 316px"
+                    className={styles.screenshot}
+                    style={{ opacity: card.imageOpacity }}
+                    data-active={activeStep === index}
+                  />
+                </div>
+              );
+            })}
           </div>
-          <button type="button" className={styles.viewButton} onClick={openScreenshot} aria-haspopup="dialog">
-            <Maximize2 size={13} strokeWidth={1.4} aria-hidden="true" />
-            View screenshot
-          </button>
         </div>
+
+        <ol className={`${styles.episodes} ${styles.finalEpisode}`} start={3} role="list" aria-label={usage.steps[2].step}>
+          <WalkthroughEpisode index={2} />
+        </ol>
       </div>
 
-      <dialog
-        ref={dialogRef}
-        className={styles.dialog}
-        aria-labelledby={`${id}-dialog-title`}
-        onClick={(event) => { if (event.target === event.currentTarget) dialogRef.current?.close(); }}
-        onClose={() => setZoomed(false)}
-      >
-        <div className={styles.dialogContent}>
-          <div className={styles.dialogToolbar}>
-            <h3 id={`${id}-dialog-title`} className={styles.dialogTitle}>{step.description}</h3>
-            <div className={styles.viewerControls}>
-              <button
-                type="button"
-                className={styles.zoomButton}
-                aria-pressed={zoomed}
-                aria-label={zoomed ? "Fit screenshot width" : "Zoom screenshot to original size"}
-                onClick={() => setZoomed((value) => !value)}
-              >
-                {zoomed ? <Minus size={15} strokeWidth={1.4} aria-hidden="true" /> : <Plus size={15} strokeWidth={1.4} aria-hidden="true" />}
-                <span>{zoomed ? "Fit width" : "Zoom in"}</span>
-              </button>
-              <button type="button" className={styles.closeButton} onClick={() => dialogRef.current?.close()} aria-label="Close screenshot">
-                <X size={19} strokeWidth={1.4} aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-          <div ref={viewerRef} className={styles.viewer} tabIndex={0} role="region" aria-label="Screenshot, scroll to explore">
-            <Image
-              src={screenshot.src}
-              alt={screenshot.alt}
-              width={788}
-              height={1705}
-              sizes={zoomed ? "788px" : "440px"}
-              className={`${styles.dialogImage} ${zoomed ? styles.zoomedImage : ""}`}
-            />
-          </div>
-        </div>
-      </dialog>
     </section>
   );
 }
