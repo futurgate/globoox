@@ -1,6 +1,7 @@
-import { LocalizedLandingPage } from '@/components/landing/LocalizedLandingPage';
-import { createLandingJsonLd, createLandingMetadata } from '@/components/landing/landingMetadata';
-import '@/components/landing/landing.css';
+import { notFound } from 'next/navigation';
+import { EditorialLandingServer } from '@/components/landing-editorial/EditorialLandingServer';
+import { createEditorialLandingMetadata } from '@/components/landing-editorial/editorialMetadata';
+import { isLandingLocale } from '@/lib/landing-i18n';
 
 export async function generateMetadata({
   params,
@@ -8,7 +9,8 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  return createLandingMetadata(locale);
+  if (!isLandingLocale(locale)) notFound();
+  return createEditorialLandingMetadata({ locale, mode: 'published' });
 }
 
 export default async function LocaleIndexPage({
@@ -17,15 +19,5 @@ export default async function LocaleIndexPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const webAppJsonLd = createLandingJsonLd(locale);
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
-      />
-      {await LocalizedLandingPage({ locale })}
-    </>
-  );
+  return <EditorialLandingServer locale={locale} mode="published" />;
 }

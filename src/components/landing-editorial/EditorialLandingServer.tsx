@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import EditorialLanding from './EditorialLanding';
 import { createEditorialLandingJsonLd, type EditorialLandingMode } from './editorialMetadata';
 
-/** Shared server boundary; published mode is deliberately not mounted by this preview. */
+/** Published locale pages check authentication; isolated previews stay available for review. */
 export async function EditorialLandingServer({
   locale,
   mode,

@@ -152,7 +152,7 @@ const documents: Record<EditorialLegalKind, EditorialLegalDocument> = {
         items: [
           'Supabase provides account authentication and cloud file storage. Google sign-in is available through the authentication flow.',
           'PostHog provides product analytics. Events can include account identifiers and email, book titles or filenames, reading activity and translation performance. These events are not described as anonymous.',
-          'Microsoft Clarity is configured on production application pages, separately from this editorial preview.',
+          'Microsoft Clarity is currently disabled.',
           'Sentry provides error and performance diagnostics. Server and edge configurations allow personal data; upload error reports can include the filename and file size.',
         ],
         pending: ['Confirm the complete production provider list, hosting locations and data-processing arrangements.'],
@@ -163,7 +163,7 @@ const documents: Record<EditorialLegalKind, EditorialLegalDocument> = {
         paragraphs: [
           'The marketing-page banner offers Necessary only and Accept all. It controls PostHog capture for those pages through a saved choice in localStorage. That saved choice expires after 24 hours, when the banner asks again.',
           'The product also uses authentication cookies, a language-preference cookie, browser caches and session storage. Campaign parameters can be stored in session storage when present in the page URL.',
-          'The marketing-page choice does not currently control every diagnostic or application integration. Application analytics and the production Clarity integration have a separate scope. Clearing browser storage removes local preferences and caches, but does not by itself delete server-held data.',
+          'The marketing-page choice does not currently control every diagnostic or application integration. Application analytics have a separate scope. Clearing browser storage removes local preferences and caches, but does not by itself delete server-held data.',
         ],
       },
       {

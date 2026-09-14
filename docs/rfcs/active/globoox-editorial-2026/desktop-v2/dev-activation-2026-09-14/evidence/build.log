@@ -1,0 +1,98 @@
+
+> globoox_preview@0.1.0 build
+> next build
+
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env.local
+- Experiments (use with caution):
+  · proxyClientMaxBodySize: 1073741824
+  · serverActions
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 80s
+  Running TypeScript ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/49) ...
+  Generating static pages using 9 workers (12/49)
+  Generating static pages using 9 workers (24/49)
+  Generating static pages using 9 workers (36/49)
+✓ Generating static pages using 9 workers (49/49) in 346.3ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /[locale]
+├ ● /[locale]/landing
+│ ├ /en/landing
+│ ├ /es/landing
+│ ├ /fr/landing
+│ └ /ru/landing
+├ ○ /admin
+├ ○ /admin/cost-lab
+├ ○ /admin/playground
+├ ƒ /api/admin/cost-runs
+├ ƒ /api/admin/cost-runs/status/[jobId]
+├ ƒ /api/admin/models
+├ ƒ /api/admin/translation-playground
+├ ƒ /api/alpha/join
+├ ƒ /api/billing/checkout
+├ ƒ /api/billing/portal
+├ ƒ /api/books
+├ ƒ /api/books/[id]
+├ ƒ /api/books/[id]/chapters
+├ ƒ /api/books/[id]/chapters/translate-titles
+├ ƒ /api/books/[id]/language
+├ ƒ /api/books/[id]/reader-metadata/translate
+├ ƒ /api/books/[id]/reading-position
+├ ƒ /api/books/[id]/translate-meta
+├ ƒ /api/books/[id]/translation-estimate
+├ ƒ /api/books/process
+├ ƒ /api/books/upload
+├ ƒ /api/chapters
+├ ƒ /api/chapters/[id]/asset
+├ ƒ /api/chapters/[id]/blocks/text
+├ ƒ /api/chapters/[id]/content
+├ ƒ /api/chapters/[id]/translate
+├ ƒ /api/chapters/[id]/translate-status
+├ ƒ /api/jobs/[id]
+├ ƒ /api/sentry-example-api
+├ ƒ /api/storage/signed-url
+├ ƒ /api/subscription
+├ ƒ /api/sync/status
+├ ƒ /api/translation-limit
+├ ƒ /api/waitlist
+├ ○ /auth
+├ ƒ /auth/callback
+├ ○ /auth/forgot-password
+├ ○ /auth/register
+├ ○ /dev/components-preview
+├ ○ /dev/unlimited-access-preview
+├ ƒ /join-alpha
+├ ƒ /landing
+├ ○ /landing-editorial
+├ ● /landing-editorial/[locale]
+│ ├ /landing-editorial/en
+│ ├ /landing-editorial/es
+│ ├ /landing-editorial/fr
+│ └ /landing-editorial/ru
+├ ○ /landing-editorial/legal/privacy
+├ ○ /landing-editorial/legal/terms
+├ ○ /landing/pricing-preview
+├ ○ /my-books
+├ ○ /pricing
+├ ƒ /reader/[id]
+├ ○ /robots.txt
+├ ƒ /s/[token]
+├ ○ /sentry-example-page
+├ ○ /settings
+├ ○ /sitemap.xml
+├ ○ /store
+└ ƒ /store/[id]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand

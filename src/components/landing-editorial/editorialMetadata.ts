@@ -21,7 +21,7 @@ export function getEditorialLandingPath(route: EditorialLandingRoute): string {
 export function createEditorialLandingMetadata(route: EditorialLandingRoute): Metadata {
   const publishedMetadata = createLandingMetadata(route.locale);
 
-  // Future publication is an explicit caller choice, never an environment switch.
+  // Publication is an explicit route choice, never an environment switch.
   if (route.mode === 'published') return publishedMetadata;
 
   const pagePath = getEditorialLandingPath(route);

@@ -1,0 +1,23 @@
+
+> globoox_preview@0.1.0 test
+> vitest run
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+ RUN  v2.1.9 /Users/user/Documents/github/globoox_frontend
+
+ ✓ src/__tests__/sectionNavigationMotion.test.ts (6 tests) 5ms
+ ✓ src/__tests__/landingConsentPath.test.ts (34 tests) 4ms
+ ✓ src/__tests__/editorialHeroCopy.test.ts (5 tests) 2ms
+ ✓ src/__tests__/mergeDisplayBlocks.test.ts (2 tests) 3ms
+ ✓ src/__tests__/activeEditorialSection.test.ts (10 tests) 3ms
+ ✓ src/__tests__/subscription.test.ts (10 tests) 34ms
+ ✓ src/__tests__/paginatorUtils.test.ts (18 tests) 5ms
+ ✓ src/__tests__/editorialServerRouting.test.ts (23 tests) 6ms
+ ✓ src/__tests__/editorialLegalCopy.test.ts (2 tests) 3ms
+ ✓ src/__tests__/editorialLocale.test.ts (12 tests) 21ms
+
+ Test Files  10 passed (10)
+      Tests  122 passed (122)
+   Start at  02:08:40
+   Duration  532ms (transform 451ms, setup 0ms, collect 1.01s, tests 86ms, environment 1ms, prepare 691ms)

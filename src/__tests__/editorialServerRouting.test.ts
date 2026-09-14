@@ -20,6 +20,7 @@ vi.mock('@/components/landing-editorial/EditorialLanding', () => ({ default: () 
 
 import { EditorialLandingServer } from '@/components/landing-editorial/EditorialLandingServer';
 import { generateMetadata } from '@/app/landing-editorial/[locale]/page';
+import { generateMetadata as generatePublishedMetadata } from '@/app/[locale]/page';
 
 describe('isolated editorial metadata', () => {
   it('retains a self-canonical English root preview', () => {
@@ -45,11 +46,16 @@ describe('isolated editorial metadata', () => {
     expect(createEditorialLandingJsonLd(route)).toBeNull();
   });
 
-  it.each(landingLocales)('%s future publication preserves existing SEO helpers exactly', (locale) => {
+  it.each(landingLocales)('%s publication preserves existing SEO helpers exactly', (locale) => {
     const route = { locale, mode: 'published' } as const;
     expect(getEditorialLandingPath(route)).toBe(`/${locale}`);
     expect(createEditorialLandingMetadata(route)).toEqual(createLandingMetadata(locale));
     expect(createEditorialLandingJsonLd(route)).toEqual(createLandingJsonLd(locale));
+  });
+
+  it.each(landingLocales)('%s primary route retains its original published metadata', async (locale) => {
+    expect(await generatePublishedMetadata({ params: Promise.resolve({ locale }) }))
+      .toEqual(createLandingMetadata(locale));
   });
 });
 
@@ -84,8 +90,8 @@ describe('editorial server mode boundary', () => {
     expect(auth.createClient).not.toHaveBeenCalled();
   });
 
-  it('rejects unknown-locale metadata instead of emitting an English fallback', async () => {
-    await expect(generateMetadata({ params: Promise.resolve({ locale: 'unknown' }) }))
+  it.each([generateMetadata, generatePublishedMetadata])('rejects unknown-locale metadata instead of emitting an English fallback', async (metadata) => {
+    await expect(metadata({ params: Promise.resolve({ locale: 'unknown' }) }))
       .rejects.toThrow('NEXT_NOT_FOUND');
   });
 });

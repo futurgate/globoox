@@ -1,0 +1,442 @@
+{
+  "routes": [
+    {
+      "path": "/de",
+      "status": 404
+    },
+    {
+      "path": "/landing-editorial/de",
+      "status": 404
+    },
+    {
+      "path": "/en",
+      "status": 200,
+      "canonical": "https://globoox.co/en",
+      "alternates": [
+        [
+          "en",
+          "/en"
+        ],
+        [
+          "es",
+          "/es"
+        ],
+        [
+          "fr",
+          "/fr"
+        ],
+        [
+          "ru",
+          "/ru"
+        ]
+      ],
+      "robots": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+      "jsonLd": 1,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "en",
+      "removedNote": false
+    },
+    {
+      "path": "/es",
+      "status": 200,
+      "canonical": "https://globoox.co/es",
+      "alternates": [
+        [
+          "en",
+          "/en"
+        ],
+        [
+          "es",
+          "/es"
+        ],
+        [
+          "fr",
+          "/fr"
+        ],
+        [
+          "ru",
+          "/ru"
+        ]
+      ],
+      "robots": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+      "jsonLd": 1,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "es",
+      "removedNote": false
+    },
+    {
+      "path": "/fr",
+      "status": 200,
+      "canonical": "https://globoox.co/fr",
+      "alternates": [
+        [
+          "en",
+          "/en"
+        ],
+        [
+          "es",
+          "/es"
+        ],
+        [
+          "fr",
+          "/fr"
+        ],
+        [
+          "ru",
+          "/ru"
+        ]
+      ],
+      "robots": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+      "jsonLd": 1,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "fr",
+      "removedNote": false
+    },
+    {
+      "path": "/ru",
+      "status": 200,
+      "canonical": "https://globoox.co/ru",
+      "alternates": [
+        [
+          "en",
+          "/en"
+        ],
+        [
+          "es",
+          "/es"
+        ],
+        [
+          "fr",
+          "/fr"
+        ],
+        [
+          "ru",
+          "/ru"
+        ]
+      ],
+      "robots": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+      "jsonLd": 1,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "ru",
+      "removedNote": false
+    },
+    {
+      "path": "/landing-editorial",
+      "status": 200,
+      "canonical": "https://globoox.co/landing-editorial",
+      "alternates": [
+        [
+          "en",
+          "/landing-editorial/en"
+        ],
+        [
+          "es",
+          "/landing-editorial/es"
+        ],
+        [
+          "fr",
+          "/landing-editorial/fr"
+        ],
+        [
+          "ru",
+          "/landing-editorial/ru"
+        ]
+      ],
+      "robots": "noindex, nofollow",
+      "jsonLd": 0,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "en",
+      "removedNote": false
+    },
+    {
+      "path": "/landing-editorial/en",
+      "status": 200,
+      "canonical": "https://globoox.co/landing-editorial/en",
+      "alternates": [
+        [
+          "en",
+          "/landing-editorial/en"
+        ],
+        [
+          "es",
+          "/landing-editorial/es"
+        ],
+        [
+          "fr",
+          "/landing-editorial/fr"
+        ],
+        [
+          "ru",
+          "/landing-editorial/ru"
+        ]
+      ],
+      "robots": "noindex, nofollow",
+      "jsonLd": 0,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "en",
+      "removedNote": false
+    },
+    {
+      "path": "/landing-editorial/es",
+      "status": 200,
+      "canonical": "https://globoox.co/landing-editorial/es",
+      "alternates": [
+        [
+          "en",
+          "/landing-editorial/en"
+        ],
+        [
+          "es",
+          "/landing-editorial/es"
+        ],
+        [
+          "fr",
+          "/landing-editorial/fr"
+        ],
+        [
+          "ru",
+          "/landing-editorial/ru"
+        ]
+      ],
+      "robots": "noindex, nofollow",
+      "jsonLd": 0,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "es",
+      "removedNote": false
+    },
+    {
+      "path": "/landing-editorial/fr",
+      "status": 200,
+      "canonical": "https://globoox.co/landing-editorial/fr",
+      "alternates": [
+        [
+          "en",
+          "/landing-editorial/en"
+        ],
+        [
+          "es",
+          "/landing-editorial/es"
+        ],
+        [
+          "fr",
+          "/landing-editorial/fr"
+        ],
+        [
+          "ru",
+          "/landing-editorial/ru"
+        ]
+      ],
+      "robots": "noindex, nofollow",
+      "jsonLd": 0,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "fr",
+      "removedNote": false
+    },
+    {
+      "path": "/landing-editorial/ru",
+      "status": 200,
+      "canonical": "https://globoox.co/landing-editorial/ru",
+      "alternates": [
+        [
+          "en",
+          "/landing-editorial/en"
+        ],
+        [
+          "es",
+          "/landing-editorial/es"
+        ],
+        [
+          "fr",
+          "/landing-editorial/fr"
+        ],
+        [
+          "ru",
+          "/landing-editorial/ru"
+        ]
+      ],
+      "robots": "noindex, nofollow",
+      "jsonLd": 0,
+      "sections": [
+        "hero",
+        "how-it-works",
+        "quality",
+        "languages",
+        "team",
+        "pricing",
+        "start"
+      ],
+      "lang": "ru",
+      "removedNote": false
+    },
+    {
+      "path": "/landing-editorial/legal/terms",
+      "status": 200,
+      "draft": true
+    },
+    {
+      "path": "/landing-editorial/legal/privacy",
+      "status": 200,
+      "draft": true
+    }
+  ],
+  "redirects": [
+    {
+      "cookie": null,
+      "status": 307,
+      "destination": "/en"
+    },
+    {
+      "cookie": "ru",
+      "status": 307,
+      "destination": "/ru"
+    },
+    {
+      "cookie": "fr",
+      "status": 307,
+      "destination": "/fr"
+    },
+    {
+      "cookie": "unsupported",
+      "status": 307,
+      "destination": "/en"
+    }
+  ],
+  "views": [
+    {
+      "locale": "en",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "device": "desktop",
+      "video": "http://localhost:3000/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "cta": "Upload your first book"
+    },
+    {
+      "locale": "es",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "device": "desktop",
+      "video": "http://localhost:3000/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "cta": "Empieza a leer gratis"
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "device": "desktop",
+      "video": "http://localhost:3000/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "cta": "Importer votre premier livre"
+    },
+    {
+      "locale": "ru",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "device": "desktop",
+      "video": "http://localhost:3000/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "cta": "Загрузить первую книгу"
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "scrollWidth": 390,
+      "device": "phone",
+      "video": "http://localhost:3000/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "cta": "Upload your first book"
+    },
+    {
+      "locale": "es",
+      "width": 390,
+      "scrollWidth": 390,
+      "device": "phone",
+      "video": "http://localhost:3000/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "cta": "Empieza a leer gratis"
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "scrollWidth": 390,
+      "device": "phone",
+      "video": "http://localhost:3000/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "cta": "Importer votre premier livre"
+    },
+    {
+      "locale": "ru",
+      "width": 390,
+      "scrollWidth": 390,
+      "device": "phone",
+      "video": "http://localhost:3000/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "cta": "Загрузить первую книгу"
+    }
+  ],
+  "errors": [],
+  "interactions": {
+    "autoplay": true,
+    "publishedLocalePreservesHash": true,
+    "previewLocalePreservesHash": true,
+    "betaDestination": "/my-books",
+    "betaFocusAndEscape": true
+  }
+}

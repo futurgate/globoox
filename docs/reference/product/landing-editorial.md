@@ -4,6 +4,7 @@ status: current
 owner: design-engineering
 last_verified: 2026-09-14
 implementation:
+  - src/app/[locale]/page.tsx
   - src/app/landing-editorial/page.tsx
   - src/components/landing-editorial/EditorialLanding.tsx
   - src/components/landing-editorial/ProductRecording.tsx
@@ -15,6 +16,8 @@ implementation:
 evidence:
   - design-qa.md
 ---
+
+**Current primary landing — dev activation, 2026-09-14:** Explicit user authorization supersedes earlier preview-only/no-replacement/no-push notices. Both origin/dev (2f7c08c) and origin/main (ead6b93) are integrated without conflicts in local dev (merge b59404d; editorial checkpoint 3707a0d). The primary /en, /es, /fr and /ru routes now render editorial in published mode; isolated previews remain noindex. Canonical original copy, real media, beta/no-payment behavior and all current visuals remain. The rejected How wait explanation remains absent. Published auth redirects, locale/hash navigation and original SEO helpers are preserved; public routes emit exactly one WebApplication declaration. Main's disabled Clarity and new analytics settings are retained. Terms/Privacy remain visible review drafts; operator/backend details remain pending. Clean production build, full TypeScript, all122 tests, scoped lint, docs checks and public desktop/mobile browser checks passed. Existing project visuals remain SECONDARY references. All history/assets are preserved. Vercel automatic deployment stays disabled for dev/main; no separate deployment. Record: `docs/rfcs/active/globoox-editorial-2026/desktop-v2/dev-activation-2026-09-14/README.md`.
 
 **Latest correction — 2026-09-14:** User rejects the added Step2 wait explanation. Remove it from desktop/mobile and all four locales; original step copy, real screenshots and motion stay intact. This supersedes earlier wait-note descriptions and captures. Removed from runtime and dictionaries. Browser verified all four locales at desktop/mobile; English Step2 screenshots visually reviewed.12 locale tests and scoped lint passed. Evidence: `docs/rfcs/active/globoox-editorial-2026/desktop-v2/replacement-preparation-2026-09-14/how-copy-correction-2026-09-14/README.md`. Preserve all history; no commit or deployment.
 
