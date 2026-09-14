@@ -1,0 +1,20 @@
+{
+  "dev.globoox.co": {
+    "alias": "dev.globoox.co",
+    "deploymentId": "dpl_DG3VN1LbyZUXKfJNCQDooVPHrLuM",
+    "projectId": "prj_HshEGaCzZpwdbiz36jSL3T9A4uyY",
+    "redirect": null
+  },
+  "globoox.co": {
+    "alias": "globoox.co",
+    "deploymentId": "dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU",
+    "projectId": "prj_HshEGaCzZpwdbiz36jSL3T9A4uyY",
+    "redirect": "www.globoox.co"
+  },
+  "www.globoox.co": {
+    "alias": "www.globoox.co",
+    "deploymentId": "dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU",
+    "projectId": "prj_HshEGaCzZpwdbiz36jSL3T9A4uyY",
+    "redirect": null
+  }
+}

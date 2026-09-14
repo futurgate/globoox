@@ -1,0 +1,490 @@
+{
+  "checked_at": "2026-09-14T14:29:34.338626+00:00",
+  "base_url": "https://dev.globoox.co",
+  "expected_commit": "019c71779f3e9b1e3165dcc0a71ddae54b6b5370",
+  "method": "Public HTTP requests only; no cookies, auth, browser or account APIs. Source identity is verified separately by root via deployment API.",
+  "pages": [
+    {
+      "path": "/en",
+      "kind": "published",
+      "locale": "en",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "localized_structured_data": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/en",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 71589,
+      "sample_sha256": "8643e997a0d63c4657033fc9769cf0c1440580ef8e2761925806ff6a4b8aec47",
+      "canonical": [
+        "https://www.globoox.co/en"
+      ],
+      "robots": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "web_application_count": 1,
+      "how_text_sha256": "126ff15de148c0f14c76c83a3d9d72f408e73864eb850c56cc7678102ffae5fc",
+      "passed": true
+    },
+    {
+      "path": "/es",
+      "kind": "published",
+      "locale": "es",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "localized_structured_data": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/es",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 70300,
+      "sample_sha256": "f876f34d996016405f4e53b28580748488c6213d52d8d89b2f1a31643bece33f",
+      "canonical": [
+        "https://www.globoox.co/es"
+      ],
+      "robots": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "web_application_count": 1,
+      "how_text_sha256": "56fd567018f82065f22ae5a846499bea66d416f251703d8617db1b91c7952bbc",
+      "passed": true
+    },
+    {
+      "path": "/fr",
+      "kind": "published",
+      "locale": "fr",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "localized_structured_data": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/fr",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 71399,
+      "sample_sha256": "fbf5d9ea38af446a41e15775065bb40698bf3d844614bcc56e30e9d9cc27fa06",
+      "canonical": [
+        "https://www.globoox.co/fr"
+      ],
+      "robots": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "web_application_count": 1,
+      "how_text_sha256": "392f66e802bd8a0ff20e756a97ac7f0de5839f0c1640fc4f52fd3563ba8383c4",
+      "passed": true
+    },
+    {
+      "path": "/ru",
+      "kind": "published",
+      "locale": "ru",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "localized_structured_data": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/ru",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 75305,
+      "sample_sha256": "b880ffed2d4c927734866b7ccc5b83683ee205fd61f56977a137750d94b96a78",
+      "canonical": [
+        "https://www.globoox.co/ru"
+      ],
+      "robots": [
+        "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1"
+      ],
+      "web_application_count": 1,
+      "how_text_sha256": "effad12eac0cc37402912f91e25d3832462562ee8d0346055a0f0d11fa510009",
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial",
+      "kind": "preview",
+      "locale": "en",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 69638,
+      "sample_sha256": "22bd89f4c67e2866fd5b929f3102fea45cc756fda87eb29c353a510c68198115",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "how_text_sha256": "126ff15de148c0f14c76c83a3d9d72f408e73864eb850c56cc7678102ffae5fc",
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial/en",
+      "kind": "preview",
+      "locale": "en",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial/en",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 70186,
+      "sample_sha256": "0b3e73df0f70386586ee2a4f7ab0438697ec2a9d98198d99b6e0c33dae94ded9",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial/en"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "how_text_sha256": "126ff15de148c0f14c76c83a3d9d72f408e73864eb850c56cc7678102ffae5fc",
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial/es",
+      "kind": "preview",
+      "locale": "es",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial/es",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 68849,
+      "sample_sha256": "f04fb23bfbb69aa69e565bf5deeee0ca685b9489fac3bbcf1b6dbdeed47a5f45",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial/es"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "how_text_sha256": "56fd567018f82065f22ae5a846499bea66d416f251703d8617db1b91c7952bbc",
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial/fr",
+      "kind": "preview",
+      "locale": "fr",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial/fr",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 69773,
+      "sample_sha256": "2363bdf13987b5eb511f4b1094919f1014b6933969b636f6e9a6824f9f5e59cc",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial/fr"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "how_text_sha256": "392f66e802bd8a0ff20e756a97ac7f0de5839f0c1640fc4f52fd3563ba8383c4",
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial/ru",
+      "kind": "preview",
+      "locale": "ru",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "editorial_title_marker": true,
+        "how_copy_exact_no_added_note": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial/ru",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 73080,
+      "sample_sha256": "e247f309d1336768adb32dc58453b4f5a78c19f577f676677674834b81326def",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial/ru"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "how_text_sha256": "effad12eac0cc37402912f91e25d3832462562ee8d0346055a0f0d11fa510009",
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial/legal/terms",
+      "kind": "legal",
+      "locale": "en",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "legal_title_marker": true,
+        "explicit_draft_label": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial/legal/terms",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 31588,
+      "sample_sha256": "75825ba6ecdac997af912932bc150fb2e597d4c6a493e6c265f3ed203d95db15",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial/legal/terms"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "passed": true
+    },
+    {
+      "path": "/landing-editorial/legal/privacy",
+      "kind": "legal",
+      "locale": "en",
+      "checks": {
+        "status_200": true,
+        "same_path": true,
+        "single_correct_canonical_path": true,
+        "html_content_type": true,
+        "expected_web_application_count": true,
+        "meta_noindex": true,
+        "legal_title_marker": true,
+        "explicit_draft_label": true
+      },
+      "status": 200,
+      "url": "https://dev.globoox.co/landing-editorial/legal/privacy",
+      "content_type": "text/html; charset=utf-8",
+      "content_range": null,
+      "x_robots_tag": null,
+      "sample_bytes": 38373,
+      "sample_sha256": "c1e13f121bf440ae3c56750800f51f42269e674af04cb51fcb1b17ffa4e4350a",
+      "canonical": [
+        "https://www.globoox.co/landing-editorial/legal/privacy"
+      ],
+      "robots": [
+        "noindex, nofollow"
+      ],
+      "web_application_count": 0,
+      "passed": true
+    }
+  ],
+  "assets": [
+    {
+      "category": "css",
+      "path": "/_next/static/chunks/a3a121d5c70180e8.css",
+      "status": 206,
+      "url": "https://dev.globoox.co/_next/static/chunks/a3a121d5c70180e8.css",
+      "content_type": "text/css; charset=utf-8",
+      "content_range": "bytes 0-1023/75419",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "6e0cbed2dfc721599c041836507b9bae647c498083026608720d21db7975c8bd",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "js",
+      "path": "/_next/static/chunks/6d459ba0cd186f6c.js",
+      "status": 206,
+      "url": "https://dev.globoox.co/_next/static/chunks/6d459ba0cd186f6c.js",
+      "content_type": "application/javascript; charset=utf-8",
+      "content_range": "bytes 0-1023/49253",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "6d0264e7ba03550b25e55f849b1b2a1e841d54588acd720f78179af6cf3c9a3a",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "optimized_image",
+      "path": "/_next/image?url=%2Fredesign%2Fhero-botanical%2Fginkgo.png&w=3840&q=75",
+      "status": 200,
+      "url": "https://dev.globoox.co/_next/image?url=%2Fredesign%2Fhero-botanical%2Fginkgo.png&w=3840&q=75",
+      "content_type": "image/png",
+      "content_range": "bytes 0-1023/307019",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "aee6c4052aac5f5423fd4c09974802376a4fcef88b7aa56a7a76c0080a7387d9",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "image",
+      "path": "/redesign/hero-botanical/ginkgo.png",
+      "status": 206,
+      "url": "https://dev.globoox.co/redesign/hero-botanical/ginkgo.png",
+      "content_type": "image/png",
+      "content_range": "bytes 0-1023/1184850",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "84e00113664602082d1499205fd0fcd833b1508cbc3b859f9552ba9760d1ac47",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "image",
+      "path": "/icon.svg",
+      "status": 206,
+      "url": "https://dev.globoox.co/icon.svg",
+      "content_type": "image/svg+xml",
+      "content_range": "bytes 0-1023/2597",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "ffa623a40e1c502d890ce5f424759c81bb19f3aa1cc825fd71fa6024445bbfc5",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "video",
+      "path": "/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "status": 206,
+      "url": "https://dev.globoox.co/screenrecordings/mac_screen_record_1280w_h264.mp4",
+      "content_type": "video/mp4",
+      "content_range": "bytes 0-1023/1019563",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "c4ba12d7c94156c6ac2e76f4c7902e4423c914d6824b364e83d63d1e1db75a6e",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "video",
+      "path": "/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "status": 206,
+      "url": "https://dev.globoox.co/screenrecordings/ipad_screen_record_768x1170_h264.mp4",
+      "content_type": "video/mp4",
+      "content_range": "bytes 0-1023/860097",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "5fecdca7fdddffe67f18471f012b1460175d4c7621ac0cf4a93bb29bfd6f92b0",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "category": "video",
+      "path": "/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "status": 206,
+      "url": "https://dev.globoox.co/screenrecordings/iphone_screen_record_540x1170_h264.mp4",
+      "content_type": "video/mp4",
+      "content_range": "bytes 0-1023/641391",
+      "x_robots_tag": null,
+      "sample_bytes": 1024,
+      "sample_sha256": "548c72fb5d55235fffe16d3aa7ce532956361b4ec09509f8b7b1bf44821c2d34",
+      "checks": {
+        "status_200_or_206": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    }
+  ],
+  "asset_categories_complete": true,
+  "limitations": [
+    "No hydration, layout, keyboard, playback, or authenticated user behavior tested. A Vercel preview X-Robots-Tag may supplement page robots metadata."
+  ],
+  "passed": true
+}

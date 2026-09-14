@@ -1,0 +1,23 @@
+{
+  "id": "dpl_DG3VN1LbyZUXKfJNCQDooVPHrLuM",
+  "url": "globoox-iuo6dm8mw-lomovski.vercel.app",
+  "target": null,
+  "readyState": "READY",
+  "alias": [
+    "dev.globoox.co",
+    "globoox-git-dev-lomovski.vercel.app"
+  ],
+  "aliasAssigned": true,
+  "aliasError": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "gitSource": {
+    "type": "github",
+    "repoId": 1235542559,
+    "ref": "dev",
+    "sha": "019c71779f3e9b1e3165dcc0a71ddae54b6b5370"
+  },
+  "createdAt": 1789395872595,
+  "buildingAt": 1789395873752,
+  "ready": 1789395944434
+}
