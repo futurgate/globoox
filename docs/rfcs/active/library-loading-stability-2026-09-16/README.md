@@ -1,17 +1,17 @@
 ---
 type: implementation-record
-status: validated-awaiting-deployment
+status: deployed-and-verified
 owner: library
 last_verified: 2026-09-16
 backend_status: unchanged
-deployment_status: pending
+deployment_status: dev-ready
 ---
 
 # Стабилизация загрузки библиотеки — 16 сентября 2026
 
 В текущих локальных исходниках устранено переключение между разными алгоритмами Recently Read при каждом обновлении массива книг. Список сохраняет раннюю потоковую публикацию; локальный snapshot восстанавливается вместе с временными метками, поздние данные сверяются по свежести, а серверные позиции запрашиваются очередью, которая не перезапускается на каждый stream batch.
 
-**Статус:** frontend реализован и локально проверен: 147 unit-тестов, 8 браузерных сценариев hook, 9 усиленных page fixtures на production-сборке, TypeScript и build прошли. Проверен настоящий гостевой маршрут Library → Reader → Library. Публикация в origin/dev и деплой dev.globoox.co выполняются; фактический deployment записывается ниже после проверки.
+**Статус:** frontend реализован и локально проверен: 147 unit-тестов, 8 браузерных сценариев hook, 9 усиленных page fixtures на production-сборке, TypeScript и build прошли. Проверен настоящий гостевой маршрут Library → Reader → Library. Коммит `b541a767b810c0243b709fb7b110195012a6d3bc` отправлен в origin/dev и опубликован на dev.globoox.co; Vercel READY, привязка домена и настоящий гостевой маршрут проверены.
 
 ## Границы работы
 
@@ -24,7 +24,7 @@ deployment_status: pending
 | Высоты и геометрия | Явно вне задачи. Не исправлялись высоты loading/готовой страницы, сетка обложек и геометрические сдвиги. Нельзя выдавать эту работу за устранение всех видов визуального мигания. |
 | Reader | Только передача scope в существующие действия/cache helpers и отметка открытия. Anchor, сохранение позиции, `stale_client` и reader layout не переписаны. |
 | Старые материалы | [Диагностика 15 сентября](audit-2026-09-15.md) сохранена отдельно неизменяемым историческим телом. Существующие документы и посторонние billing-правки не входят в это изменение. |
-| Публикация | На момент создания записи commit/push/deploy этой правки здесь не подтверждены; root завершает отдельную проверку/публикацию. Исторический audit не является доказательством нынешнего deployment SHA. |
+| Публикация | `b541a76` в origin/dev; Preview deployment `dpl_4y7kuj828gZcCDErjq5KzWWC1hCV`, dev.globoox.co. Основной домен и www остались на прежнем deployment. |
 
 ## Реализованное поведение и источники
 
@@ -58,7 +58,7 @@ deployment_status: pending
 | Production build | **PASS** | `npm run build`, Next 16.1.1; все 49 static pages собраны. Production server запущен на IPv6 loopback 3016; чужой IPv4 listener не изменялся. |
 | Локальный production smoke, настоящая guest-сеть | **Reader return PASS, наблюдались transient 502** | [Результат](evidence/real-guest-reader-return.json). 6 публичных книг; вторая открыта в Reader с настоящим текстом, после возврата первая и порядок стабилен ещё 6 с; JS exceptions нет, мутаций API нет. Первые list/sync GET вернули 502; JSON fallback списка вернул 200, главы 200. Холодная загрузка 17,7 с включает эти ошибки и не является performance benchmark. Не authenticated cross-device QA. |
 | Docs validation | **Пройдено: 126 governed files** | `npm run docs:check` после добавления этих документов. |
-| Deploy и проверка домена | **Не подтверждены этой записью** | Доступ CLI и mapping проекта сами по себе не означают публикацию новой версии. Записать SHA/deployment ID/домен и результат после фактической публикации. |
+| Deploy и проверка домена | **READY, exact SHA и alias проверены** | [Deployment evidence](evidence/deployment.json). [Настоящий гостевой smoke опубликованной версии](evidence/deployed-guest-reader-return.json): 6 книг, Reader → Library, открытая книга первая, стабильный порядок, нет JS exceptions, все наблюдённые API GET 200, нет мутаций. Холодная загрузка 15,1 с — отдельное ограничение сетевого пути, не обещание ускорения. |
 
 ### Девять сохранённых page fixtures
 
@@ -91,3 +91,13 @@ deployment_status: pending
 - [Действующий контракт и предложение серверу](../../../reference/architecture/library-contract-as-is-to-be.md): as-is подтверждён текущими frontend-потребителями; backend internals не проверены, v2 proposal не реализован.
 
 При последующем compaction этот README является текущим implementation record; audit 15 сентября — историческая диагностика, а проект серверного протокола — только предложение. Результаты build/deploy добавлять сюда, не переписывая audit body или первоначальное evidence.
+
+## Публикация
+
+- Runtime SHA: `b541a767b810c0243b709fb7b110195012a6d3bc`; source GitHub futurgate/globoox, ref dev.
+- Vercel project globoox / team lomovski; deployment `dpl_4y7kuj828gZcCDErjq5KzWWC1hCV`, Preview (`target:null`).
+- Проверенный адрес: https://dev.globoox.co/my-books. Неизменяемый адрес: https://globoox-ggbjp2nav-lomovski.vercel.app.
+- Git-source deploy содержит только отправленный commit. Локальные env-файлы, AGENTS, output и billing-правки не загружались. Политика автоматических деплоев в vercel.json не менялась.
+- dev alias назначен автоматически Vercel. globoox.co и www.globoox.co остались на `dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU`; main/production не публиковались.
+- Независимый [HTTP smoke](evidence/deployed-http-smoke.json): 4 страницы и 6 referenced JS/CSS assets доступны; `/` корректно направляет на `/en`. Это проверка HTTP, не доказательство account authorization.
+- Последующий documentation-only commit фиксирует доказательства; runtime остаётся на указанном SHA, повторная сборка для отчёта не требуется.

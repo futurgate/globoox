@@ -1,0 +1,228 @@
+{
+  "started_at": "2026-09-16T18:46:50.552049+00:00",
+  "finished_at": "2026-09-16T18:46:52.819439+00:00",
+  "base_url": "https://dev.globoox.co",
+  "expected_commit": "b541a767b810c0243b709fb7b110195012a6d3bc",
+  "expected_deployment_id": "dpl_4y7kuj828gZcCDErjq5KzWWC1hCV",
+  "expected_immutable_url": "https://globoox-ggbjp2nav-lomovski.vercel.app",
+  "identity_evidence": "Root confirms READY and dev alias mapping separately; HTTP HTML alone does not prove commit identity.",
+  "method": "Fresh anonymous GET requests to four public pages and six same-origin referenced Next.js JS/CSS assets. No cookies, auth profiles, account APIs or writes.",
+  "pages": [
+    {
+      "path": "/",
+      "url": "https://dev.globoox.co/",
+      "final_url": "https://dev.globoox.co/en",
+      "status": 200,
+      "redirects": [
+        {
+          "from": "https://dev.globoox.co/",
+          "status": 307,
+          "to": "https://dev.globoox.co/en"
+        }
+      ],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 71588,
+      "sha256": "e4a58e5ffae1e1aaeda31354ea3f1e93c04c3c1dcd1be96c8a6fa8a5020bdcc5",
+      "x_vercel_id": "fra1::iad1::ww6xb-1789584411774-01a50ebb43f8",
+      "x_vercel_cache": "MISS",
+      "title": "Globoox",
+      "checks": {
+        "http_200": true,
+        "html_content_type": true,
+        "html_document_present": true,
+        "nonempty_body": true,
+        "no_next_error_screen": true
+      },
+      "referenced_js_css_count": 17,
+      "passed": true
+    },
+    {
+      "path": "/my-books",
+      "url": "https://dev.globoox.co/my-books",
+      "final_url": "https://dev.globoox.co/my-books",
+      "status": 200,
+      "redirects": [],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 34188,
+      "sha256": "aa8ba7e24432b0bf65965dc1daf056eadddc6b321d43c63a114665c4393e1951",
+      "x_vercel_id": "fra1::hbl7j-1789584410924-75f81167e217",
+      "x_vercel_cache": "HIT",
+      "title": "My Books | Globoox",
+      "checks": {
+        "http_200": true,
+        "html_content_type": true,
+        "html_document_present": true,
+        "nonempty_body": true,
+        "no_next_error_screen": true
+      },
+      "referenced_js_css_count": 19,
+      "passed": true
+    },
+    {
+      "path": "/auth",
+      "url": "https://dev.globoox.co/auth",
+      "final_url": "https://dev.globoox.co/auth",
+      "status": 200,
+      "redirects": [],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 20606,
+      "sha256": "302eb16a23b2f42989ee5711607dc0f00afcfdbd301f7ed49546837cc2ac0094",
+      "x_vercel_id": "fra1::mj9z5-1789584410924-88d2088fedac",
+      "x_vercel_cache": "PRERENDER",
+      "title": "Globoox",
+      "checks": {
+        "http_200": true,
+        "html_content_type": true,
+        "html_document_present": true,
+        "nonempty_body": true,
+        "no_next_error_screen": true
+      },
+      "referenced_js_css_count": 18,
+      "passed": true
+    },
+    {
+      "path": "/settings",
+      "url": "https://dev.globoox.co/settings",
+      "final_url": "https://dev.globoox.co/settings",
+      "status": 200,
+      "redirects": [],
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 27322,
+      "sha256": "5dbcf7d4372acb349281e8dd18a2686d66787d0d6a6ab6423aa7626d8dcf54d1",
+      "x_vercel_id": "fra1::4grtp-1789584410945-51db01bc65e9",
+      "x_vercel_cache": "PRERENDER",
+      "title": "Globoox",
+      "checks": {
+        "http_200": true,
+        "html_content_type": true,
+        "html_document_present": true,
+        "nonempty_body": true,
+        "no_next_error_screen": true
+      },
+      "referenced_js_css_count": 18,
+      "passed": true
+    }
+  ],
+  "assets": [
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/a3a121d5c70180e8.css",
+      "category": "css",
+      "final_url": "https://dev.globoox.co/_next/static/chunks/a3a121d5c70180e8.css",
+      "status": 200,
+      "redirects": [],
+      "content_type": "text/css; charset=utf-8",
+      "bytes": 75419,
+      "sha256": "ad129c3da7e75a27851aeb068a94f456c53f4e2f3fd05f5e9c5b0351908f9b27",
+      "x_vercel_id": "fra1::pnpd4-1789584412582-5517aa439caf",
+      "x_vercel_cache": "HIT",
+      "checks": {
+        "http_200": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/fdcb9e91b531c667.css",
+      "category": "css",
+      "final_url": "https://dev.globoox.co/_next/static/chunks/fdcb9e91b531c667.css",
+      "status": 200,
+      "redirects": [],
+      "content_type": "text/css; charset=utf-8",
+      "bytes": 55560,
+      "sha256": "14717357512fe12eefb00adf89ebd59d3280e88622b910fd03e7fb51164c2cb5",
+      "x_vercel_id": "fra1::xhpbg-1789584412523-046f91af069f",
+      "x_vercel_cache": "MISS",
+      "checks": {
+        "http_200": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/624f2ec5ad9eedd1.js",
+      "category": "js",
+      "final_url": "https://dev.globoox.co/_next/static/chunks/624f2ec5ad9eedd1.js",
+      "status": 200,
+      "redirects": [],
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 34204,
+      "sha256": "086bfb662241975c123b5ef2b0f662037325690bf7d0db259fbf8b85074805dd",
+      "x_vercel_id": "fra1::29qmb-1789584412516-d576f4bcf9ea",
+      "x_vercel_cache": "HIT",
+      "checks": {
+        "http_200": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/6d459ba0cd186f6c.js",
+      "category": "js",
+      "final_url": "https://dev.globoox.co/_next/static/chunks/6d459ba0cd186f6c.js",
+      "status": 200,
+      "redirects": [],
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 49253,
+      "sha256": "cebf7aee45942f2363cb560ddcd84778aa0b83f652508a2b224f08808cbfc340",
+      "x_vercel_id": "fra1::9hvkx-1789584412524-54e544360b84",
+      "x_vercel_cache": "HIT",
+      "checks": {
+        "http_200": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/bafa0ae7053e1bc9.js",
+      "category": "js",
+      "final_url": "https://dev.globoox.co/_next/static/chunks/bafa0ae7053e1bc9.js",
+      "status": 200,
+      "redirects": [],
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 29590,
+      "sha256": "130a03363baa999eeee6b4e17801a85e947e19b71960f955dbf2825c235b63eb",
+      "x_vercel_id": "fra1::pc7q2-1789584412827-5ebb540e6692",
+      "x_vercel_cache": "HIT",
+      "checks": {
+        "http_200": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    },
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/76069fa81d71a8fc.js",
+      "category": "js",
+      "final_url": "https://dev.globoox.co/_next/static/chunks/76069fa81d71a8fc.js",
+      "status": 200,
+      "redirects": [],
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 115416,
+      "sha256": "84598820d731d46655c31dc70403dd34f3955362b51aa82ea58900edd5ac252b",
+      "x_vercel_id": "fra1::vwg4f-1789584412833-edeb7e5a6240",
+      "x_vercel_cache": "HIT",
+      "checks": {
+        "http_200": true,
+        "nonempty_body": true,
+        "expected_content_type": true
+      },
+      "passed": true
+    }
+  ],
+  "checks": {
+    "four_routes": true,
+    "six_assets": true,
+    "both_asset_types": true,
+    "all_responses_passed": true
+  },
+  "limitations": [
+    "Does not execute JavaScript or test hydration, visual layout, library sorting, reading flow or interactions.",
+    "Does not test authenticated users, actual reader return, real two-device synchronization or backend mutation behavior.",
+    "Page availability includes same-origin HTTP redirects; redirect chains are reported explicitly."
+  ],
+  "passed": true
+}

@@ -1,0 +1,45 @@
+{
+  "id": "dpl_4y7kuj828gZcCDErjq5KzWWC1hCV",
+  "url": "globoox-ggbjp2nav-lomovski.vercel.app",
+  "readyState": "READY",
+  "target": null,
+  "gitSource": {
+    "type": "github",
+    "repoId": 1235542559,
+    "ref": "dev",
+    "sha": "b541a767b810c0243b709fb7b110195012a6d3bc"
+  },
+  "alias": [
+    "dev.globoox.co",
+    "globoox-git-dev-lomovski.vercel.app"
+  ],
+  "aliasAssigned": true,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifiedAliases": [
+    {
+      "domain": "dev.globoox.co",
+      "deploymentId": "dpl_4y7kuj828gZcCDErjq5KzWWC1hCV",
+      "deployment": {
+        "id": "dpl_4y7kuj828gZcCDErjq5KzWWC1hCV",
+        "url": "globoox-ggbjp2nav-lomovski.vercel.app"
+      }
+    },
+    {
+      "domain": "globoox.co",
+      "deploymentId": "dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU",
+      "deployment": {
+        "id": "dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU",
+        "url": "globoox-5cfq7be4v-lomovski.vercel.app"
+      }
+    },
+    {
+      "domain": "www.globoox.co",
+      "deploymentId": "dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU",
+      "deployment": {
+        "id": "dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU",
+        "url": "globoox-5cfq7be4v-lomovski.vercel.app"
+      }
+    }
+  ]
+}
