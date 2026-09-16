@@ -1,0 +1,22 @@
+{
+  "created_on": "2026-09-16",
+  "audit": {
+    "source": "output/library-load-audit-2026-09-15/REPORT.md",
+    "target": "docs/rfcs/active/library-loading-stability-2026-09-16/audit-2026-09-15.md",
+    "source_sha256": "f62c2eb583f7640b2ad10510781e71a91e975b1b98163c8fa4ac1982357d5540",
+    "source_bytes": 37104,
+    "body_exact_match": true,
+    "frontmatter_added_only": true
+  },
+  "page_fixtures": {
+    "source": "/tmp/globoox-library-regression-final/summary.json",
+    "target": "docs/rfcs/active/library-loading-stability-2026-09-16/evidence/page-fixtures-initial-summary.json",
+    "sha256": "253d965a4687a00a5d93f57ed233f10c9cfce35dbf148f2107ac14e6b3a9c053",
+    "passed": 9,
+    "total": 9,
+    "fixtureOnly": true,
+    "readerReturnIsRestoredState": true,
+    "strengthened_harness_status": "pending-at-capture"
+  },
+  "not_a_deployment_record": true
+}

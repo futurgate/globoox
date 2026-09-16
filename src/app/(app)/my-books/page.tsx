@@ -25,7 +25,18 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import GoogleOneTap from '@/components/GoogleOneTap';
 import PageHeader from '@/components/ui/PageHeader';
 import { trackBookOpened } from '@/lib/posthog';
-import { BookReadingProgress, ApiBook, fetchReadingPosition, getGuestScopeKey } from '@/lib/api';
+import { fetchReadingPosition, getGuestScopeKey, type ApiBook } from '@/lib/api';
+import {
+  compareRecentlyReadBooks,
+  createLibraryProgressQueue,
+  localReadingTimestamp,
+  mergeLibraryProgress,
+  newestTimestamp,
+  progressBelongsToScope,
+  sameBookOrder,
+  timestampMs,
+  type LibraryProgressRow as ProgressRow,
+} from '@/lib/libraryReadingState';
 import {
   getCachedLibraryViewSnapshotSync,
   getCachedLibraryViewSnapshot,
@@ -37,83 +48,25 @@ import {
 const FALLBACK_AUTHOR = 'Unknown author';
 const BOOKS_BATCH_SIZE = 6;
 
-type ProgressRow = BookReadingProgress & {
-  server_updated_at?: string | null;
-  idb_updated_at?: string | null;
-};
-
-function toMs(ts: string | null | undefined): number {
-  if (!ts) return Number.NEGATIVE_INFINITY;
-  const ms = Date.parse(ts);
-  return Number.isFinite(ms) ? ms : Number.NEGATIVE_INFINITY;
-}
-
-function chooseNewestTs(...candidates: Array<string | null | undefined>): string | null {
-  let best: string | null = null;
-  let bestMs = Number.NEGATIVE_INFINITY;
-  for (const ts of candidates) {
-    const ms = toMs(ts);
-    if (ms > bestMs) {
-      best = ts ?? null;
-      bestMs = ms;
-    }
-  }
-  return best;
-}
-
-function chooseByPriority(...candidates: Array<string | null | undefined>): string | null {
-  for (const ts of candidates) {
-    if (!ts) continue;
-    if (Number.isFinite(toMs(ts))) return ts;
-  }
-  return null;
-}
-
-function sameOrder(a: string[] | null | undefined, b: string[] | null | undefined): boolean {
-  if (!a && !b) return true;
-  if (!a || !b) return false;
-  if (a.length !== b.length) return false;
-  for (let i = 0; i < a.length; i += 1) {
-    if (a[i] !== b[i]) return false;
-  }
-  return true;
-}
-
-function mergeProgressMonotonic(existing: ProgressRow | undefined, incoming: ProgressRow): ProgressRow {
-  if (!existing) {
-    const normalizedUpdated = chooseNewestTs(
-      incoming.server_updated_at,
-      incoming.idb_updated_at,
-      incoming.updated_at,
-    );
-    return {
-      ...incoming,
-      updated_at: normalizedUpdated,
-      server_updated_at: incoming.server_updated_at ?? incoming.updated_at ?? null,
-      idb_updated_at: incoming.idb_updated_at ?? incoming.updated_at ?? null,
-    };
-  }
-
-  const serverUpdated = chooseNewestTs(existing.server_updated_at, incoming.server_updated_at);
-  const idbUpdated = chooseNewestTs(existing.idb_updated_at, incoming.idb_updated_at);
-  const effectiveUpdated = chooseNewestTs(serverUpdated, idbUpdated, existing.updated_at, incoming.updated_at);
-
-  const useIncomingBlockData = toMs(incoming.updated_at) >= toMs(existing.updated_at);
-  const source = useIncomingBlockData ? incoming : existing;
-
-  return {
-    ...source,
-    server_updated_at: serverUpdated,
-    idb_updated_at: idbUpdated,
-    updated_at: effectiveUpdated,
-  };
-}
-
 export default function MyBooksPage() {
-  const { progress, touchLastRead, updateServerProgress, syncVersions } = useAppStore();
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
-  const scopeKey = isAuthenticated && user?.id ? user.id : getGuestScopeKey();
-  const { books, loading, error, hideBook, unhideBook, removeBook, refresh } = useBooks({ scopeKey });
+  const auth = useAuth();
+  const scopeKey = auth.isAuthenticated && auth.user?.id ? auth.user.id : getGuestScopeKey();
+  // Scope changes reset all view/progress state together. Never carry a previous
+  // account's order or pending reads into a new library.
+  return <LibraryContent key={scopeKey} scopeKey={scopeKey} auth={auth} />;
+}
+
+function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType<typeof useAuth> }) {
+  const progress = useAppStore((state) => state.progress);
+  const touchLastRead = useAppStore((state) => state.touchLastRead);
+  const updateServerProgress = useAppStore((state) => state.updateServerProgress);
+  const progressVersion = useAppStore((state) => state.syncVersions.progress);
+  const { isAuthenticated, loading: authLoading } = auth;
+  const { books, loading, error, hideBook, unhideBook, removeBook, refresh } = useBooks({
+    scopeKey,
+    enabled: !authLoading || isAuthenticated,
+    isAuthenticated,
+  });
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [progressData, setProgressData] = useState<Record<string, ProgressRow>>({});
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
@@ -129,15 +82,19 @@ export default function MyBooksPage() {
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [sortDrawerOpen, setSortDrawerOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(BOOKS_BATCH_SIZE);
-  const [progressHydrated, setProgressHydrated] = useState(false);
   const [recentlyOpenedSnapshotOrder, setRecentlyOpenedSnapshotOrder] = useState<string[] | null>(() => {
     const cached = getCachedLibraryViewSnapshotSync(scopeKey, 'recently_opened');
     return cached?.order ?? null;
   });
-  const savedSnapshotOrderRef = useRef<string[] | null>(recentlyOpenedSnapshotOrder);
+  const [snapshotLastRead, setSnapshotLastRead] = useState<Record<string, string | null>>(() =>
+    getCachedLibraryViewSnapshotSync(scopeKey, 'recently_opened')?.effectiveLastReadByBookId ?? {}
+  );
+  const [snapshotReady, setSnapshotReady] = useState(false);
+  const savedSnapshotRef = useRef('');
+  const hydratedBookIdsRef = useRef(new Set<string>());
+  const mountedRef = useRef(true);
+  const progressQueueRef = useRef<ReturnType<typeof createLibraryProgressQueue<Awaited<ReturnType<typeof fetchReadingPosition>>>> | null>(null);
   const progressRef = useRef(progress);
-  const readingPositionControllersRef = useRef<Set<AbortController>>(new Set());
-  const revalidatedBookIdsRef = useRef<Set<string>>(new Set());
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
   const sortTriggerRef = useRef<HTMLButtonElement>(null);
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -160,30 +117,28 @@ export default function MyBooksPage() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    if (sortOrder !== 'recently_opened') {
-      setRecentlyOpenedSnapshotOrder(null);
-      return;
-    }
-
-    const syncSnapshot = getCachedLibraryViewSnapshotSync(scopeKey, 'recently_opened');
-    if (syncSnapshot?.order?.length) {
-      setRecentlyOpenedSnapshotOrder((prev) => (sameOrder(prev, syncSnapshot.order) ? prev : syncSnapshot.order));
-    }
-
-    void getCachedLibraryViewSnapshot(scopeKey, 'recently_opened').then((snapshot) => {
-      if (cancelled) return;
-      const nextOrder = snapshot?.order ?? null;
-      setRecentlyOpenedSnapshotOrder((prev) => (sameOrder(prev, nextOrder) ? prev : nextOrder));
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [scopeKey, sortOrder]);
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   useEffect(() => {
-    savedSnapshotOrderRef.current = recentlyOpenedSnapshotOrder;
-  }, [recentlyOpenedSnapshotOrder]);
+    let cancelled = false;
+    void getCachedLibraryViewSnapshot(scopeKey, 'recently_opened').then((snapshot) => {
+      if (cancelled) return;
+      if (snapshot) {
+        setRecentlyOpenedSnapshotOrder((prev) => prev ?? snapshot.order);
+        setSnapshotLastRead((prev) => {
+          const next = { ...prev };
+          for (const [id, timestamp] of Object.entries(snapshot.effectiveLastReadByBookId)) {
+            next[id] = newestTimestamp(prev[id], timestamp);
+          }
+          return next;
+        });
+      }
+      setSnapshotReady(true);
+    });
+    return () => { cancelled = true; };
+  }, [scopeKey]);
 
   // After OAuth redirect back with ?upload=1, auto-open upload modal
   useEffect(() => {
@@ -229,174 +184,101 @@ export default function MyBooksPage() {
     }
   }, [deleteTarget, removeBook]);
 
-  // Hydrate server reading positions from IndexedDB on load to avoid N requests on refresh.
+  // Read each book's persisted progress once, without switching the sorting
+  // algorithm off and on when an identical response or stream tail arrives.
+  const bookIdsKey = JSON.stringify(books.map((book) => book.id));
   useEffect(() => {
-    if (books.length === 0) {
-      setProgressData({});
-      setProgressHydrated(false);
-      return;
-    }
-
-    let cancelled = false;
-    setProgressHydrated(false);
-    void (async () => {
-      const entries = await Promise.all(
-        books.map(async (b) => {
-          const cached = await getCachedReadingPosition(scopeKey, b.id);
-          return [b.id, cached] as const;
-        })
-      );
-
-      if (cancelled) return;
-
-      const progressMap: Record<string, ProgressRow> = {};
-      for (const [bookId, cached] of entries) {
-        if (!cached) continue;
-        const pos = cached.position;
-        const effectiveUpdatedAt = chooseNewestTs(pos.updated_at, cached.updatedAt);
-        progressMap[bookId] = {
-          book_id: pos.book_id,
-          chapter_id: pos.chapter_id,
-          block_id: pos.block_id,
-          block_position: pos.block_position,
-          total_blocks: pos.total_blocks ?? progressRef.current[bookId]?.totalBlocks ?? 0,
-          content_version: 0,
-          updated_at: effectiveUpdatedAt,
-          server_updated_at: pos.updated_at ?? null,
-          idb_updated_at: cached.updatedAt ?? null,
-        };
-      }
+    const ids = (JSON.parse(bookIdsKey) as string[]).filter((id) => !hydratedBookIdsRef.current.has(id));
+    if (!ids.length) return;
+    ids.forEach((id) => hydratedBookIdsRef.current.add(id));
+    void Promise.all(ids.map(async (id) => [id, await getCachedReadingPosition(scopeKey, id)] as const)).then((entries) => {
+      if (!mountedRef.current) return;
       setProgressData((prev) => {
-        const next = { ...prev };
-        for (const [bookId, incoming] of Object.entries(progressMap)) {
-          next[bookId] = mergeProgressMonotonic(prev[bookId], incoming);
-        }
-        return next;
-      });
-      setProgressHydrated(true);
-    })();
-
-    return () => { cancelled = true; };
-  }, [books, scopeKey]);
-
-  // Revalidate reading positions from server so Recently Read is consistent cross-device.
-  useEffect(() => {
-    const controllers = readingPositionControllersRef.current;
-    const abortAllReadingPositionRequests = () => {
-      controllers.forEach((controller) => controller.abort());
-      controllers.clear();
-    };
-
-    const handleNavigationIntent = () => {
-      abortAllReadingPositionRequests();
-    };
-
-    window.addEventListener('globoox:navigation-intent', handleNavigationIntent);
-    return () => {
-      window.removeEventListener('globoox:navigation-intent', handleNavigationIntent);
-      abortAllReadingPositionRequests();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated || books.length === 0) return;
-
-    const targetIds = books
-      .slice(0, Math.min(books.length, visibleCount + BOOKS_BATCH_SIZE))
-      .map((book) => book.id)
-      .filter((bookId) => !revalidatedBookIdsRef.current.has(bookId));
-    if (targetIds.length === 0) return;
-
-    const controllers = readingPositionControllersRef.current;
-    let cancelled = false;
-    const controller = new AbortController();
-    controllers.add(controller);
-    void (async () => {
-      const updates: Array<{ bookId: string; remote: Awaited<ReturnType<typeof fetchReadingPosition>> } | null> = [];
-      const CONCURRENCY = 4;
-      for (let i = 0; i < targetIds.length && !cancelled; i += CONCURRENCY) {
-        const batchIds = targetIds.slice(i, i + CONCURRENCY);
-        const batchUpdates = await Promise.all(
-          batchIds.map(async (bookId) => {
-            try {
-              const remote = await fetchReadingPosition(bookId, controller.signal);
-              void setCachedReadingPosition(scopeKey, bookId, { position: remote, updatedAt: remote.updated_at ?? null });
-              return { bookId, remote };
-            } catch {
-              return null;
-            }
-          })
-        );
-        updates.push(...batchUpdates);
-      }
-
-      if (cancelled) return;
-
-      const serverUpdates: Array<{
-        bookId: string;
-        blockPosition?: number;
-        totalBlocks?: number;
-        serverUpdatedAt: string;
-      }> = [];
-
-      setProgressData((prev) => {
-        const next = { ...prev };
-        for (const item of updates) {
-          if (!item) continue;
-          const { bookId, remote } = item;
-          if (!remote.chapter_id) continue;
-          const totalBlocks = prev[bookId]?.total_blocks ?? progressRef.current[bookId]?.totalBlocks ?? 0;
+        let next = prev;
+        for (const [id, cached] of entries) {
+          if (!cached) continue;
+          const pos = cached.position;
           const incoming: ProgressRow = {
-            book_id: remote.book_id,
-            chapter_id: remote.chapter_id,
-            block_id: remote.block_id,
-            block_position: remote.block_position,
-            total_blocks: totalBlocks,
+            book_id: pos.book_id,
+            chapter_id: pos.chapter_id,
+            block_id: pos.block_id,
+            block_position: pos.block_position,
+            total_blocks: pos.total_blocks ?? (progressBelongsToScope(progressRef.current[id], scopeKey) ? progressRef.current[id]?.totalBlocks : undefined) ?? 0,
             content_version: 0,
-            updated_at: remote.updated_at,
-            server_updated_at: remote.updated_at,
-            idb_updated_at: remote.updated_at,
+            updated_at: newestTimestamp(pos.updated_at, cached.updatedAt),
+            server_updated_at: pos.updated_at,
+            idb_updated_at: cached.updatedAt,
           };
-          next[bookId] = mergeProgressMonotonic(prev[bookId], incoming);
-          const currentServerTs = progressRef.current[bookId]?.serverUpdatedAt;
-          if (remote.updated_at && currentServerTs !== remote.updated_at) {
-            serverUpdates.push({
-              bookId,
-              blockPosition: remote.block_position ?? undefined,
-              totalBlocks,
-              serverUpdatedAt: remote.updated_at,
-            });
-          }
+          const merged = mergeLibraryProgress(next[id], incoming);
+          if (merged === next[id]) continue;
+          if (next === prev) next = { ...prev };
+          next[id] = merged;
         }
         return next;
       });
+    });
+  }, [bookIdsKey, scopeKey]);
 
-      for (const update of serverUpdates) {
-        updateServerProgress(update.bookId, {
-          blockPosition: update.blockPosition,
-          totalBlocks: update.totalBlocks,
-          serverUpdatedAt: update.serverUpdatedAt,
-        });
-      }
-      if (!cancelled) {
-        targetIds.forEach((bookId) => revalidatedBookIdsRef.current.add(bookId));
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-      controllers.delete(controller);
-    };
-  }, [books, isAuthenticated, scopeKey, syncVersions.progress, updateServerProgress, visibleCount]);
-
+  // One queue per account / server progress version. A new stream batch only
+  // extends it; it cannot abort earlier reads or publish an old scope's results.
   useEffect(() => {
-    revalidatedBookIdsRef.current.clear();
-  }, [scopeKey, syncVersions.progress]);
+    if (!isAuthenticated) return;
+    const queue = createLibraryProgressQueue({
+      read: async (id, signal) => {
+        const remote = await fetchReadingPosition(id, signal, scopeKey);
+        if (!signal.aborted) {
+          void setCachedReadingPosition(scopeKey, id, { position: remote, updatedAt: remote.updated_at });
+        }
+        return remote;
+      },
+      publish: (results) => {
+        setProgressData((prev) => {
+          let next = prev;
+          for (const { id, value: remote } of results) {
+            if (!remote.chapter_id) continue;
+            const incoming: ProgressRow = {
+              book_id: remote.book_id,
+              chapter_id: remote.chapter_id,
+              block_id: remote.block_id,
+              block_position: remote.block_position,
+              total_blocks: remote.total_blocks ?? prev[id]?.total_blocks ?? (progressBelongsToScope(progressRef.current[id], scopeKey) ? progressRef.current[id]?.totalBlocks : undefined) ?? 0,
+              content_version: 0,
+              updated_at: remote.updated_at,
+              server_updated_at: remote.updated_at,
+              idb_updated_at: remote.updated_at,
+            };
+            const merged = mergeLibraryProgress(next[id], incoming);
+            if (merged === next[id]) continue;
+            if (next === prev) next = { ...prev };
+            next[id] = merged;
+          }
+          return next;
+        });
+        // Keep store writes outside the React state updater (which may be
+        // deferred or replayed). Background sync must not invent reading events.
+        for (const { id, value: remote } of results) {
+          if (!remote.chapter_id || !remote.updated_at) continue;
+          const local = progressRef.current[id];
+          if (local?.serverProgressScope === scopeKey && timestampMs(local.serverUpdatedAt) >= timestampMs(remote.updated_at)) continue;
+          updateServerProgress(id, {
+            blockPosition: remote.block_position ?? undefined,
+            totalBlocks: remote.total_blocks ?? (progressBelongsToScope(local, scopeKey) ? local?.totalBlocks : undefined),
+            serverUpdatedAt: remote.updated_at,
+            scopeKey,
+          });
+        }
+      },
+    });
+    progressQueueRef.current = queue;
+    return () => {
+      queue.dispose();
+      if (progressQueueRef.current === queue) progressQueueRef.current = null;
+    };
+  }, [isAuthenticated, scopeKey, progressVersion, updateServerProgress]);
 
   // Get block-based progress for a book
   const getBookProgress = useCallback((book: ApiBook) => {
-    const local = progress[book.id];
+    const local = progressBelongsToScope(progress[book.id], scopeKey) ? progress[book.id] : undefined;
     const server = progressData[book.id];
 
     // Priority: server data, fallback to local
@@ -408,20 +290,18 @@ export default function MyBooksPage() {
     }
 
     return 0;
-  }, [progress, progressData]);
+  }, [progress, progressData, scopeKey]);
 
   useEffect(() => {
     progressRef.current = progress;
   }, [progress]);
 
-  const getEffectiveLastRead = useCallback((bookId: string) => {
-    const p = progressData[bookId];
-    return chooseByPriority(
-      p?.server_updated_at,
-      p?.idb_updated_at,
-      progress[bookId]?.lastRead ?? null,
-    );
-  }, [progressData, progress]);
+  const getEffectiveLastRead = useCallback((bookId: string) => newestTimestamp(
+    snapshotLastRead[bookId],
+    progressData[bookId]?.updated_at,
+    progress[bookId]?.serverProgressScope === scopeKey ? progress[bookId]?.serverUpdatedAt : null,
+    localReadingTimestamp(progress[bookId], scopeKey),
+  ), [snapshotLastRead, progressData, progress, scopeKey]);
 
   const snapshotRank = useMemo(() => {
     if (!recentlyOpenedSnapshotOrder) return new Map<string, number>();
@@ -439,21 +319,7 @@ export default function MyBooksPage() {
       if (sortOrder === 'title_asc') return a.title.localeCompare(b.title);
       if (sortOrder === 'title_desc') return b.title.localeCompare(a.title);
       if (sortOrder === 'recently_opened') {
-        if (!progressHydrated && snapshotRank.size > 0) {
-          const aRank = snapshotRank.get(a.id);
-          const bRank = snapshotRank.get(b.id);
-          const aKnown = aRank != null;
-          const bKnown = bRank != null;
-          if (aKnown && bKnown && aRank !== bRank) return aRank - bRank;
-          if (aKnown !== bKnown) return aKnown ? -1 : 1;
-          const createdDiff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-          if (createdDiff !== 0) return createdDiff;
-          return a.id.localeCompare(b.id);
-        }
-        const aMs = toMs(getEffectiveLastRead(a.id));
-        const bMs = toMs(getEffectiveLastRead(b.id));
-        if (bMs !== aMs) return bMs - aMs;
-        return a.id.localeCompare(b.id);
+        return compareRecentlyReadBooks(a, b, getEffectiveLastRead, snapshotRank);
       }
       // recently_added
       const createdDiff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -462,26 +328,31 @@ export default function MyBooksPage() {
     });
 
     return sorted;
-  }, [books, statusFilter, sortOrder, getEffectiveLastRead, progressHydrated, snapshotRank]);
+  }, [books, statusFilter, sortOrder, getEffectiveLastRead, snapshotRank]);
+
+  // Prioritise books actually visible in the selected order, then a lookahead
+  // batch. Reordering does not cancel or repeat IDs already in this queue.
+  const progressTargetKey = JSON.stringify(filteredBooks.slice(0, visibleCount + BOOKS_BATCH_SIZE).map((book) => book.id));
+  useEffect(() => {
+    progressQueueRef.current?.enqueue(JSON.parse(progressTargetKey) as string[]);
+  }, [progressTargetKey, isAuthenticated, scopeKey, progressVersion]);
 
   useEffect(() => {
-    if (sortOrder !== 'recently_opened') return;
-    if (!progressHydrated) return;
-    if (filteredBooks.length === 0) return;
-
+    if (sortOrder !== 'recently_opened' || !snapshotReady || !filteredBooks.length) return;
     const order = filteredBooks.map((book) => book.id);
-    if (sameOrder(savedSnapshotOrderRef.current, order)) return;
-    const effectiveLastReadByBookId: Record<string, string | null> = {};
-    for (const book of filteredBooks) {
-      effectiveLastReadByBookId[book.id] = getEffectiveLastRead(book.id);
-    }
-    savedSnapshotOrderRef.current = order;
+    const effectiveLastReadByBookId = Object.fromEntries(order.map((id) => [id, getEffectiveLastRead(id)]));
+    const signature = JSON.stringify({ order, effectiveLastReadByBookId });
+    if (signature === savedSnapshotRef.current) return;
+    savedSnapshotRef.current = signature;
+    // The current fallback order follows the displayed view, rather than
+    // retaining the initial snapshot and jumping back to it on later updates.
+    setRecentlyOpenedSnapshotOrder((prev) => sameBookOrder(prev, order) ? prev : order);
     void setCachedLibraryViewSnapshot(scopeKey, 'recently_opened', {
       order,
       effectiveLastReadByBookId,
       computedAt: Date.now(),
     });
-  }, [filteredBooks, getEffectiveLastRead, progressHydrated, scopeKey, sortOrder]);
+  }, [filteredBooks, getEffectiveLastRead, snapshotReady, scopeKey, sortOrder]);
 
   const visibleBooks = useMemo(
     () => filteredBooks.slice(0, Math.min(visibleCount, filteredBooks.length)),
@@ -665,17 +536,17 @@ export default function MyBooksPage() {
                     onDelete={handleRequestDelete}
                     hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
                     onOpen={() => {
-                      touchLastRead(book.id);
+                      touchLastRead(book.id, scopeKey);
                       const nowIso = new Date().toISOString();
                       setRecentlyOpenedSnapshotOrder((prev) => {
                         const base = prev?.length ? prev : filteredBooks.map((b) => b.id);
                         const next = [book.id, ...base.filter((id) => id !== book.id)];
-                        if (sameOrder(prev, next)) return prev;
+                        if (sameBookOrder(prev, next)) return prev;
                         const effectiveLastReadByBookId: Record<string, string | null> = {};
                         next.forEach((id) => {
                           effectiveLastReadByBookId[id] = id === book.id ? nowIso : getEffectiveLastRead(id);
                         });
-                        savedSnapshotOrderRef.current = next;
+                        savedSnapshotRef.current = '';
                         void setCachedLibraryViewSnapshot(scopeKey, 'recently_opened', {
                           order: next,
                           effectiveLastReadByBookId,

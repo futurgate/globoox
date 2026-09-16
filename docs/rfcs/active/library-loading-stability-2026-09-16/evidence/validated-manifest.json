@@ -1,0 +1,22 @@
+{
+  "source": "final local production build",
+  "backendChanged": false,
+  "artifacts": [
+    {
+      "file": "page-fixtures-production-summary.json",
+      "sha256": "6425377282775df654817c314835a21a6bef0192494ef4b7ec84db80de4cad1a"
+    },
+    {
+      "file": "real-guest-reader-return.json",
+      "sha256": "ae548ccff7a669e187df8d41a6171cacc979f828af6ded3e0c833c23ba789ec0"
+    },
+    {
+      "file": "coherent-progress-wave-timeline.json",
+      "sha256": "d781f5b3ae25d315d86c63af95eb83ca2eec485264ec8b3dee2826f67187112f"
+    },
+    {
+      "file": "warm-identical-revalidation-timeline.json",
+      "sha256": "cc73eb2ce8f3ca2a7ea483e506a0ae2c22b0c283e9182e850ac85ca9c2132efe"
+    }
+  ]
+}

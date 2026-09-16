@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import ReaderView from '@/components/Reader/ReaderView';
-import { ApiBook, fetchBook, getCachedBookById } from '@/lib/api';
+import { ApiBook, fetchBook, getCachedBookById, getGuestScopeKey } from '@/lib/api';
 import { getCachedBookMeta, touchCachedLastRead } from '@/lib/contentCache';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAppStore } from '@/lib/store';
@@ -28,9 +28,11 @@ export default function ReaderPage({ params }: ReaderPageProps) {
 
   useEffect(() => {
     // Mark book as "recently opened" immediately, so Library sort by "recently opened" updates even if user doesn't turn a page.
-    touchLastRead(id);
-    const scopeKey = isAuthenticated && user?.id ? user.id : 'guest';
-    void touchCachedLastRead(scopeKey, id, new Date().toISOString());
+    const scopeKey = isAuthenticated && user?.id ? user.id : getGuestScopeKey();
+    if (!authLoading || isAuthenticated) {
+      touchLastRead(id, scopeKey);
+      void touchCachedLastRead(scopeKey, id, new Date().toISOString());
+    }
 
     let cancelled = false;
     const cachedBook = getCachedBookById(id);

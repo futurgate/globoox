@@ -1,0 +1,56 @@
+{
+  "base": "http://[::1]:3016",
+  "guestOnly": true,
+  "firstCardsMs": 17675,
+  "bookCount": 6,
+  "selected": "/reader/92863897-deee-4954-80a5-3c4b8b531735",
+  "readerTextLength": 2065,
+  "original": [
+    "/reader/93ed2d75-d82a-4120-83fb-d1df912f6520",
+    "/reader/92863897-deee-4954-80a5-3c4b8b531735",
+    "/reader/4067ef8d-9c2e-4570-b9be-96852b06e64f",
+    "/reader/97828c6a-c91a-499a-ba33-b16a3a92864c",
+    "/reader/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d",
+    "/reader/ac6f23b9-675f-449f-bacc-d57cfaa0b358"
+  ],
+  "returnOrder": [
+    "/reader/92863897-deee-4954-80a5-3c4b8b531735",
+    "/reader/93ed2d75-d82a-4120-83fb-d1df912f6520",
+    "/reader/4067ef8d-9c2e-4570-b9be-96852b06e64f",
+    "/reader/97828c6a-c91a-499a-ba33-b16a3a92864c",
+    "/reader/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d",
+    "/reader/ac6f23b9-675f-449f-bacc-d57cfaa0b358"
+  ],
+  "settled": [
+    "/reader/92863897-deee-4954-80a5-3c4b8b531735",
+    "/reader/93ed2d75-d82a-4120-83fb-d1df912f6520",
+    "/reader/4067ef8d-9c2e-4570-b9be-96852b06e64f",
+    "/reader/97828c6a-c91a-499a-ba33-b16a3a92864c",
+    "/reader/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d",
+    "/reader/ac6f23b9-675f-449f-bacc-d57cfaa0b358"
+  ],
+  "errors": [],
+  "blocked": [],
+  "statuses": [
+    {
+      "path": "/api/books",
+      "status": 502
+    },
+    {
+      "path": "/api/sync/status",
+      "status": 502
+    },
+    {
+      "path": "/api/books",
+      "status": 200
+    },
+    {
+      "path": "/api/books/92863897-deee-4954-80a5-3c4b8b531735/chapters",
+      "status": 200
+    },
+    {
+      "path": "/api/chapters",
+      "status": 200
+    }
+  ]
+}

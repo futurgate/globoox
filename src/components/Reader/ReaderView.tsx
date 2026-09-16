@@ -1367,7 +1367,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
             };
         }
 
-        fetchReadingPosition(bookId)
+        fetchReadingPosition(bookId, undefined, scopeKey)
             .then((remote) => {
                 if (cancelled) return;
 
@@ -1533,7 +1533,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
             sentence_index: anchor.sentenceIndex,
             lang: activeLang.toUpperCase(),
             updated_at_client: anchor.updatedAt,
-        }).then((response) => {
+        }, scopeKey).then((response) => {
             if (response.persisted && response.updated_at) {
                 // Sync anchor timestamp with server so subsequent PUTs are never stale
                 const syncedAnchor = { ...anchor, updatedAt: response.updated_at };
@@ -1557,7 +1557,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
             } else if (response.reason === 'stale_client') {
                 // Server has a newer position than us. Fetch it and update store + anchor
                 // so subsequent PUTs use the correct updated_at baseline.
-                fetchReadingPosition(bookId).then((remote) => {
+                fetchReadingPosition(bookId, undefined, scopeKey).then((remote) => {
                     if (remote.block_id && remote.block_position != null && remote.updated_at) {
                         const synced: ReadingAnchor = {
                             chapterId: remote.chapter_id ?? anchor.chapterId,
@@ -1580,6 +1580,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                     blockPosition: anchor.blockPosition,
                     totalBlocks: response.total_blocks,
                     serverUpdatedAt: response.updated_at ?? anchor.updatedAt,
+                    scopeKey,
                 });
             }
         }).catch(() => {

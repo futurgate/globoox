@@ -1,299 +1,279 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ApiBook, fetchBooks, fetchBooksStreaming, createBook, updateBook, deleteBook as apiDeleteBook } from './api'
 import { clearCachedBookMeta, clearCachedBookMetaEntry, clearCachedBooksList, getCachedBooksList, setCachedBookMeta, setCachedBooksList } from './contentCache'
+import { BooksRequestGuard, sameBooks } from './useBooksState'
 
-// Stale-While-Revalidate cache — module-level so it survives component remounts (route navigation)
-const STALE_TIME_MS = 5 * 60 * 1000 // 5 minutes — background refresh only if older
+const STALE_TIME_MS = 5 * 60 * 1000
+const EMPTY_BOOKS: ApiBook[] = []
 
 interface CachedBooks {
   data: ApiBook[]
   fetchedAt: number
 }
 
+interface BooksView {
+  sessionId: symbol
+  books: ApiBook[]
+  loading: boolean
+  stabilizing: boolean
+  error: string | null
+}
+
 const booksCache = new Map<string, CachedBooks>()
 
-/** Expose a way for useSyncCheck to force-invalidate the cache from outside the hook */
+/** Invalidates future reads; this deliberately does not trigger a fetch in mounted hooks. */
 export function invalidateBooksCache() {
   booksCache.clear()
-  // Also drop persisted cache so a post-sync reload doesn't resurrect stale data.
   void clearCachedBooksList()
   void clearCachedBookMeta()
 }
 
-export function useBooks(options?: { scopeKey?: string; stabilizeOnMount?: boolean }) {
+interface UseBooksOptions {
+  scopeKey?: string
+  stabilizeOnMount?: boolean
+  enabled?: boolean
+  isAuthenticated?: boolean
+}
+
+export function useBooks(options?: UseBooksOptions) {
   const scopeKey = options?.scopeKey ?? 'guest'
   const stabilizeOnMount = options?.stabilizeOnMount ?? false
-  const cacheKey = `${scopeKey}::all`
-  const isAuthenticatedScope = scopeKey !== 'guest'
+  const enabled = options?.enabled ?? true
+  const isAuthenticatedScope = options?.isAuthenticated ?? (scopeKey !== 'guest' && !scopeKey.startsWith('share:'))
   const listStatus = isAuthenticatedScope ? 'all' : 'active'
+  const cacheKey = `${scopeKey}::all`
 
-  // Initialise from cache immediately — no skeleton on repeated visits
-  const cached = booksCache.get(cacheKey)
-  const [books, setBooks] = useState<ApiBook[]>(cached?.data ?? [])
-  // loading=true only when there is absolutely no cached data yet (very first visit)
-  const [loading, setLoading] = useState(!cached)
-  const [stabilizing, setStabilizing] = useState(Boolean(cached && stabilizeOnMount))
-  const [error, setError] = useState<string | null>(null)
-  const revalidating = useRef<string | null>(null)
-  const hasSuccessfulBooksFetch = useRef(Boolean(cached))
-  const authRetryDone = useRef(false)
-  const activeCacheKeyRef = useRef(cacheKey)
-  const initialStabilizationDoneRef = useRef(false)
+  // Async work retains this exact session, so A → B → A cannot admit old A responses.
+  const session = useMemo(() => {
+    const cached = enabled ? booksCache.get(cacheKey) : undefined
+    const view: BooksView = {
+      sessionId: Symbol(cacheKey),
+      books: cached?.data ?? EMPTY_BOOKS,
+      loading: !cached,
+      stabilizing: Boolean(enabled && cached && stabilizeOnMount),
+      error: null,
+    }
+    return {
+      guard: new BooksRequestGuard(),
+      isAuthenticatedScope,
+      view,
+      hasData: Boolean(cached),
+      authRetryDone: false,
+      pendingMutations: 0,
+      latestMutation: new Map<string, symbol>(),
+      refreshAfterMutation: false,
+    }
+  }, [cacheKey, enabled, isAuthenticatedScope, stabilizeOnMount])
+  const [view, setView] = useState<BooksView>(session.view)
 
-  const commitBooks = useCallback((nextBooks: ApiBook[], fetchedAt = Date.now()) => {
-    if (activeCacheKeyRef.current !== cacheKey) return
-    booksCache.set(cacheKey, { data: nextBooks, fetchedAt })
-    setBooks(nextBooks)
-    void setCachedBooksList(scopeKey, 'all', nextBooks)
-    nextBooks.forEach((b) => void setCachedBookMeta(scopeKey, b))
-  }, [cacheKey, scopeKey])
+  const publish = useCallback((patch: Partial<Omit<BooksView, 'sessionId'>>) => {
+    if (!session.guard.active) return
+    const books = patch.books && !sameBooks(session.view.books, patch.books) ? patch.books : session.view.books
+    session.view = { ...session.view, ...patch, books }
+    setView(session.view)
+  }, [session])
+
+  const persistBooks = useCallback((nextBooks: ApiBook[], fetchedAt = Date.now()) => {
+    if (!session.guard.active) return
+    session.guard.markPublished()
+    publish({ books: nextBooks, loading: false })
+    session.hasData = true
+    const stableBooks = session.view.books
+    booksCache.set(cacheKey, { data: stableBooks, fetchedAt })
+    void setCachedBooksList(scopeKey, 'all', stableBooks)
+    stableBooks.forEach((book) => void setCachedBookMeta(scopeKey, book))
+  }, [cacheKey, publish, scopeKey, session])
 
   useEffect(() => {
-    activeCacheKeyRef.current = cacheKey
-    revalidating.current = null
-    authRetryDone.current = false
-    hasSuccessfulBooksFetch.current = Boolean(booksCache.get(cacheKey))
-    initialStabilizationDoneRef.current = false
-    setStabilizing(Boolean(booksCache.get(cacheKey) && stabilizeOnMount))
-  }, [cacheKey, stabilizeOnMount])
+    session.guard.activate()
+    publish(session.view)
+    return () => session.guard.dispose()
+  }, [publish, session])
 
-  // Hydrate from persisted IndexedDB cache (fast reloads)
   useEffect(() => {
+    if (!enabled) return
+    if (booksCache.has(cacheKey)) return
     let cancelled = false
-    if (booksCache.get(cacheKey)) return
-
+    const hydrationVersion = session.guard.hydrationVersion()
     void getCachedBooksList(scopeKey, 'all').then((entry) => {
-      if (cancelled) return
-      if (!entry?.books?.length) return
-      booksCache.set(cacheKey, { data: entry.books, fetchedAt: entry.fetchedAt })
-      setBooks(entry.books)
-      setLoading(false)
-      hasSuccessfulBooksFetch.current = true
-      // Persist per-book metadata too, so /reader/[id] can render instantly on reload.
-      entry.books.forEach((b) => void setCachedBookMeta(scopeKey, b))
+      // Network's first batch or a local mutation wins over a late disk read.
+      if (cancelled || !session.guard.canHydrate(hydrationVersion) || !entry) return
+      const newerMemory = booksCache.get(cacheKey)
+      const data = newerMemory?.data ?? entry.books
+      booksCache.set(cacheKey, newerMemory ?? { data, fetchedAt: entry.fetchedAt })
+      session.hasData = true
+      publish({ books: data, loading: false })
+      data.forEach((book) => void setCachedBookMeta(scopeKey, book))
     })
+    return () => { cancelled = true }
+  }, [cacheKey, enabled, publish, scopeKey, session])
 
-    return () => {
-      cancelled = true
-    }
-  }, [cacheKey, scopeKey])
-
-  /**
-   * refresh(force=false) — stale-while-revalidate:
-   *   - Always shows existing cached data immediately (no skeletons)
-   *   - Fetches in background when cache is older than STALE_TIME_MS
-   *   - force=true: always re-fetches (e.g. after mutating the list)
-   */
   const refresh = useCallback(async (force = false) => {
-    const entry = booksCache.get(cacheKey)
-    const now = Date.now()
-    const isFresh = entry && now - entry.fetchedAt < STALE_TIME_MS
-
-    // Show cached data instantly — never block the user with a spinner
-    if (entry) {
-      setBooks(entry.data)
-      setLoading(false)
-    }
-
-    // Keep skeleton until first successful /api/books call.
-    if (!hasSuccessfulBooksFetch.current) {
-      setLoading(true)
-    }
-
-    // Nothing to do if cache is fresh and not forced
-    if (!force && isFresh) return
-
-    // Prevent concurrent fetches
-    if (revalidating.current === cacheKey) return
-    revalidating.current = cacheKey
-
-    // Clear stale entry when forced so we don't risk showing it again on next mount
-    if (force) booksCache.delete(cacheKey)
-
-    setError(null)
-    // Don't set loading=true here — we already have data to show
-
-    // First-paint fast path: no cache yet → stream so the head batch renders before
-    // the full list is even queried server-side. Skip for revalidations (we already
-    // have data to show, and the JSON path is simpler/cheaper there).
-    const isFirstPaint = !entry && !hasSuccessfulBooksFetch.current
-    let streamSucceeded = false
-    let streamedData: ApiBook[] | null = null
-    if (isFirstPaint) {
-      try {
-        const streamed: ApiBook[] = []
-        await fetchBooksStreaming(listStatus, (batch, isFirst) => {
-          if (activeCacheKeyRef.current !== cacheKey) return
-          streamed.push(...batch)
-          setBooks([...streamed])
-          if (isFirst) setLoading(false)
-        })
-        streamSucceeded = true
-        streamedData = streamed
-        // For guest scope we can commit immediately. Auth scope still does the
-        // session-race retry below — keep that behavior intact.
-        if (!isAuthenticatedScope) {
-          commitBooks(streamed)
-          hasSuccessfulBooksFetch.current = true
-          return
-        }
-      } catch (err: unknown) {
-        // Fall through to JSON fetch on stream failure.
-        console.warn('[useBooks] stream failed, falling back to JSON', err)
-      }
-    }
-
-    try {
-      // Auth + stream succeeded: skip the immediate JSON fetch; use streamed data
-      // as the "first" payload and proceed straight to the stabilization retry.
-      const data = streamSucceeded && streamedData
-        ? streamedData
-        : await fetchBooks(listStatus)
-      const needsAuthStabilization = isAuthenticatedScope && !authRetryDone.current
-      if (!needsAuthStabilization) {
-        commitBooks(data)
-        hasSuccessfulBooksFetch.current = true
-      } else {
-        // First authenticated fetch can still race before proxy session is fully ready.
-        // Show data immediately, then do one short retry and only persist the retry result as fresh.
-        if (activeCacheKeyRef.current === cacheKey) {
-          setBooks(data)
-        }
-        authRetryDone.current = true
-
-        try {
-          await new Promise((resolve) => setTimeout(resolve, 1200))
-          const retryData = await fetchBooks(listStatus)
-          commitBooks(retryData)
-          hasSuccessfulBooksFetch.current = true
-        } catch {
-          // Fallback: keep current data but mark it near-stale so a follow-up refresh retries quickly.
-          commitBooks(data, Date.now() - STALE_TIME_MS + 1)
-          hasSuccessfulBooksFetch.current = true
-        }
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to load books'
-      setError(message)
-      hasSuccessfulBooksFetch.current = true
-    } finally {
-      if (revalidating.current === cacheKey) revalidating.current = null
-      // Only clear the initial loading spinner (first ever load)
-      setLoading(false)
-    }
-  }, [cacheKey, commitBooks, isAuthenticatedScope, listStatus])
-
-  // On mount: show cache immediately, revalidate if stale
-  useEffect(() => {
-    const hasCache = Boolean(booksCache.get(cacheKey))
-    if (stabilizeOnMount && hasCache && !initialStabilizationDoneRef.current) {
-      initialStabilizationDoneRef.current = true
-      setStabilizing(true)
-      void refresh(true).finally(() => {
-        if (activeCacheKeyRef.current === cacheKey) setStabilizing(false)
-      })
+    if (!enabled || !session.guard.active) return
+    if (session.pendingMutations) {
+      session.refreshAfterMutation = true
       return
     }
+    if (session.guard.inFlight && !force) return
 
-    void refresh()
+    const entry = booksCache.get(cacheKey)
+    if (entry) {
+      session.hasData = true
+      publish({ books: entry.data, loading: false })
+    }
+    if (!force && entry && Date.now() - entry.fetchedAt < STALE_TIME_MS) return
+
+    const request = session.guard.beginRequest()
+    const isCurrent = () => session.guard.isCurrent(request)
+    // Retain usable data on failed revalidation, but do not treat it as fresh.
+    if (force && entry) booksCache.set(cacheKey, { ...entry, fetchedAt: 0 })
+    publish({ error: null, loading: !session.hasData })
+
+    try {
+      let data: ApiBook[] | null = null
+      if (!entry && !session.hasData) {
+        try {
+          const streamed: ApiBook[] = []
+          await fetchBooksStreaming(listStatus, (batch) => {
+            if (!isCurrent()) return
+            streamed.push(...batch)
+            session.guard.markPublished()
+            session.hasData = true
+            // Preserve the first streamed batch: no debounce, disk read or auth retry delay.
+            // A complete disk snapshot may have arrived while the stream was starting.
+            // Keep its tail visible until the complete network list can replace it.
+            if (!booksCache.has(cacheKey)) publish({ books: [...streamed], loading: false })
+          }, request.controller.signal)
+          if (!isCurrent()) return
+          data = streamed
+        } catch (err: unknown) {
+          if (!isCurrent()) return
+          console.warn('[useBooks] stream failed, falling back to JSON', err)
+        }
+      }
+
+      if (!data) data = await fetchBooks(listStatus)
+      if (!isCurrent()) return
+      session.guard.markPublished()
+      session.hasData = true
+      publish({ books: data, loading: false })
+
+      if (session.isAuthenticatedScope && !session.authRetryDone) {
+        // Keep the existing proxy-session stabilization retry until auth is fixed end to end.
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 1200))
+          if (!isCurrent()) return
+          const retryData = await fetchBooks(listStatus)
+          if (!isCurrent()) return
+          session.authRetryDone = true
+          persistBooks(retryData)
+        } catch {
+          if (!isCurrent()) return
+          session.authRetryDone = true
+          persistBooks(data, Date.now() - STALE_TIME_MS + 1)
+        }
+      } else {
+        persistBooks(data)
+      }
+    } catch (err: unknown) {
+      if (!isCurrent()) return
+      publish({ error: err instanceof Error ? err.message : 'Failed to load books' })
+    } finally {
+      if (isCurrent()) {
+        publish({ loading: false, stabilizing: false })
+        session.guard.finishRequest(request)
+      }
+    }
+  }, [cacheKey, enabled, listStatus, persistBooks, publish, session])
+
+  useEffect(() => {
+    void refresh(Boolean(stabilizeOnMount && booksCache.has(cacheKey)))
   }, [cacheKey, refresh, stabilizeOnMount])
 
-  // On tab focus: silent background revalidation (no skeleton)
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        void refresh()
-      }
+      if (document.visibilityState === 'visible') void refresh()
     }
     document.addEventListener('visibilitychange', handleVisibility)
     return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, [refresh])
 
+  const beginMutation = useCallback((id: string) => {
+    if (!enabled || !session.guard.active) throw new Error('Library is not ready for changes')
+    const token = Symbol(id)
+    if (session.latestMutation.has(id)) session.refreshAfterMutation = true
+    session.latestMutation.set(id, token)
+    session.pendingMutations += 1
+    session.refreshAfterMutation = session.guard.invalidateRequest() || session.refreshAfterMutation
+    session.guard.markPublished()
+    publish({ loading: false, stabilizing: false, error: null })
+    return token
+  }, [enabled, publish, session])
+
+  const finishMutation = useCallback((id: string, token: symbol) => {
+    session.pendingMutations -= 1
+    if (session.latestMutation.get(id) === token) session.latestMutation.delete(id)
+    if (!session.guard.active) {
+      // Never promote a now-inactive scope's optimistic state to a fresh cache.
+      booksCache.delete(cacheKey)
+      return
+    }
+    if (!session.pendingMutations && session.refreshAfterMutation) {
+      session.refreshAfterMutation = false
+      void refresh(true)
+    }
+  }, [cacheKey, refresh, session])
+
   const addBook = useCallback(async (data: { title: string; author?: string; cover_url?: string; source_language?: string }) => {
-    const created = await createBook(data)
-    setBooks((prev) => [created, ...prev])
-    booksCache.delete(cacheKey)
-    void setCachedBookMeta(scopeKey, created)
-    return created
-  }, [cacheKey, scopeKey])
-
-  const hideBook = useCallback(async (id: string) => {
-    const previousBooks = booksCache.get(cacheKey)?.data ?? books
-    const nextBooks = previousBooks.map((b) => (b.id === id ? { ...b, status: 'hidden' } : b))
-
-    setError(null)
-    setBooks(nextBooks)
-    booksCache.set(cacheKey, { data: nextBooks, fetchedAt: Date.now() })
-    void setCachedBooksList(scopeKey, 'all', nextBooks)
-    const updated = nextBooks.find((book) => book.id === id)
-    if (updated) void setCachedBookMeta(scopeKey, updated)
-
+    const id = `create:${Date.now()}`
+    const token = beginMutation(id)
     try {
-      await updateBook(id, { status: 'hidden' })
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to archive book'
-      setBooks(previousBooks)
-      booksCache.set(cacheKey, { data: previousBooks, fetchedAt: Date.now() })
-      void setCachedBooksList(scopeKey, 'all', previousBooks)
-      const restored = previousBooks.find((book) => book.id === id)
-      if (restored) void setCachedBookMeta(scopeKey, restored)
-      setError(message)
-      throw err
-    }
-  }, [books, cacheKey, scopeKey])
-
-  const unhideBook = useCallback(async (id: string) => {
-    const previousBooks = booksCache.get(cacheKey)?.data ?? books
-    const nextBooks = previousBooks.map((b) => (b.id === id ? { ...b, status: 'active' } : b))
-
-    setError(null)
-    setBooks(nextBooks)
-    booksCache.set(cacheKey, { data: nextBooks, fetchedAt: Date.now() })
-    void setCachedBooksList(scopeKey, 'all', nextBooks)
-    const updated = nextBooks.find((book) => book.id === id)
-    if (updated) void setCachedBookMeta(scopeKey, updated)
-
-    try {
-      await updateBook(id, { status: 'active' })
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to restore book'
-      setBooks(previousBooks)
-      booksCache.set(cacheKey, { data: previousBooks, fetchedAt: Date.now() })
-      void setCachedBooksList(scopeKey, 'all', previousBooks)
-      const restored = previousBooks.find((book) => book.id === id)
-      if (restored) void setCachedBookMeta(scopeKey, restored)
-      setError(message)
-      throw err
-    }
-  }, [books, cacheKey, scopeKey])
-
-  const removeBook = useCallback(async (id: string) => {
-    const previousBooks = booksCache.get(cacheKey)?.data ?? books
-    const nextBooks = previousBooks.filter((b) => b.id !== id)
-
-    setError(null)
-    setBooks(nextBooks)
-    booksCache.set(cacheKey, { data: nextBooks, fetchedAt: Date.now() })
-    void setCachedBooksList(scopeKey, 'all', nextBooks)
-    void clearCachedBookMetaEntry(scopeKey, id)
-
-    try {
-      await apiDeleteBook(id)
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to delete book'
-      setBooks(previousBooks)
-      booksCache.set(cacheKey, { data: previousBooks, fetchedAt: Date.now() })
-      void setCachedBooksList(scopeKey, 'all', previousBooks)
-      const restored = previousBooks.find((book) => book.id === id)
-      if (restored) {
-        void setCachedBookMeta(scopeKey, restored)
+      const created = await createBook(data)
+      if (session.guard.active) {
+        persistBooks([created, ...session.view.books.filter((book) => book.id !== created.id)], 0)
       }
-      setError(message)
-      throw err
+      return created
+    } finally {
+      finishMutation(id, token)
     }
-  }, [books, cacheKey, scopeKey])
+  }, [beginMutation, finishMutation, persistBooks, session])
 
+  const mutateBook = useCallback(async (id: string, action: 'hidden' | 'active' | 'delete') => {
+    const previousIndex = session.view.books.findIndex((book) => book.id === id)
+    const previousBook = session.view.books[previousIndex]
+    const token = beginMutation(id)
+    const nextBooks = action === 'delete'
+      ? session.view.books.filter((book) => book.id !== id)
+      : session.view.books.map((book) => book.id === id ? { ...book, status: action } : book)
+    persistBooks(nextBooks)
+    if (action === 'delete') void clearCachedBookMetaEntry(scopeKey, id)
+
+    try {
+      if (action === 'delete') await apiDeleteBook(id)
+      else await updateBook(id, { status: action })
+    } catch (err: unknown) {
+      if (session.guard.active && session.latestMutation.get(id) === token) {
+        // Roll back only this book, preserving concurrent changes to other books.
+        const restored = session.view.books.filter((book) => book.id !== id)
+        if (previousBook) restored.splice(Math.min(previousIndex, restored.length), 0, previousBook)
+        persistBooks(restored)
+        const fallback = action === 'delete' ? 'Failed to delete book' : action === 'hidden' ? 'Failed to archive book' : 'Failed to restore book'
+        publish({ error: err instanceof Error ? err.message : fallback })
+      }
+      throw err
+    } finally {
+      finishMutation(id, token)
+    }
+  }, [beginMutation, finishMutation, persistBooks, publish, scopeKey, session])
+
+  const hideBook = useCallback((id: string) => mutateBook(id, 'hidden'), [mutateBook])
+  const unhideBook = useCallback((id: string) => mutateBook(id, 'active'), [mutateBook])
+  const removeBook = useCallback((id: string) => mutateBook(id, 'delete'), [mutateBook])
+
+  // A scope change must never render the previous account's books before effects run.
+  const currentView = view.sessionId === session.view.sessionId ? view : session.view
+  const { books, loading, stabilizing, error } = currentView
   return { books, loading, stabilizing, error, refresh, addBook, hideBook, unhideBook, removeBook }
 }

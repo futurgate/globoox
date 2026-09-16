@@ -34,7 +34,11 @@ interface ReadingProgress {
     blockPosition?: number;
     totalBlocks?: number;
     lastRead: string;
+    // Explicit user activity, unlike legacy lastRead values written by sync.
+    localLastReadAt?: string;
+    localLastReadScope?: string;
     serverUpdatedAt?: string;
+    serverProgressScope?: string;
   };
 }
 
@@ -67,11 +71,11 @@ interface AppState {
   // Reading progress (block-based)
   progress: ReadingProgress;
   updateProgress: (bookId: string, blockPosition: number, totalBlocks: number) => void;
-  touchLastRead: (bookId: string) => void;
+  touchLastRead: (bookId: string, scopeKey?: string) => void;
   getProgress: (bookId: string) => { blockPosition?: number; totalBlocks?: number } | null;
   updateServerProgress: (
     bookId: string,
-    data: { blockPosition?: number; totalBlocks?: number; serverUpdatedAt: string }
+    data: { blockPosition?: number; totalBlocks?: number; serverUpdatedAt: string; scopeKey?: string }
   ) => void;
 
   // Block-level reading anchor (per book)
@@ -146,6 +150,7 @@ export const useAppStore = create<AppState>()(
       updateProgress: (bookId, blockPosition, totalBlocks) =>
         set((state) => {
           const existing = state.progress[bookId] || {};
+          const readAt = new Date().toISOString();
           return {
             progress: {
               ...state.progress,
@@ -153,21 +158,25 @@ export const useAppStore = create<AppState>()(
                 ...existing,
                 blockPosition,
                 totalBlocks,
-                lastRead: new Date().toISOString()
+                lastRead: readAt,
+                localLastReadAt: readAt,
               }
             }
           };
         }),
 
-      touchLastRead: (bookId) =>
+      touchLastRead: (bookId, scopeKey = 'guest') =>
         set((state) => {
           const existing = state.progress[bookId] || {};
+          const readAt = new Date().toISOString();
           return {
             progress: {
               ...state.progress,
               [bookId]: {
                 ...existing,
-                lastRead: new Date().toISOString(),
+                lastRead: readAt,
+                localLastReadAt: readAt,
+                localLastReadScope: scopeKey,
               }
             }
           };
@@ -181,7 +190,11 @@ export const useAppStore = create<AppState>()(
 
       updateServerProgress: (bookId, data) =>
         set((state) => {
-          const existing = state.progress[bookId] || { lastRead: new Date().toISOString() };
+          const previous = state.progress[bookId];
+          const existing = previous || { lastRead: data.serverUpdatedAt };
+          // Before the first server sync, legacy lastRead is a local action.
+          // Preserve that evidence when introducing the explicit activity field.
+          const legacyLocalRead = previous && !previous.serverUpdatedAt ? previous.lastRead : undefined;
           return {
             progress: {
               ...state.progress,
@@ -190,7 +203,10 @@ export const useAppStore = create<AppState>()(
                 blockPosition: data.blockPosition ?? existing.blockPosition,
                 totalBlocks: data.totalBlocks ?? existing.totalBlocks,
                 serverUpdatedAt: data.serverUpdatedAt,
-                lastRead: new Date().toISOString(),
+                serverProgressScope: data.scopeKey,
+                lastRead: existing.lastRead,
+                localLastReadAt: existing.localLastReadAt ?? legacyLocalRead,
+                localLastReadScope: existing.localLastReadScope ?? (legacyLocalRead ? data.scopeKey : undefined),
               }
             }
           };

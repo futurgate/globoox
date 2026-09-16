@@ -823,16 +823,17 @@ export function updateBookLanguage(bookId: string, lang: string): Promise<ApiBoo
   })
 }
 
-export function fetchReadingPosition(bookId: string, signal?: AbortSignal): Promise<ReadingPosition> {
+export function fetchReadingPosition(bookId: string, signal?: AbortSignal, scopeKey = 'guest'): Promise<ReadingPosition> {
+  const cacheKey = `${scopeKey}::${bookId}`
   // Check cache first
-  const cached = positionCache.get(bookId)
+  const cached = positionCache.get(cacheKey)
   if (cached && cached.expiresAt > Date.now()) {
     return Promise.resolve(cached.data)
   }
 
   return request<ReadingPosition>(`/api/books/${bookId}/reading-position`, { signal })
     .then((data) => {
-      positionCache.set(bookId, {
+      positionCache.set(cacheKey, {
         data,
         expiresAt: Date.now() + POSITION_CACHE_TTL_MS,
       })
@@ -842,17 +843,19 @@ export function fetchReadingPosition(bookId: string, signal?: AbortSignal): Prom
 
 export function saveReadingPosition(
   bookId: string,
-  data: SaveReadingPositionRequest
+  data: SaveReadingPositionRequest,
+  scopeKey = 'guest'
 ): Promise<SaveReadingPositionResponse> {
+  const cacheKey = `${scopeKey}::${bookId}`
   // Invalidate position cache so next fetchReadingPosition gets fresh data
-  positionCache.delete(bookId)
+  positionCache.delete(cacheKey)
   return request<SaveReadingPositionResponse>(`/api/books/${bookId}/reading-position`, {
     method: 'PUT',
     body: JSON.stringify(data),
   }).then((response) => {
     // Update cache with the returned position so the next GET is already fresh
     if (response.persisted && response.chapter_id) {
-      positionCache.set(bookId, {
+      positionCache.set(cacheKey, {
         data: {
           book_id: bookId,
           chapter_id: response.chapter_id,
