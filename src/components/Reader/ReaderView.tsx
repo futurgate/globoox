@@ -2453,6 +2453,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                             onSelectChapter={handleSelectChapterFromToc}
                             disabled={false}
                             onTocOpen={handleTocOpen}
+                            currentLanguage={activeLang}
                         />
                     </div>
                 </div>
