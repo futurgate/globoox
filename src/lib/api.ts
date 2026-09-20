@@ -1060,6 +1060,9 @@ export interface PlaygroundJudgeVerdict {
 export interface PlaygroundResult {
   model: string
   actualModel?: string
+  /** Index of the prompt variant this result was produced with. */
+  variantIndex?: number
+  variantLabel?: string
   ok: boolean
   translatedText?: string
   latencyMs?: number
@@ -1073,13 +1076,27 @@ export interface PlaygroundResult {
   error?: string
 }
 
+export interface PlaygroundVariantMeta {
+  index: number
+  label: string
+  /** false → this variant used the production default prompt. */
+  customized: boolean
+}
+
 export interface PlaygroundResponse {
   targetLanguage: string
   sourceLanguage: string | null
   judged: boolean
   judgeModel: string | null
   referenceUsed: boolean
+  variants?: PlaygroundVariantMeta[]
   results: PlaygroundResult[]
+}
+
+/** One editable system-prompt variant. Blank template → production default. */
+export interface PlaygroundPromptVariant {
+  label?: string
+  template?: string
 }
 
 export interface PlaygroundRequest {
@@ -1087,6 +1104,7 @@ export interface PlaygroundRequest {
   targetLanguage: string
   sourceLanguage?: string
   models: string[]
+  promptVariants?: PlaygroundPromptVariant[]
   judge?: boolean
   judgeModel?: string
   reference?: string
@@ -1097,6 +1115,18 @@ export function runTranslationPlayground(payload: PlaygroundRequest): Promise<Pl
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export interface PlaygroundPromptTemplate {
+  lang: string
+  template: string
+}
+
+/** Fetch the production translation prompt template for a target language. */
+export function fetchTranslationPrompt(lang: string): Promise<PlaygroundPromptTemplate> {
+  return request<PlaygroundPromptTemplate>(
+    `/api/admin/translation-prompt?lang=${encodeURIComponent(lang)}`,
+  )
 }
 
 export interface PlaygroundModels {
