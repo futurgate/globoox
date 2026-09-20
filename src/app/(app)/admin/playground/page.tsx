@@ -2,9 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Play, Plus, X, ShieldAlert, RefreshCw, Download, Trash2 } from 'lucide-react';
+import {
+  Loader2,
+  Play,
+  Plus,
+  X,
+  ShieldAlert,
+  RefreshCw,
+  Download,
+  Trash2,
+  Maximize2,
+  Copy,
+  Check,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
+import IOSDialog from '@/components/ui/ios-dialog';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   runTranslationPlayground,
@@ -72,6 +85,10 @@ export default function TranslationPlaygroundPage() {
   const [variants, setVariants] = useState<PromptVariantDraft[]>([defaultVariant(0)]);
   const [loadingPromptIdx, setLoadingPromptIdx] = useState<number | null>(null);
   const [promptError, setPromptError] = useState<string | null>(null);
+
+  // Full-screen viewer for reading long prompts / source text comfortably.
+  const [viewer, setViewer] = useState<{ title: string; content: string } | null>(null);
+  const openViewer = (title: string, content: string) => setViewer({ title, content });
 
   const [running, setRunning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -219,9 +236,20 @@ export default function TranslationPlaygroundPage() {
       {/* ── Input form ── */}
       <div className="space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
         <div>
-          <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-            Source text
-          </label>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+              Source text
+            </label>
+            <button
+              type="button"
+              onClick={() => openViewer('Source text', sourceText)}
+              disabled={!sourceText.trim()}
+              title="View full source text"
+              className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-40"
+            >
+              <Maximize2 className="h-3.5 w-3.5" /> View
+            </button>
+          </div>
           <textarea
             value={sourceText}
             onChange={(e) => setSourceText(e.target.value)}
@@ -377,6 +405,21 @@ export default function TranslationPlaygroundPage() {
                     )}
                     Load prod prompt
                   </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openViewer(
+                        v.label,
+                        v.template.trim()
+                          ? v.template
+                          : '(blank — the production prompt for the target language is used at run time. Click “Load prod prompt” to view and edit the real template.)',
+                      )
+                    }
+                    title="View this prompt"
+                    className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
+                  >
+                    <Maximize2 className="h-3.5 w-3.5" /> View
+                  </button>
                   <span className="ml-auto text-xs text-[var(--app-text-muted)]">
                     {v.template.trim() ? `${v.template.length} chars` : 'prod default'}
                   </span>
@@ -487,6 +530,7 @@ export default function TranslationPlaygroundPage() {
                             key={`${r.variantIndex}::${r.model}`}
                             result={r}
                             showVariant
+                            onView={openViewer}
                           />
                         ))}
                       </div>
@@ -497,36 +541,118 @@ export default function TranslationPlaygroundPage() {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {response.results.map((r) => (
-                  <ResultCard key={r.model} result={r} />
+                  <ResultCard key={r.model} result={r} onView={openViewer} />
                 ))}
               </div>
             )}
           </div>
         );
       })()}
+
+      <TextViewerModal viewer={viewer} onClose={() => setViewer(null)} />
     </div>
+  );
+}
+
+/** Read-only full-screen viewer for long prompts / source / translated text. */
+function TextViewerModal({
+  viewer,
+  onClose,
+}: {
+  viewer: { title: string; content: string } | null;
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 1500);
+    return () => clearTimeout(t);
+  }, [copied]);
+
+  const copy = async () => {
+    if (!viewer) return;
+    try {
+      await navigator.clipboard.writeText(viewer.content);
+      setCopied(true);
+    } catch {
+      // Clipboard blocked (insecure context / permissions) — ignore silently.
+    }
+  };
+
+  return (
+    <IOSDialog
+      open={!!viewer}
+      onOpenChange={(o) => !o && onClose()}
+      className="sm:max-w-3xl"
+    >
+      <div className="flex max-h-[80vh] flex-col">
+        <div className="flex items-center justify-between gap-3 border-b border-[var(--separator-opaque)] px-5 py-3">
+          <h2 className="truncate text-sm font-semibold">{viewer?.title}</h2>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={copy}
+              title="Copy to clipboard"
+              className="inline-flex items-center gap-1 rounded-[var(--radius)] px-2 py-1 text-xs text-[var(--app-text-muted)] hover:bg-[var(--app-surface-bg)] hover:text-[var(--app-accent)]"
+            >
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? 'Copied' : 'Copy'}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              title="Close"
+              className="rounded-full p-1 text-[var(--app-text-muted)] hover:bg-[var(--app-surface-bg)] hover:text-[var(--app-text)]"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        <div className="overflow-y-auto px-5 py-4">
+          <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-[var(--app-text)]">
+            {viewer?.content}
+          </pre>
+        </div>
+      </div>
+    </IOSDialog>
   );
 }
 
 function ResultCard({
   result: r,
   showVariant = false,
+  onView,
 }: {
   result: PlaygroundResult;
   showVariant?: boolean;
+  onView?: (title: string, content: string) => void;
 }) {
   // Grouped-by-model view labels each card by its prompt variant; the flat view
   // labels by model (single-prompt runs).
   const heading = showVariant ? r.variantLabel ?? 'Variant' : r.model;
+  const viewTitle = showVariant ? `${r.model} · ${r.variantLabel ?? 'Variant'}` : r.model;
   return (
     <div className="flex flex-col rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
       <div className="mb-2 flex items-center justify-between gap-2">
         <span className="truncate text-sm font-medium">{heading}</span>
-        {r.ok && r.verdict && (
-          <span className={'text-lg font-bold tabular-nums ' + scoreColor(r.verdict.overall)}>
-            {r.verdict.overall}
-          </span>
-        )}
+        <div className="flex shrink-0 items-center gap-2">
+          {r.ok && r.translatedText && onView && (
+            <button
+              type="button"
+              onClick={() => onView(viewTitle, r.translatedText ?? '')}
+              title="View full translation"
+              className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
+            >
+              <Maximize2 className="h-3.5 w-3.5" /> View
+            </button>
+          )}
+          {r.ok && r.verdict && (
+            <span className={'text-lg font-bold tabular-nums ' + scoreColor(r.verdict.overall)}>
+              {r.verdict.overall}
+            </span>
+          )}
+        </div>
       </div>
 
       {!r.ok ? (
@@ -538,7 +664,9 @@ function ResultCard({
               served by {r.actualModel}
             </p>
           )}
-          <p className="whitespace-pre-wrap text-sm leading-relaxed">{r.translatedText}</p>
+          <p className="max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">
+            {r.translatedText}
+          </p>
 
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--app-text-muted)]">
             <span>{r.latencyMs != null ? `${(r.latencyMs / 1000).toFixed(1)}s` : '—'}</span>
