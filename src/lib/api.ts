@@ -467,6 +467,92 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
   URL.revokeObjectURL(url)
 }
 
+// ── Full-book fiction translation (admin) ──────────────────────────────────
+
+export type FictionProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done'
+  chapterId?: string
+  index?: number
+  title?: string
+  blocks?: number
+  parsed?: number
+  done?: number
+  totalChapters?: number
+  error?: string
+}
+
+export type FictionProgress = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'running' | 'complete'
+  totalChapters: number
+  counts: { pending: number; translating: number; done: number; error: number }
+  percent: number
+  chapters: Array<{ chapter_id: string; status: string; error: string | null; updated_at: string }>
+}
+
+/**
+ * Start a full-book fiction translation and stream per-chapter progress.
+ * Admin only (gated on the backend). Reads the NDJSON stream and invokes
+ * onEvent for each line until the stream ends.
+ */
+export async function startFictionTranslation(
+  bookId: string,
+  lang: string,
+  onEvent: (ev: FictionProgressEvent) => void,
+  signal?: AbortSignal,
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/translate-full-book`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), mode: 'fiction' }),
+    signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Translation failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as FictionProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+/** Poll full-book fiction translation progress (bypasses the GET cache). */
+export async function getFictionProgress(bookId: string, lang: string): Promise<FictionProgress> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/translate-full-book?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch progress: ${res.status}`)
+  }
+  return res.json() as Promise<FictionProgress>
+}
+
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
   const params = status ? `?status=${encodeURIComponent(status)}` : ''
   return request<ApiBook[]>(`/api/books${params}`).then((books) => {

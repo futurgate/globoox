@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, FlaskConical, Gauge, ChevronRight } from 'lucide-react';
+import { Loader2, ShieldAlert, FlaskConical, Gauge, BookOpen, ChevronRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
@@ -29,6 +29,13 @@ const ADMIN_LINKS: AdminLink[] = [
     description:
       'Measure the real first-time cost of translating a whole book on a chosen model, and browse the history of measured runs.',
     Icon: Gauge,
+  },
+  {
+    href: '/admin/fiction',
+    title: 'Fiction Translation',
+    description:
+      'Run the full-book fiction pipeline on a whole book, watch per-chapter progress, and download the translated EPUB (markup and images preserved).',
+    Icon: BookOpen,
   },
 ];
 
