@@ -46,6 +46,7 @@ export default function AdminFictionPage() {
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
+  const [overwriteTranslation, setOverwriteTranslation] = useState(false);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -159,6 +160,7 @@ export default function AdminFictionPage() {
     try {
       await startFictionTranslation(bookId, lang, onEvent, {
         useGlossary: useGlossaryForTranslate && glossaryReady,
+        overwrite: overwriteTranslation,
         signal: controller.signal,
       });
       await loadProgress();
@@ -169,7 +171,7 @@ export default function AdminFictionPage() {
       abortRef.current = null;
       void loadHistory();
     }
-  }, [bookId, lang, running, loadProgress, loadHistory, useGlossaryForTranslate, glossaryReady]);
+  }, [bookId, lang, running, loadProgress, loadHistory, useGlossaryForTranslate, glossaryReady, overwriteTranslation]);
 
   const handleDownload = useCallback(async () => {
     if (!bookId) return;
@@ -352,6 +354,20 @@ export default function AdminFictionPage() {
             {!glossaryReady && (
               <span className="ml-1 text-xs text-[var(--app-text-muted)]">(none generated yet)</span>
             )}
+          </span>
+        </label>
+
+        <label className="flex items-center gap-2 text-sm" title="Re-translate every block, replacing existing translations">
+          <input
+            type="checkbox"
+            checked={overwriteTranslation}
+            disabled={running}
+            onChange={(e) => setOverwriteTranslation(e.target.checked)}
+            className="h-4 w-4 accent-[var(--app-accent)]"
+          />
+          <span>
+            Overwrite existing translations
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = skip already-translated blocks)</span>
           </span>
         </label>
 
