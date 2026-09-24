@@ -45,6 +45,7 @@ export default function AdminFictionPage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -92,6 +93,11 @@ export default function AdminFictionPage() {
   // Prefill progress when book/lang changes (so a previously-finished book
   // shows as complete and the download button is enabled).
   const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  // A glossary is usable for translation once it carries terms or named entities.
+  const glossaryReady =
+    !!glossary &&
+    ((glossary.terminology?.length ?? 0) > 0 || (glossary.named_entities?.length ?? 0) > 0);
 
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
@@ -151,7 +157,10 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startFictionTranslation(bookId, lang, onEvent, controller.signal);
+      await startFictionTranslation(bookId, lang, onEvent, {
+        useGlossary: useGlossaryForTranslate && glossaryReady,
+        signal: controller.signal,
+      });
       await loadProgress();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Translation failed');
@@ -160,7 +169,7 @@ export default function AdminFictionPage() {
       abortRef.current = null;
       void loadHistory();
     }
-  }, [bookId, lang, running, loadProgress, loadHistory]);
+  }, [bookId, lang, running, loadProgress, loadHistory, useGlossaryForTranslate, glossaryReady]);
 
   const handleDownload = useCallback(async () => {
     if (!bookId) return;
@@ -327,6 +336,25 @@ export default function AdminFictionPage() {
           </div>
         </div>
 
+        <label
+          className={`flex items-center gap-2 text-sm ${glossaryReady ? '' : 'opacity-50'}`}
+          title={glossaryReady ? 'Translate using the generated glossary' : 'Generate a glossary below to enable this'}
+        >
+          <input
+            type="checkbox"
+            checked={useGlossaryForTranslate && glossaryReady}
+            disabled={!glossaryReady || running}
+            onChange={(e) => setUseGlossaryForTranslate(e.target.checked)}
+            className="h-4 w-4 accent-[var(--app-accent)]"
+          />
+          <span>
+            Use glossary
+            {!glossaryReady && (
+              <span className="ml-1 text-xs text-[var(--app-text-muted)]">(none generated yet)</span>
+            )}
+          </span>
+        </label>
+
         <div className="flex flex-wrap items-center gap-3">
           <Button onClick={handleTranslate} disabled={!bookId || running}>
             {running ? (
@@ -335,7 +363,8 @@ export default function AdminFictionPage() {
               </>
             ) : (
               <>
-                <Play className="mr-2 h-4 w-4" /> Translate book
+                <Play className="mr-2 h-4 w-4" />
+                {useGlossaryForTranslate && glossaryReady ? 'Translate with glossary' : 'Translate book'}
               </>
             )}
           </Button>

@@ -500,7 +500,7 @@ export async function startFictionTranslation(
   bookId: string,
   lang: string,
   onEvent: (ev: FictionProgressEvent) => void,
-  signal?: AbortSignal,
+  opts: { useGlossary?: boolean; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -509,8 +509,8 @@ export async function startFictionTranslation(
   const res = await fetch(`${API_URL}/api/books/${bookId}/translate-full-book`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ lang: lang.toUpperCase(), mode: 'fiction' }),
-    signal,
+    body: JSON.stringify({ lang: lang.toUpperCase(), mode: 'fiction', useGlossary: opts.useGlossary === true }),
+    signal: opts.signal,
   })
   if (!res.ok) {
     const body = await res.json().catch(() => ({} as { message?: string }))
