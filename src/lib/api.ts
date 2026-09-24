@@ -51,20 +51,29 @@ interface BaseBlock {
   is_pending?: boolean // True if translation is pending on the server
 }
 
+/** Inline emphasis / line-break marks over a block's plain `text` (offsets into it). */
+export type InlineMark =
+  | { t: 'em'; s: number; e: number }
+  | { t: 'strong'; s: number; e: number }
+  | { t: 'br'; o: number }
+
 export interface ParagraphBlock extends BaseBlock {
   type: 'paragraph'
   text: string
+  marks?: InlineMark[]
 }
 
 export interface HeadingBlock extends BaseBlock {
   type: 'heading'
   level: 1 | 2 | 3 | 4 | 5 | 6
   text: string
+  marks?: InlineMark[]
 }
 
 export interface QuoteBlock extends BaseBlock {
   type: 'quote'
   text: string
+  marks?: InlineMark[]
 }
 
 export interface ListBlock extends BaseBlock {

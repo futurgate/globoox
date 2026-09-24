@@ -1,5 +1,6 @@
 import type { ContentBlock } from '@/lib/api'
 import { hasTargetLangText } from '@/lib/translationState'
+import { carryBlockEmphasis } from '@/lib/inlineMarks'
 
 export function mergeDisplayBlocksPreservingTranslations(
   prev: ContentBlock[],
@@ -20,7 +21,8 @@ export function mergeDisplayBlocksPreservingTranslations(
     if (block.type === 'paragraph' || block.type === 'quote' || block.type === 'heading') {
       const priorText = (prior as typeof block).text
       if (typeof priorText === 'string' && priorText.length > 0) {
-        return { ...block, text: priorText, targetLangReady: true, isTranslated: true, is_pending: false }
+        const marks = carryBlockEmphasis(block.text, block.marks, priorText)
+        return { ...block, text: priorText, marks, targetLangReady: true, isTranslated: true, is_pending: false }
       }
       return block
     }

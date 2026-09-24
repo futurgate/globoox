@@ -1,5 +1,6 @@
 import Typograf from 'typograf';
 import { ContentBlock } from '@/lib/api';
+import { carryBlockEmphasis } from '@/lib/inlineMarks';
 
 const typografByLocale = new Map<string, Typograf>();
 
@@ -60,12 +61,14 @@ export function applyTypografToBlocks(blocks: ContentBlock[], lang?: string | nu
                 try {
                     const text = processText(tp, source, isFrenchLocale);
                     if (text === source) return block;
-                    return { ...block, text };
+                    // Typografed text may change length (…, —, nbsp) — offset marks no
+                    // longer align, so keep only block-level emphasis.
+                    return { ...block, text, marks: carryBlockEmphasis(source, block.marks, text) };
                 } catch {
                     if (!isFrenchLocale) return block;
                     const text = normalizeFrenchGuillemets(normalizeSoftWrapHyphens(source));
                     if (text === source) return block;
-                    return { ...block, text };
+                    return { ...block, text, marks: carryBlockEmphasis(source, block.marks, text) };
                 }
             }
             case 'list': {

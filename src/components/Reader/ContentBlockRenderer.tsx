@@ -1,4 +1,5 @@
 import { ContentBlock } from '@/lib/api'
+import { renderInlineMarks } from '@/lib/inlineMarks'
 import { getLineHeightStyle } from '@/lib/readerTypography'
 import { useReaderTheme } from '@/lib/hooks/useReaderTheme'
 import { getReaderContentTokens, getReaderHeadingTypography, getReaderWeightClass, type ReaderThemeConfig } from '@/lib/readerTheme'
@@ -122,7 +123,7 @@ export default function ContentBlockRenderer({
       : { fontStyle: headingTypography.italic ? 'italic' : 'normal' as const }
     return (
       <PendingWrapper isPending={isPending} showLabel={showTranslatingLabel} pendingLabel={pendingLabel} mutedTextColor={contentTokens.pendingLabelText}>
-        <Tag className={headingTypography.className} style={headingStyle}>{block.text}</Tag>
+        <Tag className={headingTypography.className} style={headingStyle}>{renderInlineMarks(block.text, block.marks)}</Tag>
       </PendingWrapper>
     )
   }
@@ -137,7 +138,7 @@ export default function ContentBlockRenderer({
           className={`${mbClass} ${bodyWeightClass}`}
           style={{ ...textStyle, hyphens: 'auto', WebkitHyphens: 'auto' }}
         >
-          {block.text}
+          {renderInlineMarks(block.text, block.marks)}
         </p>
       </PendingWrapper>
     )
@@ -148,7 +149,7 @@ export default function ContentBlockRenderer({
     return (
       <PendingWrapper isPending={isPending} showLabel={showTranslatingLabel} pendingLabel={pendingLabel} mutedTextColor={contentTokens.pendingLabelText}>
         <blockquote className={`border-l-1 pl-3 my-4 italic ${bodyWeightClass}`} style={{ ...style, borderColor: contentTokens.quoteBorder, color: contentTokens.quoteText }}>
-          {block.text}
+          {renderInlineMarks(block.text, block.marks)}
         </blockquote>
       </PendingWrapper>
     )
