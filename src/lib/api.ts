@@ -583,6 +583,117 @@ export async function getFictionProgress(bookId: string, lang: string): Promise<
   return res.json() as Promise<FictionProgress>
 }
 
+// ── Fiction glossary / style bible (admin) ──────────────────────────────────
+
+export type BookGlossary = {
+  source_language?: string
+  target_language?: string
+  character_voice_profiles?: Array<{
+    character_id?: string
+    register?: string
+    speech_patterns?: string
+    example_lines?: string[]
+  }>
+  prose_style_profile?: {
+    register?: string
+    domain?: string
+    narrative_tense?: string
+    rhythm_target?: string
+    diction?: string
+  }
+  terminology?: Array<{ source_term?: string; preferred_translation?: string; note?: string }>
+  named_entities?: Array<{ entity?: string; type?: string; preferred_target?: string; note?: string }>
+}
+
+export type GlossaryProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done'
+  chapterId?: string
+  index?: number
+  title?: string
+  done?: number
+  totalChapters?: number
+  resumingFrom?: number
+  skipped?: boolean
+  terms?: number
+  names?: number
+  characters?: number
+  error?: string
+}
+
+export type GlossaryStatus = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'pending' | 'building' | 'done' | 'error'
+  chaptersDone: number
+  chaptersTotal: number
+  percent: number
+  error: string | null
+  updatedAt?: string
+  glossary: BookGlossary | null
+}
+
+/**
+ * Build the book-wide fiction glossary incrementally (chapter by chapter) and
+ * stream per-chapter progress. Admin only (gated on the backend). Reads the
+ * NDJSON stream and invokes onEvent for each line until the stream ends.
+ */
+export async function startGlossaryGeneration(
+  bookId: string,
+  lang: string,
+  onEvent: (ev: GlossaryProgressEvent) => void,
+  opts: { restart?: boolean; signal?: AbortSignal } = {},
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/generate-glossary`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), restart: opts.restart === true }),
+    signal: opts.signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Glossary generation failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as GlossaryProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+/** Fetch the current fiction glossary + build progress (bypasses cache). */
+export async function getGlossary(bookId: string, lang: string): Promise<GlossaryStatus> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/generate-glossary?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch glossary: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryStatus>
+}
+
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
   const params = status ? `?status=${encodeURIComponent(status)}` : ''
   return request<ApiBook[]>(`/api/books${params}`).then((books) => {
