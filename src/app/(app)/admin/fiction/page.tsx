@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -10,9 +10,11 @@ import {
   fetchBooks,
   startFictionTranslation,
   getFictionProgress,
+  listFictionTranslations,
   downloadTranslatedEpub,
   type ApiBook,
   type FictionProgressEvent,
+  type FictionHistoryEntry,
 } from '@/lib/api';
 
 const inputCls =
@@ -40,7 +42,23 @@ export default function AdminFictionPage() {
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
 
+  // History (one entry per book+language), persists across tab reloads.
+  const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [downloadingKey, setDownloadingKey] = useState<string | null>(null);
+
   const abortRef = useRef<AbortController | null>(null);
+
+  const loadHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    try {
+      setHistory(await listFictionTranslations());
+    } catch {
+      // non-fatal — history is best-effort
+    } finally {
+      setHistoryLoading(false);
+    }
+  }, []);
 
   // Load book list once admin is confirmed.
   useEffect(() => {
@@ -53,6 +71,7 @@ export default function AdminFictionPage() {
       })
       .catch(() => setError('Failed to load books'))
       .finally(() => setBooksLoading(false));
+    void loadHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
@@ -125,8 +144,9 @@ export default function AdminFictionPage() {
     } finally {
       setRunning(false);
       abortRef.current = null;
+      void loadHistory();
     }
-  }, [bookId, lang, running, loadProgress]);
+  }, [bookId, lang, running, loadProgress, loadHistory]);
 
   const handleDownload = useCallback(async () => {
     if (!bookId) return;
@@ -140,6 +160,19 @@ export default function AdminFictionPage() {
       setDownloading(false);
     }
   }, [bookId, lang]);
+
+  const handleDownloadEntry = useCallback(async (entry: FictionHistoryEntry) => {
+    const key = `${entry.bookId}::${entry.language}`;
+    setDownloadingKey(key);
+    setError(null);
+    try {
+      await downloadTranslatedEpub(entry.bookId, entry.language);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Download failed');
+    } finally {
+      setDownloadingKey(null);
+    }
+  }, []);
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
@@ -284,6 +317,65 @@ export default function AdminFictionPage() {
         )}
 
         {error && <p className="text-sm text-red-500">{error}</p>}
+      </div>
+
+      {/* ── History ── */}
+      <div className="mt-6">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">History</h2>
+          <Button variant="outline" size="sm" onClick={loadHistory} disabled={historyLoading}>
+            <RefreshCw className={`mr-2 h-3.5 w-3.5 ${historyLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
+
+        {history.length === 0 ? (
+          <p className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4 text-sm text-[var(--app-text-muted)]">
+            No fiction translations yet. Translate a book above — each book + language becomes its own entry here.
+          </p>
+        ) : (
+          <ul className="divide-y divide-[var(--separator-opaque)] rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+            {history.map((h) => {
+              const key = `${h.bookId}::${h.language}`;
+              const isComplete = h.state === 'complete';
+              return (
+                <li key={key} className="flex items-center gap-3 p-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-sm font-medium">{h.title}</span>
+                      <span className="shrink-0 rounded-full border border-[var(--separator-opaque)] px-1.5 py-0.5 text-[10px] font-semibold uppercase text-[var(--app-text-muted)]">
+                        {h.language}
+                      </span>
+                    </div>
+                    <div className="mt-0.5 text-xs text-[var(--app-text-muted)]">
+                      {isComplete ? (
+                        <span className="text-[var(--app-accent)]">Complete</span>
+                      ) : (
+                        <span>
+                          {h.state === 'partial' ? 'Partial' : 'Pending'} · {h.doneChapters}/{h.totalChapters} ({h.percent}%)
+                        </span>
+                      )}
+                      {h.errorChapters > 0 && <span className="text-red-500"> · {h.errorChapters} failed</span>}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDownloadEntry(h)}
+                    disabled={!isComplete || downloadingKey === key}
+                    title={isComplete ? 'Download translated EPUB' : 'Not fully translated yet'}
+                  >
+                    {downloadingKey === key ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Download className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </div>
   );

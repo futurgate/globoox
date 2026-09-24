@@ -537,6 +537,36 @@ export async function startFictionTranslation(
   if (buffer.trim()) processLine(buffer)
 }
 
+export type FictionHistoryEntry = {
+  bookId: string
+  title: string
+  author: string | null
+  language: string
+  totalChapters: number
+  doneChapters: number
+  errorChapters: number
+  state: 'complete' | 'partial' | 'pending'
+  percent: number
+  updatedAt: string
+}
+
+/**
+ * Fiction translation history — one entry per (book, language). Downloadable
+ * entries persist in the DB, so this survives closing/reopening the tab.
+ */
+export async function listFictionTranslations(): Promise<FictionHistoryEntry[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/fiction-translations`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load history: ${res.status}`)
+  }
+  const data = (await res.json()) as { entries?: FictionHistoryEntry[] }
+  return data.entries ?? []
+}
+
 /** Poll full-book fiction translation progress (bypasses the GET cache). */
 export async function getFictionProgress(bookId: string, lang: string): Promise<FictionProgress> {
   const headers = new Headers()
