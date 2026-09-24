@@ -5,6 +5,7 @@ import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useAppStore, Language, ReadingAnchor } from '@/lib/store';
 import { fetchBlockBatch, fetchContent, fetchReadingPosition, saveReadingPosition, translateBlocksStreaming, updateBookLanguage, checkTranslationLimit } from '@/lib/api';
+import { carryBlockEmphasis } from '@/lib/inlineMarks';
 import type { BatchContentBlock } from '@/lib/api';
 import { useChapters } from '@/lib/hooks/useChapters';
 import { useChapterContent } from '@/lib/hooks/useChapterContent';
@@ -830,7 +831,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                         const translated = original.type === 'list'
                             ? { ...original, items: result.translatedText.split('\n').filter(Boolean), targetLangReady: true, isTranslated: true, is_pending: false }
                             : original.type === 'paragraph' || original.type === 'quote' || original.type === 'heading'
-                                ? { ...original, text: result.translatedText, targetLangReady: true, isTranslated: true, is_pending: false }
+                                ? { ...original, text: result.translatedText, marks: carryBlockEmphasis(original.text, original.marks, result.translatedText), targetLangReady: true, isTranslated: true, is_pending: false }
                                 : null;
                         if (!translated) return;
 
@@ -2453,6 +2454,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                             onSelectChapter={handleSelectChapterFromToc}
                             disabled={false}
                             onTocOpen={handleTocOpen}
+                            currentLanguage={activeLang}
                         />
                     </div>
                 </div>

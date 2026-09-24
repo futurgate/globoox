@@ -51,20 +51,29 @@ interface BaseBlock {
   is_pending?: boolean // True if translation is pending on the server
 }
 
+/** Inline emphasis / line-break marks over a block's plain `text` (offsets into it). */
+export type InlineMark =
+  | { t: 'em'; s: number; e: number }
+  | { t: 'strong'; s: number; e: number }
+  | { t: 'br'; o: number }
+
 export interface ParagraphBlock extends BaseBlock {
   type: 'paragraph'
   text: string
+  marks?: InlineMark[]
 }
 
 export interface HeadingBlock extends BaseBlock {
   type: 'heading'
   level: 1 | 2 | 3 | 4 | 5 | 6
   text: string
+  marks?: InlineMark[]
 }
 
 export interface QuoteBlock extends BaseBlock {
   type: 'quote'
   text: string
+  marks?: InlineMark[]
 }
 
 export interface ListBlock extends BaseBlock {
@@ -423,6 +432,39 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   } finally {
     inflightGetRequests.delete(key)
   }
+}
+
+/**
+ * Admin-only: download the fully-translated book as an EPUB for the given
+ * language. Triggers a browser file download. Bypasses the JSON `request()`
+ * wrapper because the response is binary. Throws with a readable message when
+ * the book is not 100% translated (backend 409) or the request otherwise fails.
+ */
+export async function downloadTranslatedEpub(bookId: string, lang: string): Promise<void> {
+  const path = `/api/books/${bookId}/download-translated?lang=${encodeURIComponent(lang)}`
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}${withShareToken(path)}`, { headers })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Download failed: ${res.status}`)
+  }
+
+  const blob = await res.blob()
+  const disposition = res.headers.get('content-disposition') || ''
+  const match = disposition.match(/filename="?([^"]+)"?/i)
+  const filename = match?.[1] || `book-${lang}.epub`
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
 }
 
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
