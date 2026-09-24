@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ContentBlock, fetchBlockTexts, TranslatedBlockResult, translateBlocksStreaming } from '@/lib/api'
+import { carryBlockEmphasis } from '@/lib/inlineMarks'
 import { trackTranslationBatch, trackTranslationSessionSummary, trackBookTranslationStarted } from '@/lib/posthog'
 import { setCachedTranslatedBlockText } from '@/lib/contentCache'
 import { hasTargetLangText } from '@/lib/translationState'
@@ -41,7 +42,10 @@ function createSessionId(): string {
 /** Merge a translatedText string into the appropriate field(s) of a ContentBlock. */
 function applyTranslation(block: ContentBlock, translatedText: string): ContentBlock | null {
   if (block.type === 'paragraph' || block.type === 'quote' || block.type === 'heading') {
-    return { ...block, text: translatedText, targetLangReady: true, isTranslated: true, is_pending: false }
+    // Offset marks index the original text; they don't map onto the translation.
+    // Carry only block-level emphasis (mirrors the backend), else drop.
+    const marks = carryBlockEmphasis(block.text, block.marks, translatedText)
+    return { ...block, text: translatedText, marks, targetLangReady: true, isTranslated: true, is_pending: false }
   }
   if (block.type === 'list') {
     return { ...block, items: translatedText.split('\n').filter(Boolean), targetLangReady: true, isTranslated: true, is_pending: false }

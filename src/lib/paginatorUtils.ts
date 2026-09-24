@@ -1,4 +1,5 @@
 import { ContentBlock, ParagraphBlock } from './api'
+import { carryBlockEmphasis as fragmentMarks } from './inlineMarks'
 import { getLineHeightMultiplier, getLineHeightStyle } from './readerTypography'
 import { READER_THEME_CONFIGS, type ReaderThemeConfig, getReaderHeadingTypography, getReaderWeightClass, type ReaderThemeId } from './readerTheme'
 
@@ -721,6 +722,7 @@ function computePagesDom(
             ...block,
             id: finalId,
             text: remainingText,
+            marks: fragmentMarks(block.text, block.marks, remainingText),
             parentId: block.parentId ?? block.id,
             partIndex,
             isFirstPart,
@@ -806,6 +808,7 @@ function computePagesDom(
           ...block,
           id: fragmentId,
           text: firstText,
+          marks: fragmentMarks(block.text, block.marks, firstText),
           parentId: block.parentId ?? block.id,
           partIndex,
           isFirstPart,
@@ -1140,6 +1143,7 @@ function computePagesFallback(
           ...block,
           id: fragmentId,
           text: firstText,
+          marks: fragmentMarks(block.text, block.marks, firstText),
           parentId: block.parentId ?? block.id,
           partIndex,
           isFirstPart,
