@@ -699,6 +699,55 @@ export async function getGlossary(bookId: string, lang: string): Promise<Glossar
   return res.json() as Promise<GlossaryStatus>
 }
 
+// ── Fiction per-stage cost / tokens / time (admin) ──────────────────────────────
+
+export type FictionCostStage = 'glossary' | 'translate' | 'revise'
+/** measured = real recorded spend; estimate = ran before recording (approx); none = never ran. */
+export type FictionCostSource = 'measured' | 'estimate' | 'none'
+
+export type FictionStageCost = {
+  stage: FictionCostStage
+  source: FictionCostSource
+  tokensIn: number
+  tokensOut: number
+  cachedTokensIn: number
+  thoughtsTokens: number
+  costUsd: number
+  llmCalls: number
+  /** Wall-clock LLM time (ms). Only present for measured stages; null otherwise. */
+  durationMs: number | null
+  /** false when pricing for the model is approximate (family fallback / override). */
+  priceKnown: boolean
+  modelVersion: string | null
+  startedAt: string | null
+  finishedAt: string | null
+}
+
+export type FictionCosts = {
+  bookId: string
+  lang: string
+  stages: FictionStageCost[]
+  totals: { tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
+  /** true when at least one stage is an estimate (no real recorded spend). */
+  hasEstimate: boolean
+}
+
+/** Fetch per-stage LLM cost/tokens/time for a fiction book (admin, bypasses cache). */
+export async function getFictionCosts(bookId: string, lang: string): Promise<FictionCosts> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/fiction-costs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch fiction costs: ${res.status}`)
+  }
+  return res.json() as Promise<FictionCosts>
+}
+
 // ── Stylistic revision, Pass 2 (admin) ──────────────────────────────────────
 
 export type RevisionProgressEvent = {
