@@ -801,9 +801,10 @@ export default function AdminFictionPage() {
               <Coins className="h-4 w-4" /> Cost &amp; tokens
             </h2>
             <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-              LLM spend, tokens and time per stage for the selected book + language. Stages run before
-              cost tracking existed show a labelled <em>estimate</em> (real historical spend isn&apos;t
-              recoverable); newly-run stages show measured figures. Time is only known for measured stages.
+              LLM spend, tokens and time per stage for the selected book + language. Each stage shows the
+              <em> estimate</em> (worst-case projection from book structure) next to the <em>measured</em>
+              figures (real recorded spend), so you can compare. Measured appears once a stage has run under
+              cost tracking; time is only known for measured runs.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={loadFictionCosts} disabled={!bookId || costsLoading}>
@@ -820,10 +821,11 @@ export default function AdminFictionPage() {
 
         {fictionCosts && (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-sm">
+            <table className="w-full min-w-[620px] border-collapse text-sm">
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
                   <th className="py-1 pr-3 font-medium">Stage</th>
+                  <th className="py-1 pr-3 font-medium"> </th>
                   <th className="py-1 pr-3 text-right font-medium">Calls</th>
                   <th className="py-1 pr-3 text-right font-medium">Tokens in → out</th>
                   <th className="py-1 pr-3 text-right font-medium">Time</th>
@@ -832,27 +834,37 @@ export default function AdminFictionPage() {
               </thead>
               <tbody>
                 {fictionCosts.stages.map((s) => (
-                  <StageCostRow key={s.stage} row={s} />
+                  <StageCostRows key={s.stage} row={s} />
                 ))}
-                <tr className="border-t border-[var(--separator-opaque)] font-semibold">
-                  <td className="py-2 pr-3">Total</td>
+                <tr className="border-t-2 border-[var(--separator-opaque)] font-semibold">
+                  <td className="py-2 pr-3" rowSpan={2}>Total</td>
+                  <td className="py-2 pr-3"><SourceTag kind="estimate" /></td>
                   <td className="py-2 pr-3 text-right tabular-nums">
-                    {fictionCosts.stages.reduce((a, s) => a + s.llmCalls, 0).toLocaleString('en-US')}
+                    {fictionCosts.stages.reduce((a, s) => a + s.estimate.llmCalls, 0).toLocaleString('en-US')}
                   </td>
                   <td className="py-2 pr-3 text-right tabular-nums">
-                    {fmtTokens(fictionCosts.totals.tokensIn)} → {fmtTokens(fictionCosts.totals.tokensOut)}
+                    {fmtTokens(fictionCosts.totals.estimate.tokensIn)} → {fmtTokens(fictionCosts.totals.estimate.tokensOut)}
                   </td>
-                  <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(fictionCosts.totals.durationMs)}</td>
-                  <td className="py-2 text-right tabular-nums">{fmtUsd(fictionCosts.totals.costUsd)}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums text-[var(--app-text-muted)]">—</td>
+                  <td className="py-2 text-right tabular-nums">{fmtUsd(fictionCosts.totals.estimate.costUsd)}</td>
+                </tr>
+                <tr className="font-semibold">
+                  <td className="py-2 pr-3"><SourceTag kind="measured" /></td>
+                  <td className="py-2 pr-3 text-right tabular-nums">
+                    {fictionCosts.stages.reduce((a, s) => a + (s.measured?.llmCalls ?? 0), 0).toLocaleString('en-US')}
+                  </td>
+                  <td className="py-2 pr-3 text-right tabular-nums">
+                    {fmtTokens(fictionCosts.totals.measured.tokensIn)} → {fmtTokens(fictionCosts.totals.measured.tokensOut)}
+                  </td>
+                  <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(fictionCosts.totals.measured.durationMs)}</td>
+                  <td className="py-2 text-right tabular-nums">{fmtUsd(fictionCosts.totals.measured.costUsd)}</td>
                 </tr>
               </tbody>
             </table>
-            {fictionCosts.hasEstimate && (
-              <p className="mt-2 text-xs text-[var(--app-text-muted)]">
-                <span className="font-medium">estimate</span> = worst-case (empty-cache) approximation from book
-                structure; actual spend was not recorded for that stage.
-              </p>
-            )}
+            <p className="mt-2 text-xs text-[var(--app-text-muted)]">
+              <span className="font-medium">estimate</span> = worst-case (empty-cache) projection from book structure ·
+              <span className="font-medium"> measured</span> = real recorded spend. A stage shows <span className="italic">not run yet</span> until it has been executed under cost tracking.
+            </p>
           </div>
         )}
       </div>
@@ -1069,34 +1081,55 @@ function fmtDuration(ms: number | null): string {
   return `${m}m ${s % 60}s`;
 }
 
-function StageCostRow({ row }: { row: FictionStageCost }) {
-  const badge =
-    row.source === 'measured'
-      ? { text: 'measured', cls: 'bg-[var(--app-accent)]/15 text-[var(--app-accent)]' }
-      : row.source === 'estimate'
-        ? { text: 'estimate', cls: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' }
-        : { text: 'not run', cls: 'text-[var(--app-text-muted)]' };
-  const muted = row.source === 'none';
+function SourceTag({ kind }: { kind: 'estimate' | 'measured' }) {
+  const cls =
+    kind === 'measured'
+      ? 'bg-[var(--app-accent)]/15 text-[var(--app-accent)]'
+      : 'bg-amber-500/15 text-amber-600 dark:text-amber-400';
   return (
-    <tr className={`border-t border-[var(--separator-opaque)] ${muted ? 'opacity-50' : ''}`}>
-      <td className="py-2 pr-3">
-        <span className="mr-2">{STAGE_LABEL[row.stage] ?? row.stage}</span>
-        <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${badge.cls}`}>
-          {badge.text}
-        </span>
-        {row.source === 'estimate' && !row.priceKnown && (
-          <span className="ml-1 text-[10px] text-[var(--app-text-muted)]" title="Pricing for this model is approximate">
-            ~price
-          </span>
+    <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${cls}`}>
+      {kind}
+    </span>
+  );
+}
+
+// Two rows per stage: the estimate (projection) above the measured (real) figures.
+function StageCostRows({ row }: { row: FictionStageCost }) {
+  const est = row.estimate;
+  const m = row.measured;
+  return (
+    <>
+      <tr className="border-t-2 border-[var(--separator-opaque)]">
+        <td className="py-2 pr-3 align-top font-medium" rowSpan={2}>
+          {STAGE_LABEL[row.stage] ?? row.stage}
+        </td>
+        <td className="py-2 pr-3">
+          <SourceTag kind="estimate" />
+          {!est.priceKnown && (
+            <span className="ml-1 text-[10px] text-[var(--app-text-muted)]" title="Pricing for this model is approximate">
+              ~price
+            </span>
+          )}
+        </td>
+        <td className="py-2 pr-3 text-right tabular-nums">{est.llmCalls.toLocaleString('en-US')}</td>
+        <td className="py-2 pr-3 text-right tabular-nums">{fmtTokens(est.tokensIn)} → {fmtTokens(est.tokensOut)}</td>
+        <td className="py-2 pr-3 text-right tabular-nums text-[var(--app-text-muted)]">—</td>
+        <td className="py-2 text-right tabular-nums">{fmtUsd(est.costUsd)}</td>
+      </tr>
+      <tr className={m ? '' : 'text-[var(--app-text-muted)]'}>
+        <td className="py-2 pr-3"><SourceTag kind="measured" /></td>
+        {m ? (
+          <>
+            <td className="py-2 pr-3 text-right tabular-nums">{m.llmCalls.toLocaleString('en-US')}</td>
+            <td className="py-2 pr-3 text-right tabular-nums">{fmtTokens(m.tokensIn)} → {fmtTokens(m.tokensOut)}</td>
+            <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(m.durationMs)}</td>
+            <td className="py-2 text-right tabular-nums">{fmtUsd(m.costUsd)}</td>
+          </>
+        ) : (
+          <td className="py-2 text-right italic" colSpan={4}>{row.ran ? 'not measured yet' : 'not run yet'}</td>
         )}
-      </td>
-      <td className="py-2 pr-3 text-right tabular-nums">{row.source === 'none' ? '—' : row.llmCalls.toLocaleString('en-US')}</td>
-      <td className="py-2 pr-3 text-right tabular-nums">
-        {row.source === 'none' ? '—' : `${fmtTokens(row.tokensIn)} → ${fmtTokens(row.tokensOut)}`}
-      </td>
-      <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(row.durationMs)}</td>
-      <td className="py-2 text-right tabular-nums">{row.source === 'none' ? '—' : fmtUsd(row.costUsd)}</td>
-    </tr>
+      </tr>
+    </>
   );
 }
 
