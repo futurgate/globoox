@@ -702,34 +702,50 @@ export async function getGlossary(bookId: string, lang: string): Promise<Glossar
 // ── Fiction per-stage cost / tokens / time (admin) ──────────────────────────────
 
 export type FictionCostStage = 'glossary' | 'translate' | 'revise'
-/** measured = real recorded spend; estimate = ran before recording (approx); none = never ran. */
-export type FictionCostSource = 'measured' | 'estimate' | 'none'
 
-export type FictionStageCost = {
-  stage: FictionCostStage
-  source: FictionCostSource
+/** Projected (worst-case) cost for a stage — always present. */
+export type FictionStageEstimate = {
+  llmCalls: number
+  tokensIn: number
+  tokensOut: number
+  costUsd: number
+  /** false when pricing for the model is approximate (family fallback / override). */
+  priceKnown: boolean
+}
+
+/** Real recorded spend for a stage — null until the stage has run under cost tracking. */
+export type FictionStageMeasured = {
+  llmCalls: number
   tokensIn: number
   tokensOut: number
   cachedTokensIn: number
   thoughtsTokens: number
   costUsd: number
-  llmCalls: number
-  /** Wall-clock LLM time (ms). Only present for measured stages; null otherwise. */
-  durationMs: number | null
-  /** false when pricing for the model is approximate (family fallback / override). */
-  priceKnown: boolean
+  /** Wall-clock LLM time (ms). */
+  durationMs: number
   modelVersion: string | null
   startedAt: string | null
   finishedAt: string | null
+}
+
+export type FictionStageCost = {
+  stage: FictionCostStage
+  /** whether the stage has actually run for this book/lang */
+  ran: boolean
+  estimate: FictionStageEstimate
+  measured: FictionStageMeasured | null
 }
 
 export type FictionCosts = {
   bookId: string
   lang: string
   stages: FictionStageCost[]
-  totals: { tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
-  /** true when at least one stage is an estimate (no real recorded spend). */
-  hasEstimate: boolean
+  totals: {
+    estimate: { tokensIn: number; tokensOut: number; costUsd: number }
+    measured: { tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
+  }
+  /** true when at least one stage has real recorded spend. */
+  hasMeasured: boolean
 }
 
 /** Fetch per-stage LLM cost/tokens/time for a fiction book (admin, bypasses cache). */
