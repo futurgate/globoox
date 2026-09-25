@@ -7,8 +7,15 @@ import * as Sentry from '@sentry/nextjs'
  * Attaches Supabase auth token when user is logged in.
  * Returns null only when no backend URL is configured.
  */
-export async function proxyToBackend(request: Request): Promise<NextResponse | null> {
-  const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL
+export async function proxyToBackend(
+  request: Request,
+  opts?: { admin?: boolean }
+): Promise<NextResponse | null> {
+  // Admin/heavy team endpoints route to a dedicated backend instance when
+  // ADMIN_API_URL is set; otherwise they fall back to the shared backend.
+  const backendUrl = opts?.admin
+    ? process.env.ADMIN_API_URL || process.env.API_URL || process.env.NEXT_PUBLIC_API_URL
+    : process.env.API_URL || process.env.NEXT_PUBLIC_API_URL
   if (!backendUrl) return null
 
   const supabase = await createClient()
@@ -89,8 +96,11 @@ export async function proxyToBackend(request: Request): Promise<NextResponse | n
   }
 }
 
-export async function requireBackendProxy(request: Request): Promise<NextResponse> {
-  const proxied = await proxyToBackend(request)
+export async function requireBackendProxy(
+  request: Request,
+  opts?: { admin?: boolean }
+): Promise<NextResponse> {
+  const proxied = await proxyToBackend(request, opts)
   if (proxied) return proxied
 
   return NextResponse.json(
