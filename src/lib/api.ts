@@ -51,20 +51,29 @@ interface BaseBlock {
   is_pending?: boolean // True if translation is pending on the server
 }
 
+/** Inline emphasis / line-break marks over a block's plain `text` (offsets into it). */
+export type InlineMark =
+  | { t: 'em'; s: number; e: number }
+  | { t: 'strong'; s: number; e: number }
+  | { t: 'br'; o: number }
+
 export interface ParagraphBlock extends BaseBlock {
   type: 'paragraph'
   text: string
+  marks?: InlineMark[]
 }
 
 export interface HeadingBlock extends BaseBlock {
   type: 'heading'
   level: 1 | 2 | 3 | 4 | 5 | 6
   text: string
+  marks?: InlineMark[]
 }
 
 export interface QuoteBlock extends BaseBlock {
   type: 'quote'
   text: string
+  marks?: InlineMark[]
 }
 
 export interface ListBlock extends BaseBlock {
@@ -423,6 +432,456 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   } finally {
     inflightGetRequests.delete(key)
   }
+}
+
+/**
+ * Admin-only: download the fully-translated book as an EPUB for the given
+ * language. Triggers a browser file download. Bypasses the JSON `request()`
+ * wrapper because the response is binary. Throws with a readable message when
+ * the book is not 100% translated (backend 409) or the request otherwise fails.
+ */
+export async function downloadTranslatedEpub(bookId: string, lang: string): Promise<void> {
+  const path = `/api/books/${bookId}/download-translated?lang=${encodeURIComponent(lang)}`
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}${withShareToken(path)}`, { headers })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Download failed: ${res.status}`)
+  }
+
+  const blob = await res.blob()
+  const disposition = res.headers.get('content-disposition') || ''
+  const match = disposition.match(/filename="?([^"]+)"?/i)
+  const filename = match?.[1] || `book-${lang}.epub`
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
+// ── Full-book fiction translation (admin) ──────────────────────────────────
+
+export type FictionProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done'
+  chapterId?: string
+  index?: number
+  title?: string
+  blocks?: number
+  parsed?: number
+  done?: number
+  totalChapters?: number
+  error?: string
+}
+
+export type FictionProgress = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'running' | 'complete'
+  totalChapters: number
+  counts: { pending: number; translating: number; done: number; error: number }
+  percent: number
+  chapters: Array<{ chapter_id: string; status: string; error: string | null; updated_at: string }>
+}
+
+/**
+ * Start a full-book fiction translation and stream per-chapter progress.
+ * Admin only (gated on the backend). Reads the NDJSON stream and invokes
+ * onEvent for each line until the stream ends.
+ */
+export async function startFictionTranslation(
+  bookId: string,
+  lang: string,
+  onEvent: (ev: FictionProgressEvent) => void,
+  opts: { useGlossary?: boolean; overwrite?: boolean; signal?: AbortSignal } = {},
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/translate-full-book`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      mode: 'fiction',
+      useGlossary: opts.useGlossary === true,
+      overwrite: opts.overwrite === true,
+    }),
+    signal: opts.signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Translation failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as FictionProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+export type FictionHistoryEntry = {
+  bookId: string
+  title: string
+  author: string | null
+  language: string
+  totalChapters: number
+  doneChapters: number
+  errorChapters: number
+  state: 'complete' | 'partial' | 'pending'
+  percent: number
+  updatedAt: string
+}
+
+/**
+ * Fiction translation history — one entry per (book, language). Downloadable
+ * entries persist in the DB, so this survives closing/reopening the tab.
+ */
+export async function listFictionTranslations(): Promise<FictionHistoryEntry[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/fiction-translations`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load history: ${res.status}`)
+  }
+  const data = (await res.json()) as { entries?: FictionHistoryEntry[] }
+  return data.entries ?? []
+}
+
+/** Poll full-book fiction translation progress (bypasses the GET cache). */
+export async function getFictionProgress(bookId: string, lang: string): Promise<FictionProgress> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/translate-full-book?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch progress: ${res.status}`)
+  }
+  return res.json() as Promise<FictionProgress>
+}
+
+// ── Fiction glossary / style bible (admin) ──────────────────────────────────
+
+export type BookGlossary = {
+  source_language?: string
+  target_language?: string
+  character_voice_profiles?: Array<{
+    character_id?: string
+    register?: string
+    speech_patterns?: string
+    example_lines?: string[]
+  }>
+  prose_style_profile?: {
+    register?: string
+    domain?: string
+    narrative_tense?: string
+    rhythm_target?: string
+    diction?: string
+  }
+  terminology?: Array<{ source_term?: string; preferred_translation?: string; note?: string }>
+  named_entities?: Array<{ entity?: string; type?: string; preferred_target?: string; note?: string }>
+}
+
+export type GlossaryProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done'
+  chapterId?: string
+  index?: number
+  title?: string
+  done?: number
+  totalChapters?: number
+  resumingFrom?: number
+  skipped?: boolean
+  terms?: number
+  names?: number
+  characters?: number
+  error?: string
+}
+
+export type GlossaryStatus = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'pending' | 'building' | 'done' | 'error'
+  chaptersDone: number
+  chaptersTotal: number
+  percent: number
+  error: string | null
+  updatedAt?: string
+  glossary: BookGlossary | null
+}
+
+/**
+ * Build the book-wide fiction glossary incrementally (chapter by chapter) and
+ * stream per-chapter progress. Admin only (gated on the backend). Reads the
+ * NDJSON stream and invokes onEvent for each line until the stream ends.
+ */
+export async function startGlossaryGeneration(
+  bookId: string,
+  lang: string,
+  onEvent: (ev: GlossaryProgressEvent) => void,
+  opts: { restart?: boolean; signal?: AbortSignal } = {},
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/generate-glossary`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), restart: opts.restart === true }),
+    signal: opts.signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Glossary generation failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as GlossaryProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+/** Fetch the current fiction glossary + build progress (bypasses cache). */
+export async function getGlossary(bookId: string, lang: string): Promise<GlossaryStatus> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/generate-glossary?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch glossary: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryStatus>
+}
+
+// ── Fiction per-stage cost / tokens / time (admin) ──────────────────────────────
+
+export type FictionCostStage = 'glossary' | 'translate' | 'revise'
+/** measured = real recorded spend; estimate = ran before recording (approx); none = never ran. */
+export type FictionCostSource = 'measured' | 'estimate' | 'none'
+
+export type FictionStageCost = {
+  stage: FictionCostStage
+  source: FictionCostSource
+  tokensIn: number
+  tokensOut: number
+  cachedTokensIn: number
+  thoughtsTokens: number
+  costUsd: number
+  llmCalls: number
+  /** Wall-clock LLM time (ms). Only present for measured stages; null otherwise. */
+  durationMs: number | null
+  /** false when pricing for the model is approximate (family fallback / override). */
+  priceKnown: boolean
+  modelVersion: string | null
+  startedAt: string | null
+  finishedAt: string | null
+}
+
+export type FictionCosts = {
+  bookId: string
+  lang: string
+  stages: FictionStageCost[]
+  totals: { tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
+  /** true when at least one stage is an estimate (no real recorded spend). */
+  hasEstimate: boolean
+}
+
+/** Fetch per-stage LLM cost/tokens/time for a fiction book (admin, bypasses cache). */
+export async function getFictionCosts(bookId: string, lang: string): Promise<FictionCosts> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/fiction-costs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch fiction costs: ${res.status}`)
+  }
+  return res.json() as Promise<FictionCosts>
+}
+
+// ── Stylistic revision, Pass 2 (admin) ──────────────────────────────────────
+
+export type RevisionProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'block_done' | 'block_error' | 'chapter_done' | 'book_done'
+  bookId?: string
+  lang?: string
+  chapterId?: string
+  blockId?: string
+  index?: number
+  title?: string
+  blocks?: number
+  done?: number
+  totalBlocks?: number
+  totalChapters?: number
+  revised?: number
+  changed?: number | boolean
+  skipped?: boolean
+  error?: string
+}
+
+export type RevisionProgress = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'running' | 'done'
+  totalBlocks: number
+  revised: number
+  changed: number
+  percent: number
+}
+
+export type RevisionDiffEntry = {
+  chapterId: string
+  chapterNumber: number
+  chapterTitle: string
+  blockId: string
+  position: number
+  source: string
+  draft: string
+  revised: string
+  changed: boolean
+}
+
+export type RevisionDiff = {
+  bookId: string
+  lang: string
+  changedOnly: boolean
+  count: number
+  entries: RevisionDiffEntry[]
+}
+
+/**
+ * Run Pass-2 stylistic revision and stream per-block progress. Admin only
+ * (gated on the backend). Reads the NDJSON stream and invokes onEvent per line.
+ */
+export async function startStylisticRevision(
+  bookId: string,
+  lang: string,
+  onEvent: (ev: RevisionProgressEvent) => void,
+  opts: { useGlossary?: boolean; overwrite?: boolean; signal?: AbortSignal } = {},
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/revise-full-book`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      useGlossary: opts.useGlossary !== false,
+      overwrite: opts.overwrite === true,
+    }),
+    signal: opts.signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Revision failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as RevisionProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+/** Poll Pass-2 revision progress (bypasses cache). */
+export async function getRevisionProgress(bookId: string, lang: string): Promise<RevisionProgress> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revise-full-book?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision progress: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionProgress>
+}
+
+/** Fetch the Pass-2 before/after diff (changed blocks by default). */
+export async function getRevisionDiff(
+  bookId: string,
+  lang: string,
+  opts: { changedOnly?: boolean } = {},
+): Promise<RevisionDiff> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const changedOnly = opts.changedOnly === false ? '0' : '1'
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revision-diff?lang=${encodeURIComponent(lang.toUpperCase())}&changedOnly=${changedOnly}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision diff: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionDiff>
 }
 
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
@@ -1063,6 +1522,9 @@ export interface PlaygroundJudgeVerdict {
 export interface PlaygroundResult {
   model: string
   actualModel?: string
+  /** Index of the prompt variant this result was produced with. */
+  variantIndex?: number
+  variantLabel?: string
   ok: boolean
   translatedText?: string
   latencyMs?: number
@@ -1076,13 +1538,27 @@ export interface PlaygroundResult {
   error?: string
 }
 
+export interface PlaygroundVariantMeta {
+  index: number
+  label: string
+  /** false → this variant used the production default prompt. */
+  customized: boolean
+}
+
 export interface PlaygroundResponse {
   targetLanguage: string
   sourceLanguage: string | null
   judged: boolean
   judgeModel: string | null
   referenceUsed: boolean
+  variants?: PlaygroundVariantMeta[]
   results: PlaygroundResult[]
+}
+
+/** One editable system-prompt variant. Blank template → production default. */
+export interface PlaygroundPromptVariant {
+  label?: string
+  template?: string
 }
 
 export interface PlaygroundRequest {
@@ -1090,6 +1566,7 @@ export interface PlaygroundRequest {
   targetLanguage: string
   sourceLanguage?: string
   models: string[]
+  promptVariants?: PlaygroundPromptVariant[]
   judge?: boolean
   judgeModel?: string
   reference?: string
@@ -1100,6 +1577,18 @@ export function runTranslationPlayground(payload: PlaygroundRequest): Promise<Pl
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export interface PlaygroundPromptTemplate {
+  lang: string
+  template: string
+}
+
+/** Fetch the production translation prompt template for a target language. */
+export function fetchTranslationPrompt(lang: string): Promise<PlaygroundPromptTemplate> {
+  return request<PlaygroundPromptTemplate>(
+    `/api/admin/translation-prompt?lang=${encodeURIComponent(lang)}`,
+  )
 }
 
 export interface PlaygroundModels {

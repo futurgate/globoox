@@ -52,11 +52,18 @@ export async function proxyToBackend(request: Request): Promise<NextResponse | n
       return response
     }
 
-    if (contentType.startsWith('image/') || contentType === 'application/octet-stream') {
+    if (
+      contentType.startsWith('image/') ||
+      contentType === 'application/octet-stream' ||
+      contentType.startsWith('application/epub+zip')
+    ) {
       const response = new NextResponse(res.body, { status: res.status })
       response.headers.set('Content-Type', contentType)
       const cacheControl = res.headers.get('cache-control')
       if (cacheControl) response.headers.set('Cache-Control', cacheControl)
+      // Preserve the download filename for binary attachments (e.g. EPUB export)
+      const contentDisposition = res.headers.get('content-disposition')
+      if (contentDisposition) response.headers.set('Content-Disposition', contentDisposition)
       return response
     }
 

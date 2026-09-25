@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { MoreHorizontal, List, Type, ChevronRight } from 'lucide-react';
+import { MoreHorizontal, List, Type, ChevronRight, Download, Loader2 } from 'lucide-react';
 import { Language } from '@/lib/store';
 import TableOfContents from './TableOfContents';
 import ReaderSettings from './ReaderSettings';
@@ -11,6 +11,8 @@ import IOSItemsStack from '@/components/ui/ios-items-stack';
 import { useReaderTheme } from '@/lib/hooks/useReaderTheme';
 import { getReaderUiColors } from '@/lib/readerTheme';
 import { getThemeStyle } from '@/lib/themes';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { downloadTranslatedEpub } from '@/lib/api';
 
 interface ReaderActionsMenuProps {
   book: {
@@ -26,6 +28,8 @@ interface ReaderActionsMenuProps {
   onSelectChapter: (num: number) => void;
   disabled?: boolean;
   onTocOpen?: () => void;
+  /** Language currently being read; used for the admin EPUB export. */
+  currentLanguage: Language;
 }
 
 export default function ReaderActionsMenu({
@@ -34,9 +38,13 @@ export default function ReaderActionsMenu({
   onSelectChapter,
   disabled,
   onTocOpen,
+  currentLanguage,
 }: ReaderActionsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<'none' | 'toc' | 'settings'>('none');
+  const { isAdmin } = useAuth();
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
   const readerTheme = useReaderTheme();
   const uiColors = getReaderUiColors(readerTheme);
   const readerThemeStyle = getThemeStyle(readerTheme.id);
@@ -51,13 +59,27 @@ export default function ReaderActionsMenu({
     triggerRef,
     menuRef,
     menuWidth: 224,
-    menuHeight: 104,
+    menuHeight: isAdmin ? 152 : 104,
   });
 
   const handleAction = (action: 'toc' | 'settings') => {
     setIsOpen(false);
     setActiveModal(action);
     if (action === 'toc') onTocOpen?.();
+  };
+
+  const handleDownloadEpub = async () => {
+    if (isDownloading) return;
+    setDownloadError(null);
+    setIsDownloading(true);
+    try {
+      await downloadTranslatedEpub(book.id, currentLanguage.toUpperCase());
+      setIsOpen(false);
+    } catch (err) {
+      setDownloadError(err instanceof Error ? err.message : 'Download failed');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -102,6 +124,35 @@ export default function ReaderActionsMenu({
             </div>
             <ChevronRight className="w-4 h-4 text-[var(--reader-subtle-text)]" />
           </button>
+
+          {isAdmin && (
+            <>
+              <div className="ml-12 mr-4 h-[0.5px] bg-[var(--reader-border)]" />
+
+              <button
+                onClick={handleDownloadEpub}
+                disabled={isDownloading}
+                className={uiMenuItemButton}
+              >
+                <div className="flex items-center gap-3">
+                  {isDownloading ? (
+                    <Loader2 className="w-5 h-5 text-[var(--reader-accent)] animate-spin" />
+                  ) : (
+                    <Download className="w-5 h-5 text-[var(--reader-accent)]" />
+                  )}
+                  <span className="text-[17px]">
+                    {isDownloading ? 'Preparing…' : `Download EPUB (${currentLanguage.toUpperCase()})`}
+                  </span>
+                </div>
+              </button>
+
+              {downloadError && (
+                <p className="px-4 pb-2 pt-1 text-[13px] leading-snug text-red-500">
+                  {downloadError}
+                </p>
+              )}
+            </>
+          )}
         </IOSItemsStack>
         </div>
       )}
