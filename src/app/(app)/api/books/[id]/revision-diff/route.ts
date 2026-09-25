@@ -9,5 +9,5 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   void params
-  return requireBackendProxy(request)
+  return requireBackendProxy(request, { admin: true })
 }
