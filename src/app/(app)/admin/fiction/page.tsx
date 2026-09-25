@@ -65,6 +65,8 @@ export default function AdminFictionPage() {
   const [revisionChangedCount, setRevisionChangedCount] = useState(0);
   const [revisionState, setRevisionState] = useState<string>('idle');
   const [revisionError, setRevisionError] = useState<string | null>(null);
+  const [revisionUpdatedAt, setRevisionUpdatedAt] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [diffOpen, setDiffOpen] = useState(false);
   const [diffLoading, setDiffLoading] = useState(false);
   const [diffEntries, setDiffEntries] = useState<RevisionDiffEntry[] | null>(null);
@@ -181,11 +183,14 @@ export default function AdminFictionPage() {
       setRevisionDone(p.revised);
       setRevisionChangedCount(p.changed);
       setRevisionState(p.state);
+      setRevisionUpdatedAt(p.updatedAt ?? null);
+      setRevisionError(p.error ?? null);
     } catch {
       setRevisionTotal(0);
       setRevisionDone(0);
       setRevisionChangedCount(0);
       setRevisionState('idle');
+      setRevisionUpdatedAt(null);
     }
   }, [bookId, lang]);
 
@@ -366,6 +371,24 @@ export default function AdminFictionPage() {
     return () => clearInterval(id);
   }, [isAdmin, bookId, glossaryState, glossaryRunning, loadGlossary]);
 
+  // Pull the freshest state for every stage at once (translation, glossary,
+  // revision) + history — so an interrupted/resumed run shows its real progress.
+  const handleRefresh = useCallback(async () => {
+    if (!bookId) return;
+    setRefreshing(true);
+    try {
+      await Promise.allSettled([
+        loadProgress(),
+        loadGlossary(),
+        loadRevisionProgress(),
+        loadHistory(),
+        loadFictionCosts(),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [bookId, loadProgress, loadGlossary, loadRevisionProgress, loadHistory, loadFictionCosts]);
+
   const handleGenerateGlossary = useCallback(async () => {
     if (!bookId || glossaryRunning) return;
     setGlossaryRunning(true);
@@ -433,7 +456,19 @@ export default function AdminFictionPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pb-24">
-      <PageHeader title="Fiction Translation" />
+      <div className="flex items-start justify-between gap-3">
+        <PageHeader title="Fiction Translation" />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={!bookId || refreshing}
+          title="Pull the latest status for every stage (translation, glossary, revision)"
+        >
+          <RefreshCw className={`mr-2 h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
+      </div>
 
       <p className="mb-5 text-sm text-[var(--app-text-muted)]">
         Run the full-book fiction pipeline on a whole book, watch progress, and download the
@@ -714,31 +749,44 @@ export default function AdminFictionPage() {
           </Button>
         </div>
 
-        {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-[var(--app-text-muted)]">
-                {revisionState === 'done' && !revisionRunning
-                  ? 'Complete'
-                  : revisionRunning
-                    ? 'Revising…'
-                    : revisionState === 'error'
-                      ? 'Stopped'
-                      : 'Progress'}
-                <span className="ml-2 text-xs">{revisionChangedCount} changed</span>
-              </span>
-              <span className="tabular-nums text-[var(--app-text-muted)]">
-                {revisionDone}/{revisionTotal} · {revisionTotal > 0 ? Math.round((revisionDone / revisionTotal) * 100) : 0}%
-              </span>
+        {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (() => {
+          const stopped = !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
+          const label = revisionRunning
+            ? 'Revising…'
+            : revisionState === 'done'
+              ? 'Complete'
+              : revisionState === 'stalled'
+                ? 'Stopped (stalled)'
+                : revisionState === 'incomplete'
+                  ? 'Stopped — incomplete'
+                  : revisionState === 'error'
+                    ? 'Stopped — error'
+                    : 'Progress';
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className={stopped ? 'font-medium text-amber-600 dark:text-amber-500' : 'text-[var(--app-text-muted)]'}>
+                  {label}
+                  <span className="ml-2 text-xs text-[var(--app-text-muted)]">{revisionChangedCount} changed</span>
+                </span>
+                <span className="tabular-nums text-[var(--app-text-muted)]">
+                  {revisionDone}/{revisionTotal} · {revisionTotal > 0 ? Math.round((revisionDone / revisionTotal) * 100) : 0}%
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--separator-opaque)]">
+                <div
+                  className={`h-full rounded-full transition-[width] duration-300 ${stopped ? 'bg-amber-500' : 'bg-[var(--app-accent)]'}`}
+                  style={{ width: `${revisionTotal > 0 ? Math.round((revisionDone / revisionTotal) * 100) : 0}%` }}
+                />
+              </div>
+              {stopped && (
+                <p className="text-xs text-[var(--app-text-muted)]">
+                  Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
+                </p>
+              )}
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--separator-opaque)]">
-              <div
-                className="h-full rounded-full bg-[var(--app-accent)] transition-[width] duration-300"
-                style={{ width: `${revisionTotal > 0 ? Math.round((revisionDone / revisionTotal) * 100) : 0}%` }}
-              />
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
 
