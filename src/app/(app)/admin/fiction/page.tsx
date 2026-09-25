@@ -118,6 +118,11 @@ export default function AdminFictionPage() {
     !!glossary &&
     ((glossary.terminology?.length ?? 0) > 0 || (glossary.named_entities?.length ?? 0) > 0);
 
+  // "Building" is a server-side state, not tied to this tab's stream: it stays
+  // true after a reload (or when a build was started elsewhere). Drives the
+  // loader/label so progress is visible even without an active stream here.
+  const glossaryBuilding = glossaryRunning || glossaryState === 'building';
+
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
     try {
@@ -322,6 +327,16 @@ export default function AdminFictionPage() {
     setGlossaryOpen(false);
     void loadGlossary();
   }, [isAdmin, bookId, lang, loadGlossary]);
+
+  // When a build is in progress but this tab isn't the one streaming it (after a
+  // reload, or a build started elsewhere), there are no NDJSON events to advance
+  // the bar — poll the status endpoint so progress keeps updating.
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    if (glossaryState !== 'building' || glossaryRunning) return;
+    const id = setInterval(() => { void loadGlossary(); }, 3000);
+    return () => clearInterval(id);
+  }, [isAdmin, bookId, glossaryState, glossaryRunning, loadGlossary]);
 
   const handleGenerateGlossary = useCallback(async () => {
     if (!bookId || glossaryRunning) return;
@@ -579,12 +594,19 @@ export default function AdminFictionPage() {
             ) : (
               <>
                 <ScrollText className="mr-2 h-4 w-4" />
-                {glossary ? 'Regenerate glossary' : 'Generate glossary'}
+                {/* A server-side build that this tab isn't streaming (e.g. after a
+                    reload, or one that stalled) can be picked up from where it
+                    left off — resumes from chapters_done. */}
+                {glossaryState === 'building'
+                  ? 'Resume glossary'
+                  : glossary
+                    ? 'Regenerate glossary'
+                    : 'Generate glossary'}
               </>
             )}
           </Button>
 
-          {glossary && !glossaryRunning && (
+          {glossary && !glossaryBuilding && (
             <Button variant="outline" onClick={() => setGlossaryOpen((o) => !o)}>
               {glossaryOpen ? <ChevronDown className="mr-2 h-4 w-4" /> : <ChevronRight className="mr-2 h-4 w-4" />}
               {glossaryOpen ? 'Hide glossary' : 'View glossary'}
@@ -592,13 +614,14 @@ export default function AdminFictionPage() {
           )}
         </div>
 
-        {(glossaryRunning || glossaryTotal > 0) && glossaryState !== 'idle' && (
+        {(glossaryBuilding || glossaryTotal > 0) && glossaryState !== 'idle' && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-[var(--app-text-muted)]">
-                {glossaryState === 'done' && !glossaryRunning
+              <span className="flex items-center gap-2 text-[var(--app-text-muted)]">
+                {glossaryBuilding && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                {glossaryState === 'done' && !glossaryBuilding
                   ? 'Complete'
-                  : glossaryRunning
+                  : glossaryBuilding
                     ? 'Building…'
                     : glossaryState === 'error'
                       ? 'Stopped'
