@@ -699,6 +699,142 @@ export async function getGlossary(bookId: string, lang: string): Promise<Glossar
   return res.json() as Promise<GlossaryStatus>
 }
 
+// ── Stylistic revision, Pass 2 (admin) ──────────────────────────────────────
+
+export type RevisionProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'block_done' | 'block_error' | 'chapter_done' | 'book_done'
+  bookId?: string
+  lang?: string
+  chapterId?: string
+  blockId?: string
+  index?: number
+  title?: string
+  blocks?: number
+  done?: number
+  totalBlocks?: number
+  totalChapters?: number
+  revised?: number
+  changed?: number | boolean
+  skipped?: boolean
+  error?: string
+}
+
+export type RevisionProgress = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'running' | 'done'
+  totalBlocks: number
+  revised: number
+  changed: number
+  percent: number
+}
+
+export type RevisionDiffEntry = {
+  chapterId: string
+  chapterNumber: number
+  chapterTitle: string
+  blockId: string
+  position: number
+  source: string
+  draft: string
+  revised: string
+  changed: boolean
+}
+
+export type RevisionDiff = {
+  bookId: string
+  lang: string
+  changedOnly: boolean
+  count: number
+  entries: RevisionDiffEntry[]
+}
+
+/**
+ * Run Pass-2 stylistic revision and stream per-block progress. Admin only
+ * (gated on the backend). Reads the NDJSON stream and invokes onEvent per line.
+ */
+export async function startStylisticRevision(
+  bookId: string,
+  lang: string,
+  onEvent: (ev: RevisionProgressEvent) => void,
+  opts: { useGlossary?: boolean; overwrite?: boolean; signal?: AbortSignal } = {},
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/revise-full-book`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      useGlossary: opts.useGlossary !== false,
+      overwrite: opts.overwrite === true,
+    }),
+    signal: opts.signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Revision failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as RevisionProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+/** Poll Pass-2 revision progress (bypasses cache). */
+export async function getRevisionProgress(bookId: string, lang: string): Promise<RevisionProgress> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revise-full-book?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision progress: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionProgress>
+}
+
+/** Fetch the Pass-2 before/after diff (changed blocks by default). */
+export async function getRevisionDiff(
+  bookId: string,
+  lang: string,
+  opts: { changedOnly?: boolean } = {},
+): Promise<RevisionDiff> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const changedOnly = opts.changedOnly === false ? '0' : '1'
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revision-diff?lang=${encodeURIComponent(lang.toUpperCase())}&changedOnly=${changedOnly}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision diff: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionDiff>
+}
+
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
   const params = status ? `?status=${encodeURIComponent(status)}` : ''
   return request<ApiBook[]>(`/api/books${params}`).then((books) => {
