@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -14,10 +14,13 @@ import {
   downloadTranslatedEpub,
   startGlossaryGeneration,
   getGlossary,
+  startStylisticRevision,
+  getRevisionProgress,
   type ApiBook,
   type FictionProgressEvent,
   type FictionHistoryEntry,
   type GlossaryProgressEvent,
+  type RevisionProgressEvent,
   type BookGlossary,
 } from '@/lib/api';
 
@@ -47,6 +50,15 @@ export default function AdminFictionPage() {
   const [downloading, setDownloading] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
   const [overwriteTranslation, setOverwriteTranslation] = useState(false);
+  const [runRevisionAfter, setRunRevisionAfter] = useState(false);
+
+  // Pass 2 — stylistic revision.
+  const [revisionRunning, setRevisionRunning] = useState(false);
+  const [revisionDone, setRevisionDone] = useState(0);
+  const [revisionTotal, setRevisionTotal] = useState(0);
+  const [revisionChangedCount, setRevisionChangedCount] = useState(0);
+  const [revisionState, setRevisionState] = useState<string>('idle');
+  const [revisionError, setRevisionError] = useState<string | null>(null);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -64,6 +76,7 @@ export default function AdminFictionPage() {
 
   const abortRef = useRef<AbortController | null>(null);
   const glossaryAbortRef = useRef<AbortController | null>(null);
+  const revisionAbortRef = useRef<AbortController | null>(null);
 
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
@@ -123,6 +136,67 @@ export default function AdminFictionPage() {
     void loadProgress();
   }, [isAdmin, bookId, lang, loadProgress]);
 
+  // ── Pass 2 — stylistic revision ──
+  const loadRevisionProgress = useCallback(async () => {
+    if (!bookId) return;
+    try {
+      const p = await getRevisionProgress(bookId, lang);
+      setRevisionTotal(p.totalBlocks);
+      setRevisionDone(p.revised);
+      setRevisionChangedCount(p.changed);
+      setRevisionState(p.state);
+    } catch {
+      setRevisionTotal(0);
+      setRevisionDone(0);
+      setRevisionChangedCount(0);
+      setRevisionState('idle');
+    }
+  }, [bookId, lang]);
+
+  const runRevision = useCallback(async () => {
+    if (!bookId || revisionRunning) return;
+    setRevisionRunning(true);
+    setRevisionError(null);
+    setRevisionState('running');
+    setRevisionDone(0);
+    setRevisionChangedCount(0);
+
+    const controller = new AbortController();
+    revisionAbortRef.current = controller;
+
+    const onEvent = (ev: RevisionProgressEvent) => {
+      switch (ev.type) {
+        case 'book_start':
+          setRevisionTotal(ev.totalBlocks ?? 0);
+          break;
+        case 'block_done':
+          if (typeof ev.done === 'number') setRevisionDone(ev.done);
+          if (ev.changed === true) setRevisionChangedCount((c) => c + 1);
+          break;
+        case 'book_done':
+          if (typeof ev.changed === 'number') setRevisionChangedCount(ev.changed);
+          setRevisionState('done');
+          break;
+      }
+    };
+
+    try {
+      await startStylisticRevision(bookId, lang, onEvent, { signal: controller.signal });
+      await loadRevisionProgress();
+    } catch (e) {
+      setRevisionError(e instanceof Error ? e.message : 'Revision failed');
+      setRevisionState('error');
+    } finally {
+      setRevisionRunning(false);
+      revisionAbortRef.current = null;
+    }
+  }, [bookId, lang, revisionRunning, loadRevisionProgress]);
+
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    void loadRevisionProgress();
+  }, [isAdmin, bookId, lang, loadRevisionProgress]);
+
   const handleTranslate = useCallback(async () => {
     if (!bookId || running) return;
     setRunning(true);
@@ -171,7 +245,10 @@ export default function AdminFictionPage() {
       abortRef.current = null;
       void loadHistory();
     }
-  }, [bookId, lang, running, loadProgress, loadHistory, useGlossaryForTranslate, glossaryReady, overwriteTranslation]);
+
+    // Pass 2 chains after a successful Pass 1 when the toggle is on.
+    if (runRevisionAfter) await runRevision();
+  }, [bookId, lang, running, loadProgress, loadHistory, useGlossaryForTranslate, glossaryReady, overwriteTranslation, runRevisionAfter, runRevision]);
 
   const handleDownload = useCallback(async () => {
     if (!bookId) return;
@@ -266,7 +343,7 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, glossaryRunning, loadGlossary]);
 
-  useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); }, []);
+  useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
 
   if (authLoading) {
     return (
@@ -368,6 +445,20 @@ export default function AdminFictionPage() {
           <span>
             Overwrite existing translations
             <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = skip already-translated blocks)</span>
+          </span>
+        </label>
+
+        <label className="flex items-center gap-2 text-sm" title="After translating, run segment-level stylistic revision (Pass 2)">
+          <input
+            type="checkbox"
+            checked={runRevisionAfter}
+            disabled={running || revisionRunning}
+            onChange={(e) => setRunRevisionAfter(e.target.checked)}
+            className="h-4 w-4 accent-[var(--app-accent)]"
+          />
+          <span>
+            Stylistic revision (Pass 2) after translation
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = translate only)</span>
           </span>
         </label>
 
@@ -507,6 +598,61 @@ export default function AdminFictionPage() {
         {glossaryError && <p className="text-sm text-red-500">{glossaryError}</p>}
 
         {glossary && glossaryOpen && <GlossaryView glossary={glossary} />}
+      </div>
+
+      {/* ── Stylistic revision (Pass 2) ── */}
+      <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-sm font-semibold">
+            <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
+          </h2>
+          <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+            Polishes the translated text block by block using neighboring context + the glossary. Runs on
+            the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={runRevision} disabled={!bookId || revisionRunning || running}>
+            {revisionRunning ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Revising…
+              </>
+            ) : (
+              <>
+                <Wand2 className="mr-2 h-4 w-4" /> Run revision
+              </>
+            )}
+          </Button>
+        </div>
+
+        {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-[var(--app-text-muted)]">
+                {revisionState === 'done' && !revisionRunning
+                  ? 'Complete'
+                  : revisionRunning
+                    ? 'Revising…'
+                    : revisionState === 'error'
+                      ? 'Stopped'
+                      : 'Progress'}
+                <span className="ml-2 text-xs">{revisionChangedCount} changed</span>
+              </span>
+              <span className="tabular-nums text-[var(--app-text-muted)]">
+                {revisionDone}/{revisionTotal} · {revisionTotal > 0 ? Math.round((revisionDone / revisionTotal) * 100) : 0}%
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--separator-opaque)]">
+              <div
+                className="h-full rounded-full bg-[var(--app-accent)] transition-[width] duration-300"
+                style={{ width: `${revisionTotal > 0 ? Math.round((revisionDone / revisionTotal) * 100) : 0}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
       </div>
 
       {/* ── History ── */}
