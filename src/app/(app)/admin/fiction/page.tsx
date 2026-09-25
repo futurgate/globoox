@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -17,6 +17,7 @@ import {
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
+  getFictionCosts,
   type ApiBook,
   type FictionProgressEvent,
   type FictionHistoryEntry,
@@ -24,7 +25,10 @@ import {
   type RevisionProgressEvent,
   type RevisionDiffEntry,
   type BookGlossary,
+  type FictionCosts,
+  type FictionStageCost,
 } from '@/lib/api';
+// (FictionCostStage not imported — stage labels use a string-keyed map.)
 
 const inputCls =
   'w-full rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-3 py-2 text-sm outline-none focus:border-[var(--app-accent)]';
@@ -79,6 +83,10 @@ export default function AdminFictionPage() {
   const [glossary, setGlossary] = useState<BookGlossary | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
 
+  // Per-stage cost / tokens / time for the selected book+language.
+  const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
+  const [costsLoading, setCostsLoading] = useState(false);
+
   const abortRef = useRef<AbortController | null>(null);
   const glossaryAbortRef = useRef<AbortController | null>(null);
   const revisionAbortRef = useRef<AbortController | null>(null);
@@ -94,6 +102,18 @@ export default function AdminFictionPage() {
     }
   }, []);
 
+  const loadFictionCosts = useCallback(async () => {
+    if (!bookId) { setFictionCosts(null); return; }
+    setCostsLoading(true);
+    try {
+      setFictionCosts(await getFictionCosts(bookId, lang));
+    } catch {
+      setFictionCosts(null); // non-fatal — cost panel is best-effort
+    } finally {
+      setCostsLoading(false);
+    }
+  }, [bookId, lang]);
+
   // Load book list once admin is confirmed.
   useEffect(() => {
     if (!isAdmin) return;
@@ -108,6 +128,12 @@ export default function AdminFictionPage() {
     void loadHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
+
+  // Load per-stage costs whenever the selected book or language changes.
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    void loadFictionCosts();
+  }, [isAdmin, bookId, lang, loadFictionCosts]);
 
   // Prefill progress when book/lang changes (so a previously-finished book
   // shows as complete and the download button is enabled).
@@ -199,8 +225,9 @@ export default function AdminFictionPage() {
     } finally {
       setRevisionRunning(false);
       revisionAbortRef.current = null;
+      void loadFictionCosts();
     }
-  }, [bookId, lang, revisionRunning, loadRevisionProgress]);
+  }, [bookId, lang, revisionRunning, loadRevisionProgress, loadFictionCosts]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -271,11 +298,12 @@ export default function AdminFictionPage() {
       setRunning(false);
       abortRef.current = null;
       void loadHistory();
+      void loadFictionCosts();
     }
 
     // Pass 2 chains after a successful Pass 1 when the toggle is on.
     if (runRevisionAfter) await runRevision();
-  }, [bookId, lang, running, loadProgress, loadHistory, useGlossaryForTranslate, glossaryReady, overwriteTranslation, runRevisionAfter, runRevision]);
+  }, [bookId, lang, running, loadProgress, loadHistory, loadFictionCosts, useGlossaryForTranslate, glossaryReady, overwriteTranslation, runRevisionAfter, runRevision]);
 
   const handleDownload = useCallback(async () => {
     if (!bookId) return;
@@ -377,8 +405,9 @@ export default function AdminFictionPage() {
     } finally {
       setGlossaryRunning(false);
       glossaryAbortRef.current = null;
+      void loadFictionCosts();
     }
-  }, [bookId, lang, glossaryRunning, loadGlossary]);
+  }, [bookId, lang, glossaryRunning, loadGlossary, loadFictionCosts]);
 
   useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
 
@@ -716,6 +745,70 @@ export default function AdminFictionPage() {
         {diffOpen && diffEntries && <RevisionDiffView entries={diffEntries} />}
       </div>
 
+      {/* ── Cost & tokens (per stage) ── */}
+      <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <Coins className="h-4 w-4" /> Cost &amp; tokens
+            </h2>
+            <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+              LLM spend, tokens and time per stage for the selected book + language. Stages run before
+              cost tracking existed show a labelled <em>estimate</em> (real historical spend isn&apos;t
+              recoverable); newly-run stages show measured figures. Time is only known for measured stages.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={loadFictionCosts} disabled={!bookId || costsLoading}>
+            <RefreshCw className={`mr-2 h-3.5 w-3.5 ${costsLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
+
+        {!fictionCosts && costsLoading && (
+          <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+            <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+          </div>
+        )}
+
+        {fictionCosts && (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] border-collapse text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
+                  <th className="py-1 pr-3 font-medium">Stage</th>
+                  <th className="py-1 pr-3 text-right font-medium">Calls</th>
+                  <th className="py-1 pr-3 text-right font-medium">Tokens in → out</th>
+                  <th className="py-1 pr-3 text-right font-medium">Time</th>
+                  <th className="py-1 text-right font-medium">Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fictionCosts.stages.map((s) => (
+                  <StageCostRow key={s.stage} row={s} />
+                ))}
+                <tr className="border-t border-[var(--separator-opaque)] font-semibold">
+                  <td className="py-2 pr-3">Total</td>
+                  <td className="py-2 pr-3 text-right tabular-nums">
+                    {fictionCosts.stages.reduce((a, s) => a + s.llmCalls, 0).toLocaleString('en-US')}
+                  </td>
+                  <td className="py-2 pr-3 text-right tabular-nums">
+                    {fmtTokens(fictionCosts.totals.tokensIn)} → {fmtTokens(fictionCosts.totals.tokensOut)}
+                  </td>
+                  <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(fictionCosts.totals.durationMs)}</td>
+                  <td className="py-2 text-right tabular-nums">{fmtUsd(fictionCosts.totals.costUsd)}</td>
+                </tr>
+              </tbody>
+            </table>
+            {fictionCosts.hasEstimate && (
+              <p className="mt-2 text-xs text-[var(--app-text-muted)]">
+                <span className="font-medium">estimate</span> = worst-case (empty-cache) approximation from book
+                structure; actual spend was not recorded for that stage.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* ── History ── */}
       <div className="mt-6">
         <div className="mb-2 flex items-center justify-between">
@@ -902,6 +995,60 @@ function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
         </section>
       ))}
     </div>
+  );
+}
+
+const STAGE_LABEL: Record<string, string> = {
+  glossary: 'Glossary',
+  translate: 'Translation',
+  revise: 'Revision (Pass 2)',
+};
+
+function fmtUsd(n: number): string {
+  if (!n) return '$0';
+  return n < 1 ? `$${n.toFixed(4)}` : `$${n.toFixed(2)}`;
+}
+function fmtTokens(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(n >= 100_000 ? 0 : 1)}k`;
+  return String(n);
+}
+function fmtDuration(ms: number | null): string {
+  if (!ms) return '—';
+  const s = Math.round(ms / 1000);
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  return `${m}m ${s % 60}s`;
+}
+
+function StageCostRow({ row }: { row: FictionStageCost }) {
+  const badge =
+    row.source === 'measured'
+      ? { text: 'measured', cls: 'bg-[var(--app-accent)]/15 text-[var(--app-accent)]' }
+      : row.source === 'estimate'
+        ? { text: 'estimate', cls: 'bg-amber-500/15 text-amber-600 dark:text-amber-400' }
+        : { text: 'not run', cls: 'text-[var(--app-text-muted)]' };
+  const muted = row.source === 'none';
+  return (
+    <tr className={`border-t border-[var(--separator-opaque)] ${muted ? 'opacity-50' : ''}`}>
+      <td className="py-2 pr-3">
+        <span className="mr-2">{STAGE_LABEL[row.stage] ?? row.stage}</span>
+        <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ${badge.cls}`}>
+          {badge.text}
+        </span>
+        {row.source === 'estimate' && !row.priceKnown && (
+          <span className="ml-1 text-[10px] text-[var(--app-text-muted)]" title="Pricing for this model is approximate">
+            ~price
+          </span>
+        )}
+      </td>
+      <td className="py-2 pr-3 text-right tabular-nums">{row.source === 'none' ? '—' : row.llmCalls.toLocaleString('en-US')}</td>
+      <td className="py-2 pr-3 text-right tabular-nums">
+        {row.source === 'none' ? '—' : `${fmtTokens(row.tokensIn)} → ${fmtTokens(row.tokensOut)}`}
+      </td>
+      <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(row.durationMs)}</td>
+      <td className="py-2 text-right tabular-nums">{row.source === 'none' ? '—' : fmtUsd(row.costUsd)}</td>
+    </tr>
   );
 }
 
