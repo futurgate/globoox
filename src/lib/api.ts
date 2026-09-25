@@ -771,11 +771,13 @@ export type RevisionProgressEvent = {
 export type RevisionProgress = {
   bookId: string
   lang: string
-  state: 'idle' | 'running' | 'done'
+  state: 'idle' | 'running' | 'stalled' | 'incomplete' | 'done' | 'error'
   totalBlocks: number
   revised: number
   changed: number
   percent: number
+  updatedAt?: string | null
+  error?: string | null
 }
 
 export type RevisionDiffEntry = {
