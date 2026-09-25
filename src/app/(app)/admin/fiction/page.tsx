@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2 } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -16,11 +16,13 @@ import {
   getGlossary,
   startStylisticRevision,
   getRevisionProgress,
+  getRevisionDiff,
   type ApiBook,
   type FictionProgressEvent,
   type FictionHistoryEntry,
   type GlossaryProgressEvent,
   type RevisionProgressEvent,
+  type RevisionDiffEntry,
   type BookGlossary,
 } from '@/lib/api';
 
@@ -59,6 +61,9 @@ export default function AdminFictionPage() {
   const [revisionChangedCount, setRevisionChangedCount] = useState(0);
   const [revisionState, setRevisionState] = useState<string>('idle');
   const [revisionError, setRevisionError] = useState<string | null>(null);
+  const [diffOpen, setDiffOpen] = useState(false);
+  const [diffLoading, setDiffLoading] = useState(false);
+  const [diffEntries, setDiffEntries] = useState<RevisionDiffEntry[] | null>(null);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -194,8 +199,25 @@ export default function AdminFictionPage() {
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
+    setDiffOpen(false);
+    setDiffEntries(null);
     void loadRevisionProgress();
   }, [isAdmin, bookId, lang, loadRevisionProgress]);
+
+  const handleViewChanges = useCallback(async () => {
+    if (diffOpen) { setDiffOpen(false); return; }
+    setDiffLoading(true);
+    setRevisionError(null);
+    try {
+      const d = await getRevisionDiff(bookId, lang, { changedOnly: true });
+      setDiffEntries(d.entries);
+      setDiffOpen(true);
+    } catch (e) {
+      setRevisionError(e instanceof Error ? e.message : 'Failed to load changes');
+    } finally {
+      setDiffLoading(false);
+    }
+  }, [bookId, lang, diffOpen]);
 
   const handleTranslate = useCallback(async () => {
     if (!bookId || running) return;
@@ -624,6 +646,20 @@ export default function AdminFictionPage() {
               </>
             )}
           </Button>
+
+          <Button
+            variant="outline"
+            onClick={handleViewChanges}
+            disabled={!bookId || revisionRunning || diffLoading || revisionChangedCount === 0}
+            title={revisionChangedCount === 0 ? 'No changes to show yet' : 'Compare draft vs revised'}
+          >
+            {diffLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <GitCompare className="mr-2 h-4 w-4" />
+            )}
+            {diffOpen ? 'Hide changes' : 'View changes'}
+          </Button>
         </div>
 
         {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (
@@ -653,6 +689,8 @@ export default function AdminFictionPage() {
         )}
 
         {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
+
+        {diffOpen && diffEntries && <RevisionDiffView entries={diffEntries} />}
       </div>
 
       {/* ── History ── */}
@@ -806,5 +844,67 @@ function Row({ label, value }: { label: string; value: string }) {
       <dt className="shrink-0 text-[var(--app-text-muted)]">{label}:</dt>
       <dd>{value}</dd>
     </div>
+  );
+}
+
+function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
+  // Group entries by chapter, preserving the (already chapter+position ordered) sequence.
+  const groups: { key: string; title: string; items: RevisionDiffEntry[] }[] = [];
+  for (const e of entries) {
+    const title = `${e.chapterNumber ? `Ch. ${e.chapterNumber}` : 'Chapter'}${e.chapterTitle ? ` — ${e.chapterTitle}` : ''}`;
+    const last = groups[groups.length - 1];
+    if (last && last.key === e.chapterId) last.items.push(e);
+    else groups.push({ key: e.chapterId, title, items: [e] });
+  }
+
+  if (entries.length === 0) {
+    return (
+      <p className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3 text-sm text-[var(--app-text-muted)]">
+        No changed blocks — the revision left the draft unchanged.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-4 text-sm">
+      <p className="text-xs text-[var(--app-text-muted)]">{entries.length} changed block{entries.length === 1 ? '' : 's'}</p>
+      {groups.map((g) => (
+        <section key={g.key} className="space-y-2">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">{g.title}</h4>
+          <ul className="space-y-3">
+            {g.items.map((e) => (
+              <RevisionDiffEntryRow key={e.blockId} entry={e} />
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
+  const [showSource, setShowSource] = useState(false);
+  return (
+    <li className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">Draft (before)</div>
+          <p className="whitespace-pre-wrap text-[var(--app-text-muted)]">{entry.draft}</p>
+        </div>
+        <div>
+          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
+          <p className="whitespace-pre-wrap">{entry.revised}</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => setShowSource((s) => !s)}
+        className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
+      >
+        {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+        {showSource ? 'Hide source' : 'Show source'}
+      </button>
+      {showSource && <p className="mt-1 whitespace-pre-wrap text-xs text-[var(--app-text-muted)]">{entry.source}</p>}
+    </li>
   );
 }
