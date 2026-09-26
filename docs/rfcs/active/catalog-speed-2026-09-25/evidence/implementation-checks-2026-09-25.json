@@ -295,9 +295,9 @@
     "fixture_syntax_check": "PASS; final reset truncates appended upload fixtures back to18 base entries (small cleanup change syntax-checked after transport smoke)."
   },
   "deployment_2026_09_26": {
-    "status": "preparing-awaiting-dashboard-authentication",
+    "status": "source-pushed-awaiting-dashboard-authentication",
     "authorization": "User explicitly authorizes backend push/deploy and production DB migration after tests with rollback available; fully new dev frontend then production after acceptance.",
-    "backend_commit": "fb6786d",
+    "backend_commit": "fb6786d09c8159e806ab6c6a5a076d92329abfea",
     "backend_base": "173f4903800398c0ca8794a3bb65805cc6c40ca9",
     "backend_tests": "54/54 passed again; backend-deploy-tests.json",
     "verified_backend_build_source_mismatches": 0,
@@ -334,6 +334,14 @@
     },
     "production_database_changed": false,
     "frontend_production_deployed": false,
-    "committed_log_format": "Trailing whitespace and final blank lines normalized; original raw logs retained in owned .local QA directories."
+    "committed_log_format": "Trailing whitespace and final blank lines normalized; original raw logs retained in owned .local QA directories.",
+    "backend_pushed_branch": "feat/catalog-speed",
+    "frontend_commit": "ba89d3ab73c1beeba46d2c6ef60762ae68edacbc",
+    "frontend_pushed_branch": "dev",
+    "remote_refs_verified": true,
+    "server_deployed": false,
+    "dev_frontend_deployed": false,
+    "code_rollback_reference": "Both source bases and deployment artifacts retained. Exact currently live Render/Vercel rollback targets await dashboard access; do not switch until recorded.",
+    "frontend_review": "All386 source hashes match checked build; same-origin proxy and credential-safe source review passed. Vercel automatic git deployments remain disabled."
   }
 }
