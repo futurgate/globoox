@@ -1,0 +1,22 @@
+BEGIN
+SET
+ current_database | current_user | can_create_public | can_trigger_users | can_trigger_books | can_trigger_progress | uuid_function_present
+------------------+--------------+-------------------+-------------------+-------------------+----------------------+-----------------------
+ postgres         | postgres     | t                 | t                 | t                 | t                    | t
+(1 row)
+
+ long_client_transactions
+--------------------------
+                        0
+(1 row)
+
+ relname | waiting_locks
+---------+---------------
+(0 rows)
+
+ orphan_progress_books
+-----------------------
+                     0
+(1 row)
+
+ROLLBACK

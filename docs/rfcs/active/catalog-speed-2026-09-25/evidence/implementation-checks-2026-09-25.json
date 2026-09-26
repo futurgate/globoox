@@ -295,7 +295,7 @@
     "fixture_syntax_check": "PASS; final reset truncates appended upload fixtures back to18 base entries (small cleanup change syntax-checked after transport smoke)."
   },
   "deployment_2026_09_26": {
-    "status": "backend-deployed-awaiting-sql-pooler-address",
+    "status": "backend-database-dev-live-reader-resume-investigation",
     "authorization": "User explicitly authorizes backend push/deploy and production DB migration after tests with rollback available; fully new dev frontend then production after acceptance.",
     "backend_commit": "fb6786d09c8159e806ab6c6a5a076d92329abfea",
     "backend_base": "173f4903800398c0ca8794a3bb65805cc6c40ca9",
@@ -320,7 +320,7 @@
     "database_preflight": {
       "project": "mricrybtjsizqywvyxkr",
       "REST_read_only": "Existing dependency tables/columns present; v2 tables/RPC absent. Does not prove SQL permissions, constraints or lock availability.",
-      "pending": "SQL preflight and exact live deployment/rollback target verification",
+      "pending": null,
       "evidence": [
         "backend-deploy-schema-rest.json",
         "backend-deploy-preflight.sql"
@@ -329,10 +329,10 @@
     "access": {
       "GitHub": "WRITE in both repositories",
       "Render": "Authenticated; service and previous live deployment recorded; new backend deployed.",
-      "Supabase": "DB password provided; direct endpoint AAAA resolves but host has no IPv6 route; Session pooler address or authenticated SQL Editor still needed",
-      "Vercel": "Authenticated browser as lomovski-2958 can access team lomovski / project globoox. CLI device authorization remains pending, but browser UI is available; no new credentials needed."
+      "Supabase": "Authenticated dashboard via provided account; exact Session pooler host observed in Connect. psql session connected using provided DB password, SSL required. No secrets stored.",
+      "Vercel": "Authenticated browser as lomovski-2958 accesses team lomovski/project globoox; deployment controls and rollback visible. Optional CLI login cancelled after disabled authorization UI; use browser unless CLI is later needed."
     },
-    "production_database_changed": false,
+    "production_database_changed": true,
     "frontend_production_deployed": false,
     "committed_log_format": "Trailing whitespace and final blank lines normalized; original raw logs retained in owned .local QA directories.",
     "backend_pushed_branch": "main and feat/catalog-speed",
@@ -340,8 +340,8 @@
     "frontend_pushed_branch": "dev",
     "remote_refs_verified": true,
     "server_deployed": true,
-    "dev_frontend_deployed": false,
-    "code_rollback_reference": "Both source bases and deployment artifacts retained. Exact currently live Render/Vercel rollback targets await dashboard access; do not switch until recorded.",
+    "dev_frontend_deployed": true,
+    "code_rollback_reference": "Verified Render prior deployment dep-darbub67bikc73960l30 /173f490; Vercel dev4y7kuj828gZcCDErjq5KzWWC1hCV and productionBEDnRV2fqt83szaCVHZSDY8azbyb recorded from authenticated browser. Source bases and deployment artifacts retained.",
     "frontend_review": "All386 source hashes match checked build; same-origin proxy and credential-safe source review passed. Vercel automatic git deployments remain disabled.",
     "render": {
       "service_id": "srv-d6aa07a4d50c738pbdcg",
@@ -369,7 +369,180 @@
       "project": "lomovski/globoox",
       "dev_deployment": "4y7kuj828gZcCDErjq5KzWWC1hCV",
       "branch": "dev",
-      "observed_via": "Authenticated project overview Active Branches"
+      "observed_via": "Authenticated project overview Active Branches",
+      "production_deployment": "BEDnRV2fqt83szaCVHZSDY8azbyb",
+      "production_url": "globoox-j9tytnzri-lomovski.vercel.app",
+      "production_commit": "92799bc3d26430a95b65b1a1b0b66d6a97b6c2c4",
+      "production_rollback_visible": true,
+      "production_not_modified": true,
+      "domain_mapping": {
+        "dev.globoox.co": "dev branch",
+        "www.globoox.co": "Production",
+        "project-wh0xe.vercel.app": "Production",
+        "globoox.co": "307 redirect to www.globoox.co"
+      },
+      "domain_mapping_verified_via": "Authenticated Vercel project Domains page; all report Valid Configuration.",
+      "production_verified_unchanged_after_dev": true
+    },
+    "supabase_management_auth_check": {
+      "project": "mricrybtjsizqywvyxkr",
+      "checks": [
+        {
+          "method": "GET",
+          "url": "https://api.supabase.com/v1/projects/mricrybtjsizqywvyxkr",
+          "http_status": 401,
+          "response": {
+            "message": "Unauthorized"
+          }
+        },
+        {
+          "method": "POST",
+          "url": "https://api.supabase.com/v1/projects/mricrybtjsizqywvyxkr/database/query",
+          "read_only": true,
+          "purpose": "Read current database/user/version and relation existence",
+          "http_status": 401,
+          "response": {
+            "message": "Unauthorized"
+          }
+        }
+      ],
+      "token_format": "Recognized PAT prefix and hexadecimal suffix; no Markdown backslash. Token value not retained in evidence.",
+      "migration_executed": false,
+      "conclusion": "Authentication rejected; expiry/revocation/incorrect token cause not established. Awaiting replacement credentials or database connection host."
+    },
+    "live_dev_acceptance": {
+      "status": "API PASS; browser bookshelf/reader navigation PASS; browser resume FAILED once, repeat investigation pending browser reconnect",
+      "cases": [
+        "Cold guest/auth entry; immediate titles/order; reload at5s without list GET and after10s with fresh GET; measure titles and first6covers separately.",
+        "Independent guest/auth/share scopes: private QA book and cover absent for guest; unknown share empty without stale cache.",
+        "All accessible covers without scroll, max4requests; if only6books present this does not prove below-fold prefetch.",
+        "Unique private QA EPUB with en source and simple cover: instant top placeholder, modal close/reopen, single ready card; never retry process with prior storage path.",
+        "Original-mode Reader only, no translation POST: content, forward/back, activity ACK, returned order and position; independent client after own TTL sees updated order.",
+        "Archive/restore/delete only run-owned QA book; offline scoped cache and explicit Retry requests on restored client network."
+      ],
+      "limits": "Real frontend user session is needed for authenticated/upload checks; PAT does not provide one. Two independent browser profiles do not prove phone behavior. Small smoke samples do not prove p95 or speedup factor.",
+      "translation_control": "Upload process disables auto-translation, but Reader can translate for selected target language. Use fresh QA book without language choice, confirm source/original mode and no translation requests.",
+      "browser_observed": {
+        "viewport_width": 1530,
+        "horizontal_overflow": false,
+        "guest_image_count": 6,
+        "guest_decoded_images": 6,
+        "existing_user_decoded_first_screen_images": 6,
+        "existing_user_session_preserved": true,
+        "guest_domain": "globoox-h3qwdyrmf-lomovski.vercel.app",
+        "authenticated_domain": "dev.globoox.co",
+        "visual_review": "Public guest bookshelf screenshot inspected: six covers render, normal grid/title/footer layout."
+      },
+      "api_evidence": "dev-live-api-qa.json",
+      "api_checks_passed": 20,
+      "browser_qa": {
+        "temporary_account": true,
+        "origin": "https://globoox-h3qwdyrmf-lomovski.vercel.app",
+        "real_user_session_untouched": true,
+        "qa_book_visible_first": true,
+        "reader_language": "EN original",
+        "forward_page": "Paragraphs6–9,23%",
+        "back_page": "Paragraphs1–5,0%",
+        "return_bookshelf_first_book_is_QA": true,
+        "resume_observed": "After another ArrowRight to23% and return to bookshelf, reopening showed0%/Paragraph1. Actual root cause not established.",
+        "reader_evidence": "dev-qa-reader.txt",
+        "translations_after_reader": {
+          "chapter_translations": 0,
+          "block_translations": 0,
+          "translation_cache_rows": 0
+        }
+      },
+      "reader_resume_investigation": {
+        "observed_failure": true,
+        "live_database_observation": "Position0 updated18:10:38.124Z while canonical recency advanced to18:11:13.995620Z/activity4. API, row and manifest agreed on position0.",
+        "direct_save_probe": "One owned QA PUT toposition6 returned200/persistedtrue; GET and manifest confirmed6 updated18:16:06.576Z. New migration does not reject this tested legacy write.",
+        "source_review": "Arrow navigation/saveAnchor/persistAnchor unchanged fromorigin/main92799bc. Existing persistAnchor ACK/stale-client callbacks can overwrite a later local anchor; restore can use a captured stale anchor. These are hypotheses, not proven root cause.",
+        "files": [
+          "src/components/Reader/ReaderView.tsx:1299",
+          "src/components/Reader/ReaderView.tsx:1401",
+          "src/components/Reader/ReaderView.tsx:1545",
+          "src/components/Reader/ReaderView.tsx:1574"
+        ],
+        "next": "Reconnect browser, controlled single forward/save/reopen and inspect outcome; do not claim full dev acceptance or publish production frontend until resolved."
+      },
+      "browser_connection": {
+        "status": "disconnected during bounded repeat",
+        "diagnostics": "Browser runtime timed out then discovery returned no browsers. Chrome process running, extension installed/enabled, native host manifest correct.",
+        "pending": "User asked to approve additional Chrome window per Chrome troubleshooting skill; no restart performed."
+      },
+      "qa_cleanup": {
+        "status": "deferred_for_resume_reproduction",
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reason": "Own temporary account and EPUB retained only for controlled resume investigation; remove via own-object cleanup after browser checks."
+      }
+    },
+    "database_migration": {
+      "status": "committed",
+      "project": "mricrybtjsizqywvyxkr",
+      "file": "../globooks/supabase/migrations/add_catalog_v2.sql",
+      "sha256": "ec53b6a405ddd23b944e57efa7d2f261a69b216ad28a9693680ec540b8e424c3",
+      "elapsed_seconds": 5.599,
+      "exit_code": 0,
+      "source_books_before_after": [
+        190,
+        190
+      ],
+      "source_progress_before_after": [
+        275,
+        275
+      ],
+      "book_versions": 190,
+      "actors": 108,
+      "recency_seeds": 267,
+      "missing_book_versions": 0,
+      "missing_recency_seeds": 0,
+      "new_triggers_passed": 3,
+      "existing_triggers_preserved": 4,
+      "table_RLS_grants_passed": 4,
+      "functions_access_passed": 8,
+      "backup_observed": "Supabase project overview reported last backup12hours ago; backup restore not exercised.",
+      "evidence": [
+        "supabase-production-preflight.log",
+        "supabase-production-privilege-preflight.sql",
+        "supabase-production-privilege-preflight.log",
+        "supabase-production-migration.log",
+        "supabase-production-postflight.sql",
+        "supabase-production-postflight.log",
+        "supabase-production-http.json"
+      ]
+    },
+    "production_v2_http": {
+      "passed": 12,
+      "failed": 0,
+      "public_books": 6,
+      "manifest_bytes": 3813,
+      "manifest_ms": [
+        748,
+        472
+      ],
+      "legacy_bytes": 3804669,
+      "legacy_ms": 5848,
+      "webp_covers": 6,
+      "covers_bytes": 90476,
+      "notes": "Direct backend HTTP samples only; not browser render, p95 or claimed speedup. Invalid bearer401, stale cover404, unknown guest share complete empty passed."
+    },
+    "vercel_dev": {
+      "deployment_id": "dpl_FwUJwsVsca5UviKnTVfXrgRYSpHL",
+      "status": "Ready",
+      "environment": "Preview",
+      "branch": "dev",
+      "commit": "a9992a815216da9508c99339b2c6eff35c7d4ad5",
+      "source_runtime_commit": "ba89d3ab73c1beeba46d2c6ef60762ae68edacbc",
+      "duration": "1m43s",
+      "url": "https://globoox-h3qwdyrmf-lomovski.vercel.app",
+      "domains": [
+        "dev.globoox.co",
+        "globoox-git-dev-lomovski.vercel.app"
+      ],
+      "production_frontend_changed": false,
+      "rollback_dev_deployment": "dpl_4y7kuj828gZcCDErjq5KzWWC1hCV",
+      "smoke_evidence": "dev-deployed-http.json"
     }
   }
 }

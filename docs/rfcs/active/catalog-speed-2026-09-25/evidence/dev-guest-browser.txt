@@ -1,0 +1,66 @@
+- main:
+  - heading "My Books" [level=1]
+  - button "Sign In"
+  - 'link "Mutual Aid: A Factor of Evolution"':
+    - /url: /reader/93ed2d75-d82a-4120-83fb-d1df912f6520
+    - 'img "Mutual Aid: A Factor of Evolution"'
+  - 'link "Mutual Aid: A Factor of Evolution Peter Kropotkin"':
+    - /url: /reader/93ed2d75-d82a-4120-83fb-d1df912f6520
+    - paragraph: "Mutual Aid: A Factor of Evolution"
+    - paragraph: Peter Kropotkin
+  - link "Моя жизнь в искусстве":
+    - /url: /reader/92863897-deee-4954-80a5-3c4b8b531735
+    - img "Моя жизнь в искусстве"
+  - link "Моя жизнь в искусстве Константин Станиславский":
+    - /url: /reader/92863897-deee-4954-80a5-3c4b8b531735
+    - paragraph: Моя жизнь в искусстве
+    - paragraph: Константин Станиславский
+  - link "De la démocratie en Amérique":
+    - /url: /reader/4067ef8d-9c2e-4570-b9be-96852b06e64f
+    - img "De la démocratie en Amérique"
+  - link "De la démocratie en Amérique Alexis de Tocqueville":
+    - /url: /reader/4067ef8d-9c2e-4570-b9be-96852b06e64f
+    - paragraph: De la démocratie en Amérique
+    - paragraph: Alexis de Tocqueville
+  - link "The Voyage of the Beagle":
+    - /url: /reader/97828c6a-c91a-499a-ba33-b16a3a92864c
+    - img "The Voyage of the Beagle"
+  - link "The Voyage of the Beagle Charles Darwin":
+    - /url: /reader/97828c6a-c91a-499a-ba33-b16a3a92864c
+    - paragraph: The Voyage of the Beagle
+    - paragraph: Charles Darwin
+  - link "La rebelión de las masas":
+    - /url: /reader/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d
+    - img "La rebelión de las masas"
+  - link "La rebelión de las masas José Ortega y Gasset":
+    - /url: /reader/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d
+    - paragraph: La rebelión de las masas
+    - paragraph: José Ortega y Gasset
+  - link "Humanistic Wellbeing":
+    - /url: /reader/ac6f23b9-675f-449f-bacc-d57cfaa0b358
+    - img "Humanistic Wellbeing"
+  - link "Humanistic Wellbeing Joar Vittersø":
+    - /url: /reader/ac6f23b9-675f-449f-bacc-d57cfaa0b358
+    - paragraph: Humanistic Wellbeing
+    - paragraph: Joar Vittersø
+  - heading "Upload your own books" [level=2]
+  - paragraph: Sign in to upload and translate your own EPUBs.
+  - list:
+    - generic: Your library stays saved
+    - generic: Reading progress syncs across devices
+    - generic: Translate EPUBs with AI
+  - button "Sign In"
+  - text: Need help?
+  - link "support@globoox.co":
+    - /url: mailto:support@globoox.co
+- navigation:
+  - button "soon Store" [disabled]:
+    - generic: soon
+    - generic: Store
+  - link "My Books":
+    - /url: /my-books
+    - generic: My Books
+  - link "Settings":
+    - /url: /settings
+    - generic: Settings
+- alert

@@ -1,0 +1,322 @@
+{
+  "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+  "started_at": "2026-09-26T18:05:44.351Z",
+  "backend": "https://globooks-jo00.onrender.com",
+  "ownership": {
+    "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+    "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+    "epub_filename": "catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub",
+    "storage_path": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+  },
+  "budget": {
+    "max_users": 1,
+    "max_books": 1,
+    "process_requests": 1,
+    "translation_requests": 0
+  },
+  "checks": [
+    {
+      "case": "create_isolated_test_user_no_email",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "case": "prepare_unique_source_english_epub",
+      "bytes": 2391,
+      "cover_bytes": 3234,
+      "sha256": "1642cad6fc55c4aff1ec71b90704bd5bafc0dbc717d469f6ef04f1b932c2b382",
+      "pass": true
+    },
+    {
+      "case": "independent_auth_session_1",
+      "pass": true,
+      "status": 200,
+      "bytes": 2283,
+      "ms": 677
+    },
+    {
+      "case": "independent_auth_session_2",
+      "pass": true,
+      "status": 200,
+      "bytes": 2283,
+      "ms": 196
+    },
+    {
+      "case": "independent_session_tokens",
+      "pass": true,
+      "distinct": true
+    },
+    {
+      "case": "dev_authenticated_manifest_before_upload",
+      "pass": true,
+      "status": 200,
+      "bytes": 3812,
+      "ms": 1827,
+      "count": 6,
+      "activity_version": "0"
+    },
+    {
+      "case": "backend_signed_upload",
+      "pass": true,
+      "status": 200,
+      "bytes": 1081,
+      "ms": 962
+    },
+    {
+      "case": "supabase_storage_put",
+      "pass": true,
+      "status": 200,
+      "bytes": 2391
+    },
+    {
+      "case": "backend_epub_process_once",
+      "pass": true,
+      "status": 200,
+      "bytes": 63,
+      "ms": 3611,
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "chapter_count": 1
+    },
+    {
+      "case": "dev_authenticated_private_upload_visible",
+      "pass": true,
+      "status": 200,
+      "bytes": 4375,
+      "ms": 1691,
+      "count": 7,
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "is_own": true,
+      "source_language": "EN",
+      "selected_language": "EN",
+      "cover_version": "b40ae4bd-cac0-4802-95a2-2857ce047176",
+      "revision": "48d9542ad89504ec76ba80d2530981cd"
+    },
+    {
+      "case": "private_book_absent_for_guest",
+      "pass": true,
+      "status": 200,
+      "bytes": 3813,
+      "ms": 587,
+      "count": 6
+    },
+    {
+      "case": "authorized_private_thumbnail",
+      "pass": true,
+      "status": 200,
+      "bytes": 342,
+      "ms": 819,
+      "content_type": "image/webp",
+      "width": 320,
+      "height": 480
+    },
+    {
+      "case": "guest_denied_cached_private_thumbnail",
+      "pass": true,
+      "status": 404,
+      "bytes": 282,
+      "ms": 541
+    },
+    {
+      "case": "authenticated_scope_mismatch_rejected",
+      "pass": true,
+      "status": 403,
+      "bytes": 179,
+      "ms": 485
+    },
+    {
+      "case": "client1_reading_activity_ack",
+      "pass": true,
+      "status": 200,
+      "bytes": 212,
+      "ms": 747,
+      "event": {
+        "event_id": "f94b0a68-7d3d-4ee0-8c75-7095ea61296d",
+        "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "occurred_at": "2026-09-26T18:08:27.962Z",
+        "age_ms": 0
+      },
+      "activity_version": "1",
+      "acknowledged_event_ids": [
+        "f94b0a68-7d3d-4ee0-8c75-7095ea61296d"
+      ]
+    },
+    {
+      "case": "client2_observes_ack_and_canonical_head",
+      "pass": true,
+      "status": 200,
+      "bytes": 4405,
+      "ms": 1109,
+      "activity_version": "1",
+      "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "last_read_at": "2026-09-26T18:08:28.590091+00:00",
+      "revision": "c98f29c5cc533b926348cad0bdeeac6e"
+    },
+    {
+      "case": "client2_idempotent_event_replay",
+      "pass": true,
+      "status": 200,
+      "activity_version": "1",
+      "last_read_at": "2026-09-26T18:08:28.590091+00:00",
+      "acknowledged_event_ids": [
+        "f94b0a68-7d3d-4ee0-8c75-7095ea61296d"
+      ]
+    },
+    {
+      "case": "unobserved_activity_version_rejected",
+      "pass": true,
+      "status": 409,
+      "bytes": 231,
+      "ms": 1093
+    },
+    {
+      "case": "archive_seen_by_independent_client",
+      "pass": true,
+      "mutation_status": 200,
+      "status": 200,
+      "bytes": 4405,
+      "ms": 680,
+      "book_status": "hidden",
+      "revision": "854b496e560a3c2be5ed35026dc3e069"
+    },
+    {
+      "case": "restore_seen_by_first_client",
+      "pass": true,
+      "mutation_status": 200,
+      "status": 200,
+      "bytes": 4405,
+      "ms": 695,
+      "book_status": "active",
+      "revision": "c98f29c5cc533b926348cad0bdeeac6e"
+    }
+  ],
+  "limitations": [
+    "API acceptance is not UI/physical-device evidence",
+    "No production user data is mutated; only this run-owned user/book may change"
+  ],
+  "dev_frontend": "https://dev.globoox.co",
+  "completed_at": "2026-09-26T18:08:36.820Z",
+  "status": "api_pass_awaiting_browser_and_cleanup",
+  "translation_requests": 0,
+  "cleanup": {
+    "status": "deferred_for_root_browser_check",
+    "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+    "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643"
+  },
+  "ui_readonly_observations": [
+    {
+      "case": "read_only_after_ui_reader_navigation",
+      "started_at": "2026-09-26T18:12:09.828Z",
+      "completed_at": "2026-09-26T18:12:11.838Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "status": 200,
+        "ms": 1884,
+        "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+        "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+        "block_position": 0,
+        "sentence_index": 0,
+        "lang": "EN",
+        "updated_at": "2026-09-26T18:10:38.124+00:00"
+      },
+      "persisted_progress": [
+        {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+          "block_position": 0,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "content_version": 25,
+          "updated_at": "2026-09-26T18:10:38.124+00:00"
+        }
+      ],
+      "manifest": {
+        "status": 200,
+        "ms": 1291,
+        "activity_version": "4",
+        "revision": "786dbc30a84f0dcb187999e07397c44d",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T18:10:38.124+00:00",
+          "total_blocks": null,
+          "block_position": 0
+        },
+        "last_read_at": "2026-09-26T18:11:13.99562+00:00",
+        "selected_language": "EN"
+      },
+      "translation_state": {
+        "chapter_count": 1,
+        "chapter_translation_entries": 0,
+        "block_count": 25,
+        "block_translation_entries": 0,
+        "translation_cache_rows": 0,
+        "cache_languages": []
+      },
+      "limitation": "No stored translations is evidence about persisted state, not a provider billing audit."
+    }
+  ],
+  "direct_position_probe": {
+    "case": "one_direct_legacy_position_put_after_migration",
+    "started_at": "2026-09-26T18:16:03.562Z",
+    "completed_at": "2026-09-26T18:16:09.375Z",
+    "request": {
+      "method": "PUT",
+      "origin": "https://globooks-jo00.onrender.com",
+      "path": "/api/books/b4efd68f-4ad0-4403-aa6a-234761117643/reading-position",
+      "body": {
+        "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+        "block_id": "c47b7ad8-327c-48e9-811e-f4053861a936",
+        "block_position": 6,
+        "sentence_index": 0,
+        "lang": "EN",
+        "updated_at_client": "2026-09-26T18:16:03.559Z"
+      }
+    },
+    "response": {
+      "status": 200,
+      "ms": 4017,
+      "json": {
+        "success": true,
+        "persisted": true,
+        "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+        "block_id": "c47b7ad8-327c-48e9-811e-f4053861a936",
+        "block_position": 6,
+        "sentence_index": 0,
+        "content_version": 25,
+        "total_blocks": 25,
+        "updated_at": "2026-09-26T18:16:06.576Z"
+      }
+    },
+    "readback": {
+      "status": 200,
+      "ms": 1796,
+      "json": {
+        "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+        "block_id": "c47b7ad8-327c-48e9-811e-f4053861a936",
+        "block_position": 6,
+        "sentence_index": 0,
+        "lang": "EN",
+        "updated_at": "2026-09-26T18:16:06.576+00:00"
+      }
+    },
+    "manifest": {
+      "status": 200,
+      "ms": 1611,
+      "activity_version": "4",
+      "revision": "6fe40f9ef5828a8456b523c4691ba1c2",
+      "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "reading": {
+        "updated_at": "2026-09-26T18:16:06.576+00:00",
+        "total_blocks": null,
+        "block_position": 6
+      },
+      "last_read_at": "2026-09-26T18:11:13.99562+00:00",
+      "selected_language": "EN"
+    },
+    "pass": true,
+    "limitation": "Direct API write bypasses browser position scheduling and restore; it does not prove UI persistence."
+  }
+}

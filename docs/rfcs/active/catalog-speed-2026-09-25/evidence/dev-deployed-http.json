@@ -1,0 +1,19 @@
+[
+  {
+    "url": "https://dev.globoox.co/api/v2/library",
+    "status": 200,
+    "bytes": 3813,
+    "ms": 1440,
+    "content_type": "application/json",
+    "complete": true,
+    "contract_version": 2,
+    "books": 6
+  },
+  {
+    "url": "https://dev.globoox.co/my-books",
+    "status": 200,
+    "bytes": 34261,
+    "ms": 509,
+    "content_type": "text/html; charset=utf-8"
+  }
+]

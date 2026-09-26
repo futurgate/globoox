@@ -1,0 +1,43 @@
+BEGIN
+SET
+ books | reading_progress | versions | actors | recency | events | missing_book_versions | missing_recency_seeds
+-------+------------------+----------+--------+---------+--------+-----------------------+-----------------------
+   190 |              275 |      190 |    108 |     267 |      0 |                     0 |                     0
+(1 row)
+
+        relation         |        trigger_name        | enabled | function_ok |                                                                      definition
+-------------------------+----------------------------+---------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ auth.users              | catalog_v2_user_deleted    | t       | t           | CREATE TRIGGER catalog_v2_user_deleted AFTER DELETE ON auth.users FOR EACH ROW EXECUTE FUNCTION catalog_v2_delete_user()
+ public.books            | catalog_v2_book_version    | t       | t           | CREATE TRIGGER catalog_v2_book_version AFTER INSERT OR UPDATE ON public.books FOR EACH ROW EXECUTE FUNCTION catalog_v2_version_book()
+ public.reading_progress | catalog_v2_legacy_progress | t       | t           | CREATE TRIGGER catalog_v2_legacy_progress AFTER INSERT OR UPDATE ON public.reading_progress FOR EACH ROW EXECUTE FUNCTION catalog_v2_project_legacy()
+(3 rows)
+
+            relation             | rls_enabled | service_grants_ok | client_grants_blocked
+---------------------------------+-------------+-------------------+-----------------------
+ public.catalog_v2_actors        | t           | t                 | t
+ public.catalog_v2_recency       | t           | t                 | t
+ public.catalog_v2_events        | t           | t                 | t
+ public.catalog_v2_book_versions | t           | t                 | t
+(4 rows)
+
+                        signature                        | service_execute_ok | client_execute_blocked
+---------------------------------------------------------+--------------------+------------------------
+ public.catalog_v2_membership(uuid,text)                 | t                  | t
+ public.catalog_v2_manifest(text,uuid,text)              | t                  | t
+ public.catalog_v2_record_activity(text,uuid,text,jsonb) | t                  | t
+ public.catalog_v2_prune_events(integer)                 | t                  | t
+ public.catalog_v2_cover(uuid,text,uuid,uuid,boolean)    | t                  | t
+ public.catalog_v2_delete_user()                         |                    | t
+ public.catalog_v2_version_book()                        |                    | t
+ public.catalog_v2_project_legacy()                      |                    | t
+(8 rows)
+
+     relation     |           tgname            | tgenabled
+------------------+-----------------------------+-----------
+ auth.users       | on_auth_user_created        | O
+ books            | trg_books_library_tombstone | O
+ books            | trg_books_sync              | O
+ reading_progress | trg_reading_progress_sync   | O
+(4 rows)
+
+ROLLBACK

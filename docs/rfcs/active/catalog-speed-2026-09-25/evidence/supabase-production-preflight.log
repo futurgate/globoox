@@ -1,0 +1,115 @@
+BEGIN
+SET
+ migration_role |                                   server_version
+----------------+------------------------------------------------------------------------------------
+ postgres       | PostgreSQL 17.6 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
+(1 row)
+
+ schema_name |      table_name       | relkind |        owner
+-------------+-----------------------+---------+---------------------
+ auth        | users                 | r       | supabase_auth_admin
+ public      | books                 | r       | postgres
+ public      | reading_progress      | r       | postgres
+ public      | share_link_books      | r       | postgres
+ public      | share_links           | r       | postgres
+ public      | user_book_preferences | r       | postgres
+(6 rows)
+
+ table_schema |      table_name       |     column_name     |        data_type         |  udt_name   | is_nullable
+--------------+-----------------------+---------------------+--------------------------+-------------+-------------
+ public       | books                 | id                  | uuid                     | uuid        | NO
+ public       | books                 | title               | text                     | text        | NO
+ public       | books                 | author              | text                     | text        | YES
+ public       | books                 | cover_url           | text                     | text        | YES
+ public       | books                 | file_path           | text                     | text        | NO
+ public       | books                 | file_format         | text                     | text        | NO
+ public       | books                 | file_size           | integer                  | int4        | YES
+ public       | books                 | created_at          | timestamp with time zone | timestamptz | YES
+ public       | books                 | updated_at          | timestamp with time zone | timestamptz | YES
+ public       | books                 | user_id             | uuid                     | uuid        | YES
+ public       | books                 | source_language     | text                     | text        | YES
+ public       | books                 | available_languages | ARRAY                    | _text       | YES
+ public       | books                 | status              | text                     | text        | NO
+ public       | books                 | processing_status   | text                     | text        | NO
+ public       | books                 | file_hash           | text                     | text        | YES
+ public       | reading_progress      | id                  | uuid                     | uuid        | NO
+ public       | reading_progress      | user_id             | uuid                     | uuid        | YES
+ public       | reading_progress      | book_id             | uuid                     | uuid        | YES
+ public       | reading_progress      | current_cfi         | text                     | text        | YES
+ public       | reading_progress      | current_chapter     | integer                  | int4        | YES
+ public       | reading_progress      | progress_percentage | numeric                  | numeric     | YES
+ public       | reading_progress      | last_read_at        | timestamp with time zone | timestamptz | YES
+ public       | reading_progress      | created_at          | timestamp with time zone | timestamptz | YES
+ public       | reading_progress      | selected_language   | text                     | text        | YES
+ public       | reading_progress      | chapter_id          | uuid                     | uuid        | YES
+ public       | reading_progress      | block_id            | uuid                     | uuid        | YES
+ public       | reading_progress      | block_position      | integer                  | int4        | YES
+ public       | reading_progress      | content_version     | integer                  | int4        | YES
+ public       | reading_progress      | updated_at          | timestamp with time zone | timestamptz | YES
+ public       | reading_progress      | sentence_index      | integer                  | int4        | YES
+ public       | share_link_books      | share_link_id       | uuid                     | uuid        | NO
+ public       | share_link_books      | book_id             | uuid                     | uuid        | NO
+ public       | share_link_books      | position            | integer                  | int4        | NO
+ public       | share_links           | id                  | uuid                     | uuid        | NO
+ public       | share_links           | token               | text                     | text        | NO
+ public       | share_links           | name                | text                     | text        | YES
+ public       | share_links           | active              | boolean                  | bool        | NO
+ public       | share_links           | created_at          | timestamp with time zone | timestamptz | NO
+ public       | share_links           | created_by          | uuid                     | uuid        | YES
+ public       | user_book_preferences | user_id             | uuid                     | uuid        | NO
+ public       | user_book_preferences | book_id             | uuid                     | uuid        | NO
+ public       | user_book_preferences | hidden              | boolean                  | bool        | NO
+ public       | user_book_preferences | created_at          | timestamp with time zone | timestamptz | NO
+ public       | user_book_preferences | updated_at          | timestamp with time zone | timestamptz | NO
+ public       | user_book_preferences | deleted             | boolean                  | bool        | NO
+(45 rows)
+
+      table_name       |               conname                | contype |                                                       definition
+-----------------------+--------------------------------------+---------+------------------------------------------------------------------------------------------------------------------------
+ books                 | books_pkey                           | p       | PRIMARY KEY (id)
+ books                 | books_processing_status_check        | c       | CHECK ((processing_status = ANY (ARRAY['pending'::text, 'processing'::text, 'ready'::text, 'error'::text])))
+ books                 | books_user_id_fkey                   | f       | FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+ books                 | chk_source_language                  | c       | CHECK (((source_language IS NULL) OR (source_language = ANY (ARRAY['EN'::text, 'RU'::text, 'FR'::text, 'ES'::text]))))
+ reading_progress      | reading_progress_book_id_fkey        | f       | FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+ reading_progress      | reading_progress_chapter_id_fkey     | f       | FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE SET NULL
+ reading_progress      | reading_progress_pkey                | p       | PRIMARY KEY (id)
+ reading_progress      | reading_progress_user_id_book_id_key | u       | UNIQUE (user_id, book_id)
+ reading_progress      | reading_progress_user_id_fkey        | f       | FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+ share_link_books      | share_link_books_book_id_fkey        | f       | FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+ share_link_books      | share_link_books_pkey                | p       | PRIMARY KEY (share_link_id, book_id)
+ share_link_books      | share_link_books_share_link_id_fkey  | f       | FOREIGN KEY (share_link_id) REFERENCES share_links(id) ON DELETE CASCADE
+ share_links           | share_links_created_by_fkey          | f       | FOREIGN KEY (created_by) REFERENCES auth.users(id) ON DELETE SET NULL
+ share_links           | share_links_pkey                     | p       | PRIMARY KEY (id)
+ share_links           | share_links_token_key                | u       | UNIQUE (token)
+ user_book_preferences | user_book_preferences_book_id_fkey   | f       | FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+ user_book_preferences | user_book_preferences_pkey           | p       | PRIMARY KEY (user_id, book_id)
+ user_book_preferences | user_book_preferences_user_id_fkey   | f       | FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+(18 rows)
+
+    table_name    |           tgname            | tgenabled |                                                                        definition
+------------------+-----------------------------+-----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+ auth.users       | on_auth_user_created        | O         | CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION handle_new_user()
+ books            | trg_books_library_tombstone | O         | CREATE TRIGGER trg_books_library_tombstone BEFORE DELETE ON public.books FOR EACH ROW EXECUTE FUNCTION record_library_tombstone()
+ books            | trg_books_sync              | O         | CREATE TRIGGER trg_books_sync AFTER INSERT OR DELETE OR UPDATE ON public.books FOR EACH ROW EXECUTE FUNCTION update_sync_library()
+ reading_progress | trg_reading_progress_sync   | O         | CREATE TRIGGER trg_reading_progress_sync AFTER INSERT OR DELETE OR UPDATE ON public.reading_progress FOR EACH ROW EXECUTE FUNCTION update_sync_progress()
+(4 rows)
+
+    rolname    | rolsuper | rolbypassrls
+---------------+----------+--------------
+ authenticated | f        | f
+ anon          | f        | f
+ service_role  | f        | t
+ postgres      | f        | t
+(4 rows)
+
+    table_name    | rows
+------------------+------
+ books            |  190
+ reading_progress |  275
+(2 rows)
+
+ nspname | proname | arguments
+---------+---------+-----------
+(0 rows)
+
+ROLLBACK

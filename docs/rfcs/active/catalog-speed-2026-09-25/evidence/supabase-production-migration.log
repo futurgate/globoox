@@ -1,0 +1,53 @@
+migration_sha256: ec53b6a405ddd23b944e57efa7d2f261a69b216ad28a9693680ec540b8e424c3
+exit_code: 0
+elapsed_seconds: 5.599
+BEGIN
+SET
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+REVOKE
+DROP TRIGGER
+CREATE TRIGGER
+INSERT 0 190
+CREATE FUNCTION
+REVOKE
+DROP TRIGGER
+CREATE TRIGGER
+INSERT 0 108
+INSERT 0 267
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+GRANT
+NOTIFY
+COMMIT
+psql:supabase/migrations/add_catalog_v2.sql:60: NOTICE:  trigger "catalog_v2_user_deleted" for relation "auth.users" does not exist, skipping
+psql:supabase/migrations/add_catalog_v2.sql:80: NOTICE:  trigger "catalog_v2_book_version" for relation "public.books" does not exist, skipping
+psql:supabase/migrations/add_catalog_v2.sql:110: NOTICE:  trigger "catalog_v2_legacy_progress" for relation "public.reading_progress" does not exist, skipping

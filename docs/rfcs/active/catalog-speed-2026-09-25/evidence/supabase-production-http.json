@@ -1,0 +1,134 @@
+[
+  {
+    "path": "/api/v2/library",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 748,
+    "bytes": 3813,
+    "content_type": "application/json",
+    "cache_control": "private, no-store",
+    "passed": true,
+    "book_count": 6,
+    "complete": true,
+    "contract_version": 2,
+    "activity_version": "0"
+  },
+  {
+    "path": "/api/books",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 5848,
+    "bytes": 3804669,
+    "content_type": "application/json",
+    "cache_control": "public, max-age=30, s-maxage=60, stale-while-revalidate=300",
+    "passed": true,
+    "book_count": 6
+  },
+  {
+    "path": "/api/v2/books/93ed2d75-d82a-4120-83fb-d1df912f6520/cover?version=81d982ed-19a9-407d-af07-9e65ce0ffb0d",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 2033,
+    "bytes": 12874,
+    "content_type": "image/webp",
+    "cache_control": "private, max-age=0, must-revalidate",
+    "passed": true,
+    "valid_webp": true
+  },
+  {
+    "path": "/api/v2/books/92863897-deee-4954-80a5-3c4b8b531735/cover?version=a57be2be-259e-47e9-bb84-6f249f166679",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 1713,
+    "bytes": 8712,
+    "content_type": "image/webp",
+    "cache_control": "private, max-age=0, must-revalidate",
+    "passed": true,
+    "valid_webp": true
+  },
+  {
+    "path": "/api/v2/books/4067ef8d-9c2e-4570-b9be-96852b06e64f/cover?version=2fc2b524-b53a-4ab5-9a40-a7b5eec8dee6",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 2241,
+    "bytes": 26976,
+    "content_type": "image/webp",
+    "cache_control": "private, max-age=0, must-revalidate",
+    "passed": true,
+    "valid_webp": true
+  },
+  {
+    "path": "/api/v2/books/97828c6a-c91a-499a-ba33-b16a3a92864c/cover?version=4bc209b0-3c51-4dbc-ad1b-13dba910e303",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 1730,
+    "bytes": 16922,
+    "content_type": "image/webp",
+    "cache_control": "private, max-age=0, must-revalidate",
+    "passed": true,
+    "valid_webp": true
+  },
+  {
+    "path": "/api/v2/books/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d/cover?version=bcbe1661-9c71-4af9-8ff9-a52fc19a02db",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 1247,
+    "bytes": 15606,
+    "content_type": "image/webp",
+    "cache_control": "private, max-age=0, must-revalidate",
+    "passed": true,
+    "valid_webp": true
+  },
+  {
+    "path": "/api/v2/books/ac6f23b9-675f-449f-bacc-d57cfaa0b358/cover?version=0ee6926d-50be-4cb2-bf6f-d40269f6ac0c",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 1478,
+    "bytes": 9386,
+    "content_type": "image/webp",
+    "cache_control": "private, max-age=0, must-revalidate",
+    "passed": true,
+    "valid_webp": true
+  },
+  {
+    "path": "/api/v2/library?share=qa-nonexistent-catalog-deploy-20260926",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 516,
+    "bytes": 313,
+    "content_type": "application/json",
+    "cache_control": "private, no-store",
+    "passed": true,
+    "empty_complete": true
+  },
+  {
+    "path": "/api/v2/library",
+    "status": 401,
+    "expected": 401,
+    "elapsed_ms": 830,
+    "bytes": 187,
+    "content_type": "application/json",
+    "cache_control": "private, no-store",
+    "passed": true
+  },
+  {
+    "path": "/api/v2/books/93ed2d75-d82a-4120-83fb-d1df912f6520/cover?version=00000000-0000-4000-8000-000000000001",
+    "status": 404,
+    "expected": 404,
+    "elapsed_ms": 868,
+    "bytes": 282,
+    "content_type": "application/json",
+    "cache_control": "no-cache",
+    "passed": true
+  },
+  {
+    "path": "/api/v2/library",
+    "status": 200,
+    "expected": 200,
+    "elapsed_ms": 472,
+    "bytes": 3813,
+    "content_type": "application/json",
+    "cache_control": "private, no-store",
+    "passed": true
+  }
+]

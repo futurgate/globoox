@@ -1,0 +1,16 @@
+- main:
+  - link:
+    - /url: /my-books
+  - heading "Catalog QA 102cc5e5" [level=1]
+  - paragraph: Temporary QA
+  - button "EN" [active]:
+    - generic: EN
+  - button:
+  - paragraph: The text requires no translation and contains no personal information. This paragraph also provides enough content to make a visible page and to check that the saved reading position can be opened again. Test identifier 102cc5e5-9979-444b-8197-d57e27b22958.
+  - paragraph: Paragraph 6. This original English text belongs to a temporary release verification book. The reader can move forward and backward while the bookshelf records the reading event. The text requires no translation and contains no personal information. This paragraph also provides enough content to make a visible page and to check that the saved reading position can be opened again. Test identifier 102cc5e5-9979-444b-8197-d57e27b22958.
+  - paragraph: Paragraph 7. This original English text belongs to a temporary release verification book. The reader can move forward and backward while the bookshelf records the reading event. The text requires no translation and contains no personal information. This paragraph also provides enough content to make a visible page and to check that the saved reading position can be opened again. Test identifier 102cc5e5-9979-444b-8197-d57e27b22958.
+  - paragraph: Paragraph 8. This original English text belongs to a temporary release verification book. The reader can move forward and backward while the bookshelf records the reading event. The text requires no translation and contains no personal information. This paragraph also provides enough content to make a visible page and to check that the saved reading position can be opened again. Test identifier 102cc5e5-9979-444b-8197-d57e27b22958.
+  - paragraph: Paragraph 9. This original English text belongs to a temporary release verification book. The reader can move forward and backward while the bookshelf records the reading event. The text requires no translation and contains no personal information. This paragraph also provides enough content to make a visible page and to check that the saved reading position can be opened again. Test identifier 102cc5e5-9979-444b-8197-d57e27b22958.
+  - generic: Original English QA
+  - generic: 23%
+- alert: Globoox
