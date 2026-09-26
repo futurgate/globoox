@@ -1,0 +1,49 @@
+[
+  {
+    "path": "/api/books",
+    "invalid_bearer": false,
+    "status": 200,
+    "expected": 200,
+    "passed": true,
+    "elapsed_ms": 4331,
+    "bytes": 3804669,
+    "content_type": "application/json",
+    "book_count": 6
+  },
+  {
+    "path": "/api/v2/library",
+    "invalid_bearer": false,
+    "status": 503,
+    "expected": 503,
+    "passed": true,
+    "elapsed_ms": 583,
+    "bytes": 238,
+    "content_type": "application/json",
+    "error_code": "catalog_migration_required",
+    "message": "Catalog migration required"
+  },
+  {
+    "path": "/api/v2/books/4067ef8d-9c2e-4570-b9be-96852b06e64f/cover?version=00000000-0000-4000-8000-000000000001",
+    "invalid_bearer": false,
+    "status": 503,
+    "expected": 503,
+    "passed": true,
+    "elapsed_ms": 803,
+    "bytes": 324,
+    "content_type": "application/json",
+    "error_code": "catalog_migration_required",
+    "message": "Catalog migration required"
+  },
+  {
+    "path": "/api/v2/library",
+    "invalid_bearer": true,
+    "status": 401,
+    "expected": 401,
+    "passed": true,
+    "elapsed_ms": 1430,
+    "bytes": 187,
+    "content_type": "application/json",
+    "error_code": null,
+    "message": "Invalid or expired authentication"
+  }
+]

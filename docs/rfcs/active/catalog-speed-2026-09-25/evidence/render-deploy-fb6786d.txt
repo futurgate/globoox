@@ -1,0 +1,171 @@
+feat(catalog): add compact library, reading activity and cover API
+STATUS
+Deploy succeeded
+DURATION
+1m46s
+DEPLOYED
+
+Sep 26, 2026
+at
+6:45:43 PM
+GMT+2
+
+TRIGGER
+Auto-Deploy
+SOURCE
+fb6786d
+All logs
+Search
+Sep 26, 6:44 PM - 6:48 PM
+GMT+2
+Sep 26
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/sync/status.get.mjs.map (6.79 kB) (823 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/translate.post.mjs (5.42 kB) (1.9 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/translate.post.mjs.map (22.2 kB) (2.32 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/translation-limit.get.mjs (2.27 kB) (977 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/translation-limit.get.mjs.map (6.58 kB) (1.15 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/v2/books/_id/cover.get.mjs (2.82 kB) (1.22 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/v2/books/_id/cover.get.mjs.map (8.03 kB) (1.51 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/v2/library.get.mjs (1.78 kB) (812 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/v2/library.get.mjs.map (3.31 kB) (763 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/v2/reading-activity.post.mjs (2.62 kB) (1.12 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/v2/reading-activity.post.mjs.map (7.82 kB) (1.1 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/waitlist.post.mjs (1.92 kB) (854 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/waitlist.post.mjs.map (4.3 kB) (659 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/webhooks/lemonsqueezy.post.mjs (3.6 kB) (1.33 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/api/webhooks/lemonsqueezy.post.mjs.map (12.8 kB) (1.71 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/renderer.mjs (16.4 kB) (5.38 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/routes/renderer.mjs.map (27.2 kB) (7.2 kB gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/virtual/_virtual_spa-template.mjs (546 B) (346 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/chunks/virtual/_virtual_spa-template.mjs.map (108 B) (106 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/index.mjs (1.11 kB) (534 B gzip)
+06:46:46 PM
+
+  ├─ .output/server/package.json (6.95 kB) (2.1 kB gzip)
+06:46:46 PM
+
+  └─ .output/server/sentry.server.config.mjs (1.74 kB) (869 B gzip)
+06:46:46 PM
+
+Σ Total size: 71.3 MB (25.5 MB gzip)
+06:46:46 PM
+
+[success] [nitro] You can preview this build using `node .output/server/index.mjs`
+06:46:46 PM
+
+[log] │
+06:46:46 PM
+
+└  ✨ Build complete!
+06:46:47 PM
+
+==> Uploading build...
+06:46:57 PM
+
+==> Uploaded in 5.5s. Compression took 3.8s
+06:46:57 PM
+
+==> Build successful 🎉
+06:46:57 PM
+
+==> Deploying...
+06:46:58 PM
+
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+06:47:18 PM
+[jlbg9]
+==> Running 'npm run start'
+06:47:19 PM
+[jlbg9]
+06:47:19 PM
+[jlbg9]
+> start
+06:47:19 PM
+[jlbg9]
+> node .output/server/index.mjs
+06:47:19 PM
+[jlbg9]
+06:47:23 PM
+[jlbg9]
+Listening on http://[::]:3001
+06:47:23 PM
+[jlbg9]
+IMPORTANT! Eviction policy is allkeys-lru. It should be "noeviction"
+06:47:23 PM
+[jlbg9]
+IMPORTANT! Eviction policy is allkeys-lru. It should be "noeviction"
+06:47:23 PM
+[jlbg9]
+IMPORTANT! Eviction policy is allkeys-lru. It should be "noeviction"
+06:47:23 PM
+[jlbg9]
+IMPORTANT! Eviction policy is allkeys-lru. It should be "noeviction"
+06:47:24 PM
+[jlbg9]
+[useAuth] User changed, fetching admin status. User: undefined
+06:47:24 PM
+[jlbg9]
+[index.vue] isAdmin changed: false
+06:47:28 PM
+
+==> Your service is live 🎉
+06:47:29 PM
+
+==>
+06:47:29 PM
+
+==> ///////////////////////////////////////////////////////////
+06:47:29 PM
+
+==>
+06:47:29 PM
+
+==> Available at your primary URL https://globooks-jo00.onrender.com
+06:47:29 PM
+
+==>
+06:47:29 PM
+
+==> ///////////////////////////////////////////////////////////
+
+Need better ways to work with logs? Try theRender CLI, Render MCP Server, or set up a log stream integration

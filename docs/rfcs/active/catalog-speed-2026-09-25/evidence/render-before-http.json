@@ -1,0 +1,19 @@
+[
+  {
+    "path": "/api/books",
+    "status": 200,
+    "elapsed_ms": 6186,
+    "bytes": 3804669,
+    "content_type": "application/json",
+    "book_count": 6
+  },
+  {
+    "path": "/api/v2/library",
+    "status": 404,
+    "elapsed_ms": 349,
+    "bytes": 251,
+    "content_type": "application/json",
+    "error_code": null,
+    "message": "Page not found: /api/v2/library"
+  }
+]

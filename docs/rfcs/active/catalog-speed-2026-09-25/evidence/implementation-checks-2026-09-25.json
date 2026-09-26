@@ -295,7 +295,7 @@
     "fixture_syntax_check": "PASS; final reset truncates appended upload fixtures back to18 base entries (small cleanup change syntax-checked after transport smoke)."
   },
   "deployment_2026_09_26": {
-    "status": "source-pushed-awaiting-dashboard-authentication",
+    "status": "backend-deployed-awaiting-sql-pooler-address",
     "authorization": "User explicitly authorizes backend push/deploy and production DB migration after tests with rollback available; fully new dev frontend then production after acceptance.",
     "backend_commit": "fb6786d09c8159e806ab6c6a5a076d92329abfea",
     "backend_base": "173f4903800398c0ca8794a3bb65805cc6c40ca9",
@@ -328,20 +328,48 @@
     },
     "access": {
       "GitHub": "WRITE in both repositories",
-      "Render": "Dashboard requests login",
-      "Supabase": "Dashboard requests login; no SQL credential available",
-      "Vercel": "Old CLI session invalid; new device sign-in pending"
+      "Render": "Authenticated; service and previous live deployment recorded; new backend deployed.",
+      "Supabase": "DB password provided; direct endpoint AAAA resolves but host has no IPv6 route; Session pooler address or authenticated SQL Editor still needed",
+      "Vercel": "Authenticated browser as lomovski-2958 can access team lomovski / project globoox. CLI device authorization remains pending, but browser UI is available; no new credentials needed."
     },
     "production_database_changed": false,
     "frontend_production_deployed": false,
     "committed_log_format": "Trailing whitespace and final blank lines normalized; original raw logs retained in owned .local QA directories.",
-    "backend_pushed_branch": "feat/catalog-speed",
+    "backend_pushed_branch": "main and feat/catalog-speed",
     "frontend_commit": "ba89d3ab73c1beeba46d2c6ef60762ae68edacbc",
     "frontend_pushed_branch": "dev",
     "remote_refs_verified": true,
-    "server_deployed": false,
+    "server_deployed": true,
     "dev_frontend_deployed": false,
     "code_rollback_reference": "Both source bases and deployment artifacts retained. Exact currently live Render/Vercel rollback targets await dashboard access; do not switch until recorded.",
-    "frontend_review": "All386 source hashes match checked build; same-origin proxy and credential-safe source review passed. Vercel automatic git deployments remain disabled."
+    "frontend_review": "All386 source hashes match checked build; same-origin proxy and credential-safe source review passed. Vercel automatic git deployments remain disabled.",
+    "render": {
+      "service_id": "srv-d6aa07a4d50c738pbdcg",
+      "service_url": "https://globooks-jo00.onrender.com",
+      "repo": "tanya124/globooks",
+      "deploy_branch": "main",
+      "automatic_deploy_observed": true,
+      "before_commit": "173f4903800398c0ca8794a3bb65805cc6c40ca9",
+      "before_deployment": "dep-darbub67bikc73960l30",
+      "rollback_available": "Render deploy history exposes Rollback for successful previous deploys; before deployment retained as rollback target",
+      "database_sequence": "Backend may deploy first: additive v2 routes return explicit503 until schema exists; dev frontend remains previous version until migration/API smoke pass.",
+      "deployed_commit": "fb6786d09c8159e806ab6c6a5a076d92329abfea",
+      "deployment_id": "dep-darvddvf3r2c73afgmr0",
+      "status": "Deploy succeeded / service live",
+      "duration": "1m46s",
+      "evidence": [
+        "render-deploy-fb6786d.txt",
+        "render-before-http.json",
+        "render-deployed-http.json"
+      ],
+      "checks": "4/4: legacy books200 with6books; v2library503catalog_migration_required; v2cover503catalog_migration_required (native module loads on Linux); invalid bearer401",
+      "existing_startup_warning": "Redis eviction policy allkeys-lru; production configuration untouched."
+    },
+    "vercel_before": {
+      "project": "lomovski/globoox",
+      "dev_deployment": "4y7kuj828gZcCDErjq5KzWWC1hCV",
+      "branch": "dev",
+      "observed_via": "Authenticated project overview Active Branches"
+    }
   }
 }
