@@ -7,12 +7,20 @@ import * as Sentry from '@sentry/nextjs'
  * Attaches Supabase auth token when user is logged in.
  * Returns null only when no backend URL is configured.
  */
-export async function proxyToBackend(request: Request): Promise<NextResponse | null> {
+export async function proxyToBackend(request: Request, expectedReadingUser?: string): Promise<NextResponse | null> {
   const backendUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL
   if (!backendUrl) return null
 
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
+
+  // A queued reading intent belongs to the account that created it. Use the
+  // same session for this check and forwarding so a cookie change cannot
+  // silently save the previous account's position under the next account.
+  if (expectedReadingUser !== undefined &&
+      (!session?.access_token || session.user.id !== expectedReadingUser)) {
+    return NextResponse.json({ error: 'Reading account changed' }, { status: 401 })
+  }
 
   const incomingContentType = request.headers.get('content-type') || ''
   const isMultipart = incomingContentType.includes('multipart/form-data')
@@ -89,8 +97,8 @@ export async function proxyToBackend(request: Request): Promise<NextResponse | n
   }
 }
 
-export async function requireBackendProxy(request: Request): Promise<NextResponse> {
-  const proxied = await proxyToBackend(request)
+export async function requireBackendProxy(request: Request, expectedReadingUser?: string): Promise<NextResponse> {
+  const proxied = await proxyToBackend(request, expectedReadingUser)
   if (proxied) return proxied
 
   return NextResponse.json(

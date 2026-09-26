@@ -1,5 +1,6 @@
 import { trackApiRequest, trackTranslateStreamClient } from './posthog'
 import { setCachedBookMeta } from './contentCache'
+import { createReadingPositionWriter } from './readingPositionWriter'
 
 // In browser we must call local Next.js API routes (/api/*), so auth can be injected by proxy.
 // Direct backend calls are allowed only during server-side execution.
@@ -273,10 +274,20 @@ function withShareToken(path: string): string {
 // Reading position cache with TTL (30 seconds)
 const POSITION_CACHE_TTL_MS = 30000
 const positionCache = new Map<string, { data: ReadingPosition; expiresAt: number }>()
+const positionVersions = new Map<string, number>()
+let positionGeneration = 0
+const positionWriter = createReadingPositionWriter()
+const positionKey = (scope: string, bookId: string) => `${scope}::${bookId}`
+const nextPositionVersion = (key: string) => {
+  const version = (positionVersions.get(key) ?? 0) + 1
+  positionVersions.set(key, version)
+  return version
+}
 
 /** Clears the entire reading-position cache (used by useSyncCheck on cross-device sync) */
 export function positionCacheInvalidateAll() {
   positionCache.clear()
+  positionGeneration += 1
 }
 
 
@@ -355,7 +366,7 @@ async function getBrowserAccessToken(): Promise<string | null> {
   return token
 }
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+async function request<T>(path: string, options?: RequestInit, capturedShare?: string | null): Promise<T> {
   const key = buildGetCacheKey(path, options)
   if (key) {
     const cached = recentGetResponses.get(key)
@@ -383,7 +394,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     let statusCode: number | undefined
 
     try {
-      const res = await fetch(`${API_URL}${withShareToken(path)}`, {
+      const scopedPath = capturedShare === undefined ? withShareToken(path)
+        : capturedShare ? `${path}${path.includes('?') ? '&' : '?'}share=${encodeURIComponent(capturedShare)}` : path
+      const res = await fetch(`${API_URL}${scopedPath}`, {
         ...options,
         headers,
       })
@@ -1300,20 +1313,29 @@ export function updateBookLanguage(bookId: string, lang: string): Promise<ApiBoo
   })
 }
 
-export function fetchReadingPosition(bookId: string, signal?: AbortSignal, scopeKey = 'guest'): Promise<ReadingPosition> {
-  const cacheKey = `${scopeKey}::${bookId}`
+export function hasPendingReadingPosition(bookId: string, scopeKey = 'guest'): boolean {
+  return positionWriter.pending(positionKey(scopeKey, bookId))
+}
+
+export async function fetchReadingPosition(bookId: string, signal?: AbortSignal, scopeKey = 'guest'): Promise<ReadingPosition> {
+  const cacheKey = positionKey(scopeKey, bookId)
+  // A new Reader lifetime must not restore the position preceding our own queued PUT.
+  while (positionWriter.pending(cacheKey)) await positionWriter.wait(cacheKey)
+  signal?.throwIfAborted()
   // Check cache first
   const cached = positionCache.get(cacheKey)
   if (cached && cached.expiresAt > Date.now()) {
-    return Promise.resolve(cached.data)
+    return cached.data
   }
-
-  return request<ReadingPosition>(`/api/books/${bookId}/reading-position`, { signal })
+  const version = nextPositionVersion(cacheKey)
+  const generation = positionGeneration
+  return request<ReadingPosition>(`/api/books/${bookId}/reading-position`, {
+    signal, headers: scopeKey === 'guest' ? undefined : { 'X-Reading-User': scopeKey },
+  })
     .then((data) => {
-      positionCache.set(cacheKey, {
-        data,
-        expiresAt: Date.now() + POSITION_CACHE_TTL_MS,
-      })
+      if (positionVersions.get(cacheKey) === version && positionGeneration === generation) {
+        positionCache.set(cacheKey, { data, expiresAt: Date.now() + POSITION_CACHE_TTL_MS })
+      }
       return data
     })
 }
@@ -1323,21 +1345,40 @@ export function saveReadingPosition(
   data: SaveReadingPositionRequest,
   scopeKey = 'guest'
 ): Promise<SaveReadingPositionResponse> {
-  const cacheKey = `${scopeKey}::${bookId}`
+  const cacheKey = positionKey(scopeKey, bookId)
+  const version = nextPositionVersion(cacheKey)
+  const generation = positionGeneration
+  // Capture credentials when the intent is queued, not after a possible account switch.
+  const token = getBrowserAccessToken()
+  const share = getShareToken()
   // Invalidate position cache so next fetchReadingPosition gets fresh data
   positionCache.delete(cacheKey)
-  return request<SaveReadingPositionResponse>(`/api/books/${bookId}/reading-position`, {
-    method: 'PUT',
-    body: JSON.stringify(data),
+  return positionWriter.enqueue(cacheKey, data, async payload => {
+    const capturedToken = await token
+    if (typeof window !== 'undefined' && scopeKey !== 'guest' && !capturedToken) throw new Error('Reading session is unavailable')
+    if (typeof window !== 'undefined' && capturedToken && /^[0-9a-f-]{36}$/i.test(scopeKey)) {
+      let owner: unknown
+      try { owner = JSON.parse(atob(capturedToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).sub } catch { /* fail closed */ }
+      if (owner !== scopeKey) throw new Error('Reading session changed')
+    }
+    return request<SaveReadingPositionResponse>(`/api/books/${bookId}/reading-position`, {
+      method: 'PUT', headers: {
+        Authorization: capturedToken ? `Bearer ${capturedToken}` : '',
+        ...(scopeKey === 'guest' ? {} : { 'X-Reading-User': scopeKey }),
+      },
+      body: JSON.stringify(payload),
+    }, share)
   }).then((response) => {
     // Update cache with the returned position so the next GET is already fresh
-    if (response.persisted && response.chapter_id) {
+    if (response.persisted && response.chapter_id && positionVersions.get(cacheKey) === version && positionGeneration === generation) {
       positionCache.set(cacheKey, {
         data: {
           book_id: bookId,
           chapter_id: response.chapter_id,
           block_id: response.block_id ?? null,
           block_position: response.block_position ?? null,
+          sentence_index: data.sentence_index ?? null,
+          total_blocks: response.total_blocks ?? null,
           lang: data.lang ?? null,
           updated_at: response.updated_at ?? null,
         },

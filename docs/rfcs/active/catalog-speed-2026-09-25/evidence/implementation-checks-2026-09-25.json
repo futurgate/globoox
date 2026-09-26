@@ -411,7 +411,7 @@
       "conclusion": "Authentication rejected; expiry/revocation/incorrect token cause not established. Awaiting replacement credentials or database connection host."
     },
     "live_dev_acceptance": {
-      "status": "API PASS; browser bookshelf/reader navigation PASS; browser resume FAILED once, repeat investigation pending browser reconnect",
+      "status": "API PASS; UI upload PASS; Reader race reproduced and frontend fix verified locally; dev redeploy/retest pending; live index latency unacceptable",
       "cases": [
         "Cold guest/auth entry; immediate titles/order; reload at5s without list GET and after10s with fresh GET; measure titles and first6covers separately.",
         "Independent guest/auth/share scopes: private QA book and cover absent for guest; unknown share empty without stale cache.",
@@ -456,25 +456,70 @@
         "observed_failure": true,
         "live_database_observation": "Position0 updated18:10:38.124Z while canonical recency advanced to18:11:13.995620Z/activity4. API, row and manifest agreed on position0.",
         "direct_save_probe": "One owned QA PUT toposition6 returned200/persistedtrue; GET and manifest confirmed6 updated18:16:06.576Z. New migration does not reject this tested legacy write.",
-        "source_review": "Arrow navigation/saveAnchor/persistAnchor unchanged fromorigin/main92799bc. Existing persistAnchor ACK/stale-client callbacks can overwrite a later local anchor; restore can use a captured stale anchor. These are hypotheses, not proven root cause.",
+        "source_review": "Controlled 1200ms back/forward reproduces old late ACK timestamp race; serialized/coalesced per-account/book writer, guarded local anchors/cache and proxy principal binding implemented.",
         "files": [
           "src/components/Reader/ReaderView.tsx:1299",
           "src/components/Reader/ReaderView.tsx:1401",
           "src/components/Reader/ReaderView.tsx:1545",
           "src/components/Reader/ReaderView.tsx:1574"
         ],
-        "next": "Reconnect browser, controlled single forward/save/reopen and inspect outcome; do not claim full dev acceptance or publish production frontend until resolved."
+        "next": "Serialize/coalesce same-client scope/book position writes, preserve latest local anchor, guard late ACK/restore/cache responses; focused deferred tests then clean build, dev deploy and live repeat. No backend/schema change.",
+        "status": "FIX WRITTEN AND LOCALLY VERIFIED; live dev repeat pending",
+        "controlled_cases": [
+          {
+            "case": "single forward then wait for saved API before reopen",
+            "result": "PASS position5/23%"
+          },
+          {
+            "case": "back and forward27ms apart then return/reopen",
+            "result": "PASS position5/23%"
+          },
+          {
+            "case": "back at18:41:37.939Z and forward1200ms later at18:41:39.176Z",
+            "result": "FAIL: UI23%, persisted0 updated18:41:40.073Z after requests settled; API/SQL/manifest agree"
+          }
+        ],
+        "finding": "Overlapping legacy position writes compare client intent time with server completion time; an older write can make a newer local intent stale. Reader also applies old ACK/restore anchors without guarding newer navigation. Existing code predates catalog; fix needed for verified read/return behavior.",
+        "checks": {
+          "unit": "253/253 across24files including5proxy account binding cases",
+          "build": "isolated reused .local/catalog-qa-app: production webpack + TypeScript PASS53staticpages; known Sentry instrumentation/workspace-root warnings",
+          "lint": "new helper/API/tests/proxy/routes clean; Reader pre-existing no-explicit-any remains",
+          "docs": "docs:check PASS127governedfiles",
+          "diff": "git diff --check PASS",
+          "inputs": "reader-fix-build-hashes.json"
+        }
       },
       "browser_connection": {
-        "status": "disconnected during bounded repeat",
-        "diagnostics": "Browser runtime timed out then discovery returned no browsers. Chrome process running, extension installed/enabled, native host manifest correct.",
-        "pending": "User asked to approve additional Chrome window per Chrome troubleshooting skill; no restart performed."
+        "status": "restored",
+        "authorization": "User explicitly approved opening all required browser windows, measurements and checks.",
+        "method": "Chrome Default new window through documented recovery command; existing tabs recovered."
       },
       "qa_cleanup": {
         "status": "deferred_for_resume_reproduction",
         "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
         "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
-        "reason": "Own temporary account and EPUB retained only for controlled resume investigation; remove via own-object cleanup after browser checks."
+        "reason": "Own temporary account and EPUB retained only for controlled resume investigation; remove via own-object cleanup after browser checks.",
+        "book_ids": [
+          "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+        ]
+      },
+      "ui_upload": {
+        "status": "PASS",
+        "evidence": "dev-ui-upload.json",
+        "book_id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+        "observation": "Top placeholder visible under modal while uploading; modal closed; exactly one ready card replaces it at top; original QA card remains next. Tool elapsed values are not precise paint latency."
+      },
+      "latency": {
+        "status": "FAIL current user expectation",
+        "browser_evidence": "dev-browser-timings.json",
+        "note": "Cold browser title observation2503ms includes navigation/automation. Warm HTTP index still~0.5–1.7s; tiny body does not imply tiny end-to-end latency.",
+        "regions": {
+          "render": "Oregon (US West), observed Settings UI",
+          "supabase": "eu-west-1 pooler",
+          "vercel": "iad1 function per responseheader; ingressfra1"
+        },
+        "next": "Measure SQL separately, inspect redundant serial network requests; plan colocating API and DB."
       }
     },
     "database_migration": {

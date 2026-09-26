@@ -5,7 +5,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   void params
-  return requireBackendProxy(request)
+  return requireBackendProxy(request, request.headers.get('X-Reading-User') ?? undefined)
 }
 
 export async function PUT(
@@ -13,5 +13,5 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   void params
-  return requireBackendProxy(request)
+  return requireBackendProxy(request, request.headers.get('X-Reading-User') ?? undefined)
 }
