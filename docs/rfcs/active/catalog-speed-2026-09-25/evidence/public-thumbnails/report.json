@@ -1,0 +1,95 @@
+{
+  "date": "2026-09-25T18:50:11.085Z",
+  "scope": "public user_id IS NULL only",
+  "read_only_source": true,
+  "source_rows": 6,
+  "smoke": [
+    {
+      "id": "4067ef8d-9c2e-4570-b9be-96852b06e64f",
+      "ok": true,
+      "ms": 31.35879100000011,
+      "output_bytes": 26976
+    },
+    {
+      "id": "6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d",
+      "ok": true,
+      "ms": 18.725834000000305,
+      "output_bytes": 15606
+    },
+    {
+      "id": "92863897-deee-4954-80a5-3c4b8b531735",
+      "ok": true,
+      "ms": 16.853417000000263,
+      "output_bytes": 8712
+    }
+  ],
+  "samples": [
+    {
+      "id": "4067ef8d-9c2e-4570-b9be-96852b06e64f",
+      "ok": true,
+      "source_string_bytes": 841275,
+      "inline": true,
+      "output_bytes": 26976,
+      "width": 320,
+      "height": 480,
+      "ms": 41.532874999999876,
+      "file": ".local/catalog-v2-pg/public-covers/4067ef8d-9c2e-4570-b9be-96852b06e64f.webp"
+    },
+    {
+      "id": "6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d",
+      "ok": true,
+      "source_string_bytes": 305667,
+      "inline": true,
+      "output_bytes": 15606,
+      "width": 320,
+      "height": 480,
+      "ms": 32.30108399999972,
+      "file": ".local/catalog-v2-pg/public-covers/6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d.webp"
+    },
+    {
+      "id": "92863897-deee-4954-80a5-3c4b8b531735",
+      "ok": true,
+      "source_string_bytes": 287011,
+      "inline": true,
+      "output_bytes": 8712,
+      "width": 320,
+      "height": 480,
+      "ms": 46.91416699999991,
+      "file": ".local/catalog-v2-pg/public-covers/92863897-deee-4954-80a5-3c4b8b531735.webp"
+    },
+    {
+      "id": "93ed2d75-d82a-4120-83fb-d1df912f6520",
+      "ok": true,
+      "source_string_bytes": 1517923,
+      "inline": true,
+      "output_bytes": 12874,
+      "width": 308,
+      "height": 480,
+      "ms": 63.046625000000404,
+      "file": ".local/catalog-v2-pg/public-covers/93ed2d75-d82a-4120-83fb-d1df912f6520.webp"
+    },
+    {
+      "id": "97828c6a-c91a-499a-ba33-b16a3a92864c",
+      "ok": true,
+      "source_string_bytes": 637075,
+      "inline": true,
+      "output_bytes": 16922,
+      "width": 320,
+      "height": 480,
+      "ms": 60.00612500000034,
+      "file": ".local/catalog-v2-pg/public-covers/97828c6a-c91a-499a-ba33-b16a3a92864c.webp"
+    },
+    {
+      "id": "ac6f23b9-675f-449f-bacc-d57cfaa0b358",
+      "ok": true,
+      "source_string_bytes": 213771,
+      "inline": true,
+      "output_bytes": 9386,
+      "width": 319,
+      "height": 480,
+      "ms": 83.94650000000001,
+      "file": ".local/catalog-v2-pg/public-covers/ac6f23b9-675f-449f-bacc-d57cfaa0b358.webp"
+    }
+  ],
+  "limitations": "Local transform timing only, one public sample set; not end-to-end latency or authenticated benchmark. No source originals retained."
+}

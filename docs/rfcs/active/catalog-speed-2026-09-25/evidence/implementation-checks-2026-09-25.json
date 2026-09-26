@@ -1,0 +1,339 @@
+{
+  "stage": "Implemented and verified locally; production migration, live integration and performance acceptance pending",
+  "frontend_base": "f23b5ad3a2f8a12ae6f87ec057b6abe88144bd0b",
+  "backend_base": "173f4903800398c0ca8794a3bb65805cc6c40ca9",
+  "frontend_tests": {
+    "command": "npx vitest run --reporter=json --outputFile=docs/rfcs/active/catalog-speed-2026-09-25/evidence/frontend-unit-tests.json",
+    "passed": 217,
+    "files": 20,
+    "evidence": "frontend-unit-tests.json"
+  },
+  "frontend_react_harness": {
+    "command": "node e2e/catalog-hook-races.mjs",
+    "passed": 3
+  },
+  "frontend_cover_harness": {
+    "command": "node e2e/catalog-cover-races.mjs",
+    "passed": 5
+  },
+  "backend_tests": {
+    "passed": 54,
+    "files": 6,
+    "commands_and_scope": "../../../../../../globooks/docs/catalog-v2.md",
+    "verified_after_final_upstream_sync": true
+  },
+  "sql": {
+    "isolated_port": 55439,
+    "assertions": 40,
+    "expected_exceptions": 2,
+    "books": 1103,
+    "sql_json_bytes": 424164,
+    "diagnostic_ms": 14.857,
+    "atomic_reapply": "PASS: complete transaction COMMIT, lock_timeout=5s, statement_timeout=60s, schema reload notification; backend-sql-atomic-reapply.log",
+    "idempotency": "Initial fixture setup plus repeated successful reapply; final transactional reapply preserved existing v2 data"
+  },
+  "public_covers": {
+    "source": "public-thumbnails/report.json",
+    "visual_inspection": "All six viewed: readable titles/authors, no obvious resize distortion; not full original-to-thumbnail pixel comparison."
+  },
+  "browser_reader": {
+    "environment": "production frontend + synthetic local HTTP fixture",
+    "observed": [
+      "six covers visible",
+      "Reader chapter and paragraphs visible",
+      "ArrowRight advanced paragraphs1-6 to7-12",
+      "ArrowLeft restored first page",
+      "activity ack2",
+      "return order6,1,2,3,4,5"
+    ],
+    "unexpected_fixture_requests": []
+  },
+  "not_run": [
+    "production SQL migration",
+    "real newHTTP-to-Supabase path",
+    "real authenticated/private/share browser checks",
+    "real two-device canonical order",
+    "matched cold/warm latency benchmark",
+    "physical phone browser measurement",
+    "Linux native production deployment"
+  ],
+  "adverse_findings": [
+    "Initial Nuxt standalone artifact omitted Sharp native dependency; portable native-loader tracing fixed it, final standalone transform + 8 HTTP/SSR checks PASS. Failed attempts retained locally and indexed in backend docs.",
+    "code review: offline cover >150ms discarded and Retry revoked blobs; fixed and covered",
+    "legacy epoch/progress resets could erase offline work; removed destructive invalidation",
+    "incoming proxy body was unbounded; bounded16KiB and shared8s abort, targeted5tests pass",
+    "durablemigrationmarker could survive failedmanifestwrite andblockofflinelegacyrecovery; fixed, targeted7cachetests pass",
+    "code review found disk sync clearing pendingAnchor; disk deletion removed; memory GET invalidation retained",
+    "incoming chunkedbody capped16KiB, abortbeforeend handled;5proxytests pass"
+  ],
+  "frontend_build": {
+    "status": "PASS",
+    "mode": "production webpack; isolated exactsourcecopy; dummy local Supabase/API environment; dependencies symlink reused",
+    "static_pages": 53,
+    "evidence": "frontend-build.log",
+    "source_hashes": "frontend-build-source-hashes.json",
+    "working_checkout_typecheck": "Same9 pre-existing errors in two user backup directories and stale generated types; clean QA source build typecheck passes.",
+    "verified_after_final_upstream_sync": true
+  },
+  "browser_cases": [
+    {
+      "scenario": "initial normal",
+      "result": "PASS: initial skeleton then6titles/decodedcovers; no per-book position GET inlibrary"
+    },
+    {
+      "scenario": "Reader forward/backward/return",
+      "result": "PASS: actualtextpages,2activityACKs,return6first"
+    },
+    {
+      "scenario": "timeout with cached6",
+      "result": "PASS: no cachebeforedeadline;backendrequestabortedat2437ms afterauth; late4000ms neworder didnotreplacefallback6,1,2,3,4,5"
+    },
+    {
+      "scenario": "Retry delayed1200ms",
+      "result": "PASS: status Retrying andsame6,1,2,3,4,5 retained;success6,5,4,3,2,1;all6images decoded"
+    },
+    {
+      "scenario": "mobile390x844",
+      "result": "PASS: scrollWidth390,6decodedimages; screenshot visuallyinspected"
+    },
+    {
+      "scenario": "success empty withcache",
+      "result": "PASS: No books yet; no stale cards"
+    },
+    {
+      "scenario": "unsupported404",
+      "result": "PASS: explicitserverunsupportedmessage +Retry, noofflineclaim/no heavyfallback"
+    },
+    {
+      "scenario": "onebroken cover404 newversion",
+      "result": "PASS:6titles,5decodedimages,ownplaceholder,no catalogerror"
+    },
+    {
+      "scenario": "auth401 withcache",
+      "result": "PASS: accesserror,0cachedtitles,Retry;syntheticguestfixture notrealprivate-accountproof"
+    }
+  ],
+  "frontend_origin_main": "92799bc3d26430a95b65b1a1b0b66d6a97b6c2c4",
+  "backend_build": {
+    "status": "PASS",
+    "build_result": "backend-build-result.json",
+    "runtime_result": "backend-runtime-result.json",
+    "native_smoke": "backend-native-smoke.log",
+    "source_hashes": "backend-build-source-hashes.json",
+    "source_files": 184,
+    "standalone_http_checks": 8,
+    "limitations": "macOS arm64; synthetic loopback Supabase transport; live database and Linux deployment NOT RUN"
+  },
+  "compatibility": {
+    "catalog_legacy_handlers": "No edits to existing book handlers; all pre-existing OpenAPI paths and schemas structurally equal to final upstream base",
+    "mixed_clients": "After explicit v2 activity owns actor/book, legacy saves retain existing legacy position/recency behavior but no longer advance that book in v2 ordering. Full canonical cross-device guarantee applies only to v2 clients.",
+    "upstream_admin": "Fresh upstream fiction-costs changes unversioned DTO; synchronized new frontend/backend match. New frontend with old backend can crash the admin cost table. Fresh glossary estimate is incomplete despite worst-case label; missing measured total rendered as zero. Outside catalog edits; full admin flow NOT RUN."
+  },
+  "artifact_retention": "Bounded isolated frontend build, standalone backend artifacts and SQL fixture cluster retained locally for review/reproduction until real migration/integration; no credentials copied. Adverse builds retained as evidence of packaging fix.",
+  "owned_qa_services_stopped": [
+    3017,
+    3018,
+    55439
+  ],
+  "bookshelf_followup_2026_09_26": {
+    "status": "implemented-and-verified-locally-not-deployed",
+    "frontend_base": "f23b5ad3a2f8a12ae6f87ec057b6abe88144bd0b",
+    "scope": "/my-books bookshelf; 10-second confirmed-index cooldown; autonomous FIFO cover prefetch max4; immediate page-local upload placeholder",
+    "server_changes_this_followup": false,
+    "upstream": "Both origin fetches completed; no new frontend/main or backend/main commits beyond recorded integrated bases.",
+    "unit_tests": {
+      "command": "npm test -- --reporter=json --outputFile=.local/bookshelf-followup-unit-tests.json",
+      "passed": 234,
+      "failed": 0,
+      "files": 22,
+      "new_cooldown_cases": 11,
+      "new_cover_queue_cases": 6,
+      "report": "bookshelf-followup-unit-tests.json"
+    },
+    "component_harnesses": {
+      "commands": [
+        "node e2e/catalog-hook-races.mjs",
+        "node e2e/catalog-cover-races.mjs",
+        "node e2e/bookshelf-upload-races.mjs"
+      ],
+      "passed": {
+        "catalog_hook": 3,
+        "cover_hook": 5,
+        "upload": 4
+      },
+      "evidence": [
+        "bookshelf-hook-harness.log",
+        "bookshelf-cover-harness.log",
+        "bookshelf-upload-harness.log"
+      ],
+      "boundary": "Real React in fresh browser with synthetic dependencies; upload harness is component integration, not real backend or full Next upload E2E."
+    },
+    "lint": {
+      "status": "PASS",
+      "scope": [
+        "src/app/(app)/my-books/page.tsx",
+        "src/components/UploadBookModal.tsx",
+        "src/components/Store/UploadBookPlaceholder.tsx",
+        "src/lib/api.ts",
+        "src/lib/catalogFreshness.ts",
+        "src/lib/catalogState.ts",
+        "src/lib/catalogCoverQueue.ts",
+        "src/lib/useCatalog.ts",
+        "src/lib/useCatalogCover.ts",
+        "src/lib/useCatalogCoverQueue.ts",
+        "src/lib/bookshelfUploads.ts",
+        "src/lib/readingActivity.ts",
+        "src/__tests__/catalogCooldown.test.ts",
+        "src/__tests__/catalogCoverQueue.test.ts"
+      ],
+      "evidence": "bookshelf-followup-lint.log"
+    },
+    "production_build": {
+      "status": "PASS",
+      "command": "NEXT_TELEMETRY_DISABLED=1 SENTRY_AUTH_TOKEN= npm run build -- --webpack",
+      "environment": "Isolated QA source copy; dummy loopback Supabase/API on3028; existing dependencies reused; no production .env copied",
+      "static_pages": 53,
+      "typecheck": "PASS in clean QA source copy",
+      "source_files": 386,
+      "verified_hash_mismatches": 0,
+      "hashes": "bookshelf-followup-build-hashes.json",
+      "log": "bookshelf-followup-build.log",
+      "checkout_typecheck": "Same9 pre-existing backup/generated-type errors; preserved user files; see bookshelf-followup-types.log."
+    },
+    "browser": {
+      "environment": "Browser skill, local production Next3027 → synthetic backend3028; 18 books; no production writes",
+      "first_open": {
+        "manifest_gets": 1,
+        "cover_gets": 18,
+        "mounted_decoded_images": 6,
+        "scroll_y": 0,
+        "unexpected_requests": 0,
+        "evidence": "bookshelf-browser-first.json"
+      },
+      "cooldown": {
+        "observation": "After expired reload manifest count reached2; immediate second reload left count2 and cover count18. Full page reload still has initial SSR/auth/cache hydration skeleton; no zero-first-paint claim.",
+        "evidence": "bookshelf-browser-cooldown.json"
+      },
+      "identity": "Guest then UI sign-in as synthetic userA; covers fetched under separate scope; no unexpected fixture requests. Not proof of real account authorization.",
+      "reader_return": {
+        "observation": "Actual Reader displayed synthetic chapter paragraphs; one accepted activity event ACK1; return order six,one,two,three,four,five; manifest activity_version1. Return was not inside10s; invalidation within10s is proven by unit tests.",
+        "evidence": "bookshelf-browser-reader-return.json"
+      },
+      "final_source_build": {
+        "observation": "Final build re-opened, six images decoded, order retained, scrollY0, no horizontal overflow.",
+        "evidence": [
+          "bookshelf-browser-final.json",
+          "bookshelf-followup-final-dom.txt",
+          "bookshelf-followup-final-dom.json"
+        ]
+      },
+      "screenshot": {
+        "file": "bookshelf-followup-desktop.jpg",
+        "visually_reviewed": true,
+        "note": "First followup build before final upload focus/placeholder-copy adjustments; final DOM checked separately."
+      }
+    },
+    "synthetic_upload_transport_smoke": {
+      "status": "PASS",
+      "evidence": "bookshelf-upload-fixture-smoke.json",
+      "boundary": "Fixture signed-url/PUT/process routes only, owner index includes resulting book, guest excludes it; not EPUB parser or production storage verification."
+    },
+    "regressions_fixed_and_checked": [
+      "Concurrent tab invalidation uses separate epoch and receipt keys, so a finishing list GET cannot overwrite it.",
+      "Returning focus during same-page upload defers refresh instead of timing out on its own processing.",
+      "FIFO wait is outside cover request timeout; offline storage has its own bound.",
+      "A card cancellation retains shelf-owned prefetch; final queue entries are released without retaining resolved blobs.",
+      "Closing/reopening modal isolates late success/error from the newer dialog; duplicate book success renders once; page unmount aborts before further upload/process stages."
+    ],
+    "adverse_observations": [
+      "Initial component hook run exposed crypto.randomUUID absence in synthetic insecure context; token fallback added and3/3 passed.",
+      "Initial cover harness exposed unbounded offline disk wait; bounded and5/5 passed.",
+      "Initial FIFO tests required an event-loop turn for Response.blob; test scheduler corrected and6/6 passed.",
+      "Initial upload harness bundle lacked mock React resolveDir; fixture resolver corrected and final4scenarios passed."
+    ],
+    "behavior_limits": [
+      "Cooldown freshness means a complete index confirmed within10seconds; another device can still change during this accepted window. Cover completeness is separate.",
+      "Closing/reloading the page may interrupt upload; no durable import job or recovery was added, as explicitly requested.",
+      "Legacy process is never automatically retried; existing dedup original-file deletion risk remains outside this change.",
+      "Real API-to-Supabase, authenticated/share/two-device and production latency checks remain NOT RUN."
+    ],
+    "harness_source_hashes": {
+      "e2e/catalog-hook-races.mjs": "8a0d73349a1b7248f7833db074612632b44de72edeb0422a378b12bdea94a671",
+      "e2e/catalog-cover-races.mjs": "99326937cfeb0e9756b25b99096d574dbf345ff2bd45ddd0a142d7f24eafd59e",
+      "e2e/bookshelf-upload-races.mjs": "593e6fd52be5a71bdf61eb4cd75779e7679c3146ef6e0c4f74a1514506607374",
+      "scripts/catalog-fixture-server.mjs": "c490a5d74e27e8de51f42c0781a8bba32e3309562f7b549ba8c6cd639bb3e985"
+    },
+    "artifacts": [
+      "bookshelf-followup-unit-tests.json",
+      "bookshelf-followup-unit.log",
+      "bookshelf-followup-lint.log",
+      "bookshelf-followup-types.log",
+      "bookshelf-followup-build.log",
+      "bookshelf-followup-build-hashes.json",
+      "bookshelf-hook-harness.log",
+      "bookshelf-cover-harness.log",
+      "bookshelf-upload-harness.log",
+      "bookshelf-upload-fixture-smoke.json",
+      "bookshelf-browser-first.json",
+      "bookshelf-browser-cooldown.json",
+      "bookshelf-browser-reader-return.json",
+      "bookshelf-browser-final.json",
+      "bookshelf-followup-final-dom.txt",
+      "bookshelf-followup-final-dom.json",
+      "bookshelf-followup-desktop.jpg"
+    ],
+    "owned_qa_services_stopped": [
+      3027,
+      3028
+    ],
+    "docs_check": {
+      "status": "PASS",
+      "command": "npm run docs:check",
+      "evidence": "bookshelf-followup-docs.log"
+    },
+    "diff_check": "PASS in frontend and backend",
+    "fixture_syntax_check": "PASS; final reset truncates appended upload fixtures back to18 base entries (small cleanup change syntax-checked after transport smoke)."
+  },
+  "deployment_2026_09_26": {
+    "status": "preparing-awaiting-dashboard-authentication",
+    "authorization": "User explicitly authorizes backend push/deploy and production DB migration after tests with rollback available; fully new dev frontend then production after acceptance.",
+    "backend_commit": "fb6786d",
+    "backend_base": "173f4903800398c0ca8794a3bb65805cc6c40ca9",
+    "backend_tests": "54/54 passed again; backend-deploy-tests.json",
+    "verified_backend_build_source_mismatches": 0,
+    "rollback": {
+      "path": "../globooks/supabase/rollback/catalog_v2_disable_triggers.sql",
+      "source_data_preserved": true,
+      "original_sql_assertions": 40,
+      "expected_exceptions": 2,
+      "rollback_assertions": 8,
+      "atomic_lock_timeout_seconds": 5.023,
+      "evidence": [
+        "backend-rollback-checks.sql",
+        "backend-rollback-checks.log",
+        "backend-rollback-lock-check.py",
+        "backend-rollback-lock-check.json",
+        "backend-rollback-fixtures.log"
+      ],
+      "procedure": "Restore previous application/stop v2 traffic; disable only3catalog triggers if necessary. Preserve tables/RPCs/source data. Re-enabling later requires projection reconciliation."
+    },
+    "database_preflight": {
+      "project": "mricrybtjsizqywvyxkr",
+      "REST_read_only": "Existing dependency tables/columns present; v2 tables/RPC absent. Does not prove SQL permissions, constraints or lock availability.",
+      "pending": "SQL preflight and exact live deployment/rollback target verification",
+      "evidence": [
+        "backend-deploy-schema-rest.json",
+        "backend-deploy-preflight.sql"
+      ]
+    },
+    "access": {
+      "GitHub": "WRITE in both repositories",
+      "Render": "Dashboard requests login",
+      "Supabase": "Dashboard requests login; no SQL credential available",
+      "Vercel": "Old CLI session invalid; new device sign-in pending"
+    },
+    "production_database_changed": false,
+    "frontend_production_deployed": false,
+    "committed_log_format": "Trailing whitespace and final blank lines normalized; original raw logs retained in owned .local QA directories."
+  }
+}

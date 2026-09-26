@@ -1,0 +1,6 @@
+
+> globoox_preview@0.1.0 test
+> vitest run --reporter=json --outputFile=.local/bookshelf-followup-unit-tests.json
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+JSON report written to /Users/user/Documents/github/globoox_frontend/.local/bookshelf-followup-unit-tests.json

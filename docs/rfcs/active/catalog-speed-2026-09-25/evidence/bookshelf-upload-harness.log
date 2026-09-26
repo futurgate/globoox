@@ -1,0 +1,9 @@
+{
+  "fixtureOnly": true,
+  "passed": [
+    "placeholder before first network response; processing under modal; closed modal preserves card; old completion does not close new dialog; stable entry without delay",
+    "duplicate completion produces one book and closes only its own dialog",
+    "processing failure stays on its card, leaves reopened dialog intact, never retries process automatically, and can be dismissed",
+    "page unmount cancels its operation before further upload/process calls"
+  ]
+}

@@ -1,0 +1,70 @@
+- main:
+  - heading "My Books" [level=1]
+  - button "Upload book"
+  - button "Visible"
+  - button "Archived"
+  - button "All"
+  - button "Sort":
+    - generic: Recently Read
+  - button:
+  - link "QA six":
+    - /url: /reader/10000000-0000-4000-8000-000000000006
+    - img "QA six"
+  - link "QA six Synthetic Author":
+    - /url: /reader/10000000-0000-4000-8000-000000000006
+    - paragraph: QA six
+    - paragraph: Synthetic Author
+  - button:
+  - link "QA one":
+    - /url: /reader/10000000-0000-4000-8000-000000000001
+    - img "QA one"
+  - link "QA one Synthetic Author":
+    - /url: /reader/10000000-0000-4000-8000-000000000001
+    - paragraph: QA one
+    - paragraph: Synthetic Author
+  - button:
+  - link "QA two":
+    - /url: /reader/10000000-0000-4000-8000-000000000002
+    - img "QA two"
+  - link "QA two Synthetic Author":
+    - /url: /reader/10000000-0000-4000-8000-000000000002
+    - paragraph: QA two
+    - paragraph: Synthetic Author
+  - button:
+  - link "QA three":
+    - /url: /reader/10000000-0000-4000-8000-000000000003
+    - img "QA three"
+  - link "QA three Synthetic Author":
+    - /url: /reader/10000000-0000-4000-8000-000000000003
+    - paragraph: QA three
+    - paragraph: Synthetic Author
+  - button:
+  - link "QA four":
+    - /url: /reader/10000000-0000-4000-8000-000000000004
+    - img "QA four"
+  - link "QA four Synthetic Author":
+    - /url: /reader/10000000-0000-4000-8000-000000000004
+    - paragraph: QA four
+    - paragraph: Synthetic Author
+  - button:
+  - link "QA five":
+    - /url: /reader/10000000-0000-4000-8000-000000000005
+    - img "QA five"
+  - link "QA five Synthetic Author":
+    - /url: /reader/10000000-0000-4000-8000-000000000005
+    - paragraph: QA five
+    - paragraph: Synthetic Author
+  - text: Need help?
+  - link "support@globoox.co":
+    - /url: mailto:support@globoox.co
+- navigation:
+  - button "soon Store" [disabled]:
+    - generic: soon
+    - generic: Store
+  - link "My Books":
+    - /url: /my-books
+    - generic: My Books
+  - link "Settings":
+    - /url: /settings
+    - generic: Settings
+- alert

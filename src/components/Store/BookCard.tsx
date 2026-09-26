@@ -182,8 +182,8 @@ function useCoverAccent(src: string): string {
   return accent;
 }
 
-function useImageAspect(src: string): { aspect: number | null; isReady: boolean } {
-  const cacheKey = useMemo(() => `globoox:cover-aspect:${hashString(src)}`, [src]);
+function useImageAspect(src: string, versionKey?: string): { aspect: number | null; isReady: boolean } {
+  const cacheKey = useMemo(() => `globoox:cover-aspect:${hashString(versionKey || src)}`, [src, versionKey]);
   const cachedAspect = useMemo(() => {
     if (!src || typeof window === 'undefined') return null;
     try {
@@ -359,6 +359,8 @@ interface BookCardProps {
   title: string;
   author: string;
   cover?: string | null;
+  coverLoading?: boolean;
+  coverVersionKey?: string;
   languages?: string[];
   progress?: number;
   isDemo?: boolean;
@@ -373,6 +375,8 @@ export default function BookCard({
   title,
   author,
   cover,
+  coverLoading = false,
+  coverVersionKey,
   progress = 0,
   onHide,
   onDelete,
@@ -389,7 +393,7 @@ export default function BookCard({
   const displayCover = sourceCover;
   const [failedCoverSrc, setFailedCoverSrc] = useState<string | null>(null);
   const hasValidCover = Boolean(displayCover) && failedCoverSrc !== displayCover;
-  const { aspect: coverAspect, isReady: isAspectReady } = useImageAspect(hasValidCover ? displayCover : '');
+  const { aspect: coverAspect, isReady: isAspectReady } = useImageAspect(hasValidCover ? displayCover : '', coverVersionKey);
   const coverAccent = useMemo(() => {
     const hash = hashString(`${id}-${title}`);
     const r = 110 + (hash % 90);
@@ -490,8 +494,11 @@ export default function BookCard({
                       fill
                       className="object-cover"
                       sizes="(max-width: 640px) 45vw, 180px"
+                      unoptimized={displayCover.startsWith('blob:')}
                       onError={() => setFailedCoverSrc(displayCover)}
                     />
+                  ) : coverLoading ? (
+                    <Skeleton className="h-full w-full" aria-label="Loading cover" />
                   ) : (
                     <FallbackCover id={id} title={title} author={author} />
                   )}

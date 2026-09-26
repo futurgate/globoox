@@ -1,0 +1,41 @@
+{
+  "case": "third trigger table locked",
+  "elapsed_seconds": 5.023,
+  "psql_exit": 3,
+  "expected_error": "psql:supabase/migrations/disable_catalog_v2_triggers.sql:29: ERROR:  canceling statement due to lock timeout\nCONTEXT:  SQL statement \"alter table public.reading_progress disable trigger catalog_v2_legacy_progress\"\nPL/pgSQL function inline_code_block line 13 at SQL statement",
+  "before": [
+    [
+      "16879",
+      "catalog_v2_book_version",
+      "O"
+    ],
+    [
+      "16880",
+      "catalog_v2_legacy_progress",
+      "O"
+    ],
+    [
+      "16878",
+      "catalog_v2_user_deleted",
+      "O"
+    ]
+  ],
+  "after": [
+    [
+      "16879",
+      "catalog_v2_book_version",
+      "O"
+    ],
+    [
+      "16880",
+      "catalog_v2_legacy_progress",
+      "O"
+    ],
+    [
+      "16878",
+      "catalog_v2_user_deleted",
+      "O"
+    ]
+  ],
+  "atomic": true
+}

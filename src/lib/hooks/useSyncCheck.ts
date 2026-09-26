@@ -2,11 +2,9 @@
 
 import { useEffect, useRef } from 'react'
 import { fetchSyncStatus } from '@/lib/api'
-import { invalidateBooksCache } from '@/lib/useBooks'
 import { useAppStore } from '@/lib/store'
 import { positionCacheInvalidateAll } from '@/lib/api'
 import { invalidateAllChapterContentCache } from '@/lib/contentCache'
-import { clearCachedReadingPositions } from '@/lib/contentCache'
 
 /**
  * useSyncCheck
@@ -47,8 +45,8 @@ export function useSyncCheck() {
 
             // --- library scope ---
             if (isNewer(scopes.library, syncVersions.library)) {
-                console.log('[useSyncCheck] library changed, invalidating books cache')
-                invalidateBooksCache()
+                // V2 confirms its manifest on every entry/visibility change.
+                // Preserve the scoped offline/legacy lists needed for migration.
                 void invalidateAllChapterContentCache()
             }
 
@@ -58,7 +56,8 @@ export function useSyncCheck() {
             if (isNewer(scopes.progress, syncVersions.progress)) {
                 console.log('[useSyncCheck] progress changed, invalidating position cache')
                 positionCacheInvalidateAll()
-                void clearCachedReadingPositions()
+                // Persisted rows may contain an unsent pendingAnchor. A fresh
+                // Reader GET reconciles server state without deleting offline work.
             }
 
             // Persist the new timestamps so we don't re-invalidate on the next check

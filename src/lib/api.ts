@@ -1381,15 +1381,16 @@ export interface ProcessBookResponse {
 }
 
 /** Get a signed URL for direct upload to Supabase Storage */
-export function getSignedUploadUrl(bucket: string, path: string): Promise<SignedUrlResponse> {
+export function getSignedUploadUrl(bucket: string, path: string, signal?: AbortSignal): Promise<SignedUrlResponse> {
   return request<SignedUrlResponse>('/api/storage/signed-url', {
     method: 'POST',
     body: JSON.stringify({ bucket, path }),
+    signal,
   })
 }
 
 /** Upload file directly to Supabase Storage using signed URL */
-export async function uploadToStorage(signedUrl: string, file: File, contentType: string): Promise<void> {
+export async function uploadToStorage(signedUrl: string, file: File, contentType: string, signal?: AbortSignal): Promise<void> {
   const startTime = performance.now()
   let statusCode: number | undefined
   try {
@@ -1397,6 +1398,7 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
       method: 'PUT',
       headers: { 'Content-Type': contentType },
       body: file,
+      signal,
     })
     statusCode = res.status
     if (!res.ok) {
@@ -1415,10 +1417,11 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
 }
 
 /** Process an already-uploaded EPUB file */
-export function processBook(filePath: string, fileName: string, fileSize: number): Promise<ProcessBookResponse> {
+export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal): Promise<ProcessBookResponse> {
   return request<ProcessBookResponse>('/api/books/process', {
     method: 'POST',
     body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize }),
+    signal,
   })
 }
 

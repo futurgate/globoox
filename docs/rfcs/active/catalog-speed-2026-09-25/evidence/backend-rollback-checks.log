@@ -1,0 +1,80 @@
+NOTICE:  drop cascades to 2 other objects
+DETAIL:  drop cascades to table rollback_probe.book_writes
+drop cascades to function rollback_probe.audit_book()
+DROP TRIGGER
+DROP SCHEMA
+CREATE FUNCTION
+CREATE SCHEMA
+CREATE TABLE
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE FUNCTION
+SELECT 1
+BEGIN
+SET
+SET
+DO
+COMMIT
+BEGIN
+SET
+SET
+DO
+COMMIT
+psql:.local/catalog-v2-pg/rollback-checks.sql:22: NOTICE:  PASS: rollback twice preserves every source and catalog row
+ assert
+--------
+
+(1 row)
+
+psql:.local/catalog-v2-pg/rollback-checks.sql:23: NOTICE:  PASS: exactly three catalog triggers disabled
+ assert
+--------
+
+(1 row)
+
+psql:.local/catalog-v2-pg/rollback-checks.sql:24: NOTICE:  PASS: all other triggers including FK triggers unchanged
+ assert
+--------
+
+(1 row)
+
+psql:.local/catalog-v2-pg/rollback-checks.sql:25: NOTICE:  PASS: constraints unchanged
+ assert
+--------
+
+(1 row)
+
+psql:.local/catalog-v2-pg/rollback-checks.sql:26: NOTICE:  PASS: catalog functions and grants unchanged
+ assert
+--------
+
+(1 row)
+
+INSERT 0 1
+UPDATE 1
+UPDATE 1
+psql:.local/catalog-v2-pg/rollback-checks.sql:30: NOTICE:  PASS: book and reading-position writes succeed after rollback
+ assert
+--------
+
+(1 row)
+
+psql:.local/catalog-v2-pg/rollback-checks.sql:31: NOTICE:  PASS: existing book trigger still executes
+ assert
+--------
+
+(1 row)
+
+psql:.local/catalog-v2-pg/rollback-checks.sql:32: NOTICE:  PASS: disabled projection triggers no longer run
+ assert
+--------
+
+(1 row)
+
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+                  result
+------------------------------------------
+ rollback data and behavior checks passed
+(1 row)

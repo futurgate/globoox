@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { Upload, Loader2, CheckCircle, FileText } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Upload, Loader2, FileText } from 'lucide-react';
 import { IOSAction, IOSActionStack } from '@/components/ui/ios-action-group';
 import IOSFlowDialog from '@/components/ui/ios-flow-dialog';
 import IOSDialogFooter from '@/components/ui/ios-dialog-footer';
@@ -9,10 +9,15 @@ import { getSignedUploadUrl, uploadToStorage, processBook } from '@/lib/api';
 import { trackBookUploadStarted, trackBookUploaded, trackBookUploadFailed } from '@/lib/posthog';
 import * as Sentry from '@sentry/nextjs';
 
+export interface UploadBookEvent {
+  attemptId: string; fileName: string; phase: 'uploading' | 'processing' | 'complete' | 'error'; bookId?: string; error?: string;
+}
+
 interface UploadBookModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUploaded?: (bookId: string) => void;
+  onUploadEvent?: (event: UploadBookEvent) => void;
 }
 
 const SUPPORT_EMAIL = 'support@globoox.co'
@@ -71,14 +76,22 @@ function getUploadHelp(error: string | null) {
   }
 }
 
-export default function UploadBookModal({ isOpen, onClose, onUploaded }: UploadBookModalProps) {
+export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadEvent }: UploadBookModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isDropActive, setIsDropActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dialogEpoch = useRef(0);
+  const mounted = useRef(true);
+  const activeUploads = useRef(new Set<AbortController>());
+  useEffect(() => {
+    mounted.current = true;
+    const controllers = activeUploads.current;
+    return () => { mounted.current = false; for (const controller of controllers) controller.abort(); };
+  }, []);
+  useEffect(() => { if (!isOpen) dialogEpoch.current += 1; }, [isOpen]);
   const uploadHelp = getUploadHelp(error)
   const sectionClassName = 'rounded-[20px] bg-[var(--bg-grouped)] p-5'
 
@@ -145,72 +158,54 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded }: UploadB
   };
 
   const handleUpload = async () => {
-    if (!file) return;
-
+    if (!file || uploading) return;
+    const selected = file;
+    const attemptId = crypto.randomUUID();
+    const epoch = dialogEpoch.current;
+    const controller = new AbortController();
+    activeUploads.current.add(controller);
+    const currentDialog = () => mounted.current && dialogEpoch.current === epoch;
+    const notify = (phase: UploadBookEvent['phase'], extra: Partial<UploadBookEvent> = {}) =>
+      onUploadEvent?.({ attemptId, fileName: selected.name, phase, ...extra });
+    const message = (text: string) => { if (currentDialog()) setMessage(text); };
     setUploading(true);
-    setProgress(10);
     setMessage('Preparing upload…');
     setError(null);
-
-    const fileSizeKb = Math.round(file.size / 1024);
+    const fileSizeKb = Math.round(selected.size / 1024);
     trackBookUploadStarted({ file_size_kb: fileSizeKb });
-
     try {
-      Sentry.addBreadcrumb({
-        category: 'upload',
-        message: 'upload.started',
-        data: { fileName: file.name, fileSize: file.size },
-        level: 'info',
-      });
-
-      // Generate unique file path
-      const fileName = createUploadFileName(file.name);
-
-      // Step 1: Get signed URL for direct upload
-      setProgress(15);
-      setMessage('Getting upload URL…');
-      const { signedUrl } = await getSignedUploadUrl('books', fileName);
-
-      // Step 2: Upload directly to Supabase Storage (bypasses server limits)
-      setProgress(25);
-      setMessage('Uploading book…');
-      await uploadToStorage(signedUrl, file, 'application/epub+zip');
-
-      // Step 3: Process the book on the server
-      setProgress(50);
-      setMessage('Processing book…');
-      const response = await processBook(fileName, file.name, file.size);
-
-      // Success
-      trackBookUploaded({
-        title: file.name,
-        author: 'Unknown',
-        language: 'unknown',
-        chapter_count: response.chapter_count ?? 0,
-        file_size_kb: fileSizeKb,
-      });
-
-      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: response.id }, level: 'info' });
-      setProgress(100);
-      setMessage('Book uploaded successfully!');
-
-      setTimeout(() => { onUploaded?.(response.id); handleClose() }, 1500);
+      notify('uploading');
+      const fileName = createUploadFileName(selected.name);
+      const { signedUrl } = await getSignedUploadUrl('books', fileName, controller.signal);
+      controller.signal.throwIfAborted();
+      message('Uploading book…');
+      await uploadToStorage(signedUrl, selected, 'application/epub+zip', controller.signal);
+      controller.signal.throwIfAborted();
+      notify('processing');
+      message('Processing book…');
+      const response = await processBook(fileName, selected.name, selected.size, controller.signal);
+      controller.signal.throwIfAborted();
+      trackBookUploaded({ title: selected.name, author: 'Unknown', language: 'unknown', chapter_count: response.chapter_count ?? 0, file_size_kb: fileSizeKb });
+      notify('complete', { bookId: response.id });
+      onUploaded?.(response.id);
+      if (currentDialog()) handleClose();
     } catch (err: unknown) {
-      const message = getErrorMessage(err, 'Upload failed')
-      console.error('Upload error:', err);
-      Sentry.captureException(err, {
-        contexts: { upload: { fileName: file.name, fileSize: file.size, fileSizeKb } },
-      });
-      trackBookUploadFailed({ error: message, file_size_kb: fileSizeKb });
-      setError(message);
-      setUploading(false);
+      const errorMessage = getErrorMessage(err, 'Upload failed');
+      notify('error', { error: errorMessage });
+      if (!controller.signal.aborted) {
+        Sentry.captureException(err, { contexts: { upload: { fileName: selected.name, fileSize: selected.size, fileSizeKb } } });
+        trackBookUploadFailed({ error: errorMessage, file_size_kb: fileSizeKb });
+      }
+      if (currentDialog()) { setError(errorMessage); setUploading(false); }
+    } finally {
+      activeUploads.current.delete(controller);
     }
   };
 
   const handleClose = () => {
+    dialogEpoch.current += 1;
     setFile(null);
     setUploading(false);
-    setProgress(0);
     setMessage('');
     setError(null);
     setIsDropActive(false);
@@ -283,18 +278,8 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded }: UploadB
           </>
         ) : (
           <div className={`${sectionClassName} py-8 text-center`}>
-            {progress < 100 ? (
-              <Loader2 className="mx-auto mb-3 h-10 w-10 animate-spin text-muted-foreground" />
-            ) : (
-              <CheckCircle className="mx-auto mb-3 h-10 w-10 text-muted-foreground" />
-            )}
-            <p className="mb-3 text-sm text-muted-foreground">{message}</p>
-            <div className="h-2 w-full rounded-full bg-[var(--fill-quaternary)]">
-              <div
-                className="h-2 rounded-full bg-primary transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+            <Loader2 className="mx-auto mb-3 h-10 w-10 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground" role="status">{message}</p>
           </div>
         )}
       </div>

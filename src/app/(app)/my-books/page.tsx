@@ -16,85 +16,83 @@ import {
   uiTextActionButton,
   uiTextActionButtonPressed,
 } from '@/components/ui/button-styles';
-import BookCard from '@/components/Store/BookCard';
+import CatalogBookCard from '@/components/Store/CatalogBookCard';
 import DeleteBookConfirmDialog from '@/components/Store/DeleteBookConfirmDialog';
-import UploadBookModal from '@/components/UploadBookModal';
+import UploadBookModal, { type UploadBookEvent } from '@/components/UploadBookModal';
+import UploadBookPlaceholder from '@/components/Store/UploadBookPlaceholder';
+import { applyUploadEvent, type BookshelfUpload } from '@/lib/bookshelfUploads';
+import { useCatalogCoverQueue } from '@/lib/useCatalogCoverQueue';
 import { useAppStore } from '@/lib/store';
-import { useBooks } from '@/lib/useBooks';
+import { useCatalog } from '@/lib/useCatalog';
+import type { CatalogItem } from '@/lib/catalogTypes';
 import { useAuth } from '@/lib/hooks/useAuth';
 import GoogleOneTap from '@/components/GoogleOneTap';
 import PageHeader from '@/components/ui/PageHeader';
 import { trackBookOpened } from '@/lib/posthog';
-import { fetchReadingPosition, getGuestScopeKey, type ApiBook } from '@/lib/api';
-import {
-  compareRecentlyReadBooks,
-  createLibraryProgressQueue,
-  localReadingTimestamp,
-  mergeLibraryProgress,
-  newestTimestamp,
-  progressBelongsToScope,
-  sameBookOrder,
-  timestampMs,
-  type LibraryProgressRow as ProgressRow,
-} from '@/lib/libraryReadingState';
-import {
-  getCachedLibraryViewSnapshotSync,
-  getCachedLibraryViewSnapshot,
-  getCachedReadingPosition,
-  setCachedLibraryViewSnapshot,
-  setCachedReadingPosition,
-} from '@/lib/contentCache';
+import { getGuestScopeKey, getShareToken } from '@/lib/api';
 
-const FALLBACK_AUTHOR = 'Unknown author';
 const BOOKS_BATCH_SIZE = 6;
 
 export default function MyBooksPage() {
   const auth = useAuth();
+  const identity = auth.isAuthenticated ? auth.user?.id : auth.loading ? undefined : null;
+  const share = getShareToken();
+  const [lifetime, setLifetime] = useState({ identity, share, epoch: 0 });
+  if (identity !== undefined && (identity !== lifetime.identity || share !== lifetime.share)) {
+    // Resolving the initial identity must keep the deadline started on entry.
+    // A later account/share switch resets dialogs and view state before paint.
+    setLifetime({ identity, share, epoch: lifetime.identity === undefined ? lifetime.epoch : lifetime.epoch + 1 });
+  }
   const scopeKey = auth.isAuthenticated && auth.user?.id ? auth.user.id : getGuestScopeKey();
-  // Scope changes reset all view/progress state together. Never carry a previous
-  // account's order or pending reads into a new library.
-  return <LibraryContent key={scopeKey} scopeKey={scopeKey} auth={auth} />;
+  return <LibraryContent key={lifetime.epoch} scopeKey={scopeKey} auth={auth} />;
 }
 
 function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType<typeof useAuth> }) {
   const progress = useAppStore((state) => state.progress);
-  const touchLastRead = useAppStore((state) => state.touchLastRead);
-  const updateServerProgress = useAppStore((state) => state.updateServerProgress);
-  const progressVersion = useAppStore((state) => state.syncVersions.progress);
   const { isAuthenticated, loading: authLoading } = auth;
-  const { books, loading, error, hideBook, unhideBook, removeBook, refresh } = useBooks({
-    scopeKey,
-    enabled: !authLoading || isAuthenticated,
-    isAuthenticated,
+  const { books, loading, error, offline, context, refreshing, hideBook, unhideBook, removeBook, refresh, beginExternalMutation } = useCatalog({
+    userId: authLoading && !isAuthenticated ? undefined : auth.user?.id ?? null,
+    legacyScopeKey: scopeKey,
   });
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [progressData, setProgressData] = useState<Record<string, ProgressRow>>({});
+  const [uploads, setUploads] = useState<BookshelfUpload[]>([]);
+  const uploadReleases = useRef(new Map<string, () => void>());
+  const handleUploadEvent = useCallback((event: UploadBookEvent) => {
+    if (event.phase === 'uploading') uploadReleases.current.set(event.attemptId, beginExternalMutation());
+    if (event.phase === 'complete' || event.phase === 'error') {
+      uploadReleases.current.get(event.attemptId)?.();
+      uploadReleases.current.delete(event.attemptId);
+    }
+    setUploads(current => applyUploadEvent(current, event));
+    if (event.phase === 'complete') void refresh();
+  }, [beginExternalMutation, refresh]);
+  const dismissUpload = useCallback((attemptId: string) => {
+    setUploads(current => current.filter(entry => entry.attemptId !== attemptId));
+  }, []);
+  const unpinBook = useCallback((id: string) => setUploads(current => current.filter(entry => entry.bookId !== id)), []);
+  useEffect(() => {
+    setUploads(current => {
+      if (!current.some(entry => !entry.resolved && books.some(book => book.id === entry.bookId))) return current;
+      return current.map(entry => books.some(book => book.id === entry.bookId) ? { ...entry, resolved: true } : entry);
+    });
+  }, [books]);
+  const shownUploads = error?.kind === 'auth' ? [] : uploads.filter(entry => !entry.resolved || books.some(book => book.id === entry.bookId));
+  const pinnedIds = new Set(shownUploads.map(entry => entry.bookId).filter(Boolean));
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [isDeletingBook, setIsDeletingBook] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'visible' | 'hidden' | 'all'>('visible');
   const SORT_STORAGE_KEY = 'globoox:library_sort';
   const [sortOrder, setSortOrder] = useState<'title_asc' | 'title_desc' | 'recently_added' | 'recently_opened'>(() => {
     if (typeof window === 'undefined') return 'recently_opened';
-    const saved = localStorage.getItem(SORT_STORAGE_KEY);
-    return (saved as 'title_asc' | 'title_desc' | 'recently_added' | 'recently_opened') || 'recently_opened';
+    try {
+      const saved = localStorage.getItem(SORT_STORAGE_KEY);
+      return saved === 'title_asc' || saved === 'title_desc' || saved === 'recently_added' ? saved : 'recently_opened';
+    } catch { return 'recently_opened'; }
   });
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [sortDrawerOpen, setSortDrawerOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(BOOKS_BATCH_SIZE);
-  const [recentlyOpenedSnapshotOrder, setRecentlyOpenedSnapshotOrder] = useState<string[] | null>(() => {
-    const cached = getCachedLibraryViewSnapshotSync(scopeKey, 'recently_opened');
-    return cached?.order ?? null;
-  });
-  const [snapshotLastRead, setSnapshotLastRead] = useState<Record<string, string | null>>(() =>
-    getCachedLibraryViewSnapshotSync(scopeKey, 'recently_opened')?.effectiveLastReadByBookId ?? {}
-  );
-  const [snapshotReady, setSnapshotReady] = useState(false);
-  const savedSnapshotRef = useRef('');
-  const hydratedBookIdsRef = useRef(new Set<string>());
-  const mountedRef = useRef(true);
-  const progressQueueRef = useRef<ReturnType<typeof createLibraryProgressQueue<Awaited<ReturnType<typeof fetchReadingPosition>>>> | null>(null);
-  const progressRef = useRef(progress);
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
   const sortTriggerRef = useRef<HTMLButtonElement>(null);
   const sortMenuRef = useRef<HTMLDivElement>(null);
@@ -116,30 +114,6 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     };
   }, []);
 
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => { mountedRef.current = false; };
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    void getCachedLibraryViewSnapshot(scopeKey, 'recently_opened').then((snapshot) => {
-      if (cancelled) return;
-      if (snapshot) {
-        setRecentlyOpenedSnapshotOrder((prev) => prev ?? snapshot.order);
-        setSnapshotLastRead((prev) => {
-          const next = { ...prev };
-          for (const [id, timestamp] of Object.entries(snapshot.effectiveLastReadByBookId)) {
-            next[id] = newestTimestamp(prev[id], timestamp);
-          }
-          return next;
-        });
-      }
-      setSnapshotReady(true);
-    });
-    return () => { cancelled = true; };
-  }, [scopeKey]);
-
   // After OAuth redirect back with ?upload=1, auto-open upload modal
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
@@ -151,6 +125,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
   }, [authLoading, isAuthenticated]);
 
   const handleUploadClick = () => {
+    if (offline) return;
     if (isAuthenticated) {
       setIsUploadOpen(true);
     } else {
@@ -176,188 +151,44 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     const targetId = deleteTarget.id;
     try {
       setDeleteTarget(null);
+      unpinBook(targetId);
       await removeBook(targetId);
     } catch {
-      // useBooks already restores the removed book and exposes the error to the page
+      // useCatalog already restores the removed book and exposes the error to the page
     } finally {
       setIsDeletingBook(false);
     }
-  }, [deleteTarget, removeBook]);
+  }, [deleteTarget, removeBook, unpinBook]);
 
-  // Read each book's persisted progress once, without switching the sorting
-  // algorithm off and on when an identical response or stream tail arrives.
-  const bookIdsKey = JSON.stringify(books.map((book) => book.id));
-  useEffect(() => {
-    const ids = (JSON.parse(bookIdsKey) as string[]).filter((id) => !hydratedBookIdsRef.current.has(id));
-    if (!ids.length) return;
-    ids.forEach((id) => hydratedBookIdsRef.current.add(id));
-    void Promise.all(ids.map(async (id) => [id, await getCachedReadingPosition(scopeKey, id)] as const)).then((entries) => {
-      if (!mountedRef.current) return;
-      setProgressData((prev) => {
-        let next = prev;
-        for (const [id, cached] of entries) {
-          if (!cached) continue;
-          const pos = cached.position;
-          const incoming: ProgressRow = {
-            book_id: pos.book_id,
-            chapter_id: pos.chapter_id,
-            block_id: pos.block_id,
-            block_position: pos.block_position,
-            total_blocks: pos.total_blocks ?? (progressBelongsToScope(progressRef.current[id], scopeKey) ? progressRef.current[id]?.totalBlocks : undefined) ?? 0,
-            content_version: 0,
-            updated_at: newestTimestamp(pos.updated_at, cached.updatedAt),
-            server_updated_at: pos.updated_at,
-            idb_updated_at: cached.updatedAt,
-          };
-          const merged = mergeLibraryProgress(next[id], incoming);
-          if (merged === next[id]) continue;
-          if (next === prev) next = { ...prev };
-          next[id] = merged;
-        }
-        return next;
-      });
-    });
-  }, [bookIdsKey, scopeKey]);
-
-  // One queue per account / server progress version. A new stream batch only
-  // extends it; it cannot abort earlier reads or publish an old scope's results.
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    const queue = createLibraryProgressQueue({
-      read: async (id, signal) => {
-        const remote = await fetchReadingPosition(id, signal, scopeKey);
-        if (!signal.aborted) {
-          void setCachedReadingPosition(scopeKey, id, { position: remote, updatedAt: remote.updated_at });
-        }
-        return remote;
-      },
-      publish: (results) => {
-        setProgressData((prev) => {
-          let next = prev;
-          for (const { id, value: remote } of results) {
-            if (!remote.chapter_id) continue;
-            const incoming: ProgressRow = {
-              book_id: remote.book_id,
-              chapter_id: remote.chapter_id,
-              block_id: remote.block_id,
-              block_position: remote.block_position,
-              total_blocks: remote.total_blocks ?? prev[id]?.total_blocks ?? (progressBelongsToScope(progressRef.current[id], scopeKey) ? progressRef.current[id]?.totalBlocks : undefined) ?? 0,
-              content_version: 0,
-              updated_at: remote.updated_at,
-              server_updated_at: remote.updated_at,
-              idb_updated_at: remote.updated_at,
-            };
-            const merged = mergeLibraryProgress(next[id], incoming);
-            if (merged === next[id]) continue;
-            if (next === prev) next = { ...prev };
-            next[id] = merged;
-          }
-          return next;
-        });
-        // Keep store writes outside the React state updater (which may be
-        // deferred or replayed). Background sync must not invent reading events.
-        for (const { id, value: remote } of results) {
-          if (!remote.chapter_id || !remote.updated_at) continue;
-          const local = progressRef.current[id];
-          if (local?.serverProgressScope === scopeKey && timestampMs(local.serverUpdatedAt) >= timestampMs(remote.updated_at)) continue;
-          updateServerProgress(id, {
-            blockPosition: remote.block_position ?? undefined,
-            totalBlocks: remote.total_blocks ?? (progressBelongsToScope(local, scopeKey) ? local?.totalBlocks : undefined),
-            serverUpdatedAt: remote.updated_at,
-            scopeKey,
-          });
-        }
-      },
-    });
-    progressQueueRef.current = queue;
-    return () => {
-      queue.dispose();
-      if (progressQueueRef.current === queue) progressQueueRef.current = null;
-    };
-  }, [isAuthenticated, scopeKey, progressVersion, updateServerProgress]);
-
-  // Get block-based progress for a book
-  const getBookProgress = useCallback((book: ApiBook) => {
-    const local = progressBelongsToScope(progress[book.id], scopeKey) ? progress[book.id] : undefined;
-    const server = progressData[book.id];
-
-    // Priority: server data, fallback to local
-    const blockPosition = server?.block_position ?? local?.blockPosition;
-    const totalBlocks = server?.total_blocks ?? local?.totalBlocks;
-
-    if (totalBlocks && totalBlocks > 0 && blockPosition != null) {
-      return Math.min(100, Math.round((blockPosition / totalBlocks) * 100));
-    }
-
-    return 0;
-  }, [progress, progressData, scopeKey]);
-
-  useEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
-
-  const getEffectiveLastRead = useCallback((bookId: string) => newestTimestamp(
-    snapshotLastRead[bookId],
-    progressData[bookId]?.updated_at,
-    progress[bookId]?.serverProgressScope === scopeKey ? progress[bookId]?.serverUpdatedAt : null,
-    localReadingTimestamp(progress[bookId], scopeKey),
-  ), [snapshotLastRead, progressData, progress, scopeKey]);
-
-  const snapshotRank = useMemo(() => {
-    if (!recentlyOpenedSnapshotOrder) return new Map<string, number>();
-    return new Map(recentlyOpenedSnapshotOrder.map((id, index) => [id, index]));
-  }, [recentlyOpenedSnapshotOrder]);
+  // Recency is the server's array order. Position display has no authority to
+  // reorder it, and does not make per-book network requests.
+  const getBookProgress = useCallback((book: CatalogItem) => {
+    const candidate = progress[book.id];
+    const owner = candidate?.serverProgressScope ?? candidate?.localLastReadScope;
+    const local = owner === scopeKey ? candidate : undefined;
+    const summary = book.reading;
+    const block = summary?.total_blocks ? summary.block_position : local?.blockPosition;
+    const total = summary?.total_blocks || local?.totalBlocks;
+    return total && total > 0 && block != null ? Math.min(100, Math.max(0, Math.round(block / total * 100))) : 0;
+  }, [progress, scopeKey]);
 
   const filteredBooks = useMemo(() => {
-    const filtered = statusFilter === 'hidden'
-      ? books.filter((b) => b.status === 'hidden')
-      : statusFilter === 'all'
-        ? books
-        : books.filter((b) => b.status !== 'hidden');
-
-    const sorted = [...filtered].sort((a, b) => {
-      if (sortOrder === 'title_asc') return a.title.localeCompare(b.title);
-      if (sortOrder === 'title_desc') return b.title.localeCompare(a.title);
-      if (sortOrder === 'recently_opened') {
-        return compareRecentlyReadBooks(a, b, getEffectiveLastRead, snapshotRank);
-      }
-      // recently_added
-      const createdDiff = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      if (createdDiff !== 0) return createdDiff;
-      return a.id.localeCompare(b.id);
+    const filtered = books.filter((book) => statusFilter === 'all' ||
+      (statusFilter === 'hidden' ? book.status === 'hidden' : book.status !== 'hidden'));
+    if (sortOrder === 'recently_opened') return filtered;
+    return filtered.sort((a, b) => {
+      if (sortOrder === 'title_asc') return a.title.localeCompare(b.title) || a.id.localeCompare(b.id);
+      if (sortOrder === 'title_desc') return b.title.localeCompare(a.title) || a.id.localeCompare(b.id);
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime() || a.id.localeCompare(b.id);
     });
-
-    return sorted;
-  }, [books, statusFilter, sortOrder, getEffectiveLastRead, snapshotRank]);
-
-  // Prioritise books actually visible in the selected order, then a lookahead
-  // batch. Reordering does not cancel or repeat IDs already in this queue.
-  const progressTargetKey = JSON.stringify(filteredBooks.slice(0, visibleCount + BOOKS_BATCH_SIZE).map((book) => book.id));
-  useEffect(() => {
-    progressQueueRef.current?.enqueue(JSON.parse(progressTargetKey) as string[]);
-  }, [progressTargetKey, isAuthenticated, scopeKey, progressVersion]);
-
-  useEffect(() => {
-    if (sortOrder !== 'recently_opened' || !snapshotReady || !filteredBooks.length) return;
-    const order = filteredBooks.map((book) => book.id);
-    const effectiveLastReadByBookId = Object.fromEntries(order.map((id) => [id, getEffectiveLastRead(id)]));
-    const signature = JSON.stringify({ order, effectiveLastReadByBookId });
-    if (signature === savedSnapshotRef.current) return;
-    savedSnapshotRef.current = signature;
-    // The current fallback order follows the displayed view, rather than
-    // retaining the initial snapshot and jumping back to it on later updates.
-    setRecentlyOpenedSnapshotOrder((prev) => sameBookOrder(prev, order) ? prev : order);
-    void setCachedLibraryViewSnapshot(scopeKey, 'recently_opened', {
-      order,
-      effectiveLastReadByBookId,
-      computedAt: Date.now(),
-    });
-  }, [filteredBooks, getEffectiveLastRead, snapshotReady, scopeKey, sortOrder]);
+  }, [books, statusFilter, sortOrder]);
 
   const visibleBooks = useMemo(
     () => filteredBooks.slice(0, Math.min(visibleCount, filteredBooks.length)),
     [filteredBooks, visibleCount]
   );
+  const uploadBooks = shownUploads.flatMap(entry => books.find(book => book.id === entry.bookId) ?? []);
+  useCatalogCoverQueue([...uploadBooks, ...filteredBooks.filter(book => !pinnedIds.has(book.id))], context, offline);
   const hasMoreBooks = visibleCount < filteredBooks.length;
   const loadingBatchCount = hasMoreBooks
     ? Math.min(BOOKS_BATCH_SIZE, Math.max(0, filteredBooks.length - visibleBooks.length))
@@ -391,7 +222,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
       <GoogleOneTap />
       <PageHeader
         title="My Books"
-        action={authLoading ? undefined : {
+        action={authLoading || offline ? undefined : {
           label: isAuthenticated ? 'Upload book' : 'Sign In',
           onClick: handleUploadClick,
           className: isAuthenticated ? '' : 'bg-primary text-primary-foreground hover:bg-primary/90 px-4 h-8 rounded-full text-[13px]',
@@ -399,7 +230,14 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
       />
 
       <div className="container max-w-2xl mx-auto px-4 sm:px-6 pt-[calc(2rem+env(safe-area-inset-top)+72px)] pb-4 space-y-6 overflow-x-clip">
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {(error || offline) && (
+          <div role="status" aria-live="polite" className="flex items-center justify-between gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-bg)] p-3 text-sm">
+            <p>{refreshing ? 'Checking the library. Saved books remain available.' : offline && (!error || error.kind === 'network' || error.kind === 'timeout') ? 'Offline mode. Showing saved books; changes and uploads are unavailable.' : `${error?.message ?? ''}${offline ? ' Showing saved books; changes are unavailable.' : ''}`}</p>
+            <Button size="sm" variant="outline" onClick={() => void refresh()} disabled={refreshing}>
+              {refreshing ? 'Retrying…' : 'Try again'}
+            </Button>
+          </div>
+        )}
 
         {(authLoading || isAuthenticated) && (
         <div className="flex items-center gap-2 relative">
@@ -496,7 +334,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
               ] as const).map(({ value, label }, i, arr) => (
                 <div key={value}>
                   <button
-                    onClick={() => { setSortOrder(value); localStorage.setItem(SORT_STORAGE_KEY, value); setSortDropdownOpen(false); }}
+                    onClick={() => { setSortOrder(value); try { localStorage.setItem(SORT_STORAGE_KEY, value); } catch { /* preference is optional */ } setSortDropdownOpen(false); }}
                     className={uiDropdownItemButton}
                   >
                     <span className="text-[17px]">{label}</span>
@@ -513,62 +351,41 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
 
 
         <section>
-          {loading ? (
+          {(shownUploads.length > 0 || loading || filteredBooks.length > 0) && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />
-              ))}
-            </div>
-          ) : filteredBooks.length === 0 ? (
-            <p className="text-sm text-[var(--app-text-muted)]">No books yet.</p>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                {visibleBooks.map((book) => (
-                  <BookCard
-                    key={book.id}
-                    id={book.id}
-                    title={book.title}
-                    author={book.author ?? FALLBACK_AUTHOR}
-                    cover={book.cover_url}
+              {shownUploads.map(upload => {
+                const book = books.find(entry => entry.id === upload.bookId);
+                return <div key={upload.attemptId} data-upload-attempt={upload.attemptId}>
+                  {book ? <CatalogBookCard book={book} context={context} offline={offline}
                     progress={getBookProgress(book)}
-                    onHide={book.status === 'hidden' ? unhideBook : hideBook}
-                    onDelete={handleRequestDelete}
+                    onHide={offline ? undefined : id => { unpinBook(id); void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
+                    onDelete={offline ? undefined : handleRequestDelete}
                     hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
-                    onOpen={() => {
-                      touchLastRead(book.id, scopeKey);
-                      const nowIso = new Date().toISOString();
-                      setRecentlyOpenedSnapshotOrder((prev) => {
-                        const base = prev?.length ? prev : filteredBooks.map((b) => b.id);
-                        const next = [book.id, ...base.filter((id) => id !== book.id)];
-                        if (sameBookOrder(prev, next)) return prev;
-                        const effectiveLastReadByBookId: Record<string, string | null> = {};
-                        next.forEach((id) => {
-                          effectiveLastReadByBookId[id] = id === book.id ? nowIso : getEffectiveLastRead(id);
-                        });
-                        savedSnapshotRef.current = '';
-                        void setCachedLibraryViewSnapshot(scopeKey, 'recently_opened', {
-                          order: next,
-                          effectiveLastReadByBookId,
-                          computedAt: Date.now(),
-                        });
-                        return next;
-                      });
-                      trackBookOpened({ book_id: book.id, title: book.title, source: 'library' });
-                    }}
+                    onOpen={() => trackBookOpened({ book_id: book.id, title: book.title, source: 'library' })}
+                  /> : <UploadBookPlaceholder upload={upload} refreshing={refreshing} onDismiss={() => dismissUpload(upload.attemptId)} onRefresh={() => void refresh()} />}
+                </div>;
+              })}
+              {loading ? [1, 2, 3, 4, 5, 6].map(i => <div key={`initial-${i}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />)
+                : visibleBooks.filter(book => !pinnedIds.has(book.id)).map(book => (
+                  <CatalogBookCard key={book.id} book={book} context={context} offline={offline}
+                    progress={getBookProgress(book)}
+                    onHide={offline ? undefined : id => { void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
+                    onDelete={offline ? undefined : handleRequestDelete}
+                    hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
+                    onOpen={() => trackBookOpened({ book_id: book.id, title: book.title, source: 'library' })}
                   />
                 ))}
-              </div>
-              {loadingBatchCount > 0 && (
-                <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-6">
-                  {Array.from({ length: loadingBatchCount }, (_, index) => (
-                    <div key={`batch-skeleton-${index}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />
-                  ))}
-                </div>
-              )}
-              {hasMoreBooks && <div ref={loadMoreSentinelRef} className="h-1" aria-hidden="true" />}
-            </>
+            </div>
           )}
+          {!loading && !shownUploads.length && !filteredBooks.length && (
+            <p className="text-sm text-[var(--app-text-muted)]">{error ? "No saved books are available for this library." : "No books yet."}</p>
+          )}
+          {!loading && loadingBatchCount > 0 && (
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-6">
+              {Array.from({ length: loadingBatchCount }, (_, index) => <div key={`batch-skeleton-${index}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />)}
+            </div>
+          )}
+          {!loading && hasMoreBooks && <div ref={loadMoreSentinelRef} className="h-1" aria-hidden="true" />}
         </section>
 
         {!isAuthenticated && !authLoading && (
@@ -632,7 +449,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
           ] as const).map(({ value, label }, i, arr) => (
             <button
               key={value}
-              onClick={() => { setSortOrder(value); localStorage.setItem(SORT_STORAGE_KEY, value); setSortDrawerOpen(false); }}
+              onClick={() => { setSortOrder(value); try { localStorage.setItem(SORT_STORAGE_KEY, value); } catch { /* preference is optional */ } setSortDrawerOpen(false); }}
               className={[
                 uiDrawerItemButton,
                 i < arr.length - 1 ? 'border-b border-[var(--app-border)]' : '',
@@ -648,7 +465,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
       <UploadBookModal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
-        onUploaded={() => refresh(true)}
+        onUploadEvent={handleUploadEvent}
       />
 
       <DeleteBookConfirmDialog

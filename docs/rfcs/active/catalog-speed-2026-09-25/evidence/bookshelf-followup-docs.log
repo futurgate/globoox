@@ -1,0 +1,5 @@
+
+> globoox_preview@0.1.0 docs:check
+> node scripts/check-docs.mjs
+
+Documentation check passed (127 governed files).

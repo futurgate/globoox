@@ -1,0 +1,13 @@
+.next/dev/types/validator.ts(25,44): error TS2344: Type 'Route' does not satisfy the constraint 'LayoutRoutes'.
+  Type 'import("/Users/user/Documents/github/globoox_frontend/.next/dev/types/routes").LayoutRoutes' is not assignable to type 'import("/Users/user/Documents/github/globoox_frontend/.next/types/routes").LayoutRoutes'.
+    Type '"/landing-backup"' is not assignable to type 'LayoutRoutes'.
+.next/dev/types/validator.ts(25,75): error TS2344: Type 'Route' does not satisfy the constraint 'LayoutRoutes'.
+  Type 'import("/Users/user/Documents/github/globoox_frontend/.next/dev/types/routes").LayoutRoutes' is not assignable to type 'import("/Users/user/Documents/github/globoox_frontend/.next/types/routes").LayoutRoutes'.
+    Type '"/landing-backup"' is not assignable to type 'LayoutRoutes'.
+src/app/landing-backup-2/page.tsx(66,12): error TS2741: Property 'compare' is missing in type '{ label: string; heading: string; description: string; }' but required in type 'QualityAssuranceV2Props'.
+src/app/landing-backup-2/page.tsx(74,12): error TS2740: Type '{}' is missing the following properties from type 'SupportedLanguagesProps': label, heading, description, currentLangs, and 3 more.
+src/app/landing-backup-2/page.tsx(82,12): error TS2741: Property 'floatingScripts' is missing in type '{ heading: string; description: string; buttonText: string; }' but required in type 'CTAProps'.
+src/app/landing-backup-2/page.tsx(89,10): error TS2739: Type '{ tagline: string; }' is missing the following properties from type 'FooterProps': legalLabel, termsLabel, privacyLabel, copyright
+src/app/landing-backup/page.tsx(140,12): error TS2741: Property 'compare' is missing in type '{ label: string; heading: string; description: string; }' but required in type 'QualityAssuranceV2Props'.
+src/app/landing-backup/page.tsx(186,10): error TS2739: Type '{ heading: string; buttonText: string; }' is missing the following properties from type 'CTAProps': description, floatingScripts
+src/app/landing-backup/page.tsx(192,10): error TS2739: Type '{ tagline: string; }' is missing the following properties from type 'FooterProps': legalLabel, termsLabel, privacyLabel, copyright

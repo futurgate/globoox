@@ -1,0 +1,13 @@
+{
+  "fixtureOnly": true,
+  "passed": [
+    "signed URL → Storage PUT → process adds book to owner index",
+    "guest index excludes synthetic private upload"
+  ],
+  "statuses": [
+    200,
+    200,
+    200
+  ],
+  "bookId": "10000000-0000-4000-8000-000000000100"
+}

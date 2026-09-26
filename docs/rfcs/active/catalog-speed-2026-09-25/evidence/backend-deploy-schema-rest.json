@@ -1,0 +1,225 @@
+{
+  "project": "mricrybtjsizqywvyxkr",
+  "read_only": true,
+  "tables": {
+    "books": {
+      "id": {
+        "default": "gen_random_uuid()",
+        "format": "uuid",
+        "type": "string"
+      },
+      "title": {
+        "format": "text",
+        "type": "string"
+      },
+      "author": {
+        "format": "text",
+        "type": "string"
+      },
+      "cover_url": {
+        "format": "text",
+        "type": "string"
+      },
+      "file_path": {
+        "format": "text",
+        "type": "string"
+      },
+      "file_format": {
+        "default": "epub",
+        "format": "text",
+        "type": "string"
+      },
+      "file_size": {
+        "format": "integer",
+        "type": "integer"
+      },
+      "created_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "updated_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "user_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "source_language": {
+        "format": "text",
+        "type": "string"
+      },
+      "available_languages": {
+        "format": "text[]",
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "status": {
+        "default": "active",
+        "format": "text",
+        "type": "string"
+      },
+      "processing_status": {
+        "default": "ready",
+        "format": "text",
+        "type": "string"
+      },
+      "file_hash": {
+        "format": "text",
+        "type": "string"
+      }
+    },
+    "reading_progress": {
+      "id": {
+        "default": "gen_random_uuid()",
+        "format": "uuid",
+        "type": "string"
+      },
+      "user_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "book_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "current_cfi": {
+        "format": "text",
+        "type": "string"
+      },
+      "current_chapter": {
+        "default": 1,
+        "format": "integer",
+        "type": "integer"
+      },
+      "progress_percentage": {
+        "default": 0,
+        "format": "numeric",
+        "type": "number"
+      },
+      "last_read_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "created_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "selected_language": {
+        "format": "text",
+        "type": "string"
+      },
+      "chapter_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "block_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "block_position": {
+        "format": "integer",
+        "type": "integer"
+      },
+      "content_version": {
+        "default": 1,
+        "format": "integer",
+        "type": "integer"
+      },
+      "updated_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "sentence_index": {
+        "format": "integer",
+        "type": "integer"
+      }
+    },
+    "user_book_preferences": {
+      "user_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "book_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "hidden": {
+        "default": false,
+        "format": "boolean",
+        "type": "boolean"
+      },
+      "created_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "updated_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "deleted": {
+        "default": false,
+        "format": "boolean",
+        "type": "boolean"
+      }
+    },
+    "share_links": {
+      "id": {
+        "default": "gen_random_uuid()",
+        "format": "uuid",
+        "type": "string"
+      },
+      "token": {
+        "format": "text",
+        "type": "string"
+      },
+      "name": {
+        "format": "text",
+        "type": "string"
+      },
+      "active": {
+        "default": true,
+        "format": "boolean",
+        "type": "boolean"
+      },
+      "created_at": {
+        "default": "now()",
+        "format": "timestamp with time zone",
+        "type": "string"
+      },
+      "created_by": {
+        "format": "uuid",
+        "type": "string"
+      }
+    },
+    "share_link_books": {
+      "share_link_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "book_id": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "position": {
+        "default": 0,
+        "format": "integer",
+        "type": "integer"
+      }
+    },
+    "catalog_v2_actors": {},
+    "catalog_v2_recency": {},
+    "catalog_v2_events": {},
+    "catalog_v2_book_versions": {}
+  },
+  "v2_rpc_paths": []
+}

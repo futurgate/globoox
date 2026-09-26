@@ -1,0 +1,65 @@
+{
+  "build": "pass",
+  "native_standalone": "pass",
+  "http": [
+    {
+      "label": "strict missing identity",
+      "status": 400
+    },
+    {
+      "label": "manifest route",
+      "status": 200
+    },
+    {
+      "label": "activity route",
+      "status": 200
+    },
+    {
+      "label": "ack barrier",
+      "status": 200
+    },
+    {
+      "label": "native cover route",
+      "status": 200
+    },
+    {
+      "label": "authorized conditional cover",
+      "status": 304
+    },
+    {
+      "label": "invalid bearer",
+      "status": 401
+    },
+    {
+      "label": "SSR root",
+      "status": 200
+    }
+  ],
+  "limitations": "Standalone macOS/arm64 Nitro artifact; synthetic Supabase transport, not live DB or Linux deployment; no inference.",
+  "native_webp_bytes": 44,
+  "cover_bytes": 44,
+  "supabase_transport": "loopback stub only",
+  "rpc_requests": [
+    {
+      "method": "POST",
+      "path": "/rest/v1/rpc/catalog_v2_manifest"
+    },
+    {
+      "method": "POST",
+      "path": "/rest/v1/rpc/catalog_v2_record_activity"
+    },
+    {
+      "method": "POST",
+      "path": "/rest/v1/rpc/catalog_v2_manifest"
+    },
+    {
+      "method": "POST",
+      "path": "/rest/v1/rpc/catalog_v2_cover"
+    },
+    {
+      "method": "POST",
+      "path": "/rest/v1/rpc/catalog_v2_cover"
+    }
+  ],
+  "result": "pass"
+}

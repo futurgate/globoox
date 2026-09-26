@@ -54,6 +54,8 @@ import TranslationLimitDialog from '@/components/TranslationLimitDialog';
 import { uiHeaderControlHitArea, uiIconTriggerButton } from '@/components/ui/button-styles';
 import { READER_THEME_CONFIGS, getReaderContentTokens, getReaderSemanticTokens } from '@/lib/readerTheme';
 import { getThemeStyle } from '@/lib/themes';
+import type { CatalogContext } from '@/lib/catalogTypes';
+import { flushReadingActivityInBackground, recordVisibleReadingActivity } from '@/lib/readingActivity';
 
 // Source of a navigation event. Any source other than manual_scroll is a "jump"
 // that aborts in-flight prefetch requests and updates readingAnchor immediately.
@@ -89,6 +91,7 @@ interface ReaderViewProps {
     originalLanguage?: string | null;
     serverLanguage?: string | null;
     coverUrl?: string | null;
+    catalogContext?: CatalogContext;
 }
 
 type PaginationCacheEntry = {
@@ -201,7 +204,7 @@ function getLayoutContentSignature(blocks: ContentBlock[]): string {
 // Module-level cache so it survives route navigation (unmount/remount).
 const paginationCache = new Map<string, PaginationCacheEntry>();
 
-export default function ReaderView({ bookId, title, author, availableLanguages, originalLanguage, serverLanguage, coverUrl }: ReaderViewProps) {
+export default function ReaderView({ bookId, title, author, availableLanguages, originalLanguage, serverLanguage, coverUrl, catalogContext }: ReaderViewProps) {
     const { user, isAlpha, isAuthenticated, loading: authLoading } = useAuth();
     const {
         hasHydrated,
@@ -218,6 +221,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
     const readerThemeConfig = READER_THEME_CONFIGS[settings.readerTheme] ?? READER_THEME_CONFIGS['light'];
     const readerSemanticTokens = getReaderSemanticTokens(readerThemeConfig);
     const readerContentTokens = getReaderContentTokens(readerThemeConfig);
+    const activitySessionRef = useRef<string | null>(null);
 
     useEffect(() => {
         const previousVersion = window.localStorage.getItem(PAGINATION_ALGO_VERSION_STORAGE_KEY);
@@ -1698,6 +1702,37 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
         currentPageTranslatableBlocks,
         currentPageHasReadyBlock,
     ]);
+
+    // Catalog recency starts only after an anchored, readable page is visible.
+    // Changing position in either direction is reading; it need not raise progress.
+    const activityPosition = currentChapter && currentPageBlocks[0]
+        ? `${currentChapter.id}:${currentPageBlocks[0].parentId ?? currentPageBlocks[0].id}:${currentPageBlocks[0].id}`
+        : '';
+    const activityReady = pagesReady && visiblePagesReady && !isContentLoading && !chaptersLoading && !chaptersError && !contentError
+        && !!currentChapter && currentPageBlocks.length > 0 && isCurrentPageReadable;
+    useEffect(() => {
+        if (!catalogContext) return;
+        const recordIfVisible = () => {
+            if (document.visibilityState !== 'visible' || !activityReady) return;
+            activitySessionRef.current ??= crypto.randomUUID();
+            try {
+                const queued = recordVisibleReadingActivity(catalogContext, bookId, activitySessionRef.current, activityPosition, true);
+                if (queued) {
+                    if (!queued.durable) console.warn('Reading activity is retained in memory because local storage is unavailable.');
+                    void flushReadingActivityInBackground(catalogContext);
+                }
+            } catch (error) {
+                console.warn('Reading activity could not be queued:', error instanceof Error ? error.message : 'unknown error');
+            }
+        };
+        const handleVisibility = () => {
+            if (document.visibilityState === 'visible') recordIfVisible();
+            else void flushReadingActivityInBackground(catalogContext);
+        };
+        recordIfVisible();
+        document.addEventListener('visibilitychange', handleVisibility);
+        return () => document.removeEventListener('visibilitychange', handleVisibility);
+    }, [catalogContext, bookId, activityPosition, activityReady]);
 
     // Capture whether the initial content came from cache (no spinner shown).
     // Frozen the first time we have a real snapshot of the loading path.

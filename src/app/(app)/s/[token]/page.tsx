@@ -4,7 +4,6 @@ import { use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { setShareToken } from '@/lib/api';
-import { invalidateBooksCache } from '@/lib/useBooks';
 
 interface SharePageProps {
   params: Promise<{ token: string }>;
@@ -22,8 +21,8 @@ export default function SharePage({ params }: SharePageProps) {
   useEffect(() => {
     if (token) {
       setShareToken(token);
-      // Drop any previously cached guest/library data so the curated list paints fresh.
-      invalidateBooksCache();
+      // V2 keys membership by identity AND this share token. Other offline
+      // libraries stay available; entry still waits for server confirmation.
     }
     router.replace('/my-books');
   }, [token, router]);

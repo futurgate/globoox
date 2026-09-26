@@ -1,0 +1,57 @@
+{
+  "at_utc": "2026-09-25T16:07:59.888402+00:00",
+  "request": {
+    "method": "GET",
+    "url": "https://dev.globoox.co/api/books?status=active&stream=1",
+    "credentials": "none",
+    "headers": {
+      "Accept": "application/x-ndjson",
+      "Accept-Encoding": "identity"
+    },
+    "timeout_seconds": 25,
+    "max_body_bytes": 8388608,
+    "attempts": 1
+  },
+  "measurement": {
+    "tool": "Python 3 urllib.request; time.monotonic",
+    "body_bytes": "len(body) after response.read",
+    "cover_bytes": "sum(len((book.get('cover_url') or '').encode('utf-8')) for book in books)",
+    "without_covers": "len(json.dumps([{**book, 'cover_url': None} for book in books], ensure_ascii=False, separators=(',', ':')).encode('utf-8'))",
+    "headers_ms": "Elapsed to urlopen response context",
+    "complete_ms": "Elapsed through body read, NDJSON parse and cover byte calculation"
+  },
+  "response": {
+    "status": 200,
+    "content_type": "application/x-ndjson",
+    "x_authenticated": "false",
+    "headers_ms": 4533,
+    "complete_ms": 5326,
+    "decoded_body_bytes": 3804711,
+    "books": 6,
+    "message_types": ["books", "done"],
+    "inline_cover_count": 6,
+    "cover_value_bytes": 3802722,
+    "cover_share_percent": 99.948,
+    "book_array_bytes_without_cover_values": 1959,
+    "book_cover_bytes": [
+      {"id": "93ed2d75-d82a-4120-83fb-d1df912f6520", "cover_bytes": 1517923},
+      {"id": "92863897-deee-4954-80a5-3c4b8b531735", "cover_bytes": 287011},
+      {"id": "4067ef8d-9c2e-4570-b9be-96852b06e64f", "cover_bytes": 841275},
+      {"id": "97828c6a-c91a-499a-ba33-b16a3a92864c", "cover_bytes": 637075},
+      {"id": "6cb740d0-e4f3-41b2-9e86-9ecd420d1e8d", "cover_bytes": 305667},
+      {"id": "ac6f23b9-675f-449f-bacc-d57cfaa0b358", "cover_bytes": 213771}
+    ]
+  },
+  "provenance": {
+    "frontend_checkout": "182ac9ff93d338a2b79da18e746daf2c00942a34",
+    "backend_checkout": "402b93ed8ef7424be121f44a719b255be8e353b3",
+    "deployed_backend_sha": "not verified"
+  },
+  "limitations": [
+    "One public guest request, not authenticated cross-device evidence or p50/p95.",
+    "Accept-Encoding identity explicitly requested; sizes do not establish compressed wire traffic.",
+    "No first-card paint, image-complete timing, backend timing breakdown or v2 comparison measured.",
+    "1959 bytes excludes all image transfers and is not total future page weight.",
+    "Response body was analyzed in memory; base64 image blobs were not retained. Exact sizing procedure and per-book cover lengths are retained."
+  ]
+}

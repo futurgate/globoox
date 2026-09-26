@@ -1,0 +1,186 @@
+{
+  "recorded_at_utc": "2026-09-25T17:25:14.814994+00:00",
+  "scope": "Local upstream integration and catalog plan; no catalog implementation, push or deployment.",
+  "environment": {
+    "node": "v22.23.2",
+    "npm": "10.9.8",
+    "git": "2.45.0"
+  },
+  "git": {
+    "backend": {
+      "before": "402b93ed8ef7424be121f44a719b255be8e353b3",
+      "after": "987e82c892eefd42339fece6c6a48c1c944090bf",
+      "operation": "git merge --ff-only origin/main",
+      "final_head_vs_origin_main": [
+        0,
+        0
+      ],
+      "tracked_tree_clean": true
+    },
+    "frontend": {
+      "before": "182ac9ff93d338a2b79da18e746daf2c00942a34",
+      "fetched_main": "9fa6dd69e7565ac64611f57193391a7910da41f6",
+      "merge": "b85c38ca2f4d4e75f722503eb5aaae70bf855de3",
+      "operation": "git merge --no-ff --no-edit 9fa6dd69e7565ac64611f57193391a7910da41f6",
+      "merge_conflicts": [],
+      "final_head_vs_origin_main": [
+        10,
+        0
+      ],
+      "final_head_vs_origin_dev": [
+        27,
+        0
+      ],
+      "note": "Counts include merge commits; no origin/main commits missing locally."
+    }
+  },
+  "preservation": {
+    "explicitly_stashed_paths": [
+      "AGENTS.md",
+      "docs/reference/architecture/library-contract-as-is-to-be.md",
+      "docs/rfcs/active/billing-entitlements-and-translation-access.md"
+    ],
+    "exact_files_verified_after_restore": 11,
+    "owned_stash_restored_and_dropped": true,
+    "existing_untracked_output_and_backup_sources_preserved": true,
+    "protected_files_still_identical_after_plan_link_edit": 10,
+    "only_intentional_post_restore_change_to_preservation_set": "Owned contract reference linked to new plan."
+  },
+  "checks": [
+    {
+      "repo": "frontend",
+      "command": "npm test",
+      "exit_code": 0,
+      "test_files_passed": 15,
+      "tests_passed": 158,
+      "duration_ms": 873,
+      "per_file": {
+        "useBooksState": 7,
+        "libraryReadingState": 11,
+        "libraryReadingStore": 4,
+        "subscription": 10,
+        "libraryPositionScope": 3,
+        "activeEditorialSection": 10,
+        "paginatorUtils": 18,
+        "editorialServerRouting": 23,
+        "sectionNavigationMotion": 6,
+        "landingConsentPath": 34,
+        "editorialLegalCopy": 2,
+        "editorialHeroCopy": 5,
+        "mergeDisplayBlocks": 2,
+        "editorialLocale": 12,
+        "inlineMarks": 11
+      }
+    },
+    {
+      "repo": "frontend",
+      "scope": "original working checkout",
+      "command": "npx tsc --noEmit --incremental false",
+      "exit_code": 2,
+      "errors": [
+        {
+          "path": ".next/dev/types/validator.ts",
+          "code": "TS2344",
+          "count": 2,
+          "detail": "Generated dev LayoutRoutes contains /landing-backup while production LayoutRoutes does not."
+        },
+        {
+          "path": "src/app/landing-backup-2/page.tsx",
+          "lines": [
+            66,
+            74,
+            82,
+            89
+          ],
+          "codes": [
+            "TS2741",
+            "TS2740",
+            "TS2741",
+            "TS2739"
+          ],
+          "detail": "Missing required compare, SupportedLanguages, floatingScripts and Footer props."
+        },
+        {
+          "path": "src/app/landing-backup/page.tsx",
+          "lines": [
+            140,
+            186,
+            192
+          ],
+          "codes": [
+            "TS2741",
+            "TS2739",
+            "TS2739"
+          ],
+          "detail": "Missing required compare, CTA and Footer props."
+        }
+      ],
+      "attribution": "Untracked backup source directories existed before merge and were preserved byte-for-byte. Their landing dependencies were not changed by merge. Existing generated route artifacts were not deleted."
+    },
+    {
+      "repo": "frontend",
+      "scope": "clean detached worktree of merge commit",
+      "command": "npx tsc --noEmit --incremental false",
+      "exit_code": 0,
+      "stdout": ""
+    },
+    {
+      "repo": "frontend",
+      "scope": "clean detached worktree of merge commit",
+      "command": "NEXT_TELEMETRY_DISABLED=1 SENTRY_AUTH_TOKEN= npm run build -- --webpack",
+      "exit_code": 0,
+      "next_version": "16.1.1",
+      "compiler": "webpack",
+      "compiled_successfully_seconds": 15.1,
+      "static_pages_generated": 52,
+      "warnings": [
+        "Critical dependency: the request of a dependency is an expression (OpenTelemetry/Prisma instrumentation imported by Sentry)."
+      ],
+      "limitations": [
+        "Webpack production build passed; default Turbopack build was not run.",
+        "Dependencies reused from existing node_modules; local env linked without copying or logging values; Sentry artifact upload token disabled for this build.",
+        "No browser or authenticated cross-device acceptance run performed for this integration."
+      ]
+    },
+    {
+      "repo": "backend",
+      "command": "npx vitest run --config .local/vitest.config.ts server/utils/__tests__/fiction-pipeline.test.ts server/utils/__tests__/llm-provider.test.ts",
+      "exit_code": 0,
+      "test_files_passed": 2,
+      "tests_passed": 28,
+      "duration_ms": 318,
+      "per_file": {
+        "fiction-pipeline": 12,
+        "llm-provider": 16
+      },
+      "limitations": [
+        "Existing deterministic helper/config tests; no model inference, server launch or DB operations.",
+        "No dedicated new revision batching/endpoint test exists; these checks do not validate that endpoint end-to-end."
+      ]
+    }
+  ],
+  "known_upstream_gap": {
+    "frontend": "GET /api/books/:id/fiction-costs?lang=XX",
+    "frontend_sources": [
+      "src/lib/api.ts",
+      "src/app/(app)/api/books/[id]/fiction-costs/route.ts",
+      "src/app/(app)/admin/fiction/page.tsx"
+    ],
+    "backend_check": "git grep -n 'fiction-costs' HEAD -- server: no match at 987e82c",
+    "impact": "Admin frontend catches request failure and clears cost data; paired repository heads do not provide cost panel data.",
+    "live_endpoint_verified": false,
+    "repaired": false,
+    "scope": "Separate from catalog work."
+  },
+  "artifacts": {
+    "temporary_clean_worktree_removed": true,
+    "temporary_build_output_removed": true,
+    "dependency_cache_preserved": true,
+    "user_env_sources_preserved": true,
+    "temporary_local_diff_backup_removed_after_restore_verification": true
+  },
+  "notes": [
+    "Exact test/build console summaries and relevant failures are recorded here; complete raw build traces were not retained.",
+    "A final fetch of both main branches confirmed the source revisions above after checks."
+  ]
+}
