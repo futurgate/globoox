@@ -520,7 +520,8 @@
         ],
         "method": "Normal authenticated backend DELETE for exact owned books; table/storage absence verified; admin delete exact syntheticuser; profile/user/catalog actor absence verified. Credentials removed last; local fixture EPUB/evidence retained.",
         "evidence": "dev-live-api-qa.json",
-        "adverse": "Initial cleanup preflight rejected optional nonexistent blocklist column; no deletion occurred then. Check removed as unrelated to own QA scope; failed attempts retained."
+        "adverse": "Initial cleanup preflight rejected optional nonexistent blocklist column; no deletion occurred then. Check removed as unrelated to own QA scope; failed attempts retained.",
+        "verification_limit": "Optional fiction_revision_runs endpoint unavailable; no row-count claim for that table. All other reported accessible scoped tables verified empty."
       },
       "ui_upload": {
         "status": "PASS",

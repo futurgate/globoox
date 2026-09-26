@@ -206,16 +206,6 @@
       "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
     ],
     "updated_at": "2026-09-26T19:10:32.696Z",
-    "failure": {
-      "stage": "ownership_preflight",
-      "code": "READ_FAILED_blocklist",
-      "source": [
-        "catalog-live-qa-cleanup.mjs:16:47",
-        "catalog-live-qa-cleanup.mjs:87:5",
-        "catalog-live-qa-cleanup.mjs:163:11"
-      ]
-    },
-    "credentials_preserved_unless_already_removed": true,
     "verified_plan": {
       "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
       "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
@@ -307,7 +297,10 @@
       ]
     },
     "credentials_removed": true,
-    "local_epubs_and_evidence_preserved": true
+    "local_epubs_and_evidence_preserved": true,
+    "verification_limits": [
+      "Optional fiction_revision_runs REST relation unavailable; no zero-row assertion was made for it."
+    ]
   },
   "ui_readonly_observations": [
     {
@@ -1346,10 +1339,6 @@
           "unavailable": true
         },
         {
-          "table": "fiction_revision_runs",
-          "remaining": 0
-        },
-        {
           "table": "fiction_stage_costs",
           "remaining": 0
         },
@@ -1554,10 +1543,6 @@
         {
           "table": "fiction_revision_runs",
           "unavailable": true
-        },
-        {
-          "table": "fiction_revision_runs",
-          "remaining": 0
         },
         {
           "table": "fiction_stage_costs",
@@ -1766,10 +1751,6 @@
         {
           "table": "fiction_revision_runs",
           "unavailable": true
-        },
-        {
-          "table": "fiction_revision_runs",
-          "remaining": 0
         },
         {
           "table": "fiction_stage_costs",
