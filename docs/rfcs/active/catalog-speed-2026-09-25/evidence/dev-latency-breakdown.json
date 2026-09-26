@@ -1,0 +1,434 @@
+{
+  "question": "Where does live tiny-manifest latency accumulate: transport/proxy/auth/database versus payload?",
+  "budget": {
+    "max_requests": 15,
+    "executed_requests": 15,
+    "max_minutes": 15
+  },
+  "started_at": "2026-09-26T18:56:12.600Z",
+  "samples": [
+    {
+      "name": "backend_guest_1",
+      "started_at": "2026-09-26T18:56:12.601Z",
+      "status": 200,
+      "duration_ms": 775.7,
+      "bytes": 3813,
+      "reused_socket": false,
+      "dns_ms": 73.3,
+      "tcp_ms": 103.8,
+      "tls_ms": 150.7,
+      "headers_ms": 775.1,
+      "headers": {
+        "cf-ray": "a4147cc09bc35165-BEG",
+        "rndr-id": "cf5a4baa-00ea-4dd5",
+        "date": "Sat, 26 Sep 2026 18:56:13 GMT"
+      },
+      "count": 6,
+      "complete": true
+    },
+    {
+      "name": "backend_guest_2",
+      "started_at": "2026-09-26T18:56:13.378Z",
+      "status": 200,
+      "duration_ms": 520.9,
+      "bytes": 3813,
+      "reused_socket": true,
+      "headers_ms": 515.7,
+      "headers": {
+        "cf-ray": "a4147cc48e055165-BEG",
+        "rndr-id": "3243d95c-e144-49e4",
+        "date": "Sat, 26 Sep 2026 18:56:14 GMT"
+      },
+      "count": 6,
+      "complete": true
+    },
+    {
+      "name": "vercel_guest_1",
+      "started_at": "2026-09-26T18:56:13.899Z",
+      "status": 200,
+      "duration_ms": 962.5,
+      "bytes": 3813,
+      "reused_socket": false,
+      "dns_ms": 68.2,
+      "tcp_ms": 128.3,
+      "tls_ms": 239.9,
+      "headers_ms": 961.7,
+      "headers": {
+        "x-vercel-id": "fra1::iad1::wbr2z-1790448974303-01b0cc35a179",
+        "x-vercel-cache": "MISS",
+        "date": "Sat, 26 Sep 2026 18:56:14 GMT"
+      },
+      "count": 6,
+      "complete": true
+    },
+    {
+      "name": "vercel_guest_2",
+      "started_at": "2026-09-26T18:56:14.862Z",
+      "status": 200,
+      "duration_ms": 540.9,
+      "bytes": 3813,
+      "reused_socket": true,
+      "headers_ms": 529.7,
+      "headers": {
+        "x-vercel-id": "fra1::iad1::fv42x-1790448975025-4a386a21e2fc",
+        "x-vercel-cache": "MISS",
+        "date": "Sat, 26 Sep 2026 18:56:15 GMT"
+      },
+      "count": 6,
+      "complete": true
+    },
+    {
+      "name": "backend_qa_authenticated_1",
+      "started_at": "2026-09-26T18:56:15.403Z",
+      "status": 200,
+      "duration_ms": 1098,
+      "bytes": 4487,
+      "reused_socket": true,
+      "headers_ms": 1097.8,
+      "headers": {
+        "cf-ray": "a4147cd1497a5165-BEG",
+        "rndr-id": "d563fc10-675f-48d7",
+        "date": "Sat, 26 Sep 2026 18:56:16 GMT"
+      },
+      "count": 7,
+      "complete": true
+    },
+    {
+      "name": "backend_qa_authenticated_2",
+      "started_at": "2026-09-26T18:56:16.501Z",
+      "status": 200,
+      "duration_ms": 1051.6,
+      "bytes": 4487,
+      "reused_socket": true,
+      "headers_ms": 1050.5,
+      "headers": {
+        "cf-ray": "a4147cd81c5f5165-BEG",
+        "rndr-id": "c1fbc46f-558f-4055",
+        "date": "Sat, 26 Sep 2026 18:56:17 GMT"
+      },
+      "count": 7,
+      "complete": true
+    },
+    {
+      "name": "vercel_qa_authenticated_1",
+      "started_at": "2026-09-26T18:56:17.553Z",
+      "status": 200,
+      "duration_ms": 1071.7,
+      "bytes": 4486,
+      "reused_socket": true,
+      "headers_ms": 1065.5,
+      "headers": {
+        "x-vercel-id": "fra1::iad1::gmgbp-1790448977721-a7f272109e76",
+        "x-vercel-cache": "BYPASS",
+        "date": "Sat, 26 Sep 2026 18:56:18 GMT"
+      },
+      "count": 7,
+      "complete": true
+    },
+    {
+      "name": "vercel_qa_authenticated_2",
+      "started_at": "2026-09-26T18:56:18.549Z",
+      "status": 200,
+      "duration_ms": 1053.5,
+      "bytes": 4487,
+      "reused_socket": true,
+      "headers_ms": 1045.6,
+      "headers": {
+        "x-vercel-id": "fra1::iad1::fbh8d-1790448978794-f7ab542b0b9c",
+        "x-vercel-cache": "BYPASS",
+        "date": "Sat, 26 Sep 2026 18:56:19 GMT"
+      },
+      "count": 7,
+      "complete": true
+    },
+    {
+      "name": "supabase_rpc_guest_1",
+      "started_at": "2026-09-26T18:56:19.606Z",
+      "status": 200,
+      "duration_ms": 332.8,
+      "bytes": 3851,
+      "reused_socket": false,
+      "dns_ms": 78.1,
+      "tcp_ms": 104.9,
+      "tls_ms": 140.2,
+      "headers_ms": 329.5,
+      "headers": {
+        "cf-ray": "a4147ceccf9df969-BEG",
+        "date": "Sat, 26 Sep 2026 18:56:20 GMT"
+      },
+      "count": 6
+    },
+    {
+      "name": "supabase_rpc_guest_2",
+      "started_at": "2026-09-26T18:56:19.940Z",
+      "status": 200,
+      "duration_ms": 131,
+      "bytes": 3851,
+      "reused_socket": true,
+      "headers_ms": 127.7,
+      "headers": {
+        "cf-ray": "a4147cee0ac9f969-BEG",
+        "date": "Sat, 26 Sep 2026 18:56:20 GMT"
+      },
+      "count": 6
+    },
+    {
+      "name": "supabase_rpc_qa_authenticated_1",
+      "started_at": "2026-09-26T18:56:20.071Z",
+      "status": 200,
+      "duration_ms": 130.4,
+      "bytes": 4567,
+      "reused_socket": true,
+      "headers_ms": 127.5,
+      "headers": {
+        "cf-ray": "a4147ceecca7f969-BEG",
+        "date": "Sat, 26 Sep 2026 18:56:20 GMT"
+      },
+      "count": 7
+    },
+    {
+      "name": "supabase_rpc_qa_authenticated_2",
+      "started_at": "2026-09-26T18:56:20.201Z",
+      "status": 200,
+      "duration_ms": 126,
+      "bytes": 4567,
+      "reused_socket": true,
+      "headers_ms": 123.5,
+      "headers": {
+        "cf-ray": "a4147cef9e7af969-BEG",
+        "date": "Sat, 26 Sep 2026 18:56:20 GMT"
+      },
+      "count": 7
+    },
+    {
+      "name": "supabase_auth_get_user_1",
+      "started_at": "2026-09-26T18:56:20.328Z",
+      "status": 200,
+      "duration_ms": 101.7,
+      "bytes": 1170,
+      "reused_socket": true,
+      "headers_ms": 101.5,
+      "headers": {
+        "cf-ray": "a4147cf06827f969-BEG",
+        "date": "Sat, 26 Sep 2026 18:56:20 GMT"
+      }
+    },
+    {
+      "name": "supabase_auth_get_user_2",
+      "started_at": "2026-09-26T18:56:20.429Z",
+      "status": 200,
+      "duration_ms": 140.2,
+      "bytes": 1170,
+      "reused_socket": true,
+      "headers_ms": 140.1,
+      "headers": {
+        "cf-ray": "a4147cf109e6f969-BEG",
+        "date": "Sat, 26 Sep 2026 18:56:20 GMT"
+      }
+    }
+  ],
+  "limitations": [
+    "Development-machine HTTP requests are not browser paint or p95. Two samples per path are diagnostic only.",
+    "No production configuration or business data mutations. GET routes can perform existing incidental IP tracking.",
+    "Remote RPC timings include Supabase HTTP gateway and network, not only PostgreSQL execution.",
+    "No Server-Timing instrumentation exists in deployed library route; exact handler/auth/RPC attribution needs instrumentation."
+  ],
+  "completed_at": "2026-09-26T18:58:05.903Z",
+  "local_claim_verification": {
+    "sdk_version": "2.95.3",
+    "samples": [
+      {
+        "sample": 1,
+        "duration_ms": 257.78,
+        "verified": true,
+        "network_requests_so_far": 1,
+        "algorithm": "ES256"
+      },
+      {
+        "sample": 2,
+        "duration_ms": 0.86,
+        "verified": true,
+        "network_requests_so_far": 1,
+        "algorithm": "ES256"
+      },
+      {
+        "sample": 3,
+        "duration_ms": 0.89,
+        "verified": true,
+        "network_requests_so_far": 1,
+        "algorithm": "ES256"
+      }
+    ],
+    "note": "Diagnostic use of installed SDK with genuine owned QA ES256 token. Does not change deployed authentication. Cached JWKS verifies signature and expiry; account/session revocation semantics need explicit review before replacing live getUser."
+  },
+  "deployment_geography": {
+    "vercel": {
+      "observed": "fra1::iad1",
+      "evidence": "x-vercel-id in this file: Frankfurt ingress, US East function execution"
+    },
+    "render": {
+      "observed": "Oregon (US West)",
+      "evidence": "Root agent observed Render service Settings Region textbox in authenticated dashboard during this diagnosis"
+    },
+    "supabase": {
+      "observed": "eu-west-1 / Ireland",
+      "evidence": "Previously observed Session pooler aws-1-eu-west-1.pooler.supabase.com for production project"
+    },
+    "consequence": "Browser in Europe -> Vercel function US East -> Render Oregon -> Supabase Ireland; serial authorization and RPC calls repeat long-distance backend/database round trips."
+  },
+  "findings": [
+    {
+      "kind": "observed",
+      "statement": "Warm direct backend guest 520.9 ms versus dev proxy 540.9 ms; warm authenticated backend 1051.6 ms versus dev proxy 1053.5 ms. These separate samples do not provide an exact causal subtraction."
+    },
+    {
+      "kind": "observed",
+      "statement": "Manifest response is 3813 bytes for 6 guest books and 4486–4487 bytes for 7 QA books. After response headers, receiving the whole body took 0.2–11.2 ms. Payload transfer does not explain second-scale latency."
+    },
+    {
+      "kind": "observed",
+      "statement": "Warm direct Supabase manifest HTTP RPC is 126–131 ms from this European machine, including network and gateway. Root subsequently measured the same production SQL function through a read-only EXPLAIN transaction: first guest execution 97.600 ms; following authenticated QA execution 6.544 ms. These are two differently scoped calls, not a cold/warm series or p95.",
+      "references": [
+        "dev-latency-sql-explain.txt"
+      ]
+    },
+    {
+      "kind": "observed",
+      "statement": "Direct Supabase auth getUser is 101.7–140.2 ms from this machine. ES256 cached SDK getClaims verifies the owned QA token in 0.86–0.89 ms after a 257.78 ms first JWKS request."
+    },
+    {
+      "kind": "source",
+      "statement": "The catalog handler serially awaits remote getUser and then one compact manifest SQL RPC.",
+      "references": [
+        "globooks/server/utils/catalog-v2-auth.ts:11",
+        "globooks/server/api/v2/library.get.ts:9",
+        "globooks/server/api/v2/library.get.ts:12"
+      ]
+    },
+    {
+      "kind": "source",
+      "statement": "Legacy track-ip middleware is blocking despite an obsolete fire-and-forget comment: at first (token, IP) and every 5 minutes it awaits user resolution plus profiles upsert before route dispatch.",
+      "references": [
+        "globooks/server/middleware/track-ip.ts:53",
+        "globooks/server/middleware/track-ip.ts:60",
+        "globooks/server/middleware/track-ip.ts:65"
+      ]
+    },
+    {
+      "kind": "source",
+      "statement": "Blocklist reload adds an awaited Supabase SELECT at cold process/cache expiry (60 seconds). It is not awaited again for each warm request.",
+      "references": [
+        "globooks/server/utils/blocklist.ts:50",
+        "globooks/server/utils/blocklist.ts:84"
+      ]
+    },
+    {
+      "kind": "source",
+      "statement": "Initial page middleware awaits remote Supabase getUser before HTML; API routes are excluded. After hydration the controller resolves local session, settles own writes/reading activity, reads cache, then fetches the manifest. Profile status does not gate the index once user identity is known.",
+      "references": [
+        "globoox_frontend/src/lib/supabase/middleware.ts:29",
+        "globoox_frontend/src/proxy.ts:7",
+        "globoox_frontend/src/lib/catalogState.ts:125",
+        "globoox_frontend/src/lib/catalogState.ts:134",
+        "globoox_frontend/src/lib/catalogState.ts:136",
+        "globoox_frontend/src/lib/catalogState.ts:151",
+        "globoox_frontend/src/app/(app)/my-books/page.tsx:54"
+      ]
+    },
+    {
+      "kind": "scope",
+      "statement": "Earlier 2503 ms result measured browser navigation through observed title DOM, not an isolated index request and not PostgreSQL execution. It includes document loading/hydration/automation observation overhead."
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": 1,
+      "action": "Co-locate Render backend with Supabase in Europe; keep old Oregon service and DB unchanged for rollback during candidate validation. Set dev Vercel function region near backend/DB. Measure equivalent warm/cold routes before domain cutover.",
+      "reason": "Eliminates cross-ocean serial backend/auth/DB round trips; main observed infrastructure mismatch. Moving only the Vercel proxy is insufficient, as warm direct backend is already slow."
+    },
+    {
+      "priority": 2,
+      "action": "Add request stage timings for middleware, auth, manifest RPC, total handler and proxy, plus browser navigation-to-request/request-to-index timestamps. Keep payload/order/no-cache behavior unchanged.",
+      "reason": "Provides exact attribution and acceptance evidence rather than inferring PostgreSQL speed from small JSON size."
+    },
+    {
+      "priority": 3,
+      "action": "Remove duplicate blocking IP telemetry work from the manifest critical path by reusing validated request identity and deferring captured-client metadata writes with a lifecycle-safe mechanism.",
+      "reason": "Preserves telemetry while avoiding repeated auth and writes before the index response."
+    },
+    {
+      "priority": 4,
+      "action": "Evaluate cached JWKS getClaims for ES256 bearer validation in v2 after explicitly covering revoked/disabled/deleted user and issuer/audience/scope behavior; retain strict invalid-bearer rejection.",
+      "reason": "Warm local verification measured under 1 ms; this is a proposed auth behavior change, not part of the current deployment."
+    }
+  ],
+  "stop_condition": "HTTP budget completed: 15/15 bounded read-only HTTP calls by this agent. Root subsequently supplied a separate production read-only EXPLAIN; no additional application API measurements or source/production changes by this agent. Before/after region comparison remains a proposed experiment.",
+  "postgresql_explain_followup": {
+    "performed_by": "root",
+    "evidence": "dev-latency-sql-explain.txt",
+    "mode": "Root-reported read-only transaction; saved output contains BEGIN, SET, EXPLAIN ANALYZE and ROLLBACK",
+    "samples": [
+      {
+        "scope": "guest",
+        "order": 1,
+        "planning_ms": 0.041,
+        "execution_ms": 97.6,
+        "shared_hit_blocks": 1220,
+        "shared_read_blocks": 0,
+        "shared_written_blocks": 0
+      },
+      {
+        "scope": "qa_authenticated",
+        "order": 2,
+        "planning_ms": 0.013,
+        "execution_ms": 6.544,
+        "shared_hit_blocks": 76,
+        "shared_read_blocks": 0,
+        "shared_written_blocks": 0
+      }
+    ],
+    "limitations": [
+      "These two executions differ in scope and cache/planning state; they do not isolate a cold/warm difference or establish a distribution.",
+      "Execution time excludes the HTTP auth check, PostgREST, Render/Vercel transport, browser startup and paint.",
+      "Detailed SQL inputs/provenance are owned by root; this agent inspected the saved EXPLAIN output, not reran the query."
+    ]
+  },
+  "infrastructure_dashboard_review": {
+    "render_backend": {
+      "service": "srv-d6aa07a4d50c738pbdcg",
+      "live_commit": "fb6786d09c8159e806ab6c6a5a076d92329abfea",
+      "region": "Oregon (US West)",
+      "plan": "Starter",
+      "cpu": 0.5,
+      "ram_mb": 512,
+      "usd_per_month": 7,
+      "instances": 1
+    },
+    "redis": {
+      "service": "red-d6kb9k9aae7s73ar6l50",
+      "region": "Oregon",
+      "plan": "Free",
+      "ram_mb": 25,
+      "connections": 50,
+      "persistence": "Off",
+      "maxmemory_policy": "allkeys-lru",
+      "paid_256mb_price_usd_per_month": 10
+    },
+    "proposed_experiment": {
+      "status": "prepared_not_created",
+      "region": "Frankfurt",
+      "backend": "Same reviewed source fb6786d and runtime config; Starter0.5CPU/512MB",
+      "redis": "Separate256MB KeyValue with persistence; queues isolated from Oregon",
+      "incremental_compute_rate_usd_per_month": 17,
+      "billing": "Actual parallel lifetime prorated; excludes variable usage/taxes. Existing services retained.",
+      "frontend": "Only dev branch vercel.json regionsfra1 and dev Preview API_URL override; productionfrontend untouched",
+      "stop_condition": "ownership/order/queue regression, unexpected paid requirement, or no useful measured index latency improvement",
+      "unresolved": [
+        "Validate new service secret-file/env parity before deploy",
+        "Record both queue states before final production migration",
+        "Inspect external webhook targets and disk dependencies before productioncutover"
+      ]
+    },
+    "recorded_at": "2026-09-26T19:10:44.849480+00:00"
+  }
+}

@@ -1,0 +1,199 @@
+- link "Skip to content":
+  - /url: "#geist-skip-nav"
+- main:
+  - link "globoox-team Hobby":
+    - /url: /lomovski
+    - generic: globoox-team
+    - generic: Hobby
+  - button:
+  - button "Find F":
+    - generic: Find
+    - generic: F
+  - navigation:
+    - link "Overview":
+      - /url: /lomovski/globoox
+      - generic: Overview
+    - link "Deployments":
+      - /url: /lomovski/globoox/deployments
+      - generic: Deployments
+    - link "Logs":
+      - /url: /lomovski/globoox/logs
+      - generic: Logs
+    - link "Analytics":
+      - /url: /lomovski/globoox/analytics
+      - generic: Analytics
+    - link "Speed Insights":
+      - /url: /lomovski/globoox/speed-insights
+      - generic: Speed Insights
+    - link "Observability":
+      - /url: /lomovski/globoox/observability
+      - generic: Observability
+    - link "Firewall":
+      - /url: /lomovski/globoox/firewall
+      - generic: Firewall
+    - link "CDN":
+      - /url: /lomovski/globoox/cdn
+      - generic: CDN
+    - separator
+    - link "Environment Variables":
+      - /url: /lomovski/globoox/settings/environment-variables
+      - generic: Environment Variables
+    - link "Domains":
+      - /url: /lomovski/globoox/settings/domains
+      - generic: Domains
+    - link "Connect":
+      - /url: /lomovski/globoox/connect
+      - generic: Connect
+    - link "Integrations":
+      - /url: /lomovski/globoox/settings/integrations
+      - generic: Integrations
+    - link "Storage":
+      - /url: /lomovski/globoox/stores
+      - generic: Storage
+    - link "Flags":
+      - /url: /lomovski/globoox/flags
+      - generic: Flags
+    - link "Agent":
+      - /url: /lomovski/globoox/agent
+      - generic: Agent
+    - link "AI Gateway":
+      - /url: /lomovski/globoox/ai-gateway
+      - generic: AI Gateway
+    - link "Sandboxes":
+      - /url: /lomovski/globoox/sandboxes
+      - generic: Sandboxes
+    - link "Workflows":
+      - /url: /lomovski/globoox/workflows
+      - generic: Workflows
+    - link "Images":
+      - /url: /lomovski/globoox/images
+      - generic: Images
+    - separator
+    - link "Usage":
+      - /url: /lomovski/globoox/usage
+      - generic: Usage
+    - link "Support":
+      - /url: /lomovski/globoox/support
+      - generic: Support
+    - link "Settings":
+      - /url: /lomovski/globoox/settings
+      - generic: Settings
+  - generic: Speed Insights
+  - link "See all tips":
+    - /url: "#all-tips"
+  - button "Dismiss":
+  - generic: Monitor your website performance with Core Web Vitals and real user data
+  - button "Enable":
+    - generic: Enable
+  - button "Avatar for lomovski-2958 lomovski-2958":
+    - img "Avatar for lomovski-2958":
+      - img "Avatar for lomovski-2958"
+    - generic: lomovski-2958
+  - button "8 unseen notifications":
+  - button:
+  - link "globoox":
+    - /url: /lomovski/globoox
+    - generic: globoox
+  - button:
+  - link "Back to team view":
+    - /url: /lomovski/~/deployments
+  - navigation "Breadcrumb":
+    - link "Deployments":
+      - /url: /lomovski/globoox/deployments
+      - generic: Deployments
+    - generic: 82A1Buqts
+    - button "Copy ID":
+  - button "Vercel Agent is available on Pro":
+    - generic: Agent
+  - link "Deployment":
+    - /url: /lomovski/globoox/82A1BuqtsnPdC9YZNNjngvrdpdN6
+  - link "Logs":
+    - /url: /lomovski/globoox/82A1BuqtsnPdC9YZNNjngvrdpdN6/logs
+  - link "Resources":
+    - /url: /lomovski/globoox/82A1BuqtsnPdC9YZNNjngvrdpdN6/resources
+  - link "Source":
+    - /url: /lomovski/globoox/82A1BuqtsnPdC9YZNNjngvrdpdN6/source
+  - link "Open Graph":
+    - /url: /lomovski/globoox/82A1BuqtsnPdC9YZNNjngvrdpdN6/og
+  - heading "Deployment Details" [level=3]
+  - button "Share":
+    - generic: Share
+  - link "Logs":
+    - /url: /lomovski/globoox/logs?deploymentIds=dpl_82A1BuqtsnPdC9YZNNjngvrdpdN6
+    - generic: Logs
+  - link "Visit":
+    - /url: https://globoox-6p09gfmdj-lomovski.vercel.app
+    - generic: Visit
+  - button "Deployment Actions":
+  - link "Visit Deployment":
+    - /url: https://globoox-6p09gfmdj-lomovski.vercel.app
+  - generic: Created
+  - img "github/condr-at":
+    - img "github/condr-at"
+  - generic: condr-at
+  - generic: 1m ago
+  - generic: Status
+  - generic "This deployment is ready.":
+    - generic: Ready
+    - link "Latest":
+      - /url: /lomovski/globoox/deployments?filterBranch=dev
+  - generic: Duration
+  - generic "Sep 26, 2026, 9:00:25 PM GMT+2":
+    - generic: 1m 15s
+    - generic: Just now
+  - generic: Environment
+  - link "Preview":
+    - /url: /lomovski/globoox/settings/environments/preview
+  - generic: Domains
+  - link "dev.globoox.co":
+    - /url: https://dev.globoox.co
+    - generic: dev.globoox.co
+  - link "globoox-git-dev-lomovski.vercel.app":
+    - /url: https://globoox-git-dev-lomovski.vercel.app
+    - generic: globoox-git-dev-lomovski.vercel.app
+  - link "globoox-6p09gfmdj-lomovski.vercel.app":
+    - /url: https://globoox-6p09gfmdj-lomovski.vercel.app
+    - generic: globoox-6p09gfmdj-lomovski.vercel.app
+  - generic: Source
+  - link "dev":
+    - /url: https://github.com/futurgate/globoox/tree/dev
+  - 'link "3af5dbe fix(reader): serialize position saves and guard late responses"':
+    - /url: https://github.com/futurgate/globoox/commit/3af5dbe96072439d0631318b3b0faeee6a04fb30
+    - generic: 3af5dbe
+    - 'generic "fix(reader): serialize position saves and guard late responses"'
+  - button "Deployment Settings 3 Recommendations":
+    - generic: Deployment Settings
+    - generic: 3 Recommendations
+  - heading "Build Logs 1 1m 15s" [level=2]:
+    - generic: Build Logs
+    - button "1":
+      - generic: "1"
+    - generic: 1m 15s
+  - heading "Deployment Summary Resources" [level=2]:
+    - generic: Deployment Summary
+    - link "Resources":
+      - /url: /lomovski/globoox/82A1BuqtsnPdC9YZNNjngvrdpdN6/resources
+      - generic: Resources
+  - heading "Deployment Checks" [level=2]:
+    - generic: Deployment Checks
+  - heading "Assigning Custom Domains" [level=2]:
+    - generic: Assigning Custom Domains
+  - link "Runtime Logs View and debug runtime logs & errors":
+    - /url: /lomovski/globoox/logs
+    - paragraph: Runtime Logs
+    - paragraph: View and debug runtime logs & errors
+  - link "Observability Monitor app health & performance":
+    - /url: /lomovski/globoox/observability/serverless-functions
+    - paragraph: Observability
+    - paragraph: Monitor app health & performance
+  - link "Speed Insights Not Enabled Performance metrics from real users":
+    - /url: /lomovski/globoox/speed-insights
+    - paragraph: Speed Insights
+    - generic: Not Enabled
+    - paragraph: Performance metrics from real users
+  - link "Web Analytics Not Enabled Analyze visitors & traffic in real-time":
+    - /url: /lomovski/globoox/analytics
+    - paragraph: Web Analytics
+    - generic: Not Enabled
+    - paragraph: Analyze visitors & traffic in real-time
+- alert

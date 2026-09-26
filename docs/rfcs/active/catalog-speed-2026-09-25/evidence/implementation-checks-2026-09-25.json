@@ -411,7 +411,7 @@
       "conclusion": "Authentication rejected; expiry/revocation/incorrect token cause not established. Awaiting replacement credentials or database connection host."
     },
     "live_dev_acceptance": {
-      "status": "API PASS; UI upload PASS; Reader race reproduced and frontend fix verified locally; dev redeploy/retest pending; live index latency unacceptable",
+      "status": "API PASS; UI upload PASS; Reader race fix locally and live verified; latency FAIL: production frontend rollout not ready",
       "cases": [
         "Cold guest/auth entry; immediate titles/order; reload at5s without list GET and after10s with fresh GET; measure titles and first6covers separately.",
         "Independent guest/auth/share scopes: private QA book and cover absent for guest; unknown share empty without stale cache.",
@@ -444,7 +444,7 @@
         "forward_page": "Paragraphs6–9,23%",
         "back_page": "Paragraphs1–5,0%",
         "return_bookshelf_first_book_is_QA": true,
-        "resume_observed": "After another ArrowRight to23% and return to bookshelf, reopening showed0%/Paragraph1. Actual root cause not established.",
+        "resume_observed": "Old build reproducibly failed; new dev3af5dbe passes controlled1200ms race, immediateexit, reopen and fullreload; evidence dev-reader-fix-live.json.",
         "reader_evidence": "dev-qa-reader.txt",
         "translations_after_reader": {
           "chapter_translations": 0,
@@ -463,8 +463,8 @@
           "src/components/Reader/ReaderView.tsx:1545",
           "src/components/Reader/ReaderView.tsx:1574"
         ],
-        "next": "Serialize/coalesce same-client scope/book position writes, preserve latest local anchor, guard late ACK/restore/cache responses; focused deferred tests then clean build, dev deploy and live repeat. No backend/schema change.",
-        "status": "FIX WRITTEN AND LOCALLY VERIFIED; live dev repeat pending",
+        "next": "No further Reader changes for this reproduced race; speed acceptance remains open.",
+        "status": "FIX DEPLOYED TO DEV AND LIVE VERIFIED",
         "controlled_cases": [
           {
             "case": "single forward then wait for saved API before reopen",
@@ -487,6 +487,23 @@
           "docs": "docs:check PASS127governedfiles",
           "diff": "git diff --check PASS",
           "inputs": "reader-fix-build-hashes.json"
+        },
+        "live_fix": {
+          "source": "3af5dbe96072439d0631318b3b0faeee6a04fb30",
+          "deployment": "dpl_82A1BuqtsnPdC9YZNNjngvrdpdN6",
+          "url": "https://globoox-6p09gfmdj-lomovski.vercel.app",
+          "build_seconds": 75,
+          "aliases": [
+            "dev.globoox.co",
+            "globoox-git-dev-lomovski.vercel.app"
+          ],
+          "evidence": "dev-reader-fix-live.json",
+          "cases": [
+            "back42% then forward58% after1228ms: API/SQL/manifest position14",
+            "reopen58% and fullreload58%",
+            "back42% then forward58% after1250ms, immediate routeexit: persisted14 and reopen58%"
+          ],
+          "production_frontend_changed": false
         }
       },
       "browser_connection": {
@@ -495,14 +512,15 @@
         "method": "Chrome Default new window through documented recovery command; existing tabs recovered."
       },
       "qa_cleanup": {
-        "status": "deferred_for_resume_reproduction",
+        "status": "success",
         "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
-        "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
-        "reason": "Own temporary account and EPUB retained only for controlled resume investigation; remove via own-object cleanup after browser checks.",
         "book_ids": [
           "b4efd68f-4ad0-4403-aa6a-234761117643",
           "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
-        ]
+        ],
+        "method": "Normal authenticated backend DELETE for exact owned books; table/storage absence verified; admin delete exact syntheticuser; profile/user/catalog actor absence verified. Credentials removed last; local fixture EPUB/evidence retained.",
+        "evidence": "dev-live-api-qa.json",
+        "adverse": "Initial cleanup preflight rejected optional nonexistent blocklist column; no deletion occurred then. Check removed as unrelated to own QA scope; failed attempts retained."
       },
       "ui_upload": {
         "status": "PASS",
@@ -519,7 +537,15 @@
           "supabase": "eu-west-1 pooler",
           "vercel": "iad1 function per responseheader; ingressfra1"
         },
-        "next": "Measure SQL separately, inspect redundant serial network requests; plan colocating API and DB."
+        "next": "Measure SQL separately, inspect redundant serial network requests; plan colocating API and DB.",
+        "sql_explain": {
+          "guest_first_ms": 97.6,
+          "auth_next_ms": 6.544,
+          "evidence": "dev-latency-sql-explain.txt",
+          "limitation": "Distinct queries in same read-only session, no pure cold/warm pair or p95."
+        },
+        "http_breakdown": "dev-latency-breakdown.json",
+        "adverse_new_preview": "Cold login on new preview triggered index deadline and empty scoped offlinefallback; Retry recovered. Same-window independent API manifest3538ms; current speed unacceptable."
       }
     },
     "database_migration": {

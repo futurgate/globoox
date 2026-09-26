@@ -198,9 +198,116 @@
   "status": "api_pass_awaiting_browser_and_cleanup",
   "translation_requests": 0,
   "cleanup": {
-    "status": "deferred_for_root_browser_check",
+    "status": "success",
     "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
-    "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643"
+    "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+    "book_ids": [
+      "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+    ],
+    "updated_at": "2026-09-26T19:10:32.696Z",
+    "failure": {
+      "stage": "ownership_preflight",
+      "code": "READ_FAILED_blocklist",
+      "source": [
+        "catalog-live-qa-cleanup.mjs:16:47",
+        "catalog-live-qa-cleanup.mjs:87:5",
+        "catalog-live-qa-cleanup.mjs:163:11"
+      ]
+    },
+    "credentials_preserved_unless_already_removed": true,
+    "verified_plan": {
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+      "books": [
+        {
+          "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+          "title": "Catalog QA 102cc5e5",
+          "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+          "storage": [
+            {
+              "bucket": "books",
+              "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+            }
+          ],
+          "chapter_ids": [
+            "dccf349a-576c-4b99-ad88-0eafd25b589f"
+          ],
+          "block_ids": [
+            "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+            "c0318495-bf21-43ab-907c-fde811fe2a29",
+            "c363e97d-bbae-4e32-b28e-2221c99d9996",
+            "eced8062-062f-4b19-a782-c81a4f44d5d1",
+            "d9d04a6e-8309-4f12-bd74-7be07541715d",
+            "135fa0f3-28f2-4ede-9628-71df38012b7a",
+            "c47b7ad8-327c-48e9-811e-f4053861a936",
+            "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+            "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+            "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+            "35790158-735d-4fea-8fbe-936ff6fb9c55",
+            "92027b0c-05a0-45f2-b125-737b8d75fc56",
+            "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+            "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+            "6e6091f8-78a1-41ff-89f2-1658373b92af",
+            "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+            "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+            "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+            "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+            "fca55042-1983-4919-804e-04e1e56629af",
+            "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+            "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+            "3a87d62d-3a86-4cfb-89d2-268e32798390",
+            "45e694a1-2788-4750-89f2-ccba3b9d432c",
+            "f342b55c-b347-46e5-9674-28c94fab09e8"
+          ]
+        },
+        {
+          "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+          "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+          "title": "Catalog UI QA f3063f53",
+          "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+          "storage": [
+            {
+              "bucket": "books",
+              "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+            }
+          ],
+          "chapter_ids": [
+            "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+          ],
+          "block_ids": [
+            "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+            "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+            "e259ecfe-f746-42e7-a768-3a9ebe176801",
+            "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+            "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+            "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+            "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+            "35369eb9-a925-4226-9989-b33887acc6b4",
+            "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+            "bd44c578-988f-4fe9-940b-d6e364ea537b",
+            "76dca923-d45d-4047-8357-6e7347e3f1c0",
+            "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+            "09d10cba-aedf-4811-8285-3910adc570b3",
+            "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+            "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+            "e352fad1-d08d-46be-af29-69d08a8cf22f",
+            "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+            "83456644-50da-4f51-8333-9aeb8caad1d6",
+            "37553568-1761-4639-871b-b1bbdbf2abc6",
+            "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+            "74960816-523b-4e5d-9ec8-e1992283105b",
+            "d174909c-d9c5-4012-8061-13772e4fe4dc",
+            "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+            "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+            "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+          ]
+        }
+      ]
+    },
+    "credentials_removed": true,
+    "local_epubs_and_evidence_preserved": true
   },
   "ui_readonly_observations": [
     {
@@ -318,5 +425,1483 @@
     },
     "pass": true,
     "limitation": "Direct API write bypasses browser position scheduling and restore; it does not prove UI persistence."
-  }
+  },
+  "progress_snapshots": [
+    {
+      "label": "controlled_single_forward",
+      "started_at": "2026-09-26T18:39:14.689Z",
+      "completed_at": "2026-09-26T18:39:16.873Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T18:39:14.690Z",
+        "completed_at": "2026-09-26T18:39:15.968Z",
+        "duration_ms": 1278,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:39:16 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "135fa0f3-28f2-4ede-9628-71df38012b7a",
+          "block_position": 5,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T18:38:30.373+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T18:39:14.713Z",
+        "completed_at": "2026-09-26T18:39:15.149Z",
+        "duration_ms": 437,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:39:15 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "135fa0f3-28f2-4ede-9628-71df38012b7a",
+            "block_position": 5,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T18:38:30.373+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T18:39:14.711Z",
+        "completed_at": "2026-09-26T18:39:16.873Z",
+        "duration_ms": 2162,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:39:16 GMT",
+        "activity_version": "5",
+        "revision": "bddb42e4ba960645520a35654f227e52",
+        "server_time": "2026-09-26T18:39:16.757145+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T18:38:30.373+00:00",
+          "total_blocks": null,
+          "block_position": 5
+        },
+        "last_read_at": "2026-09-26T18:38:29.869409+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "rapid_leave_initial",
+      "started_at": "2026-09-26T18:40:30.946Z",
+      "completed_at": "2026-09-26T18:40:32.745Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T18:40:30.947Z",
+        "completed_at": "2026-09-26T18:40:32.231Z",
+        "duration_ms": 1284,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:40:32 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "135fa0f3-28f2-4ede-9628-71df38012b7a",
+          "block_position": 5,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T18:40:29.658+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T18:40:30.972Z",
+        "completed_at": "2026-09-26T18:40:31.157Z",
+        "duration_ms": 185,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:40:31 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "135fa0f3-28f2-4ede-9628-71df38012b7a",
+            "block_position": 5,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T18:40:29.658+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T18:40:30.970Z",
+        "completed_at": "2026-09-26T18:40:32.745Z",
+        "duration_ms": 1775,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:40:32 GMT",
+        "activity_version": "7",
+        "revision": "528195fe3e4d433bfdff5290caab98e3",
+        "server_time": "2026-09-26T18:40:32.650389+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T18:40:29.658+00:00",
+          "total_blocks": null,
+          "block_position": 5
+        },
+        "last_read_at": "2026-09-26T18:40:29.036576+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "overlapping_saves",
+      "started_at": "2026-09-26T18:41:39.343Z",
+      "completed_at": "2026-09-26T18:41:40.911Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T18:41:39.344Z",
+        "completed_at": "2026-09-26T18:41:40.911Z",
+        "duration_ms": 1567,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:41:41 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+          "block_position": 0,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T18:41:40.073+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T18:41:39.368Z",
+        "completed_at": "2026-09-26T18:41:39.649Z",
+        "duration_ms": 281,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:41:39 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "135fa0f3-28f2-4ede-9628-71df38012b7a",
+            "block_position": 5,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T18:40:29.658+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T18:41:39.366Z",
+        "completed_at": "2026-09-26T18:41:40.213Z",
+        "duration_ms": 847,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:41:40 GMT",
+        "activity_version": "9",
+        "revision": "e06f890d1fd871a772f6ed00b1e10891",
+        "server_time": "2026-09-26T18:41:40.107416+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T18:40:29.658+00:00",
+          "total_blocks": null,
+          "block_position": 5
+        },
+        "last_read_at": "2026-09-26T18:41:39.454758+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "overlapping_saves_settled",
+      "started_at": "2026-09-26T18:41:57.306Z",
+      "completed_at": "2026-09-26T18:41:58.597Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T18:41:57.307Z",
+        "completed_at": "2026-09-26T18:41:58.597Z",
+        "duration_ms": 1290,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:41:58 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+          "block_position": 0,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T18:41:40.073+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T18:41:57.330Z",
+        "completed_at": "2026-09-26T18:41:57.584Z",
+        "duration_ms": 254,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:41:57 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+            "block_position": 0,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T18:41:40.073+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T18:41:57.329Z",
+        "completed_at": "2026-09-26T18:41:58.371Z",
+        "duration_ms": 1043,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 18:41:58 GMT",
+        "activity_version": "9",
+        "revision": "f580ee8d356820ce2071604d614b1d0c",
+        "server_time": "2026-09-26T18:41:58.278728+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T18:41:40.073+00:00",
+          "total_blocks": null,
+          "block_position": 0
+        },
+        "last_read_at": "2026-09-26T18:41:39.454758+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "reader_fix_before",
+      "started_at": "2026-09-26T19:01:26.042Z",
+      "completed_at": "2026-09-26T19:01:29.602Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T19:01:26.042Z",
+        "completed_at": "2026-09-26T19:01:29.372Z",
+        "duration_ms": 3329,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:01:29 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+          "block_position": 0,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T18:41:40.073+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T19:01:26.065Z",
+        "completed_at": "2026-09-26T19:01:27.011Z",
+        "duration_ms": 945,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:01:27 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+            "block_position": 0,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T18:41:40.073+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T19:01:26.064Z",
+        "completed_at": "2026-09-26T19:01:29.602Z",
+        "duration_ms": 3538,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:01:29 GMT",
+        "activity_version": "10",
+        "revision": "0e99c1cab84a1ce47d5a01688475022b",
+        "server_time": "2026-09-26T19:01:29.116093+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T18:41:40.073+00:00",
+          "total_blocks": null,
+          "block_position": 0
+        },
+        "last_read_at": "2026-09-26T18:43:23.999194+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "reader_fix_forward_baseline",
+      "started_at": "2026-09-26T19:03:54.007Z",
+      "completed_at": "2026-09-26T19:03:55.638Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T19:03:54.008Z",
+        "completed_at": "2026-09-26T19:03:55.449Z",
+        "duration_ms": 1441,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:03:55 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "6e6091f8-78a1-41ff-89f2-1658373b92af",
+          "block_position": 14,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T19:03:47.652+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T19:03:54.033Z",
+        "completed_at": "2026-09-26T19:03:54.696Z",
+        "duration_ms": 663,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:03:54 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "6e6091f8-78a1-41ff-89f2-1658373b92af",
+            "block_position": 14,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T19:03:47.652+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T19:03:54.032Z",
+        "completed_at": "2026-09-26T19:03:55.638Z",
+        "duration_ms": 1606,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:03:55 GMT",
+        "activity_version": "13",
+        "revision": "b451f374b07c4a9410e21f654aeea2c6",
+        "server_time": "2026-09-26T19:03:55.580365+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T19:03:47.652+00:00",
+          "total_blocks": null,
+          "block_position": 14
+        },
+        "last_read_at": "2026-09-26T19:03:46.903121+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "reader_fix_1200ms_settled",
+      "started_at": "2026-09-26T19:04:49.463Z",
+      "completed_at": "2026-09-26T19:04:51.070Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T19:04:49.463Z",
+        "completed_at": "2026-09-26T19:04:50.661Z",
+        "duration_ms": 1197,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:04:50 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "6e6091f8-78a1-41ff-89f2-1658373b92af",
+          "block_position": 14,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T19:04:43.199+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T19:04:49.489Z",
+        "completed_at": "2026-09-26T19:04:50.057Z",
+        "duration_ms": 569,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:04:50 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "6e6091f8-78a1-41ff-89f2-1658373b92af",
+            "block_position": 14,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T19:04:43.199+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T19:04:49.487Z",
+        "completed_at": "2026-09-26T19:04:51.070Z",
+        "duration_ms": 1583,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:04:51 GMT",
+        "activity_version": "14",
+        "revision": "fbdefcfbb1dbce819fd5c66a6f7c11da",
+        "server_time": "2026-09-26T19:04:51.05457+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T19:04:43.199+00:00",
+          "total_blocks": null,
+          "block_position": 14
+        },
+        "last_read_at": "2026-09-26T19:04:41.30997+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    },
+    {
+      "label": "reader_fix_immediate_exit",
+      "started_at": "2026-09-26T19:06:45.745Z",
+      "completed_at": "2026-09-26T19:06:47.438Z",
+      "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+      "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+      "position_endpoint": {
+        "started_at": "2026-09-26T19:06:45.745Z",
+        "completed_at": "2026-09-26T19:06:47.438Z",
+        "duration_ms": 1692,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:06:47 GMT",
+        "value": {
+          "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+          "block_id": "6e6091f8-78a1-41ff-89f2-1658373b92af",
+          "block_position": 14,
+          "sentence_index": 0,
+          "selected_language": "EN",
+          "updated_at": "2026-09-26T19:06:32.313+00:00"
+        }
+      },
+      "persisted_progress": {
+        "started_at": "2026-09-26T19:06:45.771Z",
+        "completed_at": "2026-09-26T19:06:46.144Z",
+        "duration_ms": 374,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:06:46 GMT",
+        "values": [
+          {
+            "chapter_id": "dccf349a-576c-4b99-ad88-0eafd25b589f",
+            "block_id": "6e6091f8-78a1-41ff-89f2-1658373b92af",
+            "block_position": 14,
+            "sentence_index": 0,
+            "selected_language": "EN",
+            "content_version": 25,
+            "updated_at": "2026-09-26T19:06:32.313+00:00"
+          }
+        ]
+      },
+      "manifest": {
+        "started_at": "2026-09-26T19:06:45.769Z",
+        "completed_at": "2026-09-26T19:06:47.375Z",
+        "duration_ms": 1606,
+        "status": 200,
+        "server_date": "Sat, 26 Sep 2026 19:06:47 GMT",
+        "activity_version": "17",
+        "revision": "a4248fcb881f61f10ec69d48121acd47",
+        "server_time": "2026-09-26T19:06:47.372148+00:00",
+        "first_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+        "reading": {
+          "updated_at": "2026-09-26T19:06:32.313+00:00",
+          "total_blocks": null,
+          "block_position": 14
+        },
+        "last_read_at": "2026-09-26T19:06:29.867782+00:00",
+        "selected_language": "EN"
+      },
+      "limitation": "Three independent GETs over the recorded time window; not an atomic snapshot. No remote writes or token refresh."
+    }
+  ],
+  "cleanup_runs": [
+    {
+      "at": "2026-09-26T19:08:15.016Z",
+      "mode": "execute",
+      "status": "stopped",
+      "stage": "ownership_preflight",
+      "observations": [],
+      "failure": {
+        "stage": "ownership_preflight",
+        "code": "UNEXPECTED_LOCAL_OR_TRANSPORT_ERROR"
+      },
+      "credentials_preserved_unless_already_removed": true
+    },
+    {
+      "at": "2026-09-26T19:09:32.717Z",
+      "mode": "check",
+      "status": "stopped",
+      "stage": "ownership_preflight",
+      "observations": [
+        {
+          "table": "blocklist",
+          "status": 400,
+          "code": "42703"
+        }
+      ],
+      "failure": {
+        "stage": "ownership_preflight",
+        "code": "READ_FAILED_blocklist",
+        "source": [
+          "catalog-live-qa-cleanup.mjs:16:47",
+          "catalog-live-qa-cleanup.mjs:87:5",
+          "catalog-live-qa-cleanup.mjs:163:11"
+        ]
+      },
+      "credentials_preserved_unless_already_removed": true
+    },
+    {
+      "at": "2026-09-26T19:10:16.881Z",
+      "mode": "execute",
+      "status": "preflight_verified",
+      "stage": "ownership_preflight",
+      "observations": [
+        {
+          "case": "exact_owner_title_hash_unique_references",
+          "pass": true,
+          "book_ids": [
+            "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+          ]
+        }
+      ],
+      "verified_plan": {
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+        "books": [
+          {
+            "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog QA 102cc5e5",
+            "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+              }
+            ],
+            "chapter_ids": [
+              "dccf349a-576c-4b99-ad88-0eafd25b589f"
+            ],
+            "block_ids": [
+              "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+              "c0318495-bf21-43ab-907c-fde811fe2a29",
+              "c363e97d-bbae-4e32-b28e-2221c99d9996",
+              "eced8062-062f-4b19-a782-c81a4f44d5d1",
+              "d9d04a6e-8309-4f12-bd74-7be07541715d",
+              "135fa0f3-28f2-4ede-9628-71df38012b7a",
+              "c47b7ad8-327c-48e9-811e-f4053861a936",
+              "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+              "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+              "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+              "35790158-735d-4fea-8fbe-936ff6fb9c55",
+              "92027b0c-05a0-45f2-b125-737b8d75fc56",
+              "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+              "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+              "6e6091f8-78a1-41ff-89f2-1658373b92af",
+              "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+              "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+              "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+              "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+              "fca55042-1983-4919-804e-04e1e56629af",
+              "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+              "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+              "3a87d62d-3a86-4cfb-89d2-268e32798390",
+              "45e694a1-2788-4750-89f2-ccba3b9d432c",
+              "f342b55c-b347-46e5-9674-28c94fab09e8"
+            ]
+          },
+          {
+            "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog UI QA f3063f53",
+            "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+              }
+            ],
+            "chapter_ids": [
+              "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+            ],
+            "block_ids": [
+              "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+              "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+              "e259ecfe-f746-42e7-a768-3a9ebe176801",
+              "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+              "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+              "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+              "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+              "35369eb9-a925-4226-9989-b33887acc6b4",
+              "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+              "bd44c578-988f-4fe9-940b-d6e364ea537b",
+              "76dca923-d45d-4047-8357-6e7347e3f1c0",
+              "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+              "09d10cba-aedf-4811-8285-3910adc570b3",
+              "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+              "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+              "e352fad1-d08d-46be-af29-69d08a8cf22f",
+              "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+              "83456644-50da-4f51-8333-9aeb8caad1d6",
+              "37553568-1761-4639-871b-b1bbdbf2abc6",
+              "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+              "74960816-523b-4e5d-9ec8-e1992283105b",
+              "d174909c-d9c5-4012-8061-13772e4fe4dc",
+              "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+              "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+              "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-09-26T19:10:21.205Z",
+      "mode": "execute",
+      "status": "books_deleting",
+      "stage": "normal_book_delete",
+      "observations": [
+        {
+          "case": "exact_owner_title_hash_unique_references",
+          "pass": true,
+          "book_ids": [
+            "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+          ]
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "status": 200
+        }
+      ],
+      "verified_plan": {
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+        "books": [
+          {
+            "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog QA 102cc5e5",
+            "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+              }
+            ],
+            "chapter_ids": [
+              "dccf349a-576c-4b99-ad88-0eafd25b589f"
+            ],
+            "block_ids": [
+              "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+              "c0318495-bf21-43ab-907c-fde811fe2a29",
+              "c363e97d-bbae-4e32-b28e-2221c99d9996",
+              "eced8062-062f-4b19-a782-c81a4f44d5d1",
+              "d9d04a6e-8309-4f12-bd74-7be07541715d",
+              "135fa0f3-28f2-4ede-9628-71df38012b7a",
+              "c47b7ad8-327c-48e9-811e-f4053861a936",
+              "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+              "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+              "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+              "35790158-735d-4fea-8fbe-936ff6fb9c55",
+              "92027b0c-05a0-45f2-b125-737b8d75fc56",
+              "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+              "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+              "6e6091f8-78a1-41ff-89f2-1658373b92af",
+              "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+              "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+              "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+              "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+              "fca55042-1983-4919-804e-04e1e56629af",
+              "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+              "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+              "3a87d62d-3a86-4cfb-89d2-268e32798390",
+              "45e694a1-2788-4750-89f2-ccba3b9d432c",
+              "f342b55c-b347-46e5-9674-28c94fab09e8"
+            ]
+          },
+          {
+            "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog UI QA f3063f53",
+            "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+              }
+            ],
+            "chapter_ids": [
+              "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+            ],
+            "block_ids": [
+              "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+              "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+              "e259ecfe-f746-42e7-a768-3a9ebe176801",
+              "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+              "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+              "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+              "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+              "35369eb9-a925-4226-9989-b33887acc6b4",
+              "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+              "bd44c578-988f-4fe9-940b-d6e364ea537b",
+              "76dca923-d45d-4047-8357-6e7347e3f1c0",
+              "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+              "09d10cba-aedf-4811-8285-3910adc570b3",
+              "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+              "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+              "e352fad1-d08d-46be-af29-69d08a8cf22f",
+              "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+              "83456644-50da-4f51-8333-9aeb8caad1d6",
+              "37553568-1761-4639-871b-b1bbdbf2abc6",
+              "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+              "74960816-523b-4e5d-9ec8-e1992283105b",
+              "d174909c-d9c5-4012-8061-13772e4fe4dc",
+              "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+              "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+              "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-09-26T19:10:24.612Z",
+      "mode": "execute",
+      "status": "books_deleting",
+      "stage": "normal_book_delete",
+      "observations": [
+        {
+          "case": "exact_owner_title_hash_unique_references",
+          "pass": true,
+          "book_ids": [
+            "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+          ]
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "status": 200
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+          "status": 200
+        }
+      ],
+      "verified_plan": {
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+        "books": [
+          {
+            "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog QA 102cc5e5",
+            "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+              }
+            ],
+            "chapter_ids": [
+              "dccf349a-576c-4b99-ad88-0eafd25b589f"
+            ],
+            "block_ids": [
+              "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+              "c0318495-bf21-43ab-907c-fde811fe2a29",
+              "c363e97d-bbae-4e32-b28e-2221c99d9996",
+              "eced8062-062f-4b19-a782-c81a4f44d5d1",
+              "d9d04a6e-8309-4f12-bd74-7be07541715d",
+              "135fa0f3-28f2-4ede-9628-71df38012b7a",
+              "c47b7ad8-327c-48e9-811e-f4053861a936",
+              "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+              "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+              "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+              "35790158-735d-4fea-8fbe-936ff6fb9c55",
+              "92027b0c-05a0-45f2-b125-737b8d75fc56",
+              "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+              "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+              "6e6091f8-78a1-41ff-89f2-1658373b92af",
+              "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+              "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+              "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+              "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+              "fca55042-1983-4919-804e-04e1e56629af",
+              "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+              "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+              "3a87d62d-3a86-4cfb-89d2-268e32798390",
+              "45e694a1-2788-4750-89f2-ccba3b9d432c",
+              "f342b55c-b347-46e5-9674-28c94fab09e8"
+            ]
+          },
+          {
+            "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog UI QA f3063f53",
+            "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+              }
+            ],
+            "chapter_ids": [
+              "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+            ],
+            "block_ids": [
+              "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+              "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+              "e259ecfe-f746-42e7-a768-3a9ebe176801",
+              "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+              "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+              "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+              "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+              "35369eb9-a925-4226-9989-b33887acc6b4",
+              "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+              "bd44c578-988f-4fe9-940b-d6e364ea537b",
+              "76dca923-d45d-4047-8357-6e7347e3f1c0",
+              "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+              "09d10cba-aedf-4811-8285-3910adc570b3",
+              "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+              "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+              "e352fad1-d08d-46be-af29-69d08a8cf22f",
+              "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+              "83456644-50da-4f51-8333-9aeb8caad1d6",
+              "37553568-1761-4639-871b-b1bbdbf2abc6",
+              "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+              "74960816-523b-4e5d-9ec8-e1992283105b",
+              "d174909c-d9c5-4012-8061-13772e4fe4dc",
+              "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+              "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+              "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-09-26T19:10:29.918Z",
+      "mode": "execute",
+      "status": "books_storage_verified_absent",
+      "stage": "book_leftover_verification",
+      "observations": [
+        {
+          "case": "exact_owner_title_hash_unique_references",
+          "pass": true,
+          "book_ids": [
+            "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+          ]
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "status": 200
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+          "status": 200
+        },
+        {
+          "table": "chapters",
+          "remaining": 0
+        },
+        {
+          "table": "reading_progress",
+          "remaining": 0
+        },
+        {
+          "table": "user_book_preferences",
+          "remaining": 0
+        },
+        {
+          "table": "translation_cache",
+          "remaining": 0
+        },
+        {
+          "table": "translation_reads",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_book_versions",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_recency",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_events",
+          "remaining": 0
+        },
+        {
+          "table": "share_link_books",
+          "remaining": 0
+        },
+        {
+          "table": "book_glossaries",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_translations",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_revisions",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_revision_runs",
+          "unavailable": true
+        },
+        {
+          "table": "fiction_revision_runs",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_stage_costs",
+          "remaining": 0
+        },
+        {
+          "case": "verified_storage_absent",
+          "bucket": "books",
+          "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+        },
+        {
+          "case": "verified_storage_absent",
+          "bucket": "books",
+          "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "books",
+          "prefix": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958",
+          "search": ""
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "books",
+          "prefix": "",
+          "search": "f3063f53-86f2-48e4-b258-09a482ea007d"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "covers",
+          "prefix": "",
+          "search": "102cc5e5-9979-444b-8197-d57e27b22958"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "covers",
+          "prefix": "",
+          "search": "f3063f53-86f2-48e4-b258-09a482ea007d"
+        }
+      ],
+      "verified_plan": {
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+        "books": [
+          {
+            "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog QA 102cc5e5",
+            "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+              }
+            ],
+            "chapter_ids": [
+              "dccf349a-576c-4b99-ad88-0eafd25b589f"
+            ],
+            "block_ids": [
+              "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+              "c0318495-bf21-43ab-907c-fde811fe2a29",
+              "c363e97d-bbae-4e32-b28e-2221c99d9996",
+              "eced8062-062f-4b19-a782-c81a4f44d5d1",
+              "d9d04a6e-8309-4f12-bd74-7be07541715d",
+              "135fa0f3-28f2-4ede-9628-71df38012b7a",
+              "c47b7ad8-327c-48e9-811e-f4053861a936",
+              "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+              "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+              "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+              "35790158-735d-4fea-8fbe-936ff6fb9c55",
+              "92027b0c-05a0-45f2-b125-737b8d75fc56",
+              "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+              "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+              "6e6091f8-78a1-41ff-89f2-1658373b92af",
+              "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+              "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+              "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+              "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+              "fca55042-1983-4919-804e-04e1e56629af",
+              "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+              "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+              "3a87d62d-3a86-4cfb-89d2-268e32798390",
+              "45e694a1-2788-4750-89f2-ccba3b9d432c",
+              "f342b55c-b347-46e5-9674-28c94fab09e8"
+            ]
+          },
+          {
+            "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog UI QA f3063f53",
+            "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+              }
+            ],
+            "chapter_ids": [
+              "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+            ],
+            "block_ids": [
+              "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+              "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+              "e259ecfe-f746-42e7-a768-3a9ebe176801",
+              "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+              "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+              "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+              "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+              "35369eb9-a925-4226-9989-b33887acc6b4",
+              "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+              "bd44c578-988f-4fe9-940b-d6e364ea537b",
+              "76dca923-d45d-4047-8357-6e7347e3f1c0",
+              "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+              "09d10cba-aedf-4811-8285-3910adc570b3",
+              "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+              "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+              "e352fad1-d08d-46be-af29-69d08a8cf22f",
+              "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+              "83456644-50da-4f51-8333-9aeb8caad1d6",
+              "37553568-1761-4639-871b-b1bbdbf2abc6",
+              "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+              "74960816-523b-4e5d-9ec8-e1992283105b",
+              "d174909c-d9c5-4012-8061-13772e4fe4dc",
+              "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+              "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+              "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-09-26T19:10:32.693Z",
+      "mode": "execute",
+      "status": "success",
+      "stage": "delete_verified_synthetic_user",
+      "observations": [
+        {
+          "case": "exact_owner_title_hash_unique_references",
+          "pass": true,
+          "book_ids": [
+            "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+          ]
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "status": 200
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+          "status": 200
+        },
+        {
+          "table": "chapters",
+          "remaining": 0
+        },
+        {
+          "table": "reading_progress",
+          "remaining": 0
+        },
+        {
+          "table": "user_book_preferences",
+          "remaining": 0
+        },
+        {
+          "table": "translation_cache",
+          "remaining": 0
+        },
+        {
+          "table": "translation_reads",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_book_versions",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_recency",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_events",
+          "remaining": 0
+        },
+        {
+          "table": "share_link_books",
+          "remaining": 0
+        },
+        {
+          "table": "book_glossaries",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_translations",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_revisions",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_revision_runs",
+          "unavailable": true
+        },
+        {
+          "table": "fiction_revision_runs",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_stage_costs",
+          "remaining": 0
+        },
+        {
+          "case": "verified_storage_absent",
+          "bucket": "books",
+          "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+        },
+        {
+          "case": "verified_storage_absent",
+          "bucket": "books",
+          "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "books",
+          "prefix": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958",
+          "search": ""
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "books",
+          "prefix": "",
+          "search": "f3063f53-86f2-48e4-b258-09a482ea007d"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "covers",
+          "prefix": "",
+          "search": "102cc5e5-9979-444b-8197-d57e27b22958"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "covers",
+          "prefix": "",
+          "search": "f3063f53-86f2-48e4-b258-09a482ea007d"
+        }
+      ],
+      "verified_plan": {
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+        "books": [
+          {
+            "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog QA 102cc5e5",
+            "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+              }
+            ],
+            "chapter_ids": [
+              "dccf349a-576c-4b99-ad88-0eafd25b589f"
+            ],
+            "block_ids": [
+              "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+              "c0318495-bf21-43ab-907c-fde811fe2a29",
+              "c363e97d-bbae-4e32-b28e-2221c99d9996",
+              "eced8062-062f-4b19-a782-c81a4f44d5d1",
+              "d9d04a6e-8309-4f12-bd74-7be07541715d",
+              "135fa0f3-28f2-4ede-9628-71df38012b7a",
+              "c47b7ad8-327c-48e9-811e-f4053861a936",
+              "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+              "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+              "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+              "35790158-735d-4fea-8fbe-936ff6fb9c55",
+              "92027b0c-05a0-45f2-b125-737b8d75fc56",
+              "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+              "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+              "6e6091f8-78a1-41ff-89f2-1658373b92af",
+              "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+              "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+              "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+              "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+              "fca55042-1983-4919-804e-04e1e56629af",
+              "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+              "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+              "3a87d62d-3a86-4cfb-89d2-268e32798390",
+              "45e694a1-2788-4750-89f2-ccba3b9d432c",
+              "f342b55c-b347-46e5-9674-28c94fab09e8"
+            ]
+          },
+          {
+            "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog UI QA f3063f53",
+            "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+              }
+            ],
+            "chapter_ids": [
+              "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+            ],
+            "block_ids": [
+              "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+              "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+              "e259ecfe-f746-42e7-a768-3a9ebe176801",
+              "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+              "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+              "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+              "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+              "35369eb9-a925-4226-9989-b33887acc6b4",
+              "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+              "bd44c578-988f-4fe9-940b-d6e364ea537b",
+              "76dca923-d45d-4047-8357-6e7347e3f1c0",
+              "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+              "09d10cba-aedf-4811-8285-3910adc570b3",
+              "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+              "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+              "e352fad1-d08d-46be-af29-69d08a8cf22f",
+              "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+              "83456644-50da-4f51-8333-9aeb8caad1d6",
+              "37553568-1761-4639-871b-b1bbdbf2abc6",
+              "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+              "74960816-523b-4e5d-9ec8-e1992283105b",
+              "d174909c-d9c5-4012-8061-13772e4fe4dc",
+              "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+              "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+              "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+            ]
+          }
+        ]
+      },
+      "credentials_removed": false,
+      "local_epubs_and_evidence_preserved": true
+    },
+    {
+      "at": "2026-09-26T19:10:32.696Z",
+      "mode": "execute",
+      "status": "success",
+      "stage": "delete_verified_synthetic_user",
+      "observations": [
+        {
+          "case": "exact_owner_title_hash_unique_references",
+          "pass": true,
+          "book_ids": [
+            "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb"
+          ]
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+          "status": 200
+        },
+        {
+          "case": "normal_authenticated_book_delete",
+          "book_id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+          "status": 200
+        },
+        {
+          "table": "chapters",
+          "remaining": 0
+        },
+        {
+          "table": "reading_progress",
+          "remaining": 0
+        },
+        {
+          "table": "user_book_preferences",
+          "remaining": 0
+        },
+        {
+          "table": "translation_cache",
+          "remaining": 0
+        },
+        {
+          "table": "translation_reads",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_book_versions",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_recency",
+          "remaining": 0
+        },
+        {
+          "table": "catalog_v2_events",
+          "remaining": 0
+        },
+        {
+          "table": "share_link_books",
+          "remaining": 0
+        },
+        {
+          "table": "book_glossaries",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_translations",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_revisions",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_revision_runs",
+          "unavailable": true
+        },
+        {
+          "table": "fiction_revision_runs",
+          "remaining": 0
+        },
+        {
+          "table": "fiction_stage_costs",
+          "remaining": 0
+        },
+        {
+          "case": "verified_storage_absent",
+          "bucket": "books",
+          "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+        },
+        {
+          "case": "verified_storage_absent",
+          "bucket": "books",
+          "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "books",
+          "prefix": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958",
+          "search": ""
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "books",
+          "prefix": "",
+          "search": "f3063f53-86f2-48e4-b258-09a482ea007d"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "covers",
+          "prefix": "",
+          "search": "102cc5e5-9979-444b-8197-d57e27b22958"
+        },
+        {
+          "case": "run_storage_namespace_absent",
+          "bucket": "covers",
+          "prefix": "",
+          "search": "f3063f53-86f2-48e4-b258-09a482ea007d"
+        }
+      ],
+      "verified_plan": {
+        "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+        "run_id": "102cc5e5-9979-444b-8197-d57e27b22958",
+        "books": [
+          {
+            "id": "b4efd68f-4ad0-4403-aa6a-234761117643",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog QA 102cc5e5",
+            "hash": "b34258661e83e132166827382d606e11f362c394a1f6adbe8eafa8adaf64fdae",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-qa/102cc5e5-9979-444b-8197-d57e27b22958/catalog-live-qa-102cc5e5-9979-444b-8197-d57e27b22958.epub"
+              }
+            ],
+            "chapter_ids": [
+              "dccf349a-576c-4b99-ad88-0eafd25b589f"
+            ],
+            "block_ids": [
+              "78202bf0-4c16-4fb3-8794-4c4e4701a33f",
+              "c0318495-bf21-43ab-907c-fde811fe2a29",
+              "c363e97d-bbae-4e32-b28e-2221c99d9996",
+              "eced8062-062f-4b19-a782-c81a4f44d5d1",
+              "d9d04a6e-8309-4f12-bd74-7be07541715d",
+              "135fa0f3-28f2-4ede-9628-71df38012b7a",
+              "c47b7ad8-327c-48e9-811e-f4053861a936",
+              "2cce2e9c-8f1c-43b3-92ec-a70b75e05842",
+              "d8007ae9-39e1-40b0-99fe-bc808f1475ad",
+              "6025ae42-46b5-4622-b6fe-9abbde6d0dd0",
+              "35790158-735d-4fea-8fbe-936ff6fb9c55",
+              "92027b0c-05a0-45f2-b125-737b8d75fc56",
+              "77c51e38-e0a4-44a9-8d16-8c6694b38599",
+              "f67b32df-9926-420c-9fb0-2af7d2ad3097",
+              "6e6091f8-78a1-41ff-89f2-1658373b92af",
+              "c8c94640-f0a1-4035-8b33-440ebe69ceda",
+              "9ddefc94-e912-42f3-9638-38d0d9ece90c",
+              "72805965-dfb0-4f3f-9bbc-52b1a91a2ddd",
+              "4136fe30-5045-47cd-bbbb-18fc6c9b0f17",
+              "fca55042-1983-4919-804e-04e1e56629af",
+              "19a3f209-c43f-46fe-a53a-b9d1499b7e6e",
+              "2f86cdc5-da3e-4b42-a171-2e376a500fd6",
+              "3a87d62d-3a86-4cfb-89d2-268e32798390",
+              "45e694a1-2788-4750-89f2-ccba3b9d432c",
+              "f342b55c-b347-46e5-9674-28c94fab09e8"
+            ]
+          },
+          {
+            "id": "e7e870fa-6c76-47ad-8316-8c9ba1e3a7fb",
+            "user_id": "c73d0895-fc97-48c6-bd91-c958589b5e37",
+            "title": "Catalog UI QA f3063f53",
+            "hash": "249c57f5f991e8cfc8cfa97f5a2e1e2d25778dfd3578f889de80cd45d674f603",
+            "storage": [
+              {
+                "bucket": "books",
+                "name": "catalog-ui-qa-f3063f53-86f2-48e4-b258-09a482ea007d-0b5a0a85-f37b-40bc-ba45-bcb69f73a65f.epub"
+              }
+            ],
+            "chapter_ids": [
+              "cc6f2bc2-af25-4797-ab1a-fbc12ccb793d"
+            ],
+            "block_ids": [
+              "c381c4b4-3b84-4639-8f83-9bc66a72b4d6",
+              "fdf5e789-3ef5-4163-b896-b215ccbc1fe2",
+              "e259ecfe-f746-42e7-a768-3a9ebe176801",
+              "2bb9a3c0-759e-4302-b36a-2f97e769a45e",
+              "a57e107f-bd12-4c86-9ebd-3c7a951c6093",
+              "d79ae508-fbb3-46c1-a3a8-ff3e5c0a23c0",
+              "50b7a258-4bc5-4496-ba3f-5d1c7b39124b",
+              "35369eb9-a925-4226-9989-b33887acc6b4",
+              "0f55529c-f863-4c62-86d5-31fddc6b6ba2",
+              "bd44c578-988f-4fe9-940b-d6e364ea537b",
+              "76dca923-d45d-4047-8357-6e7347e3f1c0",
+              "0ac4ad13-e545-4567-bc7e-3dbd9048880d",
+              "09d10cba-aedf-4811-8285-3910adc570b3",
+              "e60256e2-fe1f-4f94-86cb-6f91c9c659d9",
+              "3ea301f5-a2ed-4f79-9a04-be9bfc4413c3",
+              "e352fad1-d08d-46be-af29-69d08a8cf22f",
+              "5ed4f0e7-9d27-4ea0-ab8a-8e3fe5b2d03b",
+              "83456644-50da-4f51-8333-9aeb8caad1d6",
+              "37553568-1761-4639-871b-b1bbdbf2abc6",
+              "1cd8e07b-a777-4769-8fe1-d553d66f3828",
+              "74960816-523b-4e5d-9ec8-e1992283105b",
+              "d174909c-d9c5-4012-8061-13772e4fe4dc",
+              "c1d8b709-6310-4068-b0c0-feeab331bbf7",
+              "f06dab5f-850a-4a10-8e34-6e117c9e47f6",
+              "7738ac00-c2cd-4ce7-af36-de0209a116b4"
+            ]
+          }
+        ]
+      },
+      "credentials_removed": true,
+      "local_epubs_and_evidence_preserved": true
+    }
+  ]
 }

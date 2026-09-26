@@ -1,0 +1,96 @@
+{
+  "deployment": "dpl_82A1BuqtsnPdC9YZNNjngvrdpdN6",
+  "source": "3af5dbe96072439d0631318b3b0faeee6a04fb30",
+  "cold_index_timeout": "- main:\n  - heading \"My Books\" [level=1]\n  - status:\n    - paragraph: Offline mode. Showing saved books; changes and uploads are unavailable.\n    - button \"Try again\"\n  - button \"Visible\"\n  - button \"Archived\"\n  - button \"All\"\n  - button \"Sort\":\n    - generic: Recently Read\n  - paragraph: No saved books are available for this library.\n  - text: Need help?\n  - link \"support@globoox.co\":\n    - /url: mailto:support@globoox.co\n- navigation:\n  - button \"soon Store\" [disabled]:\n    - generic: soon\n    - generic: Store\n  - link \"My Books\":\n    - /url: /my-books\n    - generic: My Books\n  - link \"Settings\":\n    - /url: /settings\n    - generic: Settings\n- alert",
+  "runs": [
+    {
+      "label": "fixed_baseline_current",
+      "at": "2026-09-26T19:04:27.183Z",
+      "paragraphs": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "progress": "58%"
+    },
+    {
+      "label": "fixed_back_before_1200ms",
+      "at": "2026-09-26T19:04:39.446Z",
+      "paragraphs": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "progress": "42%"
+    },
+    {
+      "label": "fixed_forward_after_1200ms",
+      "at": "2026-09-26T19:04:40.674Z",
+      "paragraphs": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "progress": "58%"
+    },
+    {
+      "label": "fixed_reopen",
+      "at": "2026-09-26T19:05:41.263Z",
+      "paragraphs": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "progress": "58%"
+    },
+    {
+      "label": "fixed_full_reload",
+      "at": "2026-09-26T19:06:12.194Z",
+      "paragraphs": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "progress": "58%"
+    },
+    {
+      "label": "fixed_immediate_exit_back",
+      "at": "2026-09-26T19:06:28.683Z",
+      "paragraphs": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "progress": "42%"
+    },
+    {
+      "label": "fixed_immediate_exit_forward",
+      "at": "2026-09-26T19:06:29.933Z",
+      "paragraphs": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "progress": "58%"
+    },
+    {
+      "label": "fixed_immediate_exit_reopen",
+      "at": "2026-09-26T19:07:15.723Z",
+      "paragraphs": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "progress": "58%"
+    }
+  ],
+  "limitation": "Controlled browser scenarios and independent API/SQL snapshots; not an exhaustive race proof or p95."
+}

@@ -1,0 +1,97 @@
+BEGIN
+SET
+              QUERY PLAN              
+--------------------------------------
+ [                                   +
+   {                                 +
+     "Plan": {                       +
+       "Node Type": "Result",        +
+       "Parallel Aware": false,      +
+       "Async Capable": false,       +
+       "Startup Cost": 0.00,         +
+       "Total Cost": 0.26,           +
+       "Plan Rows": 1,               +
+       "Plan Width": 32,             +
+       "Actual Startup Time": 96.728,+
+       "Actual Total Time": 96.728,  +
+       "Actual Rows": 1,             +
+       "Actual Loops": 1,            +
+       "Shared Hit Blocks": 1220,    +
+       "Shared Read Blocks": 0,      +
+       "Shared Dirtied Blocks": 0,   +
+       "Shared Written Blocks": 0,   +
+       "Local Hit Blocks": 0,        +
+       "Local Read Blocks": 0,       +
+       "Local Dirtied Blocks": 0,    +
+       "Local Written Blocks": 0,    +
+       "Temp Read Blocks": 0,        +
+       "Temp Written Blocks": 0      +
+     },                              +
+     "Planning": {                   +
+       "Shared Hit Blocks": 0,       +
+       "Shared Read Blocks": 0,      +
+       "Shared Dirtied Blocks": 0,   +
+       "Shared Written Blocks": 0,   +
+       "Local Hit Blocks": 0,        +
+       "Local Read Blocks": 0,       +
+       "Local Dirtied Blocks": 0,    +
+       "Local Written Blocks": 0,    +
+       "Temp Read Blocks": 0,        +
+       "Temp Written Blocks": 0      +
+     },                              +
+     "Planning Time": 0.041,         +
+     "Triggers": [                   +
+     ],                              +
+     "Execution Time": 97.600        +
+   }                                 +
+ ]
+(1 row)
+
+             QUERY PLAN              
+-------------------------------------
+ [                                  +
+   {                                +
+     "Plan": {                      +
+       "Node Type": "Result",       +
+       "Parallel Aware": false,     +
+       "Async Capable": false,      +
+       "Startup Cost": 0.00,        +
+       "Total Cost": 0.26,          +
+       "Plan Rows": 1,              +
+       "Plan Width": 32,            +
+       "Actual Startup Time": 6.426,+
+       "Actual Total Time": 6.427,  +
+       "Actual Rows": 1,            +
+       "Actual Loops": 1,           +
+       "Shared Hit Blocks": 76,     +
+       "Shared Read Blocks": 0,     +
+       "Shared Dirtied Blocks": 0,  +
+       "Shared Written Blocks": 0,  +
+       "Local Hit Blocks": 0,       +
+       "Local Read Blocks": 0,      +
+       "Local Dirtied Blocks": 0,   +
+       "Local Written Blocks": 0,   +
+       "Temp Read Blocks": 0,       +
+       "Temp Written Blocks": 0     +
+     },                             +
+     "Planning": {                  +
+       "Shared Hit Blocks": 0,      +
+       "Shared Read Blocks": 0,     +
+       "Shared Dirtied Blocks": 0,  +
+       "Shared Written Blocks": 0,  +
+       "Local Hit Blocks": 0,       +
+       "Local Read Blocks": 0,      +
+       "Local Dirtied Blocks": 0,   +
+       "Local Written Blocks": 0,   +
+       "Temp Read Blocks": 0,       +
+       "Temp Written Blocks": 0     +
+     },                             +
+     "Planning Time": 0.013,        +
+     "Triggers": [                  +
+     ],                             +
+     "Execution Time": 6.544        +
+   }                                +
+ ]
+(1 row)
+
+ROLLBACK
