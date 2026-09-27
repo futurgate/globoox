@@ -5,6 +5,7 @@ import { CatalogController, type CatalogDependencies } from '@/lib/catalogState'
 import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, invalidateCatalogConfirmation } from '@/lib/catalogFreshness'
 import { createReadingActivityQueue } from '@/lib/readingActivity'
 import type { CatalogCacheEntry } from '@/lib/catalogCache'
+import { CatalogError } from '@/lib/catalogTypes'
 import { context as originalContext, deferred, manifest, microtasks } from './catalogFixtures'
 
 class MemoryStorage implements Storage {
@@ -81,6 +82,51 @@ describe('confirmed 10-second shelf cooldown', () => {
     const f = setup([]); await f.page().refresh(); const page = f.page(); await page.refresh()
     expect(page.snapshot.books).toEqual([]); expect(f.fetcher).toHaveBeenCalledTimes(1)
     await page.refresh(true); expect(f.fetcher).toHaveBeenCalledTimes(2)
+  })
+  it.each([401, 403])('does not resurrect a recently confirmed private cache after an explicit %s refusal', async status => {
+    const f = setup(['private-a'])
+    const first = f.page()
+    await first.refresh()
+    expect(hasFreshCatalogConfirmation(f.data)).toBe(true)
+    const other = setup(['private-b'])
+    await other.page().refresh()
+    f.fetcher.mockRejectedValue(new CatalogError('auth', 'Access revoked', status))
+    await first.refresh(true)
+    expect(first.snapshot.books).toEqual([])
+    expect(first.snapshot.error?.kind).toBe('auth')
+    first.dispose()
+
+    // The SDK may still hold an unexpired session. A new page must recheck
+    // the authoritative refusal, rather than treating the old receipt as fresh.
+    const reopened = f.page()
+    await reopened.refresh()
+    expect(f.fetcher).toHaveBeenCalledTimes(3)
+    expect(reopened.snapshot.books).toEqual([])
+    expect(reopened.snapshot.error?.kind).toBe('auth')
+    reopened.dispose()
+    expect(hasFreshCatalogConfirmation(other.data)).toBe(true)
+    const otherPage = other.page()
+    await otherPage.refresh()
+    expect(other.fetcher).toHaveBeenCalledTimes(1)
+    expect(otherPage.snapshot.books.map(book => book.id)).toEqual(['private-b'])
+    otherPage.dispose()
+  })
+  it('a forced network timeout does not renew or revoke the previous successful receipt', async () => {
+    const f = setup(['private-a'])
+    const page = f.page()
+    await page.refresh()
+    await vi.advanceTimersByTimeAsync(5000)
+    f.fetcher.mockImplementation(() => new Promise(() => {}))
+    const retry = page.refresh(true)
+    await vi.advanceTimersByTimeAsync(2500)
+    await retry
+    expect(page.snapshot.error?.kind).toBe('timeout')
+    expect(page.snapshot.books.map(book => book.id)).toEqual(['private-a'])
+    expect(hasFreshCatalogConfirmation(f.data)).toBe(true)
+    await vi.advanceTimersByTimeAsync(2500)
+    expect(hasFreshCatalogConfirmation(f.data)).toBe(false)
+    expect(f.fetcher).toHaveBeenCalledTimes(2)
+    page.dispose()
   })
   it('does not trust a receipt for another scope, another revision, or a legacy cache', async () => {
     const f = setup(); await f.page().refresh()

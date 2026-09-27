@@ -91,7 +91,7 @@ A complete server manifest, including an empty library, may be reused for 10 sec
 
 When no eligible receipt exists, disk reads cannot postpone the index GET. Cache preparation runs alongside the server path. Identical local reads are coalesced, and each catalog storage/legacy wait is bounded to 300 ms; underlying shared legacy reads can still finish later. A late local result cannot replace accepted server state. The storage format and Reader cache remain unchanged.
 
-Network failure, an activity failure or the existing 2.5-second attempt deadline can show only the same scope's offline cache, with an explanation and Retry. Authentication/permission errors never become guest/offline success. Retry keeps existing cards while refreshing. The deadline is a failure boundary, not a latency target.
+Network failure, an activity failure or the existing 2.5-second attempt deadline can show only the same scope's offline cache, with an explanation and Retry. Authentication/permission errors clear visible private data and invalidate that scope's confirmation receipt, so reopening within 10 seconds must contact the server again. They never become guest/offline success. A network timeout neither renews nor revokes a prior receipt; its original expiry still applies. Retry keeps existing cards while refreshing. The deadline is a failure boundary, not a latency target.
 
 Covers fill the accepted slots from cache, then a FIFO queue downloads all missing covers with at most four concurrent requests, independently of scrolling. Upload immediately adds a local placeholder at the top and fills the same card when ready. Closing the page can interrupt upload; no durable server upload job is implied.
 

@@ -207,7 +207,12 @@ export class CatalogController {
         this.publish({ offline: true, error: failure, loading: false, refreshing: false })
       } else {
         // A rejected identity must not leave previously rendered private data onscreen.
-        if (failure.kind === 'auth') { this.hasData = false; this.manifest = null }
+        if (failure.kind === 'auth') {
+          const rejectedScope = context?.scopeKey ?? this.view.context?.scopeKey
+          if (rejectedScope) invalidateCatalogConfirmation(rejectedScope)
+          this.hasData = false
+          this.manifest = null
+        }
         this.publish({ error: failure, loading: false, refreshing: false, offline: false,
           ...(failure.kind === 'auth' ? { books: [], context: null, revision: null } : {}) })
       }
