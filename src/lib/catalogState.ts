@@ -1,7 +1,7 @@
 import { abortable } from './catalogApi'
 import { CatalogError, validateCatalogManifest, type CatalogContext, type CatalogItem, type CatalogManifest } from './catalogTypes'
 import type { CatalogCacheEntry } from './catalogCache'
-import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, invalidateCatalogConfirmation } from './catalogFreshness'
+import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, hasFreshCatalogReceipt, invalidateCatalogConfirmation } from './catalogFreshness'
 
 export interface CatalogView {
   books: CatalogItem[]
@@ -121,7 +121,31 @@ export class CatalogController {
       this.prepareCache(context)
     }
     try {
-      const manifest = await abortable((async () => {
+      let minVersion = '0'
+      let fromCache = false
+      const flushPriorActivity = async (resolved: CatalogContext) => {
+        await settlePriorWrites(resolved.scopeKey, controller.signal)
+        try { return await this.dependencies.flush(resolved, controller.signal) }
+        catch (error) {
+          if (controller.signal.aborted || error instanceof CatalogError) throw error
+          throw new CatalogError('activity', error instanceof Error ? error.message : 'Reading activity could not be confirmed')
+        }
+      }
+      const fetchConfirmed = async (resolved: CatalogContext) => {
+        if (!current() || controller.signal.aborted) throw controller.signal.reason
+        const validation = beginCatalogValidation(resolved.scopeKey)
+        const data = await this.dependencies.fetch(resolved, controller.signal, minVersion)
+        const checked = validateCatalogManifest(data, resolved.scopeKey, minVersion)
+        if (current() && !controller.signal.aborted) confirmCatalog(checked, validation)
+        return checked
+      }
+      const reusable = (candidate: CatalogManifest, resolved: CatalogContext) => {
+        try {
+          validateCatalogManifest(candidate, resolved.scopeKey, minVersion)
+          return hasFreshCatalogConfirmation(candidate)
+        } catch { return false }
+      }
+      let manifest = await abortable((async () => {
         const resolved = await this.dependencies.resolve(controller.signal)
         if (!current() || controller.signal.aborted) throw controller.signal.reason
         context = resolved
@@ -131,29 +155,28 @@ export class CatalogController {
           this.publish({ books: [], context: null, revision: null, offline: false, loading: true, refreshing: false })
         }
         this.prepareCache(resolved)
-        await settlePriorWrites(resolved.scopeKey, controller.signal)
-        let version: string
-        try { version = await this.dependencies.flush(resolved, controller.signal) }
-        catch (error) {
-          if (controller.signal.aborted || error instanceof CatalogError) throw error
-          throw new CatalogError('activity', error instanceof Error ? error.message : 'Reading activity could not be confirmed')
-        }
+        minVersion = await flushPriorActivity(resolved)
         if (!current() || controller.signal.aborted) throw controller.signal.reason
-        if (!force) {
-          const cached = this.dependencies.cached(resolved.scopeKey)
-            ?? await abortable(this.dependencies.cache(resolved), controller.signal)
-          if (cached?.origin === 'server' && hasFreshCatalogConfirmation(cached.manifest)) {
-            try { return validateCatalogManifest(cached.manifest, resolved.scopeKey, version) }
-            catch { /* A receipt cannot override a newer reading acknowledgement. */ }
+        if (!force && hasFreshCatalogReceipt(resolved.scopeKey, minVersion)) {
+          const memory = this.dependencies.cached(resolved.scopeKey)
+          const cached = memory ?? await abortable(this.dependencies.cache(resolved).catch(() => null), controller.signal)
+          if (cached?.origin === 'server' && reusable(cached.manifest, resolved)) {
+            fromCache = true
+            return cached.manifest
           }
+          // Reading/mutations can begin while the eligible disk record is loading.
+          if (!memory) minVersion = await flushPriorActivity(resolved)
         }
-        const validation = beginCatalogValidation(resolved.scopeKey)
-        const data = await this.dependencies.fetch(resolved, controller.signal, version)
-        const checked = validateCatalogManifest(data, resolved.scopeKey, version)
-        if (current() && !controller.signal.aborted) confirmCatalog(checked, validation)
-        return checked
+        return fetchConfirmed(resolved)
       })(), controller.signal)
       if (!current() || controller.signal.aborted || !context) return
+      // An await boundary above can cross expiry or another tab's invalidation.
+      // The last receipt check and publication must be in the same synchronous turn.
+      if (fromCache && !reusable(manifest, context)) {
+        minVersion = await abortable(flushPriorActivity(context), controller.signal)
+        manifest = await abortable(fetchConfirmed(context), controller.signal)
+        if (!current() || controller.signal.aborted) return
+      }
       this.manifest = manifest
       this.hasData = true
       this.fallback = { manifest, savedAt: Date.now(), origin: 'server' }

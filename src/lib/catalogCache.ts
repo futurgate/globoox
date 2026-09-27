@@ -3,6 +3,7 @@ import { catalogItemToApiBook, validateCatalogManifest, type CatalogContext, typ
 
 const DB_NAME = 'globoox-catalog-v2'
 const DB_VERSION = 1
+const READ_TIMEOUT_MS = 300
 type StoreName = 'manifests' | 'covers' | 'migration'
 export interface CatalogCacheEntry { manifest: CatalogManifest; savedAt: number; origin: 'server' | 'legacy'; legacyScopeKey?: string }
 const memory = new Map<string, CatalogCacheEntry>()
@@ -18,8 +19,28 @@ function rememberCover(key: string, blob: Blob) {
     coverMemory.delete(oldest)
   }
 }
-const migrationInFlight = new Map<string, Promise<CatalogCacheEntry | null>>()
+const manifestReads = new Map<string, Promise<CatalogCacheEntry | null>>()
+const cacheLoads = new Map<string, Promise<CatalogCacheEntry | null>>()
+const coverReads = new Map<string, Promise<Blob | null>>()
+const legacyListReads = new Map<string, Promise<Awaited<ReturnType<typeof getCachedBooksList>> | undefined>>()
 const writes = new Map<string, Promise<void>>()
+
+function shareRead<T>(pending: Map<string, Promise<T>>, key: string, read: () => Promise<T>): Promise<T> {
+  const existing = pending.get(key)
+  if (existing) return existing
+  const promise = read().finally(() => { if (pending.get(key) === promise) pending.delete(key) })
+  pending.set(key, promise)
+  return promise
+}
+
+/** Legacy readers are shared with Reader. Bound only catalog's wait; late reads stay read-only. */
+function boundedLegacyRead<T>(read: () => Promise<T>): Promise<T | undefined> {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => resolve(undefined), READ_TIMEOUT_MS)
+    Promise.resolve().then(read).then(value => { clearTimeout(timer); resolve(value) }, () => { clearTimeout(timer); resolve(undefined) })
+  })
+}
+const readLegacyList = (scope: string) => shareRead(legacyListReads, scope, () => boundedLegacyRead(() => getCachedBooksList(scope, 'all')))
 
 /** Storage denial/blocked upgrades must never hold a catalog attempt indefinitely. */
 async function storage<T>(storeName: StoreName, mode: IDBTransactionMode, operation: (store: IDBObjectStore) => IDBRequest<T>): Promise<T | undefined> {
@@ -34,7 +55,7 @@ async function storage<T>(storeName: StoreName, mode: IDBTransactionMode, operat
       db?.close()
       resolve(value)
     }
-    const timer = setTimeout(() => finish(), 300)
+    const timer = setTimeout(() => finish(), READ_TIMEOUT_MS)
     try {
       const opening = indexedDB.open(DB_NAME, DB_VERSION)
       opening.onupgradeneeded = () => {
@@ -76,11 +97,13 @@ export function getCatalogManifestSync(scopeKey: string): CatalogCacheEntry | nu
 export async function getCatalogManifest(scopeKey: string): Promise<CatalogCacheEntry | null> {
   const cached = memory.get(scopeKey)
   if (cached) return cached
-  const entry = validEntry(await storage('manifests', 'readonly', store => store.get(scopeKey)), scopeKey)
-  // A late disk read cannot replace a newer accepted manifest/mutation.
-  if (memory.has(scopeKey)) return memory.get(scopeKey)!
-  if (entry) memory.set(scopeKey, entry)
-  return entry
+  return shareRead(manifestReads, scopeKey, async () => {
+    const entry = validEntry(await storage('manifests', 'readonly', store => store.get(scopeKey)), scopeKey)
+    // A late disk read cannot replace a newer accepted manifest/mutation.
+    if (memory.has(scopeKey)) return memory.get(scopeKey)!
+    if (entry) memory.set(scopeKey, entry)
+    return entry
+  })
 }
 
 export async function putCatalogManifest(manifest: CatalogManifest, origin: CatalogCacheEntry['origin'] = 'server', legacyScopeKey?: string): Promise<void> {
@@ -101,22 +124,26 @@ export async function getCatalogCover(scopeKey: string, bookId: string, version:
   const key = coverKey(scopeKey, bookId, version)
   const cached = coverMemory.get(key)
   if (cached) return cached
-  let blob = await storage('covers', 'readonly', store => store.get(key))
-  if (!(blob instanceof Blob) || !blob.type.startsWith('image/')) {
-    // Legacy originals stay where they are. Decode/copy only an actually requested cover.
-    const entry = await getCatalogManifest(scopeKey)
-    if (entry?.origin !== 'legacy' || !entry.legacyScopeKey
-      || entry.manifest.items.find(item => item.id === bookId)?.cover?.version !== version) return null
-    const old = await getCachedBooksList(entry.legacyScopeKey, 'all')
-    if (old?.scope !== entry.legacyScopeKey) return null
-    if (legacyCoverVersion(old.fetchedAt, bookId) !== version) return null
-    const cover = legacyCover(old.books.find(book => book.id === bookId)?.cover_url)
-    if (!cover) return null
-    blob = cover
-    void putCatalogCover(scopeKey, bookId, version, cover)
-  }
-  rememberCover(key, blob)
-  return blob
+  return shareRead(coverReads, key, async () => {
+    let blob = await storage('covers', 'readonly', store => store.get(key))
+    if (coverMemory.has(key)) return coverMemory.get(key)!
+    if (!(blob instanceof Blob) || !blob.type.startsWith('image/')) {
+      // Legacy originals stay where they are. Decode/copy only an actually requested cover.
+      const entry = await getCatalogManifest(scopeKey)
+      if (entry?.origin !== 'legacy' || !entry.legacyScopeKey
+        || entry.manifest.items.find(item => item.id === bookId)?.cover?.version !== version) return null
+      const old = await readLegacyList(entry.legacyScopeKey)
+      if (old?.scope !== entry.legacyScopeKey) return null
+      if (legacyCoverVersion(old.fetchedAt, bookId) !== version) return null
+      const cover = legacyCover(old.books.find(book => book.id === bookId)?.cover_url)
+      if (!cover) return null
+      blob = cover
+      if (coverMemory.has(key)) return coverMemory.get(key)!
+      void putCatalogCover(scopeKey, bookId, version, cover)
+    }
+    rememberCover(key, blob)
+    return blob
+  })
 }
 
 export async function putCatalogCover(scopeKey: string, bookId: string, version: string, blob: Blob): Promise<void> {
@@ -154,19 +181,17 @@ function legacyCover(value: unknown): Blob | null {
 
 /** One-time conversion reads only an exact owned list, never the contaminated guest book_meta store. */
 export async function loadCatalogCache(context: CatalogContext, legacyScopeKey?: string): Promise<CatalogCacheEntry | null> {
-  const current = await getCatalogManifest(context.scopeKey)
-  if (current) return current
-  const inFlight = migrationInFlight.get(context.scopeKey)
-  if (inFlight) return inFlight
-  const expectedLegacy = context.userId ?? (context.shareToken ? `share:${context.shareToken}` : 'guest')
-  // Old authenticated keys did not encode share context; their membership cannot be established.
-  if (!legacyScopeKey || legacyScopeKey !== expectedLegacy || (context.userId && context.shareToken)) return null
-  const migration = (async () => {
+  return shareRead(cacheLoads, JSON.stringify([context.scopeKey, legacyScopeKey ?? null]), async () => {
+    const current = await getCatalogManifest(context.scopeKey)
+    if (current) return current
+    const expectedLegacy = context.userId ?? (context.shareToken ? `share:${context.shareToken}` : 'guest')
+    // Old authenticated keys did not encode share context; their membership cannot be established.
+    if (!legacyScopeKey || legacyScopeKey !== expectedLegacy || (context.userId && context.shareToken)) return null
     // A marker is informational: quota failures/eviction can leave it behind
     // without a valid manifest. The exact scoped legacy list may recover that miss.
-    const old = await getCachedBooksList(legacyScopeKey, 'all')
+    const old = await readLegacyList(legacyScopeKey)
     if (!old || old.scope !== legacyScopeKey || old.status !== 'all' || !Array.isArray(old.books)) return null
-    const snapshot = await getCachedLibraryViewSnapshot(legacyScopeKey, 'recently_opened')
+    const snapshot = await boundedLegacyRead(() => getCachedLibraryViewSnapshot(legacyScopeKey, 'recently_opened'))
     const rank = new Map(snapshot?.order.map((id, index) => [id, index]) ?? [])
     const items = old.books.map(book => {
       // A cheap offline-only locator: never hash/decode every original during initial migration.
@@ -192,7 +217,5 @@ export async function loadCatalogCache(context: CatalogContext, legacyScopeKey?:
     void putCatalogManifest(manifest, 'legacy', legacyScopeKey)
     void storage('migration', 'readwrite', store => store.put(true, context.scopeKey))
     return memory.get(context.scopeKey) ?? null
-  })().catch(() => null).finally(() => migrationInFlight.delete(context.scopeKey))
-  migrationInFlight.set(context.scopeKey, migration)
-  return migration
+  }).catch(() => null)
 }

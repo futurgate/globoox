@@ -2,10 +2,126 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 const legacy = vi.hoisted(() => ({ list: vi.fn(), snapshot: vi.fn() }))
 vi.mock('@/lib/contentCache', () => ({ getCachedBooksList: legacy.list, getCachedLibraryViewSnapshot: legacy.snapshot }))
 import { getCatalogCover, getCatalogManifest, loadCatalogCache, putCatalogCover, putCatalogManifest } from '../lib/catalogCache'
-import { context, manifest } from './catalogFixtures'
-afterEach(() => { vi.unstubAllGlobals(); legacy.list.mockReset(); legacy.snapshot.mockReset() })
+import { context, deferred, manifest, microtasks } from './catalogFixtures'
+afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); legacy.list.mockReset(); legacy.snapshot.mockReset() })
+
+/** Actual cache code owns opens/transactions; the test controls only disk completion. */
+function controlledDisk(value: unknown) {
+  const completeReads: (() => void)[] = []
+  const open = vi.fn(() => {
+    const opening: Record<string, unknown> = {}
+    opening.result = { close: vi.fn(), transaction: () => {
+      const transaction: Record<string, unknown> = {}
+      transaction.objectStore = () => ({
+        get: () => {
+          const request: Record<string, unknown> = { result: value }
+          completeReads.push(() => { (request.onsuccess as () => void)?.(); (transaction.oncomplete as () => void)?.() })
+          return request
+        },
+        put: () => {
+          const request: Record<string, unknown> = {}
+          queueMicrotask(() => { (request.onsuccess as () => void)?.(); (transaction.oncomplete as () => void)?.() })
+          return request
+        },
+      })
+      return transaction
+    } }
+    queueMicrotask(() => (opening.onsuccess as () => void)?.())
+    return opening
+  })
+  vi.stubGlobal('indexedDB', { open })
+  return { open, completeReads }
+}
 
 describe('scoped catalog storage and conservative legacy migration', () => {
+  it('coalesces concurrent manifest/cache reads and keeps the newer server record over late disk', async () => {
+    const scope = `${context.scopeKey}-coalesced-late-manifest`
+    const old = { manifest: manifest(['old'], scope), savedAt: 1, origin: 'server' }
+    const disk = controlledDisk(old)
+    const a = getCatalogManifest(scope)
+    const b = loadCatalogCache({ ...context, scopeKey: scope }, context.userId!)
+    const c = loadCatalogCache({ ...context, scopeKey: scope }, context.userId!)
+    await microtasks()
+    expect(disk.open).toHaveBeenCalledTimes(1)
+    expect(disk.completeReads).toHaveLength(1)
+    const fresh = manifest(['new'], scope)
+    await putCatalogManifest(fresh)
+    disk.completeReads[0]()
+    const entries = await Promise.all([a, b, c])
+    expect(entries.every(entry => entry?.manifest === fresh)).toBe(true)
+    expect((await getCatalogManifest(scope))?.manifest).toBe(fresh)
+    expect(legacy.list).not.toHaveBeenCalled()
+  })
+
+  it.each(['blocked', 'stalled'] as const)('bounds a %s IDB open, closes a late connection, and permits a new attempt', async mode => {
+    vi.useFakeTimers()
+    const scope = `${context.scopeKey}-open-${mode}`
+    const openings: Record<string, unknown>[] = []
+    const close = vi.fn()
+    const open = vi.fn(() => {
+      const opening: Record<string, unknown> = { result: { close } }
+      openings.push(opening)
+      if (mode === 'blocked') queueMicrotask(() => (opening.onblocked as () => void)?.())
+      return opening
+    })
+    vi.stubGlobal('indexedDB', { open })
+    const a = getCatalogManifest(scope), b = getCatalogManifest(scope)
+    await vi.advanceTimersByTimeAsync(300)
+    expect(await a).toBeNull(); expect(await b).toBeNull()
+    expect(open).toHaveBeenCalledTimes(1)
+    ;(openings[0].onsuccess as () => void)()
+    expect(close).toHaveBeenCalledTimes(1)
+    const retry = getCatalogManifest(scope)
+    await vi.advanceTimersByTimeAsync(300)
+    expect(await retry).toBeNull()
+    expect(open).toHaveBeenCalledTimes(2)
+  })
+
+  it('bounds and coalesces stalled legacy reads, ignoring late legacy data after a server response', async () => {
+    vi.useFakeTimers()
+    vi.stubGlobal('indexedDB', { open: () => { throw new Error('denied') } })
+    const scope = `${context.scopeKey}-legacy-stalled`
+    const old = deferred<unknown>()
+    legacy.list.mockReturnValue(old.promise)
+    const a = loadCatalogCache({ ...context, scopeKey: scope }, context.userId!)
+    const b = loadCatalogCache({ ...context, scopeKey: scope }, context.userId!)
+    await vi.advanceTimersByTimeAsync(300)
+    expect(await a).toBeNull(); expect(await b).toBeNull()
+    expect(legacy.list).toHaveBeenCalledTimes(1)
+    const fresh = manifest(['server'], scope)
+    await putCatalogManifest(fresh)
+    old.resolve({ scope: context.userId, status: 'all', fetchedAt: 1, books: [{ ...manifest(['old']).items[0] }] })
+    await microtasks()
+    expect(legacy.snapshot).not.toHaveBeenCalled()
+    expect((await getCatalogManifest(scope))?.manifest).toBe(fresh)
+  })
+
+  it('preserves an owned legacy fallback when only the old order snapshot stalls', async () => {
+    vi.useFakeTimers()
+    const scope = `${context.scopeKey}-legacy-order-stalled`
+    legacy.list.mockResolvedValue({ scope: context.userId, status: 'all', fetchedAt: 1, books: manifest(['kept']).items })
+    legacy.snapshot.mockReturnValue(new Promise(() => {}))
+    const read = loadCatalogCache({ ...context, scopeKey: scope }, context.userId!)
+    await vi.advanceTimersByTimeAsync(300)
+    const entry = await read
+    expect(entry?.origin).toBe('legacy')
+    expect(entry?.manifest.items.map(book => book.id)).toEqual(['kept'])
+  })
+
+  it('coalesces local cover reads and keeps a newer downloaded blob over a late disk blob', async () => {
+    const scope = `${context.scopeKey}-coalesced-cover`
+    const old = new Blob(['old'], { type: 'image/png' })
+    const fresh = new Blob(['new'], { type: 'image/png' })
+    const disk = controlledDisk(old)
+    const a = getCatalogCover(scope, 'a', 'v1'), b = getCatalogCover(scope, 'a', 'v1')
+    await microtasks()
+    expect(disk.open).toHaveBeenCalledTimes(1)
+    await putCatalogCover(scope, 'a', 'v1', fresh)
+    disk.completeReads[0]()
+    expect(await a).toBe(fresh); expect(await b).toBe(fresh)
+    expect(await getCatalogCover(scope, 'a', 'v1')).toBe(fresh)
+  })
+
   it('continues with bounded memory storage when IndexedDB throws', async () => {
     vi.stubGlobal('indexedDB', { open: () => { throw new Error('storage denied') } })
     const data = manifest(['a'], `${context.scopeKey}-denied`)

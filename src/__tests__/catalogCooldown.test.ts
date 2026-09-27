@@ -5,7 +5,7 @@ import { CatalogController, type CatalogDependencies } from '@/lib/catalogState'
 import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, invalidateCatalogConfirmation } from '@/lib/catalogFreshness'
 import { createReadingActivityQueue } from '@/lib/readingActivity'
 import type { CatalogCacheEntry } from '@/lib/catalogCache'
-import { context as originalContext, manifest, microtasks } from './catalogFixtures'
+import { context as originalContext, deferred, manifest, microtasks } from './catalogFixtures'
 
 class MemoryStorage implements Storage {
   values = new Map<string, string>()
@@ -34,6 +34,39 @@ function setup(ids = ['a']) {
 }
 
 describe('confirmed 10-second shelf cooldown', () => {
+  it.each(['missing', 'expired'] as const)('starts the server request before a stalled disk read when the receipt is %s', async receipt => {
+    const f = setup()
+    if (receipt === 'expired') {
+      await f.page().refresh()
+      await vi.advanceTimersByTimeAsync(10_000)
+    }
+    f.fetcher.mockClear()
+    const disk = deferred<CatalogCacheEntry | null>()
+    const server = deferred<typeof f.data>()
+    f.dependencies.cached = () => null
+    f.dependencies.cache = () => disk.promise
+    f.fetcher.mockImplementation(() => server.promise)
+    const page = f.page()
+    const rendered: string[][] = []
+    page.subscribe(view => { if (!view.loading) rendered.push(view.books.map(book => book.id)) })
+    const refresh = page.refresh()
+    try {
+      await microtasks()
+      expect(f.fetcher).toHaveBeenCalledTimes(1)
+      expect(page.snapshot.loading).toBe(true)
+      server.resolve(f.data)
+      await refresh
+      disk.resolve({ manifest: { ...f.data, items: manifest(['stale']).items }, savedAt: 1, origin: 'legacy' })
+      await microtasks()
+      expect(page.snapshot.offline).toBe(false)
+      expect(rendered).toEqual([['a']])
+    } finally {
+      page.dispose()
+      disk.resolve(null)
+      server.resolve(f.data)
+      await refresh
+    }
+  })
   it('reuses a complete index at 5s across page lifetimes without extending its expiry', async () => {
     const f = setup(); const first = f.page(); await first.refresh(); first.dispose()
     await vi.advanceTimersByTimeAsync(5000)
@@ -118,5 +151,110 @@ describe('confirmed 10-second shelf cooldown', () => {
     const f = setup(); await f.page().refresh(); const disk = f.cached()
     f.dependencies.cached = () => null; f.dependencies.cache = async () => disk
     await f.page().refresh(); expect(f.fetcher).toHaveBeenCalledTimes(1)
+  })
+  it.each([{ ids: ['a'] }, { ids: [] }])('reuses a complete disk index at 9,999ms without extending its receipt ($ids)', async ({ ids }) => {
+    const f = setup(ids); await f.page().refresh(); const disk = f.cached()
+    f.dependencies.cached = () => null; f.dependencies.cache = async () => disk
+    await vi.advanceTimersByTimeAsync(9999)
+    const page = f.page(); await page.refresh()
+    expect(page.snapshot.books.map(book => book.id)).toEqual(ids)
+    expect(f.fetcher).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+    await f.page().refresh()
+    expect(f.fetcher).toHaveBeenCalledTimes(2)
+  })
+  it('checks expiry again when disk reading crosses the 10-second boundary', async () => {
+    const f = setup(); await f.page().refresh(); const cached = f.cached()
+    const disk = deferred<CatalogCacheEntry | null>()
+    f.dependencies.cached = () => null; f.dependencies.cache = () => disk.promise
+    f.fetcher.mockClear()
+    await vi.advanceTimersByTimeAsync(9999)
+    const page = f.page(); const refresh = page.refresh()
+    await microtasks(); expect(f.fetcher).not.toHaveBeenCalled()
+    await vi.advanceTimersByTimeAsync(1)
+    disk.resolve(cached); await refresh
+    expect(f.fetcher).toHaveBeenCalledTimes(1)
+    expect(page.snapshot.offline).toBe(false)
+  })
+  it.each(['scope', 'revision', 'activity', 'partial'] as const)('rejects an eligible receipt when the disk manifest has mismatched %s', async field => {
+    const f = setup(); await f.page().refresh()
+    const cached = { ...f.cached()!, manifest: { ...f.data } }
+    if (field === 'scope') cached.manifest.scope_key = 'another-scope'
+    if (field === 'revision') cached.manifest.revision = 'another-revision'
+    if (field === 'activity') cached.manifest.activity_version = '1'
+    if (field === 'partial') Object.assign(cached.manifest, { complete: false })
+    f.dependencies.cached = () => null; f.dependencies.cache = async () => cached
+    await f.page().refresh()
+    expect(f.fetcher).toHaveBeenCalledTimes(2)
+  })
+  it('rechecks invalidation immediately before publishing the cached result', async () => {
+    const f = setup(); await f.page().refresh()
+    f.fetcher.mockClear()
+    const read = storage.getItem.bind(storage)
+    let receiptReads = 0
+    vi.spyOn(storage, 'getItem').mockImplementation(key => {
+      const value = read(key)
+      // First read admits disk/memory reuse; second validates the candidate.
+      // Invalidate at the promise handoff before controller publication.
+      if (key.includes('receipt:') && ++receiptReads === 2) queueMicrotask(() => invalidateCatalogConfirmation(f.context.scopeKey))
+      return value
+    })
+    const page = f.page(); await page.refresh()
+    expect(f.fetcher).toHaveBeenCalledTimes(1)
+    expect(page.snapshot.offline).toBe(false)
+  })
+  it('awaits activity started during the disk read before fetching a newer manifest', async () => {
+    const f = setup(); await f.page().refresh(); const cached = f.cached()
+    f.fetcher.mockClear()
+    const disk = deferred<CatalogCacheEntry | null>()
+    const ack = deferred<Response>()
+    const activityFetch = vi.fn<typeof fetch>(() => ack.promise)
+    const eventId = '00000000-0000-4000-8000-000000000123'
+    const queue = createReadingActivityQueue({ storage: () => storage, wallNow: () => Date.now(), monotonicNow: () => 0,
+      randomId: () => eventId, fetch: activityFetch })
+    f.dependencies.cached = () => null; f.dependencies.cache = () => disk.promise
+    f.dependencies.flush = (context, signal) => queue.flush(context, signal)
+    const page = f.page(); const refresh = page.refresh()
+    await microtasks()
+    queue.enqueue(f.context, '11111111-1111-4111-8111-111111111111')
+    disk.resolve(cached); await microtasks()
+    expect(activityFetch).toHaveBeenCalledTimes(1)
+    expect(f.fetcher).not.toHaveBeenCalled()
+    ack.resolve(new Response(JSON.stringify({ scope_key: f.context.scopeKey, activity_version: '2', acknowledged_event_ids: [eventId] })))
+    await refresh
+    expect(f.fetcher).toHaveBeenCalledWith(f.context, expect.any(AbortSignal), '2')
+    expect(page.snapshot.offline).toBe(false)
+  })
+  it('waits for an upload started in another shelf lifetime during the disk read', async () => {
+    const f = setup(); const first = f.page(); await first.refresh(); const cached = f.cached()
+    f.fetcher.mockClear()
+    const disk = deferred<CatalogCacheEntry | null>()
+    f.dependencies.cached = () => null; f.dependencies.cache = () => disk.promise
+    const next = f.page(); const refresh = next.refresh()
+    await microtasks()
+    const finish = first.beginExternalMutation()
+    disk.resolve(cached); await microtasks()
+    expect(f.fetcher).not.toHaveBeenCalled()
+    finish(); await refresh
+    expect(f.fetcher).toHaveBeenCalledTimes(1)
+  })
+  it('uses the healthy server when an eligible disk read fails', async () => {
+    const f = setup(); await f.page().refresh()
+    f.dependencies.cached = () => null
+    f.dependencies.cache = async () => { throw new Error('denied') }
+    const page = f.page(); await page.refresh()
+    expect(f.fetcher).toHaveBeenCalledTimes(2)
+    expect(page.snapshot.offline).toBe(false)
+  })
+  it('does not wait for disk when the acknowledgement is newer than an otherwise fresh receipt', async () => {
+    const f = setup(); await f.page().refresh()
+    f.fetcher.mockClear()
+    f.dependencies.cached = () => null
+    f.dependencies.cache = () => new Promise(() => {})
+    f.dependencies.flush = async () => '2'
+    const page = f.page(); await page.refresh()
+    expect(f.fetcher).toHaveBeenCalledWith(f.context, expect.any(AbortSignal), '2')
+    expect(f.fetcher).toHaveBeenCalledTimes(1)
+    expect(page.snapshot.offline).toBe(false)
   })
 })

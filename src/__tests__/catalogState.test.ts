@@ -3,6 +3,7 @@ vi.mock('@/lib/api', () => ({ getShareToken: () => null }))
 vi.mock('@/lib/supabase/client', () => ({ createClient: vi.fn() }))
 import { CatalogController, type CatalogDependencies } from '../lib/catalogState'
 import { CatalogError, type CatalogManifest } from '../lib/catalogTypes'
+import type { CatalogCacheEntry } from '../lib/catalogCache'
 import { context, deferred, item, manifest, microtasks } from './catalogFixtures'
 
 function setup(overrides: Partial<CatalogDependencies> = {}) {
@@ -127,6 +128,29 @@ describe('server-first catalog ownership and deadlines', () => {
     expect(controller.snapshot.loading).toBe(false)
     expect(controller.snapshot.offline).toBe(true)
     expect(controller.snapshot.books).toEqual([])
+  })
+
+  it('does not publish a fallback arriving after the offline deadline or either of two retries', async () => {
+    const disk = deferred<CatalogCacheEntry | null>()
+    const initial = deferred<CatalogManifest>(), firstRetry = deferred<CatalogManifest>(), secondRetry = deferred<CatalogManifest>()
+    const fetch = vi.fn().mockReturnValueOnce(initial.promise).mockReturnValueOnce(firstRetry.promise).mockReturnValueOnce(secondRetry.promise)
+    const { controller } = setup({ cache: () => disk.promise, fetch })
+    const start = controller.refresh()
+    await vi.advanceTimersByTimeAsync(2500); await start
+    expect(controller.snapshot.offline).toBe(true)
+    expect(controller.snapshot.loading).toBe(false)
+    expect(controller.snapshot.books).toEqual([])
+    disk.resolve({ manifest: manifest(['old']), savedAt: 1, origin: 'server' })
+    await microtasks()
+    expect(controller.snapshot.books).toEqual([])
+    const retryA = controller.refresh(true); await microtasks()
+    const retryB = controller.refresh(true); await microtasks()
+    secondRetry.resolve(manifest(['new'])); await retryB
+    initial.resolve(manifest(['late-initial'])); firstRetry.resolve(manifest(['late-retry'])); await retryA
+    await microtasks()
+    expect(fetch).toHaveBeenCalledTimes(3)
+    expect(controller.snapshot.books.map(book => book.id)).toEqual(['new'])
+    expect(controller.snapshot.offline).toBe(false)
   })
 
   it('preserves cached order when pending activity is corrupt, with a distinct activity error', async () => {
