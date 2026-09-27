@@ -2,13 +2,17 @@
 type: reference
 status: current
 owner: engineering
-last_verified: 2026-09-01
+last_verified: 2026-09-27
 implementation:
   - src/lib/api.ts
   - src/lib/useBooks.ts
   - src/app/(app)/api/_proxy.ts
   - src/lib/hooks/useSyncCheck.ts
   - src/lib/contentCache.ts
+  - src/lib/catalogState.ts
+  - src/lib/catalogCache.ts
+  - src/lib/catalogFreshness.ts
+  - src/lib/supabase/middleware.ts
 ---
 
 # API and Sync Architecture
@@ -50,12 +54,17 @@ The shared proxy:
 
 Route handlers live under `src/app/(app)/api/**/route.ts`. Session refresh is handled separately by `src/proxy.ts` and `src/lib/supabase/middleware.ts`; API routes are excluded from that matcher because `_proxy.ts` reads the session itself.
 
+The exact public `/my-books` shell (including its trailing slash) uses `getSession()` only to renew an expiring session. Its returned identity is never trusted for authorization or private server rendering. The cookie adapter updates both the downstream request and the response; changed cookies carry `Cache-Control: private, no-store`. Other matched pages retain `getUser()`. Bookshelf v2 requests use `_catalogProxy.ts` with an explicit expected scope; the backend verifies the bearer independently on every request.
+
 See [ADR-0001](../../decisions/ADR-0001-api-proxy-boundary.md).
 
 ## Core API surface
 
 Library and Reader currently consume:
 
+- `GET /api/v2/library` (complete ordered bookshelf manifest)
+- `POST /api/v2/reading-activity` (acknowledged recency events)
+- `GET /api/v2/books/{id}/cover?version=...` (authorized thumbnail)
 - `GET /api/books`
 - `POST /api/books`
 - `GET|PATCH|DELETE /api/books/{id}` through route handlers
@@ -72,20 +81,21 @@ Library and Reader currently consume:
 
 Supported frontend language codes are `EN`, `FR`, `ES`, `DE`, and `RU`.
 
-## Library loading
+## Bookshelf loading
 
-Implementation: `src/lib/useBooks.ts`.
+Implementation: `src/lib/useBooks.ts`, `catalogState.ts`, `catalogFreshness.ts`, `catalogCache.ts` and `readingActivity.ts`.
 
-Scopes differ by authentication state:
+The server supplies complete membership and order for the exact guest/account/share scope. The controller settles preceding mutations and flushes reading activity before requesting an index at or above the acknowledged activity version. It starts with a skeleton; a successful index supplies titles and fixed card positions. Scope/generation checks discard obsolete completions.
 
-- guest: `GET /api/books?status=active`;
-- authenticated: `GET /api/books?status=all`.
+A complete server manifest, including an empty library, may be reused for 10 seconds after the **start of its successful validation request**. Cache rendering never extends that receipt. Reading or membership mutations invalidate it. Receipt epoch, scope, revision, activity version, completeness and age are rechecked before publication; cover availability is independent of manifest completeness.
 
-On a cold load without cached books, the hook first requests the streaming books response so the first batch can render early. For an authenticated scope, the initial result is followed by one controlled JSON retry after approximately 1.2 seconds. This retry currently runs on every first authenticated load, not only when the first response is empty.
+When no eligible receipt exists, disk reads cannot postpone the index GET. Cache preparation runs alongside the server path. Identical local reads are coalesced, and each catalog storage/legacy wait is bounded to 300 ms; underlying shared legacy reads can still finish later. A late local result cannot replace accepted server state. The storage format and Reader cache remain unchanged.
 
-Memory and IndexedDB values are rendered immediately when present. Revalidation is background work and does not replace existing cards with a skeleton.
+Network failure, an activity failure or the existing 2.5-second attempt deadline can show only the same scope's offline cache, with an explanation and Retry. Authentication/permission errors never become guest/offline success. Retry keeps existing cards while refreshing. The deadline is a failure boundary, not a latency target.
 
-This is a mitigation for session propagation races, not a definitive authentication fix. Use `x-authenticated` when diagnosing an unexpected guest response.
+Covers fill the accepted slots from cache, then a FIFO queue downloads all missing covers with at most four concurrent requests, independently of scrolling. Upload immediately adds a local placeholder at the top and fills the same card when ready. Closing the page can interrupt upload; no durable server upload job is implied.
+
+The legacy books API remains available for other consumers and existing write operations; bookshelf loading does not fall back to its heavyweight list. See the [active implementation and verification record](../../rfcs/active/catalog-speed-2026-09-25/README.md) for deployed versus locally verified versions.
 
 ## Chapters and block batches
 
@@ -148,7 +158,9 @@ The check invalidates stale replicas; it does not implement delta pull, tombston
 
 | Data | Memory | IndexedDB | Freshness |
 |---|---|---|---|
-| Books | `useBooks` SWR cache | `books_list` | 5 minutes before background refresh |
+| Bookshelf manifest | scoped catalog cache | separate `globoox-catalog-v2` / `manifests` | Complete server confirmation for 10 seconds; mutations invalidate; otherwise server-first |
+| Bookshelf thumbnails | bounded Blob cache | separate `globoox-catalog-v2` / `covers` | Exact scope, book and cover version; FIFO prefetch |
+| Legacy books list | legacy API/cache helpers | `books_list` | Other consumers and exact-scope offline migration only |
 | Book metadata | `api.ts` map | `book_meta` | Updated with list/detail results |
 | Generic GET dedupe | `api.ts` | None | 2 seconds; books requests excluded |
 | Chapters | `api.ts` | Book metadata/cache helpers | 10 minutes in memory |
@@ -157,13 +169,13 @@ The check invalidates stale replicas; it does not implement delta pull, tombston
 | Pagination layout | module cache | `chapter_layout` | Algorithm-versioned |
 | Reader metadata translation | runtime/cache helper | `reader_metadata_bundles` | Existence/reconciliation based |
 
-IndexedDB database: `globoox-cache`, current schema version `9`.
+Reader/legacy IndexedDB database: `globoox-cache`, current schema version `9`. Bookshelf uses `globoox-catalog-v2`, version `1`; this optimization changes neither version.
 
 `chapter_content` is a legacy store name; current chapter writes use the skeleton plus per-language block-text model.
 
 ## Known limits
 
-- Session stabilization still includes a one-time retry.
+- Local loopback Auth/SQL tests do not establish production latency, OAuth behavior or cloud proxy/cookie behavior; dev acceptance remains separate.
 - Settings sync has no documented server settings source.
 - Progress has no bulk read endpoint in this frontend contract.
 - Current sync invalidation is coarse; it is not a versioned per-entity replica protocol.
