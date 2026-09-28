@@ -1372,10 +1372,14 @@ export interface SignedUrlResponse {
   path: string
 }
 
-export interface ProcessBookResponse {
-  id: string
-  chapter_count?: number
-}
+/**
+ * Response from POST /api/books/process.
+ * - Queue mode (REDIS_URL set): `{ jobId, bookId }` — poll getJobStatus(jobId).
+ * - Sync fallback (no Redis): `{ id, chapter_count }` — book is ready immediately.
+ */
+export type ProcessBookResponse =
+  | { jobId: string; bookId: string }
+  | { id: string; chapter_count?: number }
 
 /** Get a signed URL for direct upload to Supabase Storage */
 export function getSignedUploadUrl(bucket: string, path: string): Promise<SignedUrlResponse> {
