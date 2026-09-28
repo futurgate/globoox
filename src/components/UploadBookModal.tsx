@@ -5,7 +5,7 @@ import { Upload, Loader2, FileText } from 'lucide-react';
 import { IOSAction, IOSActionStack } from '@/components/ui/ios-action-group';
 import IOSFlowDialog from '@/components/ui/ios-flow-dialog';
 import IOSDialogFooter from '@/components/ui/ios-dialog-footer';
-import { getSignedUploadUrl, uploadToStorage, processBook } from '@/lib/api';
+import { getSignedUploadUrl, uploadToStorage, processBook, waitForBookJob } from '@/lib/api';
 import { trackBookUploadStarted, trackBookUploaded, trackBookUploadFailed } from '@/lib/posthog';
 import * as Sentry from '@sentry/nextjs';
 
@@ -175,6 +175,7 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
     trackBookUploadStarted({ file_size_kb: fileSizeKb });
     try {
       notify('uploading');
+      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.started', data: { fileName: selected.name, fileSize: selected.size }, level: 'info' });
       const fileName = createUploadFileName(selected.name);
       const { signedUrl } = await getSignedUploadUrl('books', fileName, controller.signal);
       controller.signal.throwIfAborted();
@@ -185,9 +186,14 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
       message('Processing book…');
       const response = await processBook(fileName, selected.name, selected.size, controller.signal);
       controller.signal.throwIfAborted();
-      trackBookUploaded({ title: selected.name, author: 'Unknown', language: 'unknown', chapter_count: response.chapter_count ?? 0, file_size_kb: fileSizeKb });
-      notify('complete', { bookId: response.id });
-      onUploaded?.(response.id);
+      const completed = 'jobId' in response
+        ? await waitForBookJob(response.jobId, controller.signal, pct => message(`Processing book… ${pct}%`))
+        : { bookId: response.id, chapterCount: response.chapter_count ?? 0 };
+      controller.signal.throwIfAborted();
+      trackBookUploaded({ title: selected.name, author: 'Unknown', language: 'unknown', chapter_count: completed.chapterCount, file_size_kb: fileSizeKb });
+      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: completed.bookId }, level: 'info' });
+      notify('complete', { bookId: completed.bookId });
+      onUploaded?.(completed.bookId);
       if (currentDialog()) handleClose();
     } catch (err: unknown) {
       const errorMessage = getErrorMessage(err, 'Upload failed');

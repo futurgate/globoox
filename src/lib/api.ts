@@ -296,7 +296,7 @@ function buildGetCacheKey(path: string, options?: RequestInit): string | null {
   if (method !== 'GET') return null
   // Books payload is auth-sensitive and can race immediately after login.
   // Skip short-lived response cache to avoid guest/auth mixing in UI state.
-  if (path.startsWith('/api/books')) return null
+  if (path.startsWith('/api/books') || path.startsWith('/api/jobs/')) return null
   const body = typeof options?.body === 'string' ? options.body : ''
   return `${path}::${body}`
 }
@@ -1416,10 +1416,14 @@ export interface SignedUrlResponse {
   path: string
 }
 
-export interface ProcessBookResponse {
-  id: string
-  chapter_count?: number
-}
+/**
+ * Response from POST /api/books/process.
+ * - Queue mode (REDIS_URL set): `{ jobId, bookId }` — poll getJobStatus(jobId).
+ * - Sync fallback (no Redis): `{ id, chapter_count }` — book is ready immediately.
+ */
+export type ProcessBookResponse =
+  | { jobId: string; bookId: string }
+  | { id: string; chapter_count?: number }
 
 /** Get a signed URL for direct upload to Supabase Storage */
 export function getSignedUploadUrl(bucket: string, path: string, signal?: AbortSignal): Promise<SignedUrlResponse> {
@@ -1483,8 +1487,51 @@ export interface JobStatus {
   failReason?: string
 }
 
-export function getJobStatus(jobId: string): Promise<JobStatus> {
-  return request<JobStatus>(`/api/jobs/${jobId}`)
+export function getJobStatus(jobId: string, signal?: AbortSignal): Promise<JobStatus> {
+  return request<JobStatus>(`/api/jobs/${encodeURIComponent(jobId)}`, { signal, cache: 'no-store' })
+}
+
+/** One deadline covers job requests, response bodies, and polling intervals. */
+export async function waitForBookJob(
+  jobId: string,
+  signal?: AbortSignal,
+  onProgress?: (pct: number) => void,
+): Promise<{ bookId: string; chapterCount: number }> {
+  const controller = new AbortController()
+  const abort = () => controller.abort(signal?.reason)
+  signal?.addEventListener('abort', abort, { once: true })
+  if (signal?.aborted) abort()
+  const deadline = setTimeout(() => controller.abort(new Error('Book processing timed out. Please try again.')), 5 * 60 * 1000)
+  let interval: ReturnType<typeof setTimeout> | undefined
+  const interrupted = <T,>(operation: Promise<T>): Promise<T> => new Promise((resolve, reject) => {
+    const stopped = () => { cleanup(); reject(controller.signal.reason) }
+    const cleanup = () => controller.signal.removeEventListener('abort', stopped)
+    controller.signal.addEventListener('abort', stopped, { once: true })
+    if (controller.signal.aborted) stopped()
+    operation.then(value => { cleanup(); resolve(value) }, error => { cleanup(); reject(error) })
+  })
+  try {
+    while (true) {
+      controller.signal.throwIfAborted()
+      const status = await interrupted(getJobStatus(jobId, controller.signal))
+      controller.signal.throwIfAborted()
+      if (typeof status.progress === 'number' && Number.isFinite(status.progress)) {
+        onProgress?.(Math.min(100, Math.max(0, Math.round(status.progress))))
+      }
+      if (status.state === 'completed') {
+        if (!status.result || typeof status.result.bookId !== 'string' || !status.result.bookId.trim()) {
+          throw new Error('Book processing returned an invalid result')
+        }
+        return { bookId: status.result.bookId, chapterCount: status.result.chapterCount ?? 0 }
+      }
+      if (status.state === 'failed') throw new Error(status.failReason || 'Book processing failed')
+      await interrupted(new Promise<void>(resolve => { interval = setTimeout(resolve, 2000) }))
+    }
+  } finally {
+    clearTimeout(deadline)
+    clearTimeout(interval)
+    signal?.removeEventListener('abort', abort)
+  }
 }
 
 export interface TranslationLimitResponse {
