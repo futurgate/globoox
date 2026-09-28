@@ -5,7 +5,7 @@ import { Upload, Loader2, CheckCircle, FileText } from 'lucide-react';
 import { IOSAction, IOSActionStack } from '@/components/ui/ios-action-group';
 import IOSFlowDialog from '@/components/ui/ios-flow-dialog';
 import IOSDialogFooter from '@/components/ui/ios-dialog-footer';
-import { getSignedUploadUrl, uploadToStorage, processBook } from '@/lib/api';
+import { getSignedUploadUrl, uploadToStorage, processBook, getJobStatus } from '@/lib/api';
 import { trackBookUploadStarted, trackBookUploaded, trackBookUploadFailed } from '@/lib/posthog';
 import * as Sentry from '@sentry/nextjs';
 
@@ -19,6 +19,37 @@ const SUPPORT_EMAIL = 'support@globoox.co'
 
 function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback
+}
+
+const JOB_POLL_INTERVAL_MS = 2000
+const JOB_POLL_TIMEOUT_MS = 5 * 60 * 1000
+
+/**
+ * Poll a queued EPUB-processing job until it completes. The heavy parse runs in
+ * the backend worker (queue mode), so the modal waits here instead of blocking
+ * on a synchronous response.
+ */
+async function waitForBookJob(
+  jobId: string,
+  onProgress: (pct: number) => void,
+): Promise<{ bookId: string; chapterCount: number }> {
+  const deadline = Date.now() + JOB_POLL_TIMEOUT_MS
+  while (Date.now() < deadline) {
+    const status = await getJobStatus(jobId)
+    if (typeof status.progress === 'number') {
+      // Worker reports 0-100; map into the 50-100 band the UI reserves for processing.
+      const pct = Math.min(100, Math.max(0, status.progress))
+      onProgress(50 + Math.round((pct / 100) * 50))
+    }
+    if (status.state === 'completed' && status.result) {
+      return { bookId: status.result.bookId, chapterCount: status.result.chapterCount ?? 0 }
+    }
+    if (status.state === 'failed') {
+      throw new Error(status.failReason || 'Book processing failed')
+    }
+    await new Promise((r) => setTimeout(r, JOB_POLL_INTERVAL_MS))
+  }
+  throw new Error('Book processing timed out. Please try again.')
 }
 
 function createUploadFileName(originalName: string): string {
@@ -176,25 +207,38 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded }: UploadB
       setMessage('Uploading book…');
       await uploadToStorage(signedUrl, file, 'application/epub+zip');
 
-      // Step 3: Process the book on the server
+      // Step 3: Process the book on the server. In queue mode the response is
+      // { jobId, bookId } and we poll for completion; in sync mode it's the
+      // finished book { id, chapter_count }.
       setProgress(50);
       setMessage('Processing book…');
       const response = await processBook(fileName, file.name, file.size);
+
+      let bookId: string;
+      let chapterCount: number;
+      if ('jobId' in response) {
+        const done = await waitForBookJob(response.jobId, setProgress);
+        bookId = done.bookId;
+        chapterCount = done.chapterCount;
+      } else {
+        bookId = response.id;
+        chapterCount = response.chapter_count ?? 0;
+      }
 
       // Success
       trackBookUploaded({
         title: file.name,
         author: 'Unknown',
         language: 'unknown',
-        chapter_count: response.chapter_count ?? 0,
+        chapter_count: chapterCount,
         file_size_kb: fileSizeKb,
       });
 
-      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: response.id }, level: 'info' });
+      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId }, level: 'info' });
       setProgress(100);
       setMessage('Book uploaded successfully!');
 
-      setTimeout(() => { onUploaded?.(response.id); handleClose() }, 1500);
+      setTimeout(() => { onUploaded?.(bookId); handleClose() }, 1500);
     } catch (err: unknown) {
       const message = getErrorMessage(err, 'Upload failed')
       console.error('Upload error:', err);
