@@ -1684,11 +1684,26 @@ export interface FictionFlowTranslateStage {
   tokensOut: number
 }
 
+/** One block's draft→final pair from the revision stage, for the diff view. */
+export interface FictionFlowRevisionBlock {
+  source: string
+  /** Pre-revision text (Pass-1 draft). */
+  draft: string
+  /** Post-revision text (falls back to the draft if that block wasn't revised). */
+  final: string
+  /** True when the revision actually changed this block. */
+  changed: boolean
+}
+
 export interface FictionFlowRevisionStage {
   /** Final polished translation, blocks joined by blank lines. */
   finalText: string
   rawText: string
   parsedCount: number
+  /** Aligned per-block draft/final pairs (index i ↔ source block i). */
+  blocks: FictionFlowRevisionBlock[]
+  /** How many blocks the revision changed. */
+  changedCount: number
   latencyMs: number
   costUsd: number
   tokensIn: number
@@ -1725,12 +1740,87 @@ export interface FictionFlowRequest {
   prompts?: { glossary?: string; translate?: string; revision?: string }
 }
 
-/** Run the whole fiction flow (glossary → translate → revision) per model. */
-export function runFictionFlowPlayground(payload: FictionFlowRequest): Promise<FictionFlowResponse> {
-  return request<FictionFlowResponse>('/api/admin/fiction-flow-playground', {
+export type FictionFlowStage = 'glossary' | 'translate' | 'revision'
+
+/** NDJSON progress events streamed by the fiction-flow-playground endpoint. */
+export type FictionFlowEvent =
+  | {
+      type: 'start'
+      totalModels: number
+      /** Stages each model runs (2 without glossary, 3 with). */
+      stagesPerModel: number
+      blockCount: number
+      targetLanguage: string
+      sourceLanguage: string
+      useGlossary: boolean
+    }
+  | { type: 'stage'; model: string; stage: FictionFlowStage }
+  | { type: 'model'; result: FictionFlowResult }
+  | ({ type: 'done' } & FictionFlowResponse)
+  | { type: 'error'; error: string }
+
+/**
+ * Run the whole fiction flow (glossary → translate → revision) per model and
+ * stream per-stage progress. Invokes `onEvent` for each NDJSON line and resolves
+ * with the final aggregated response (from the `done` event). Admin only.
+ */
+export async function runFictionFlowPlaygroundStream(
+  payload: FictionFlowRequest,
+  onEvent: (ev: FictionFlowEvent) => void,
+  signal?: AbortSignal,
+): Promise<FictionFlowResponse> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/admin/fiction-flow-playground`, {
     method: 'POST',
+    headers,
     body: JSON.stringify(payload),
+    signal,
   })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Flow failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  let final: FictionFlowResponse | null = null
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    let ev: FictionFlowEvent
+    try {
+      ev = JSON.parse(t) as FictionFlowEvent
+    } catch {
+      return // ignore partial line
+    }
+    if (ev.type === 'done') {
+      final = {
+        targetLanguage: ev.targetLanguage,
+        sourceLanguage: ev.sourceLanguage,
+        useGlossary: ev.useGlossary,
+        blockCount: ev.blockCount,
+        results: ev.results,
+      }
+    }
+    onEvent(ev)
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+
+  if (!final) throw new Error('Flow ended without a result')
+  return final
 }
 
 export interface FictionFlowPrompts {
