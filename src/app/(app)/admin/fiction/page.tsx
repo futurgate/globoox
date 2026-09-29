@@ -455,7 +455,7 @@ export default function AdminFictionPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 pb-24">
+    <div className="mx-auto w-full max-w-3xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <div className="flex items-start justify-between gap-3">
         <PageHeader title="Fiction Translation" />
         <Button

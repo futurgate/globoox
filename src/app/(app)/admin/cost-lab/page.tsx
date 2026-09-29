@@ -344,7 +344,7 @@ export default function CostLabPage() {
   const fromScratchUsd = estimate?.fromScratch.cost.totalUsd ?? null;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pb-24">
+    <div className="mx-auto w-full max-w-6xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <PageHeader title="Translation Cost Lab" />
 
       <p className="mb-5 text-sm text-[var(--app-text-muted)]">
