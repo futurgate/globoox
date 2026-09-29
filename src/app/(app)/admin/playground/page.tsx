@@ -26,9 +26,47 @@ import {
   type PlaygroundResult,
   type PlaygroundResponse,
   type PlaygroundPromptVariant,
+  type PlaygroundMode,
 } from '@/lib/api';
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
+// Fiction pipeline coverage in v1: Russian source → EN/FR only.
+const FICTION_LANGS = ['EN', 'FR'] as const;
+
+const MODES: { id: PlaygroundMode; label: string; blurb: string }[] = [
+  {
+    id: 'translate',
+    label: 'Translate',
+    blurb:
+      'Compare how models and system prompts translate the same passage via the real production translate flow, optionally scored by the MQM judge.',
+  },
+  {
+    id: 'glossary',
+    label: 'Glossary',
+    blurb:
+      'Test the fiction glossary / style-bible generation prompt: feed a chapter (and the glossary built so far) and compare the merged JSON each model emits.',
+  },
+  {
+    id: 'revision',
+    label: 'Revision',
+    blurb:
+      'Test the fiction stylistic-revision prompt: feed source + machine-translated draft segments and compare how each model polishes the draft.',
+  },
+];
+
+// Placeholders each mode fills at run time — shown in the prompt-variant help.
+const MODE_PLACEHOLDERS: Record<PlaygroundMode, string[]> = {
+  translate: ['{{LANGUAGE}}', '{{SOURCE_TEXT}}', '{{CONTEXT_SECTION}}'],
+  glossary: ['{SOURCE_LANG}', '{TARGET_LANG}', '{EXISTING_GLOSSARY}', '{SOURCE_TEXT}'],
+  revision: [
+    '{TARGET_LANGUAGE}',
+    '{GLOSSARY}',
+    '{PRECEDING_CONTEXT}',
+    '{FOLLOWING_CONTEXT}',
+    '{SOURCE_NUMBERED}',
+    '{DRAFT_NUMBERED}',
+  ],
+};
 
 const VARIANT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const MAX_VARIANTS = 6;
@@ -72,6 +110,7 @@ export default function TranslationPlaygroundPage() {
   const router = useRouter();
   const { isAdmin, loading: authLoading, isAuthenticated } = useAuth();
 
+  const [mode, setMode] = useState<PlaygroundMode>('translate');
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState<string>('EN');
   const [targetLanguage, setTargetLanguage] = useState<string>('RU');
@@ -80,6 +119,27 @@ export default function TranslationPlaygroundPage() {
   const [judge, setJudge] = useState(true);
   const [judgeModel, setJudgeModel] = useState('gemini-2.5-flash');
   const [reference, setReference] = useState('');
+
+  // Fiction-mode inputs.
+  const [existingGlossary, setExistingGlossary] = useState('{}'); // glossary mode
+  const [draftText, setDraftText] = useState(''); // revision mode: machine-translated draft
+  const [glossary, setGlossary] = useState(''); // revision mode: flattened glossary block (optional)
+  const [precedingContext, setPrecedingContext] = useState('');
+  const [followingContext, setFollowingContext] = useState('');
+
+  // Switching stage resets stale results and, for fiction stages, pins the
+  // target to the supported RU→EN/FR coverage.
+  const changeMode = (m: PlaygroundMode) => {
+    setMode(m);
+    setResponse(null);
+    setError(null);
+    if (m !== 'translate') {
+      if (!FICTION_LANGS.includes(targetLanguage as (typeof FICTION_LANGS)[number])) {
+        setTargetLanguage('EN');
+      }
+      setSourceLanguage('RU');
+    }
+  };
 
   // System-prompt variants to compare. A blank template = production default.
   const [variants, setVariants] = useState<PromptVariantDraft[]>([defaultVariant(0)]);
@@ -156,7 +216,8 @@ export default function TranslationPlaygroundPage() {
     setLoadingPromptIdx(idx);
     setPromptError(null);
     try {
-      const res = await fetchTranslationPrompt(targetLanguage);
+      const stage = mode === 'translate' ? undefined : mode;
+      const res = await fetchTranslationPrompt(targetLanguage, stage);
       updateVariant(idx, { template: res.template });
     } catch (e: unknown) {
       setPromptError(e instanceof Error ? e.message : 'Failed to load production prompt');
@@ -165,7 +226,11 @@ export default function TranslationPlaygroundPage() {
     }
   };
 
-  const canRun = sourceText.trim().length > 0 && models.length > 0 && !running;
+  const canRun =
+    sourceText.trim().length > 0 &&
+    models.length > 0 &&
+    !running &&
+    (mode !== 'revision' || draftText.trim().length > 0);
   const cellCount = models.length * variants.length;
 
   const handleRun = async () => {
@@ -179,14 +244,28 @@ export default function TranslationPlaygroundPage() {
         template: v.template,
       }));
       const res = await runTranslationPlayground({
+        mode,
         sourceText: sourceText.trim(),
         targetLanguage,
-        sourceLanguage,
         models,
         promptVariants,
-        judge,
-        judgeModel,
-        reference: reference.trim() || undefined,
+        // translate: source lang is a judge hint; glossary: it's {SOURCE_LANG}.
+        ...(mode !== 'revision' ? { sourceLanguage } : {}),
+        // translate-only
+        ...(mode === 'translate'
+          ? { judge, judgeModel, reference: reference.trim() || undefined }
+          : {}),
+        // glossary-only
+        ...(mode === 'glossary' ? { existingGlossary: existingGlossary.trim() || '{}' } : {}),
+        // revision-only
+        ...(mode === 'revision'
+          ? {
+              draftText: draftText.trim(),
+              glossary: glossary.trim() || undefined,
+              precedingContext: precedingContext.trim() || undefined,
+              followingContext: followingContext.trim() || undefined,
+            }
+          : {}),
       });
       setResponse(res);
     } catch (e: unknown) {
@@ -227,10 +306,27 @@ export default function TranslationPlaygroundPage() {
     <div className="mx-auto w-full max-w-6xl px-4 pb-24">
       <PageHeader title="Translation Playground" />
 
+      {/* ── Stage tabs ── */}
+      <div className="mb-3 inline-flex rounded-[var(--radius)] border border-[var(--separator-opaque)] p-0.5">
+        {MODES.map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => changeMode(m.id)}
+            className={
+              'rounded-[calc(var(--radius)-2px)] px-3 py-1.5 text-sm font-medium transition-colors ' +
+              (mode === m.id
+                ? 'bg-[var(--app-accent)] text-white'
+                : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]')
+            }
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
       <p className="mb-5 text-sm text-[var(--app-text-muted)]">
-        Compare how different LLM models — and different system prompts — translate the same
-        passage, using the real production translate flow, and optionally score each output with the
-        MQM quality judge.
+        {MODES.find((m) => m.id === mode)?.blurb}
       </p>
 
       {/* ── Input form ── */}
@@ -238,7 +334,11 @@ export default function TranslationPlaygroundPage() {
         <div>
           <div className="mb-1 flex items-center justify-between gap-2">
             <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-              Source text
+              {mode === 'glossary'
+                ? 'Chapter source text'
+                : mode === 'revision'
+                  ? 'Source segments (blank line between blocks)'
+                  : 'Source text'}
             </label>
             <button
               type="button"
@@ -254,28 +354,126 @@ export default function TranslationPlaygroundPage() {
             value={sourceText}
             onChange={(e) => setSourceText(e.target.value)}
             rows={5}
-            placeholder="Paste the passage to translate…"
+            placeholder={
+              mode === 'glossary'
+                ? 'Paste the chapter plain text to analyse…'
+                : mode === 'revision'
+                  ? 'Paste the source segments — one block per paragraph, separated by a blank line…'
+                  : 'Paste the passage to translate…'
+            }
             className={inputCls + ' resize-y font-[inherit]'}
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {/* Revision: the machine-translated draft to polish */}
+        {mode === 'revision' && (
+          <div>
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                Draft translation to revise (blank line between blocks)
+              </label>
+              <button
+                type="button"
+                onClick={() => openViewer('Draft translation', draftText)}
+                disabled={!draftText.trim()}
+                title="View full draft"
+                className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-40"
+              >
+                <Maximize2 className="h-3.5 w-3.5" /> View
+              </button>
+            </div>
+            <textarea
+              value={draftText}
+              onChange={(e) => setDraftText(e.target.value)}
+              rows={5}
+              placeholder="Paste the machine-translated draft — same number of blocks as the source, one per blank-line group…"
+              className={inputCls + ' resize-y font-[inherit]'}
+            />
+            <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+              Source and draft are numbered [1], [2], … in order — keep the same block count in both.
+            </p>
+          </div>
+        )}
+
+        {/* Glossary: the merged glossary built from earlier chapters */}
+        {mode === 'glossary' && (
           <div>
             <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-              From
+              Existing glossary JSON (from earlier chapters — {'{}'} for the first)
             </label>
-            <select
-              value={sourceLanguage}
-              onChange={(e) => setSourceLanguage(e.target.value)}
-              className={inputCls}
-            >
-              {LANGS.map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
+            <textarea
+              value={existingGlossary}
+              onChange={(e) => setExistingGlossary(e.target.value)}
+              rows={3}
+              placeholder="{}"
+              className={inputCls + ' resize-y font-mono text-xs leading-relaxed'}
+            />
           </div>
+        )}
+
+        {/* Revision: optional glossary + seam context */}
+        {mode === 'revision' && (
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                Glossary block (optional)
+              </label>
+              <textarea
+                value={glossary}
+                onChange={(e) => setGlossary(e.target.value)}
+                rows={2}
+                placeholder="Flattened glossary (STYLE / NAMES / TERMS lines) — leave blank for “(no glossary)”…"
+                className={inputCls + ' resize-y font-mono text-xs leading-relaxed'}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                  Preceding context (optional)
+                </label>
+                <textarea
+                  value={precedingContext}
+                  onChange={(e) => setPrecedingContext(e.target.value)}
+                  rows={2}
+                  placeholder="Already-translated neighbor before this batch…"
+                  className={inputCls + ' resize-y'}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                  Following context (optional)
+                </label>
+                <textarea
+                  value={followingContext}
+                  onChange={(e) => setFollowingContext(e.target.value)}
+                  rows={2}
+                  placeholder="Neighbor after this batch…"
+                  className={inputCls + ' resize-y'}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {mode !== 'revision' && (
+            <div>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                From
+              </label>
+              <select
+                value={sourceLanguage}
+                onChange={(e) => setSourceLanguage(e.target.value)}
+                className={inputCls}
+              >
+                {LANGS.map((l) => (
+                  <option key={l} value={l}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
               To
@@ -285,7 +483,7 @@ export default function TranslationPlaygroundPage() {
               onChange={(e) => setTargetLanguage(e.target.value)}
               className={inputCls}
             >
-              {LANGS.map((l) => (
+              {(mode === 'translate' ? LANGS : FICTION_LANGS).map((l) => (
                 <option key={l} value={l}>
                   {l}
                 </option>
@@ -372,10 +570,22 @@ export default function TranslationPlaygroundPage() {
           </div>
           <p className="mb-3 text-xs text-[var(--app-text-muted)]">
             Each prompt runs against every selected model. Leave a prompt blank to use the live
-            production prompt for <span className="font-mono">{targetLanguage}</span>, or load it and
-            tweak. Placeholders <span className="font-mono">{'{{LANGUAGE}}'}</span> and{' '}
-            <span className="font-mono">{'{{SOURCE_TEXT}}'}</span> are filled at run time;{' '}
-            <span className="font-mono">{'{{CONTEXT_SECTION}}'}</span> is blanked (single passage).
+            production{' '}
+            {mode === 'translate' ? (
+              <>
+                prompt for <span className="font-mono">{targetLanguage}</span>
+              </>
+            ) : (
+              <>{mode} prompt</>
+            )}
+            , or load it and tweak. Placeholders filled at run time:{' '}
+            {MODE_PLACEHOLDERS[mode].map((p, i) => (
+              <span key={p}>
+                {i > 0 && ' '}
+                <span className="font-mono">{p}</span>
+              </span>
+            ))}
+            .
           </p>
 
           <div className="space-y-3">
@@ -449,43 +659,47 @@ export default function TranslationPlaygroundPage() {
           )}
         </div>
 
-        {/* Judge options */}
-        <div className="flex flex-wrap items-center gap-4 border-t border-[var(--separator-opaque)] pt-4">
-          <label className="flex cursor-pointer items-center gap-2 text-sm">
-            <input type="checkbox" checked={judge} onChange={(e) => setJudge(e.target.checked)} />
-            Score quality (MQM judge)
-          </label>
-          {judge && (
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-[var(--app-text-muted)]">Judge model</span>
-              <select
-                value={judgeModel}
-                onChange={(e) => setJudgeModel(e.target.value)}
-                className={inputCls + ' w-auto py-1'}
-              >
-                {[...new Set([judgeModel, ...availableModels])].map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
+        {/* Judge options (translate mode only) */}
+        {mode === 'translate' && (
+          <>
+            <div className="flex flex-wrap items-center gap-4 border-t border-[var(--separator-opaque)] pt-4">
+              <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <input type="checkbox" checked={judge} onChange={(e) => setJudge(e.target.checked)} />
+                Score quality (MQM judge)
+              </label>
+              {judge && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-[var(--app-text-muted)]">Judge model</span>
+                  <select
+                    value={judgeModel}
+                    onChange={(e) => setJudgeModel(e.target.value)}
+                    className={inputCls + ' w-auto py-1'}
+                  >
+                    {[...new Set([judgeModel, ...availableModels])].map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {judge && (
-          <div>
-            <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-              Reference translation (optional — anchors the judge)
-            </label>
-            <textarea
-              value={reference}
-              onChange={(e) => setReference(e.target.value)}
-              rows={2}
-              placeholder="Human gold translation, if you have one…"
-              className={inputCls + ' resize-y'}
-            />
-          </div>
+            {judge && (
+              <div>
+                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                  Reference translation (optional — anchors the judge)
+                </label>
+                <textarea
+                  value={reference}
+                  onChange={(e) => setReference(e.target.value)}
+                  rows={2}
+                  placeholder="Human gold translation, if you have one…"
+                  className={inputCls + ' resize-y'}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <div className="flex items-center gap-3">
@@ -494,7 +708,7 @@ export default function TranslationPlaygroundPage() {
             {running
               ? 'Running…'
               : variants.length > 1
-                ? `Run (${cellCount} translations)`
+                ? `Run (${cellCount} runs)`
                 : `Run (${models.length} model${models.length === 1 ? '' : 's'})`}
           </Button>
           {error && <span className="text-sm text-red-600 dark:text-red-400">{error}</span>}
@@ -509,6 +723,7 @@ export default function TranslationPlaygroundPage() {
         return (
           <div className="mt-6">
             <div className="mb-3 text-xs text-[var(--app-text-muted)]">
+              {response.mode && response.mode !== 'translate' && `${response.mode} · `}
               {response.sourceLanguage ?? '—'} → {response.targetLanguage}
               {multiVariant && ` · ${response.variants!.length} prompts`}
               {response.judged && ` · judged by ${response.judgeModel}`}
