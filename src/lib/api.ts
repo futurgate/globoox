@@ -1651,6 +1651,102 @@ export function fetchPlaygroundModels(): Promise<PlaygroundModels> {
   return request<PlaygroundModels>('/api/admin/models')
 }
 
+// ── Admin: fiction end-to-end flow playground ────────────────────────────────
+// Runs the whole fiction pipeline (glossary → translate → revision) on one
+// chapter passage per model, with custom prompts per stage.
+
+export interface FictionFlowGlossaryStage {
+  /** Raw glossary output from the model. */
+  text: string
+  /** Flattened glossary block injected into the later stages. */
+  glossaryBlock: string
+  /** Did the output parse as valid glossary JSON? */
+  parsedOk: boolean
+  /** Did the parsed glossary carry usable terms / named entities? */
+  entriesUsed: boolean
+  parseError: string | null
+  latencyMs: number
+  costUsd: number
+  tokensIn: number
+  tokensOut: number
+}
+
+export interface FictionFlowTranslateStage {
+  /** Draft translation, blocks joined by blank lines. */
+  draftText: string
+  /** Raw numbered model output. */
+  rawText: string
+  blockCount: number
+  parsedCount: number
+  latencyMs: number
+  costUsd: number
+  tokensIn: number
+  tokensOut: number
+}
+
+export interface FictionFlowRevisionStage {
+  /** Final polished translation, blocks joined by blank lines. */
+  finalText: string
+  rawText: string
+  parsedCount: number
+  latencyMs: number
+  costUsd: number
+  tokensIn: number
+  tokensOut: number
+}
+
+export interface FictionFlowResult {
+  model: string
+  actualModel?: string
+  ok: boolean
+  glossary?: FictionFlowGlossaryStage | null
+  translate?: FictionFlowTranslateStage
+  revision?: FictionFlowRevisionStage
+  totalCostUsd?: number
+  totalLatencyMs?: number
+  error?: string
+}
+
+export interface FictionFlowResponse {
+  targetLanguage: string
+  sourceLanguage: string
+  useGlossary: boolean
+  blockCount: number
+  results: FictionFlowResult[]
+}
+
+export interface FictionFlowRequest {
+  sourceText: string
+  targetLanguage: string
+  sourceLanguage?: string
+  models: string[]
+  useGlossary?: boolean
+  existingGlossary?: string
+  prompts?: { glossary?: string; translate?: string; revision?: string }
+}
+
+/** Run the whole fiction flow (glossary → translate → revision) per model. */
+export function runFictionFlowPlayground(payload: FictionFlowRequest): Promise<FictionFlowResponse> {
+  return request<FictionFlowResponse>('/api/admin/fiction-flow-playground', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export interface FictionFlowPrompts {
+  lang: string
+  useGlossary: boolean
+  glossary: string
+  translate: string
+  revision: string
+}
+
+/** Fetch all three production fiction-flow prompt templates to seed the editors. */
+export function fetchFictionFlowPrompts(lang: string, useGlossary = true): Promise<FictionFlowPrompts> {
+  const q = new URLSearchParams({ lang, glossary: useGlossary ? '1' : '0' })
+  return request<FictionFlowPrompts>(`/api/admin/fiction-flow-prompts?${q.toString()}`)
+}
+
 // ── Admin: translation cost lab ──────────────────────────────────────────────
 
 export const COST_LAB_LANGS = ['EN', 'FR', 'ES', 'RU'] as const

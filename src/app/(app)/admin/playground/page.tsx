@@ -23,17 +23,25 @@ import {
   runTranslationPlayground,
   fetchPlaygroundModels,
   fetchTranslationPrompt,
+  runFictionFlowPlayground,
+  fetchFictionFlowPrompts,
   type PlaygroundResult,
   type PlaygroundResponse,
   type PlaygroundPromptVariant,
   type PlaygroundMode,
+  type FictionFlowResponse,
+  type FictionFlowResult,
 } from '@/lib/api';
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
 // Fiction pipeline coverage in v1: Russian source → EN/FR only.
 const FICTION_LANGS = ['EN', 'FR'] as const;
 
-const MODES: { id: PlaygroundMode; label: string; blurb: string }[] = [
+// The playground's stage selector. 'flow' is a page-local tab (a separate
+// endpoint that chains all fiction stages), not a translation-playground mode.
+type Tab = PlaygroundMode | 'flow';
+
+const MODES: { id: Tab; label: string; blurb: string }[] = [
   {
     id: 'translate',
     label: 'Translate',
@@ -52,10 +60,16 @@ const MODES: { id: PlaygroundMode; label: string; blurb: string }[] = [
     blurb:
       'Test the fiction stylistic-revision prompt: feed source + machine-translated draft segments and compare how each model polishes the draft.',
   },
+  {
+    id: 'flow',
+    label: 'Full flow',
+    blurb:
+      'Run the whole fiction pipeline end-to-end (glossary → translate → revision) on one chapter, per model, with a custom prompt for each stage.',
+  },
 ];
 
 // Placeholders each mode fills at run time — shown in the prompt-variant help.
-const MODE_PLACEHOLDERS: Record<PlaygroundMode, string[]> = {
+const MODE_PLACEHOLDERS: Record<Tab, string[]> = {
   translate: ['{{LANGUAGE}}', '{{SOURCE_TEXT}}', '{{CONTEXT_SECTION}}'],
   glossary: ['{SOURCE_LANG}', '{TARGET_LANG}', '{EXISTING_GLOSSARY}', '{SOURCE_TEXT}'],
   revision: [
@@ -66,7 +80,15 @@ const MODE_PLACEHOLDERS: Record<PlaygroundMode, string[]> = {
     '{SOURCE_NUMBERED}',
     '{DRAFT_NUMBERED}',
   ],
+  flow: [],
 };
+
+// Full-flow stage editors: one custom prompt per pipeline stage.
+const FLOW_STAGES: { key: 'glossary' | 'translate' | 'revision'; label: string; placeholders: string }[] = [
+  { key: 'glossary', label: '1 · Glossary prompt', placeholders: '{SOURCE_LANG} {TARGET_LANG} {EXISTING_GLOSSARY} {SOURCE_TEXT}' },
+  { key: 'translate', label: '2 · Translate prompt', placeholders: '{SOURCE_TEXT} {GLOSSARY}' },
+  { key: 'revision', label: '3 · Revision prompt', placeholders: '{TARGET_LANGUAGE} {GLOSSARY} {SOURCE_NUMBERED} {DRAFT_NUMBERED}' },
+];
 
 const VARIANT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const MAX_VARIANTS = 6;
@@ -110,7 +132,7 @@ export default function TranslationPlaygroundPage() {
   const router = useRouter();
   const { isAdmin, loading: authLoading, isAuthenticated } = useAuth();
 
-  const [mode, setMode] = useState<PlaygroundMode>('translate');
+  const [mode, setMode] = useState<Tab>('translate');
   const [sourceText, setSourceText] = useState('');
   const [sourceLanguage, setSourceLanguage] = useState<string>('EN');
   const [targetLanguage, setTargetLanguage] = useState<string>('RU');
@@ -127,11 +149,24 @@ export default function TranslationPlaygroundPage() {
   const [precedingContext, setPrecedingContext] = useState('');
   const [followingContext, setFollowingContext] = useState('');
 
+  // Full-flow (end-to-end) inputs — one editable prompt per pipeline stage.
+  const [flowUseGlossary, setFlowUseGlossary] = useState(true);
+  const [flowExistingGlossary, setFlowExistingGlossary] = useState('{}');
+  const [flowPrompts, setFlowPrompts] = useState<{ glossary: string; translate: string; revision: string }>({
+    glossary: '',
+    translate: '',
+    revision: '',
+  });
+  const [flowLoadingPrompts, setFlowLoadingPrompts] = useState(false);
+  const [flowRunning, setFlowRunning] = useState(false);
+  const [flowResponse, setFlowResponse] = useState<FictionFlowResponse | null>(null);
+
   // Switching stage resets stale results and, for fiction stages, pins the
   // target to the supported RU→EN/FR coverage.
-  const changeMode = (m: PlaygroundMode) => {
+  const changeMode = (m: Tab) => {
     setMode(m);
     setResponse(null);
+    setFlowResponse(null);
     setError(null);
     if (m !== 'translate') {
       if (!FICTION_LANGS.includes(targetLanguage as (typeof FICTION_LANGS)[number])) {
@@ -216,7 +251,7 @@ export default function TranslationPlaygroundPage() {
     setLoadingPromptIdx(idx);
     setPromptError(null);
     try {
-      const stage = mode === 'translate' ? undefined : mode;
+      const stage = mode === 'glossary' || mode === 'revision' ? mode : undefined;
       const res = await fetchTranslationPrompt(targetLanguage, stage);
       updateVariant(idx, { template: res.template });
     } catch (e: unknown) {
@@ -227,13 +262,16 @@ export default function TranslationPlaygroundPage() {
   };
 
   const canRun =
+    mode !== 'flow' &&
     sourceText.trim().length > 0 &&
     models.length > 0 &&
     !running &&
     (mode !== 'revision' || draftText.trim().length > 0);
+  const canRunFlow = mode === 'flow' && sourceText.trim().length > 0 && models.length > 0 && !flowRunning;
   const cellCount = models.length * variants.length;
 
   const handleRun = async () => {
+    // canRun already excludes 'flow', so mode narrows to a translation-playground mode here.
     if (!canRun) return;
     setRunning(true);
     setError(null);
@@ -272,6 +310,52 @@ export default function TranslationPlaygroundPage() {
       setError(e instanceof Error ? e.message : 'Request failed');
     } finally {
       setRunning(false);
+    }
+  };
+
+  // ── Full flow ─────────────────────────────────────────────────────────────
+  // Seed all three stage editors from the live production prompts in one call.
+  const loadFlowPrompts = async () => {
+    setFlowLoadingPrompts(true);
+    setPromptError(null);
+    try {
+      const res = await fetchFictionFlowPrompts(targetLanguage, flowUseGlossary);
+      setFlowPrompts({ glossary: res.glossary, translate: res.translate, revision: res.revision });
+    } catch (e: unknown) {
+      setPromptError(e instanceof Error ? e.message : 'Failed to load production prompts');
+    } finally {
+      setFlowLoadingPrompts(false);
+    }
+  };
+
+  const updateFlowPrompt = (stage: 'glossary' | 'translate' | 'revision', value: string) => {
+    setFlowPrompts((prev) => ({ ...prev, [stage]: value }));
+  };
+
+  const handleRunFlow = async () => {
+    if (!canRunFlow) return;
+    setFlowRunning(true);
+    setError(null);
+    setFlowResponse(null);
+    try {
+      const res = await runFictionFlowPlayground({
+        sourceText: sourceText.trim(),
+        targetLanguage,
+        sourceLanguage,
+        models,
+        useGlossary: flowUseGlossary,
+        existingGlossary: flowUseGlossary ? flowExistingGlossary.trim() || '{}' : undefined,
+        prompts: {
+          glossary: flowPrompts.glossary.trim() || undefined,
+          translate: flowPrompts.translate.trim() || undefined,
+          revision: flowPrompts.revision.trim() || undefined,
+        },
+      });
+      setFlowResponse(res);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Request failed');
+    } finally {
+      setFlowRunning(false);
     }
   };
 
@@ -338,7 +422,9 @@ export default function TranslationPlaygroundPage() {
                 ? 'Chapter source text'
                 : mode === 'revision'
                   ? 'Source segments (blank line between blocks)'
-                  : 'Source text'}
+                  : mode === 'flow'
+                    ? 'Chapter source text (blocks separated by blank lines)'
+                    : 'Source text'}
             </label>
             <button
               type="button"
@@ -359,7 +445,9 @@ export default function TranslationPlaygroundPage() {
                 ? 'Paste the chapter plain text to analyse…'
                 : mode === 'revision'
                   ? 'Paste the source segments — one block per paragraph, separated by a blank line…'
-                  : 'Paste the passage to translate…'
+                  : mode === 'flow'
+                    ? 'Paste the chapter — one block per paragraph, separated by a blank line…'
+                    : 'Paste the passage to translate…'
             }
             className={inputCls + ' resize-y font-[inherit]'}
           />
@@ -552,7 +640,100 @@ export default function TranslationPlaygroundPage() {
           </div>
         </div>
 
-        {/* System-prompt variants */}
+        {/* Full flow: run+customise every pipeline stage */}
+        {mode === 'flow' && (
+          <div className="space-y-4 border-t border-[var(--separator-opaque)] pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <label className="flex cursor-pointer items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={flowUseGlossary}
+                  onChange={(e) => setFlowUseGlossary(e.target.checked)}
+                />
+                Build &amp; use a glossary (Pass 0 → injected into translate + revision)
+              </label>
+              <button
+                type="button"
+                onClick={loadFlowPrompts}
+                disabled={flowLoadingPrompts}
+                className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-50"
+                title="Seed all stage prompts from the production templates"
+              >
+                {flowLoadingPrompts ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Download className="h-3.5 w-3.5" />
+                )}
+                Load prod prompts
+              </button>
+            </div>
+
+            {flowUseGlossary && (
+              <div>
+                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                  Seed glossary JSON (from earlier chapters — {'{}'} for the first)
+                </label>
+                <textarea
+                  value={flowExistingGlossary}
+                  onChange={(e) => setFlowExistingGlossary(e.target.value)}
+                  rows={2}
+                  placeholder="{}"
+                  className={inputCls + ' resize-y font-mono text-xs leading-relaxed'}
+                />
+              </div>
+            )}
+
+            <p className="text-xs text-[var(--app-text-muted)]">
+              Each model runs the full chain (glossary → translate → revision) on the chapter above.
+              Leave a stage prompt blank to use the live production template, or load and tweak it.
+            </p>
+
+            <div className="space-y-3">
+              {FLOW_STAGES.filter((s) => flowUseGlossary || s.key !== 'glossary').map((s) => {
+                const value = flowPrompts[s.key];
+                return (
+                  <div key={s.key} className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="text-sm font-medium">{s.label}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openViewer(
+                            s.label,
+                            value.trim()
+                              ? value
+                              : '(blank — the production prompt is used at run time. Click “Load prod prompts” to view and edit the real template.)',
+                          )
+                        }
+                        title="View this prompt"
+                        className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
+                      >
+                        <Maximize2 className="h-3.5 w-3.5" /> View
+                      </button>
+                      <span className="ml-auto text-xs text-[var(--app-text-muted)]">
+                        {value.trim() ? `${value.length} chars` : 'prod default'}
+                      </span>
+                    </div>
+                    <textarea
+                      value={value}
+                      onChange={(e) => updateFlowPrompt(s.key, e.target.value)}
+                      rows={value.trim() ? 8 : 3}
+                      placeholder="Blank = production prompt. Click “Load prod prompts” to edit the real template…"
+                      className={inputCls + ' resize-y font-mono text-xs leading-relaxed'}
+                    />
+                    <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+                      Placeholders: <span className="font-mono">{s.placeholders}</span>
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            {promptError && <p className="text-sm text-red-600 dark:text-red-400">{promptError}</p>}
+          </div>
+        )}
+
+        {/* System-prompt variants (hidden for the full-flow stage) */}
+        {mode !== 'flow' && (
         <div className="border-t border-[var(--separator-opaque)] pt-4">
           <div className="mb-2 flex items-center justify-between gap-2">
             <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
@@ -658,6 +839,7 @@ export default function TranslationPlaygroundPage() {
             <p className="mt-2 text-sm text-red-600 dark:text-red-400">{promptError}</p>
           )}
         </div>
+        )}
 
         {/* Judge options (translate mode only) */}
         {mode === 'translate' && (
@@ -703,17 +885,42 @@ export default function TranslationPlaygroundPage() {
         )}
 
         <div className="flex items-center gap-3">
-          <Button onClick={handleRun} disabled={!canRun}>
-            {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-            {running
-              ? 'Running…'
-              : variants.length > 1
-                ? `Run (${cellCount} runs)`
-                : `Run (${models.length} model${models.length === 1 ? '' : 's'})`}
-          </Button>
+          {mode === 'flow' ? (
+            <Button onClick={handleRunFlow} disabled={!canRunFlow}>
+              {flowRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              {flowRunning
+                ? 'Running flow…'
+                : `Run flow (${models.length} model${models.length === 1 ? '' : 's'})`}
+            </Button>
+          ) : (
+            <Button onClick={handleRun} disabled={!canRun}>
+              {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              {running
+                ? 'Running…'
+                : variants.length > 1
+                  ? `Run (${cellCount} runs)`
+                  : `Run (${models.length} model${models.length === 1 ? '' : 's'})`}
+            </Button>
+          )}
           {error && <span className="text-sm text-red-600 dark:text-red-400">{error}</span>}
         </div>
       </div>
+
+      {/* ── Full-flow results ── */}
+      {flowResponse && (
+        <div className="mt-6">
+          <div className="mb-3 text-xs text-[var(--app-text-muted)]">
+            full flow · {flowResponse.sourceLanguage} → {flowResponse.targetLanguage} ·{' '}
+            {flowResponse.blockCount} block{flowResponse.blockCount === 1 ? '' : 's'}
+            {flowResponse.useGlossary ? ' · with glossary' : ' · no glossary'}
+          </div>
+          <div className="space-y-4">
+            {flowResponse.results.map((r) => (
+              <FlowResultCard key={r.model} result={r} onView={openViewer} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── Results ── */}
       {response && (() => {
@@ -932,6 +1139,117 @@ function ResultCard({
           )}
         </>
       )}
+    </div>
+  );
+}
+
+/** One model's full-flow run: final translation + per-stage outputs and metrics. */
+function FlowResultCard({
+  result: r,
+  onView,
+}: {
+  result: FictionFlowResult;
+  onView: (title: string, content: string) => void;
+}) {
+  if (!r.ok) {
+    return (
+      <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
+        <span className="font-mono text-sm font-semibold">{r.model}</span>
+        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{r.error || 'Flow failed'}</p>
+      </div>
+    );
+  }
+
+  const g = r.glossary;
+  const t = r.translate;
+  const rev = r.revision;
+  const secs = (ms?: number) => (ms != null ? `${(ms / 1000).toFixed(1)}s` : '—');
+
+  return (
+    <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <span className="font-mono text-sm font-semibold">{r.model}</span>
+        <span className="text-xs text-[var(--app-text-muted)]">
+          total {fmtCost(r.totalCostUsd)} · {secs(r.totalLatencyMs)}
+        </span>
+      </div>
+
+      {/* Final polished translation — the flow's output. */}
+      {rev && (
+        <div className="mb-3">
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <span className="text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+              Final (revised)
+            </span>
+            <button
+              type="button"
+              onClick={() => onView(`${r.model} · final`, rev.finalText)}
+              className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
+            >
+              <Maximize2 className="h-3.5 w-3.5" /> View
+            </button>
+          </div>
+          <p className="max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">
+            {rev.finalText}
+          </p>
+        </div>
+      )}
+
+      {/* Per-stage diagnostics. */}
+      <div className="space-y-1 border-t border-[var(--separator-opaque)] pt-3 text-xs text-[var(--app-text-muted)]">
+        {g && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-medium text-[var(--app-text)]">Glossary</span>
+            <span
+              className={
+                g.parsedOk
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : 'text-red-600 dark:text-red-400'
+              }
+            >
+              {g.parsedOk ? (g.entriesUsed ? 'parsed, used' : 'parsed, empty') : 'parse failed'}
+            </span>
+            <span>{fmtCost(g.costUsd)}</span>
+            <span>{secs(g.latencyMs)}</span>
+            <span>{g.tokensIn}→{g.tokensOut} tok</span>
+            <button
+              type="button"
+              onClick={() => onView(`${r.model} · glossary JSON`, g.text)}
+              className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+            >
+              <Maximize2 className="h-3 w-3" /> JSON
+            </button>
+            {g.parseError && <span className="text-amber-600 dark:text-amber-400">· {g.parseError}</span>}
+          </div>
+        )}
+        {t && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-medium text-[var(--app-text)]">Translate</span>
+            <span className={t.parsedCount === t.blockCount ? '' : 'text-amber-600 dark:text-amber-400'}>
+              {t.parsedCount}/{t.blockCount} blocks
+            </span>
+            <span>{fmtCost(t.costUsd)}</span>
+            <span>{secs(t.latencyMs)}</span>
+            <span>{t.tokensIn}→{t.tokensOut} tok</span>
+            <button
+              type="button"
+              onClick={() => onView(`${r.model} · draft`, t.draftText)}
+              className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+            >
+              <Maximize2 className="h-3 w-3" /> draft
+            </button>
+          </div>
+        )}
+        {rev && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-medium text-[var(--app-text)]">Revision</span>
+            <span>{rev.parsedCount} revised</span>
+            <span>{fmtCost(rev.costUsd)}</span>
+            <span>{secs(rev.latencyMs)}</span>
+            <span>{rev.tokensIn}→{rev.tokensOut} tok</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
