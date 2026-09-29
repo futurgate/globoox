@@ -303,7 +303,7 @@ export default function TranslationPlaygroundPage() {
     'w-full rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-3 py-2 text-sm outline-none focus:border-[var(--app-accent)]';
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pb-24">
+    <div className="mx-auto w-full max-w-6xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <PageHeader title="Translation Playground" />
 
       {/* ── Stage tabs ── */}
