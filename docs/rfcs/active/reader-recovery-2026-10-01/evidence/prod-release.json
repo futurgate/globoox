@@ -1,0 +1,88 @@
+{
+  "checked_at_utc": "2026-09-30T23:14:35.420078+00:00",
+  "sha": "9e4ac7d5348f3735879b12990695d2e782110d7f",
+  "github_deployment_id": 6772200366,
+  "vercel_deployment_id": "8QCRfvcYr6YSN4tnQPEMG7aoVwxY",
+  "environment": "Production",
+  "deployment_state": "success",
+  "deployment_status_provenance": "caller-supplied after checking exact GitHub deployment status",
+  "deployment_created_at": "2026-09-30T23:13:30Z",
+  "status_created_at": "2026-09-30T23:13:30Z",
+  "artifact_url": "https://globoox-lay73h7j9-lomovski.vercel.app",
+  "scope": "Anonymous reader shell and same-origin public JavaScript only; no authentication, book content API or mutations",
+  "pages": {
+    "artifact": {
+      "status": 200,
+      "final_url": "https://globoox-lay73h7j9-lomovski.vercel.app/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "bytes": 24258,
+      "requested_url": "https://globoox-lay73h7j9-lomovski.vercel.app/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "html_sha256": "02b76f8fc87c50d6048e9713b223a7d9714c1462785f27ddffa0cb99773ca714",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3d8b146b5a6e7543.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/8f0a141312fa49ce.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    },
+    "alias": {
+      "status": 200,
+      "final_url": "https://www.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "bytes": 24259,
+      "requested_url": "https://www.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "html_sha256": "5d8394a98913847bae46cb20e0fafa3e839d9963322005c46535874358fc2f1c",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3d8b146b5a6e7543.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/8f0a141312fa49ce.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    }
+  },
+  "matching_chunks": [
+    {
+      "url": "https://www.globoox.co/_next/static/chunks/3d8b146b5a6e7543.js",
+      "status": 200,
+      "bytes": 137204,
+      "sha256": "d217ba6d3a03b571c9b23d5bef2be651635cc6603b560548e577f7c3a2ed4638",
+      "markers": {
+        "Some text could not be translated.": true,
+        "Reload chapter": true
+      }
+    }
+  ],
+  "chunk_failures": [],
+  "alias_script_paths_match_artifact": true,
+  "requested_chunk_count": 19,
+  "both_markers_found": true,
+  "completed_at_utc": "2026-09-30T23:14:39.536805+00:00"
+}

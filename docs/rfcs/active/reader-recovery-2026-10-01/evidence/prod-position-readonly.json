@@ -1,0 +1,31 @@
+{
+  "checked_at_utc": "2026-09-30T23:17:46.728Z",
+  "command": "node .local/verification/read-prod-position.mjs",
+  "method": "GET",
+  "resource": "reading_progress",
+  "selected_fields": [
+    "chapter_id",
+    "block_id",
+    "block_position",
+    "updated_at"
+  ],
+  "scope": "One user/book supplied by the owner; actor ID and credentials intentionally omitted.",
+  "expected": {
+    "chapter_id": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+    "block_id": "032f946a-52e2-4811-ab9d-20a13899453c",
+    "block_position": 19
+  },
+  "http_status": 200,
+  "row_count": 1,
+  "rows": [
+    {
+      "chapter_id": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "block_id": "032f946a-52e2-4811-ab9d-20a13899453c",
+      "block_position": 19,
+      "updated_at": "2026-09-30T23:16:23.763+00:00"
+    }
+  ],
+  "matches_expected": true,
+  "elapsed_ms": 361,
+  "finished_at_utc": "2026-09-30T23:17:47.090Z"
+}

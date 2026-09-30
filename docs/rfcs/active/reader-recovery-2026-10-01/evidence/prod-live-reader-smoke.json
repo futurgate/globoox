@@ -1,0 +1,110 @@
+{
+  "at": "2026-09-30T23:14:53.666Z",
+  "sha": "9e4ac7d5348f3735879b12990695d2e782110d7f",
+  "bookshelfOffline": false,
+  "steps": [
+    {
+      "step": "open restored RU chapter9 (production layout85%)",
+      "ids": [
+        "032f946a-52e2-4811-ab9d-20a13899453c",
+        "cdf08909-f514-4524-83ac-7b553d01edaa",
+        "aee4374a-a9a2-4dd4-8af8-b808def5e064",
+        "092c5f6b-4bc5-4d0a-b5eb-659520ba7ab3",
+        "2b6636a5-4c85-4e19-911a-28c7e19893bf",
+        "9c649251-4617-4b52-8405-e0a265687522"
+      ]
+    },
+    {
+      "step": "production reload retains same reading spread",
+      "ids": [
+        "0c6bd5b1-cdc4-4ad5-bf5d-4003367ba79e",
+        "a6a2a37d-b859-4c18-a5d5-bb075451e690",
+        "320975f5-8fd4-49f7-827c-3e09c3f0b0ed",
+        "9dc3457a-ed87-44f7-a716-e691359c812b",
+        "bcd13ea2-0c87-4955-b3cd-23ab8988129d",
+        "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee"
+      ],
+      "pass": false
+    },
+    {
+      "step": "settled production spread after reload",
+      "ids": [
+        "0c6bd5b1-cdc4-4ad5-bf5d-4003367ba79e",
+        "a6a2a37d-b859-4c18-a5d5-bb075451e690",
+        "320975f5-8fd4-49f7-827c-3e09c3f0b0ed",
+        "9dc3457a-ed87-44f7-a716-e691359c812b",
+        "bcd13ea2-0c87-4955-b3cd-23ab8988129d",
+        "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee"
+      ]
+    },
+    {
+      "step": "second production reload preserves settled spread",
+      "ids": [
+        "0c6bd5b1-cdc4-4ad5-bf5d-4003367ba79e",
+        "a6a2a37d-b859-4c18-a5d5-bb075451e690",
+        "320975f5-8fd4-49f7-827c-3e09c3f0b0ed",
+        "9dc3457a-ed87-44f7-a716-e691359c812b",
+        "bcd13ea2-0c87-4955-b3cd-23ab8988129d",
+        "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee"
+      ],
+      "pass": true
+    },
+    {
+      "step": "intentional production page turn to original block19",
+      "ids": [
+        "032f946a-52e2-4811-ab9d-20a13899453c",
+        "cdf08909-f514-4524-83ac-7b553d01edaa",
+        "aee4374a-a9a2-4dd4-8af8-b808def5e064",
+        "092c5f6b-4bc5-4d0a-b5eb-659520ba7ab3",
+        "2b6636a5-4c85-4e19-911a-28c7e19893bf",
+        "9c649251-4617-4b52-8405-e0a265687522"
+      ]
+    },
+    {
+      "step": "production page turn persists through reload",
+      "ids": [
+        "032f946a-52e2-4811-ab9d-20a13899453c",
+        "cdf08909-f514-4524-83ac-7b553d01edaa",
+        "aee4374a-a9a2-4dd4-8af8-b808def5e064",
+        "092c5f6b-4bc5-4d0a-b5eb-659520ba7ab3",
+        "2b6636a5-4c85-4e19-911a-28c7e19893bf",
+        "9c649251-4617-4b52-8405-e0a265687522"
+      ],
+      "pass": true
+    }
+  ],
+  "scripts": [
+    "/_next/static/chunks/6d459ba0cd186f6c.js",
+    "/_next/static/chunks/cedead4da7a5c84c.js",
+    "/_next/static/chunks/81a4fbe2cce006fb.js",
+    "/_next/static/chunks/f4763fbb650469ca.js",
+    "/_next/static/chunks/737edb47a2b38749.js",
+    "/_next/static/chunks/624f2ec5ad9eedd1.js",
+    "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+    "/_next/static/chunks/1368ab990027332b.js",
+    "/_next/static/chunks/dd4dd01088920e08.js",
+    "/_next/static/chunks/c49788d3535b2d9d.js",
+    "/_next/static/chunks/e1a3093c8f3a4116.js",
+    "/_next/static/chunks/59a8265053f4dc04.js",
+    "/_next/static/chunks/24bccb14049557b2.js",
+    "/_next/static/chunks/8727c1c9a916a453.js",
+    "/_next/static/chunks/07fd69e0df5a97cd.js",
+    "/_next/static/chunks/737372a34e9d7cdc.js",
+    "/_next/static/chunks/7ddc7629dde9a922.js",
+    "/_next/static/chunks/a6dad97d9634a72d.js",
+    "https://vercel.live/_next-live/feedback/feedback.js",
+    "https://eu-assets.i.posthog.com/static/dead-clicks-autocapture.js?v=1.352.0",
+    "https://eu-assets.i.posthog.com/static/web-vitals.js?v=1.352.0",
+    "https://eu-assets.i.posthog.com/array/phc_PttHuks4srzEQRabS6JmTGuerhcO9Hql1O3mwaMhG2U/config.js",
+    "https://eu-assets.i.posthog.com/static/surveys.js?v=1.352.0",
+    "/_next/static/chunks/9a9881617b81d8f9.js",
+    "/_next/static/chunks/8f0a141312fa49ce.js",
+    "/_next/static/chunks/3d8b146b5a6e7543.js",
+    "/_next/static/chunks/8f0a141312fa49ce.js",
+    "/_next/static/chunks/3d8b146b5a6e7543.js",
+    "/_next/static/chunks/167ed37c994957fb.js",
+    "https://accounts.google.com/gsi/client"
+  ],
+  "observation": "Initial production local spread differed from the next settled reload after prior dev reading. A second reload was stable. Deliberate production page turn to original block19 then persisted through reload. Percentages differ across origin-specific reader layouts; compare block IDs.",
+  "completedAt": "2026-09-30T23:17:41.167Z"
+}
