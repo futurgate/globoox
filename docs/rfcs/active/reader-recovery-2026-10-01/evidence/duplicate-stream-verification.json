@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-09-30T23:06:43.749487+00:00",
+  "base_commit": "c672dc2",
+  "disposition": "New regression reproduced; production rollout paused by root; minimal fix written and focused checks passed. Final build/release remains root-owned.",
+  "adverse": {
+    "raw": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/duplicate-initial-batch.json",
+    "baseline": "67700e2: one [block-1,block-2] ES stream remains active after same-ID content refresh",
+    "candidate": "c672dc2: old identical stream aborted, a second identical stream sent",
+    "conditions": "cached fallback older than pending TTL; same chapter/language; background content response before initial translation response",
+    "live_match": "Live two jobs with size2/tokens944 are consistent with this mechanism, but live block IDs were not logged; the exact live cause remains an inference."
+  },
+  "fix": "Ownership generation now excludes canTranslate readiness. An accepted source snapshot validates current IDs and ready text independently of display binding. Same-ID refresh preserves in-flight stream/recovery budget; removed IDs cannot update/cache/retry; ready source wins; stale failures/pending IDs are cleared. Manual refresh explicitly retries only still-valid missing IDs.",
+  "checks": [
+    {
+      "name": "queue_recovery_and_readiness",
+      "command": "node e2e/translation-recovery.mjs > .local/verification/translation-candidate-21.json 2> .local/verification/translation-candidate-21.stderr.log",
+      "exit_code": 0,
+      "passed": 21,
+      "failed": 0,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-candidate-21.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-candidate-21.stderr.log"
+    },
+    {
+      "name": "manual_reader_recovery",
+      "command": "node e2e/reader-translation-ui.mjs > .local/verification/reader-translation-ui-after-split-5.json 2> .local/verification/reader-translation-ui-after-split-5.stderr.log",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/reader-translation-ui-after-split-5.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/reader-translation-ui-after-split-5.stderr.log"
+    },
+    {
+      "name": "initial_stream_revalidation",
+      "command": "node e2e/reader-initial-stream.mjs > .local/verification/reader-initial-stream-fixed.json 2> .local/verification/reader-initial-stream-fixed.stderr.log",
+      "exit_code": 0,
+      "passed": 1,
+      "failed": 0,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/reader-initial-stream-fixed.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/reader-initial-stream-fixed.stderr.log"
+    }
+  ],
+  "source_sha256": {
+    "src/lib/hooks/useViewportTranslation.ts": "715d049d4a90a61f13f6982f6f6eb19ba3557ebd21139158a45c0d97154b7076",
+    "src/components/Reader/ReaderView.tsx": "7535bcfb2bf600bbf6314100481b84f3176adf1a8fb7b588c91307495431a4a8",
+    "e2e/translation-recovery.mjs": "33e8e6af029a6c81071008d5c922955123b55692b762a179a1f98a8474e44ea4",
+    "e2e/reader-translation-ui.mjs": "449c9fa0b1f24a2faa26c7bee462e03adc73b0a2d8ab0e894f8e2a144f62afd8",
+    "e2e/reader-initial-stream.mjs": "ef454cd6a971cf114db6bb6f3dfdb4b365c292441b9d089ea4302dee3d3b69f9"
+  },
+  "limitations": [
+    "Synthetic transport and simplified Reader geometry; no live model/database calls.",
+    "The earlier review ruled out a render loop but overlooked this one duplicate request on content refresh; the adverse comparison supersedes that cost assessment."
+  ]
+}

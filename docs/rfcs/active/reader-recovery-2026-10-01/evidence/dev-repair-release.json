@@ -1,0 +1,88 @@
+{
+  "checked_at_utc": "2026-09-30T23:09:55.853258+00:00",
+  "sha": "4200ccc114875d5808a094a7dc305b0b800a5068",
+  "github_deployment_id": 6772135448,
+  "vercel_deployment_id": "HfgCeWaSmti3w3yyf37CPCiHw4x5",
+  "environment": "Preview",
+  "deployment_state": "success",
+  "deployment_status_provenance": "caller-supplied after checking exact GitHub deployment status",
+  "deployment_created_at": "2026-09-30T23:08:54Z",
+  "status_created_at": "2026-09-30T23:08:54Z",
+  "artifact_url": "https://globoox-ndpd6rrqr-lomovski.vercel.app",
+  "scope": "Anonymous reader shell and same-origin public JavaScript only; no authentication, book content API or mutations",
+  "pages": {
+    "alias": {
+      "status": 200,
+      "final_url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "bytes": 24289,
+      "requested_url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "html_sha256": "351d5ff47bd74375b0c1c2af33e3417e2c54e944bc079d5ea06771cd048dc528",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3d8b146b5a6e7543.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/8f0a141312fa49ce.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    },
+    "artifact": {
+      "status": 200,
+      "final_url": "https://globoox-ndpd6rrqr-lomovski.vercel.app/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "bytes": 24290,
+      "requested_url": "https://globoox-ndpd6rrqr-lomovski.vercel.app/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "html_sha256": "1a837e4c5faad63ad40d0f17f9db5cc670e69d6f19b24fb10dfbf3b1852cbd8a",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3d8b146b5a6e7543.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/8f0a141312fa49ce.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    }
+  },
+  "matching_chunks": [
+    {
+      "url": "https://dev.globoox.co/_next/static/chunks/3d8b146b5a6e7543.js",
+      "status": 200,
+      "bytes": 137204,
+      "sha256": "d217ba6d3a03b571c9b23d5bef2be651635cc6603b560548e577f7c3a2ed4638",
+      "markers": {
+        "Some text could not be translated.": true,
+        "Reload chapter": true
+      }
+    }
+  ],
+  "chunk_failures": [],
+  "alias_script_paths_match_artifact": true,
+  "requested_chunk_count": 19,
+  "both_markers_found": true,
+  "completed_at_utc": "2026-09-30T23:09:58.736366+00:00"
+}

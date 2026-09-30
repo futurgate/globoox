@@ -1,0 +1,82 @@
+{
+  "at": "2026-09-30T23:10:05.841Z",
+  "sha": "4200ccc114875d5808a094a7dc305b0b800a5068",
+  "steps": [
+    {
+      "step": "fresh short ES chapter and next chapter translated",
+      "at": "2026-09-30T23:10:52.273Z",
+      "visibleIds": [
+        "db531f16-7e7f-4e55-bbdf-7c24710a03a6",
+        "9249bb4f-0fe5-4dfb-a185-5ac60694adae",
+        "93b37225-84cf-4a48-9a10-a11419c0f31f",
+        "01b1865c-1ff2-4de0-bcb8-e537b7074ed7",
+        "3a63ca3b-3bbf-4a5d-806b-7054cdcc2066"
+      ],
+      "error": false
+    },
+    {
+      "step": "fresh translated chapter survives reload",
+      "visibleIds": [
+        "db531f16-7e7f-4e55-bbdf-7c24710a03a6",
+        "9249bb4f-0fe5-4dfb-a185-5ac60694adae",
+        "93b37225-84cf-4a48-9a10-a11419c0f31f",
+        "01b1865c-1ff2-4de0-bcb8-e537b7074ed7",
+        "3a63ca3b-3bbf-4a5d-806b-7054cdcc2066"
+      ],
+      "pass": true
+    }
+  ],
+  "scripts": [
+    "/_next/static/chunks/6d459ba0cd186f6c.js",
+    "/_next/static/chunks/cedead4da7a5c84c.js",
+    "/_next/static/chunks/81a4fbe2cce006fb.js",
+    "/_next/static/chunks/f4763fbb650469ca.js",
+    "/_next/static/chunks/737edb47a2b38749.js",
+    "/_next/static/chunks/624f2ec5ad9eedd1.js",
+    "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+    "/_next/static/chunks/1368ab990027332b.js",
+    "/_next/static/chunks/dd4dd01088920e08.js",
+    "/_next/static/chunks/c49788d3535b2d9d.js",
+    "/_next/static/chunks/e1a3093c8f3a4116.js",
+    "/_next/static/chunks/59a8265053f4dc04.js",
+    "/_next/static/chunks/24bccb14049557b2.js",
+    "/_next/static/chunks/8727c1c9a916a453.js",
+    "/_next/static/chunks/07fd69e0df5a97cd.js",
+    "/_next/static/chunks/737372a34e9d7cdc.js",
+    "/_next/static/chunks/7ddc7629dde9a922.js",
+    "/_next/static/chunks/a6dad97d9634a72d.js",
+    "https://vercel.live/_next-live/feedback/feedback.js",
+    "https://eu-assets.i.posthog.com/static/posthog-recorder.js?v=1.352.0",
+    "https://eu-assets.i.posthog.com/static/dead-clicks-autocapture.js?v=1.352.0",
+    "https://eu-assets.i.posthog.com/static/web-vitals.js?v=1.352.0",
+    "https://eu-assets.i.posthog.com/array/phc_PttHuks4srzEQRabS6JmTGuerhcO9Hql1O3mwaMhG2U/config.js",
+    "https://eu-assets.i.posthog.com/static/surveys.js?v=1.352.0",
+    "/_next/static/chunks/9a9881617b81d8f9.js",
+    "/_next/static/chunks/8f0a141312fa49ce.js",
+    "/_next/static/chunks/3d8b146b5a6e7543.js",
+    "/_next/static/chunks/8f0a141312fa49ce.js",
+    "/_next/static/chunks/3d8b146b5a6e7543.js",
+    "/_next/static/chunks/167ed37c994957fb.js",
+    "https://accounts.google.com/gsi/client"
+  ],
+  "restoredOriginalRU82": true,
+  "logs": [
+    "01:10:07 AM[n4bwf][reading-position] Commit successful",
+    "01:10:08 AM[n4bwf][reading-position] Commit successful",
+    "01:10:12 AM[n4bwf][reading-position] Commit successful",
+    "01:10:12 AM[n4bwf]{\"event\":\"translate_request\",\"jobId\":\"a2937f1d-a3e0-456e-8651-be30cb999180\",\"chapterId\":\"ea23aa30-eb22-417e-81a3-b73c2bb9a96f\",\"lang\":\"ES\",\"blocksRequested\":1,\"model\":\"gemini-3.7-flash\",\"promptVersion\":\"06092995010f62cc\"}",
+    "01:10:13 AM[n4bwf]{\"event\":\"translate_request\",\"jobId\":\"7d165802-04fc-4c6d-a19c-a75a277e9036\",\"chapterId\":\"16c24a5f-07d5-4ab9-9d32-0e20928a9617\",\"lang\":\"ES\",\"blocksRequested\":5,\"model\":\"gemini-3.7-flash\",\"promptVersion\":\"06092995010f62cc\"}",
+    "01:10:14 AM[n4bwf]{\"event\":\"translate_done\",\"jobId\":\"a2937f1d-a3e0-456e-8651-be30cb999180\",\"chapterId\":\"ea23aa30-eb22-417e-81a3-b73c2bb9a96f\",\"lang\":\"ES\",\"hits\":0,\"misses\":1,\"errors\":0,\"llmCalls\":1,\"totalDurationMs\":2050,\"tokensIn\":432,\"tokensOut\":8,\"retries\":0,\"fallbacks\":0,\"totalTokens\":440,\"totalBlocks\":1,\"cacheHitRate\":0,\"errorRate\":0,\"estimatedCost\":0.0000348}",
+    "01:10:17 AM[n4bwf]{\"event\":\"translate_done\",\"jobId\":\"7d165802-04fc-4c6d-a19c-a75a277e9036\",\"chapterId\":\"16c24a5f-07d5-4ab9-9d32-0e20928a9617\",\"lang\":\"ES\",\"hits\":0,\"misses\":5,\"errors\":0,\"llmCalls\":1,\"totalDurationMs\":3378,\"tokensIn\":652,\"tokensOut\":256,\"retries\":0,\"fallbacks\":0,\"totalTokens\":908,\"totalBlocks\":5,\"cacheHitRate\":0,\"errorRate\":0,\"estimatedCost\":0.0001257}",
+    "01:10:45 AM[n4bwf][reading-position] Commit successful",
+    "01:10:46 AM[n4bwf][reading-position] Commit successful",
+    "01:10:46 AM[n4bwf]{\"event\":\"translate_request\",\"jobId\":\"9a87478b-df47-4166-8f7d-76e886222134\",\"chapterId\":\"ac7ba312-2f10-4d4e-b937-52cfd8c6cdf8\",\"lang\":\"ES\",\"blocksRequested\":3,\"model\":\"gemini-3.7-flash\",\"promptVersion\":\"06092995010f62cc\"}",
+    "01:10:49 AM[n4bwf]{\"event\":\"translate_done\",\"jobId\":\"9a87478b-df47-4166-8f7d-76e886222134\",\"chapterId\":\"ac7ba312-2f10-4d4e-b937-52cfd8c6cdf8\",\"lang\":\"ES\",\"hits\":0,\"misses\":3,\"errors\":0,\"llmCalls\":1,\"totalDurationMs\":2523,\"tokensIn\":500,\"tokensOut\":88,\"retries\":0,\"fallbacks\":0,\"totalTokens\":588,\"totalBlocks\":3,\"cacheHitRate\":0,\"errorRate\":0,\"estimatedCost\":0.0000639}",
+    "01:11:02 AM[n4bwf][reading-position] Commit successful",
+    "01:11:09 AM[n4bwf][reading-position] Commit successful",
+    "01:11:09 AM[n4bwf][reading-position] Commit successful",
+    "01:11:13 AM[n4bwf][reading-position] Commit successful",
+    "01:11:13 AM[n4bwf][reading-position] Commit successful",
+    "01:11:17 AM[n4bwf][reading-position] Commit successful"
+  ]
+}
