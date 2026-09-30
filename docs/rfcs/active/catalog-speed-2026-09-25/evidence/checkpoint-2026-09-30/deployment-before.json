@@ -1,0 +1,153 @@
+{
+  "recorded_at_utc": "2026-09-30T21:29:49.318Z",
+  "scope": "Read-only production release preparation; no push, deploy, cloud configuration change, browser use or credential-file reads.",
+  "candidate": {
+    "sha": "c3c82a45cfa0f1d46a6f6416441ec6feded5a4ef",
+    "working_tree_clean_at_initial_check": true,
+    "regions": [
+      "fra1"
+    ],
+    "git_deployment_enabled": {
+      "dev": true,
+      "main": false
+    }
+  },
+  "repository": {
+    "origin": "https://github.com/futurgate/globoox.git",
+    "observed_origin_main": "8a3c257b31584b63894f7e3a910ca3237b1a6704",
+    "main_git_deployment_enabled": {
+      "dev": false,
+      "main": false
+    },
+    "workflow": ".github/workflows/docs-check.yml",
+    "workflow_purpose": "Documentation check only; no repository deployment workflow found."
+  },
+  "latest_github_production_record": {
+    "id": 6761927349,
+    "sha": "235ddffd63f9ad1eb6202a2b928e089cd80e99f5",
+    "environment": "Production",
+    "state": "success",
+    "created_at_utc": "2026-09-30T14:27:19Z",
+    "environment_url": "https://globoox-5bb0n7hz3-lomovski.vercel.app",
+    "description": "Deployment has completed",
+    "verification": "Read current GitHub deployments list and this deployment statuses endpoint. This is latest successful GitHub Production record, not an authenticated Vercel alias-to-SHA assertion."
+  },
+  "public_domain_checks": [
+    {
+      "requested": "https://www.globoox.co/my-books",
+      "final_url": "https://www.globoox.co/my-books",
+      "status": 200,
+      "script_count": 19,
+      "scripts_sha256": "773e03d4f29d29effaeffbbc74a9a45bd45de721b9221814ecec41849376908e",
+      "utc": "2026-09-30T21:28:05.845635+00:00",
+      "x_vercel_cache": "HIT",
+      "x_vercel_id_present": true
+    },
+    {
+      "requested": "https://globoox.co/my-books",
+      "final_url": "https://www.globoox.co/my-books",
+      "status": 200,
+      "script_count": 19,
+      "scripts_sha256": "773e03d4f29d29effaeffbbc74a9a45bd45de721b9221814ecec41849376908e",
+      "utc": "2026-09-30T21:28:06.536331+00:00",
+      "x_vercel_cache": "HIT",
+      "x_vercel_id_present": true
+    }
+  ],
+  "deployment_path": {
+    "current_blocker": "vercel.json git.deploymentEnabled.main=false suppresses the Git integration build for main; pushing unchanged candidate does not provide the intended automatic production release.",
+    "preferred": "Review and commit main=true in the release candidate, retain dev=true and fra1, then publish to the configured production branch. GitHub history identifies Production releases associated with main SHAs; authenticated project-level productionBranch is not independently verified here.",
+    "required_after_push": "A new Production deployment for the exact release SHA must finish successfully, then verify www and apex resolve to that deployment and run release smoke. A commit/push alone is not proof of deploy.",
+    "alternative": "An explicit Vercel Production-target build/promotion is possible only with an authorized Vercel connection. Do not blindly promote an existing dev Preview: build-time public variables and environment-specific API/auth configuration may differ.",
+    "no_provider_mutations_performed": true
+  },
+  "rollback": {
+    "prior_production_sha": "235ddffd63f9ad1eb6202a2b928e089cd80e99f5",
+    "prior_production_url": "https://globoox-5bb0n7hz3-lomovski.vercel.app",
+    "provider_artifact_path": "Use the prior successful Production artifact as the rollback target through authenticated Vercel controls; availability/permission of the actual rollback action is not tested by this read-only task.",
+    "git_fallback": "If release uses the enabled main Git integration, prepare a new ordinary main commit reverting only the released application changes while keeping main deployment enabled. Distinguish pre-release Git main8a3c257 from the last published runtime235ddff; choose the intended restoration baseline explicitly and preserve intervening developer changes. Do not force-reset main.",
+    "scope": "Frontend only. Does not roll back backend, catalog DB migrations, reading activity or user data.",
+    "post_rollback": "Verify successful deployment SHA, both aliases, authentication, shelf, Reader and shared/guest access. Old artifact environment remains a separate compatibility check.",
+    "executed": false
+  },
+  "environment_requirements": [
+    {
+      "variables": [
+        "API_URL",
+        "NEXT_PUBLIC_API_URL"
+      ],
+      "code": [
+        "src/app/(app)/api/_proxy.ts",
+        "src/app/(app)/api/_catalogProxy.ts",
+        "src/lib/api.ts"
+      ],
+      "meaning": "Production server proxy upstream; API_URL takes precedence. Must target the working backend with catalog v2. The earlier dev incident came from a stale deployment upstream. No actual environment values read."
+    },
+    {
+      "variables": [
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+      ],
+      "code": [
+        "src/lib/supabase/client.ts",
+        "src/lib/supabase/server.ts",
+        "src/lib/supabase/middleware.ts"
+      ],
+      "meaning": "Public browser auth settings are compiled into the Production build; verify expected project/cookie/auth behavior. Do not reuse a locally built QA artifact with synthetic/loopback settings."
+    },
+    {
+      "variables": [
+        "NEXT_PUBLIC_SITE_URL",
+        "NEXT_PUBLIC_VERCEL_URL"
+      ],
+      "code": [
+        "src/lib/supabase/utils.ts",
+        "src/app/layout.tsx",
+        "src/app/robots.ts",
+        "src/app/sitemap.ts"
+      ],
+      "meaning": "Production canonical/auth redirect URL must match intended production domain, not dev/Preview."
+    },
+    {
+      "variables": [
+        "NEXT_PUBLIC_POSTHOG_HOST",
+        "NEXT_PUBLIC_POSTHOG_KEY"
+      ],
+      "code": [
+        "src/instrumentation-client.ts"
+      ],
+      "meaning": "Analytics project and ingestion settings may differ by environment; missing prod telemetry does not prove missing UI actions."
+    },
+    {
+      "variables": [
+        "SENTRY_AUTH_TOKEN"
+      ],
+      "code": [
+        "next.config.ts"
+      ],
+      "meaning": "Build upload behavior depends on this secret. Its value was neither read nor recorded; provider rebuilds with Production build environment."
+    }
+  ],
+  "lookups": {
+    "external_read_only_count": 4,
+    "commands": [
+      "gh api repos/futurgate/globoox/deployments?environment=Production&per_page=5 (sanitized metadata projection)",
+      "gh api repos/futurgate/globoox/deployments/6761927349/statuses (sanitized metadata projection)",
+      "GET https://www.globoox.co/my-books",
+      "GET https://globoox.co/my-books (follows public canonical redirect)"
+    ],
+    "source_reads": [
+      "candidate git status/HEAD",
+      "candidate vercel.json",
+      "origin/main vercel.json",
+      "documentation workflow",
+      "source environment variable names only"
+    ]
+  },
+  "limitations": [
+    "Authenticated Vercel project settings, production branch, aliases and environment values were not available through the allowed bounded read-only path. No claim that main=true alone guarantees a successful provider build.",
+    "Vercel CLI was previously unauthenticated; no login or secret-file exploration attempted in this task.",
+    "Public www/apex HTML script fingerprints match each other. The previous deployment URL was not fetched in the four-lookup budget, so this is not an independent exact-SHA alias match.",
+    "No rollout, rollback or failure injection executed. Evidence is preparation, not release certification."
+  ]
+}

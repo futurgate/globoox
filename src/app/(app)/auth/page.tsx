@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/lib/supabase/client';
 import { trackUserLoggedIn } from '@/lib/posthog';
+import { safeLocalReturnPath } from '@/lib/authNavigation';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export default function AuthPage() {
@@ -40,7 +41,7 @@ function AuthForm() {
     searchParams.get('error') ? 'Authentication failed. Please try again.' : null
   );
   const [message, setMessage] = useState<string | null>(null);
-  const nextUrl = searchParams.get('next') || '/my-books';
+  const nextUrl = safeLocalReturnPath(searchParams.get('next'));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,7 +177,7 @@ function AuthForm() {
 
               <p className="text-center text-sm text-[var(--app-text-muted)]">
                 Don&apos;t have an account?{' '}
-                <Link href="/auth/register" className="text-primary underline-offset-4 hover:underline">
+                <Link href={`/auth/register?next=${encodeURIComponent(nextUrl)}`} className="text-primary underline-offset-4 hover:underline">
                   Create account
                 </Link>
               </p>
@@ -184,7 +185,7 @@ function AuthForm() {
           </Card>
         </section>
         <p className="pb-2 text-center text-sm text-[var(--app-text-muted)]">
-          <Link href="/my-books" className="text-primary underline-offset-4 hover:underline">
+          <Link href={nextUrl} className="text-primary underline-offset-4 hover:underline">
             Browse as guest
           </Link>
         </p>

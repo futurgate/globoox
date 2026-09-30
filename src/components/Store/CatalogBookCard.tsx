@@ -16,6 +16,7 @@ export default function CatalogBookCard({ book, context, offline, ...props }: {
 }) {
   const cover = useCatalogCover(book, context, offline)
   return <BookCard {...props} id={book.id} title={book.title} author={book.author || 'Unknown author'}
+    shareToken={context?.shareToken ?? null}
     coverVersionKey={`${context?.scopeKey}::${book.id}::${book.cover?.version}`}
     cover={cover.url} coverLoading={cover.loading} />
 }

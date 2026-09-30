@@ -3,6 +3,9 @@ import { CatalogError, validateCatalogManifest, type CatalogContext, type Catalo
 import type { CatalogCacheEntry } from './catalogCache'
 import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, hasFreshCatalogReceipt, invalidateCatalogConfirmation } from './catalogFreshness'
 
+// One bounded budget for identity, reading acknowledgements and the manifest.
+export const CATALOG_REFRESH_TIMEOUT_MS = 5_000
+
 export interface CatalogView {
   books: CatalogItem[]
   loading: boolean
@@ -65,7 +68,7 @@ export class CatalogController {
   private pendingMutations = 0
   private refreshAfterMutation = false
 
-  constructor(private dependencies: CatalogDependencies, private timeoutMs = 2500) {}
+  constructor(private dependencies: CatalogDependencies, private timeoutMs = CATALOG_REFRESH_TIMEOUT_MS) {}
   get snapshot() { return this.view }
   subscribe(listener: (view: CatalogView) => void) {
     this.listeners.add(listener)

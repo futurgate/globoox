@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
+import { withShareContext } from '@/lib/shareNavigation';
 import Link from 'next/link';
 import { StarIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -361,6 +362,7 @@ interface BookCardProps {
   cover?: string | null;
   coverLoading?: boolean;
   coverVersionKey?: string;
+  shareToken?: string | null;
   languages?: string[];
   progress?: number;
   isDemo?: boolean;
@@ -377,6 +379,7 @@ export default function BookCard({
   cover,
   coverLoading = false,
   coverVersionKey,
+  shareToken = null,
   progress = 0,
   onHide,
   onDelete,
@@ -461,7 +464,7 @@ export default function BookCard({
           </div>
         )}
         <Link
-          href={`/reader/${id}`}
+          href={withShareContext(`/reader/${id}`, shareToken)}
           className={`block transition-transform ${isMenuOpen ? 'pointer-events-none' : 'active:scale-[0.98]'}`}
           tabIndex={isMenuOpen ? -1 : 0}
           aria-disabled={isMenuOpen}
@@ -518,7 +521,7 @@ export default function BookCard({
         </Link>
       </div>
       <Link
-        href={`/reader/${id}`}
+        href={withShareContext(`/reader/${id}`, shareToken)}
         className={`block ${isMenuOpen ? 'pointer-events-none' : ''}`}
         tabIndex={isMenuOpen ? -1 : 0}
         aria-disabled={isMenuOpen}

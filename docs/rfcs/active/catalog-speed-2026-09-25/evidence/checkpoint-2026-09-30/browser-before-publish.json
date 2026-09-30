@@ -1,0 +1,612 @@
+{
+  "capturedAt": "2026-09-30T21:44:19.397Z",
+  "localProductionFixture": [
+    {
+      "step": "public_six",
+      "at": "2026-09-30T21:40:56.551Z",
+      "state": {
+        "books": [
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000001",
+            "label": "QA one\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000002",
+            "label": "QA two\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000003",
+            "label": "QA three\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000004",
+            "label": "QA four\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000005",
+            "label": "QA five\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000006",
+            "label": "QA six\n\nSynthetic Author"
+          }
+        ],
+        "retry": false,
+        "status": null,
+        "url": "http://localhost:3040/my-books"
+      }
+    },
+    {
+      "step": "shared_one",
+      "at": "2026-09-30T21:41:09.148Z",
+      "state": {
+        "books": [
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000001?share=checkpoint-demo",
+            "label": "QA one\n\nSynthetic Author"
+          }
+        ],
+        "retry": false,
+        "status": null,
+        "url": "http://localhost:3040/my-books?share=checkpoint-demo"
+      }
+    },
+    {
+      "step": "shared_reader",
+      "at": "2026-09-30T21:42:58.796Z",
+      "url": "http://localhost:3040/reader/10000000-0000-4000-8000-000000000001?share=checkpoint-demo",
+      "backHref": "/my-books?share=checkpoint-demo"
+    },
+    {
+      "step": "shared_reader_reload",
+      "at": "2026-09-30T21:42:59.337Z",
+      "url": "http://localhost:3040/reader/10000000-0000-4000-8000-000000000001?share=checkpoint-demo",
+      "backHref": "/my-books?share=checkpoint-demo"
+    },
+    {
+      "step": "reader_back_shared",
+      "at": "2026-09-30T21:42:59.426Z",
+      "state": {
+        "books": [
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000001?share=checkpoint-demo",
+            "label": "QA one\n\nSynthetic Author"
+          }
+        ],
+        "retry": false,
+        "status": null,
+        "url": "http://localhost:3040/my-books?share=checkpoint-demo"
+      }
+    },
+    {
+      "step": "nav_public",
+      "at": "2026-09-30T21:42:59.624Z",
+      "state": {
+        "books": [
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000001",
+            "label": "QA one\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000002",
+            "label": "QA two\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000003",
+            "label": "QA three\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000004",
+            "label": "QA four\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000005",
+            "label": "QA five\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000006",
+            "label": "QA six\n\nSynthetic Author"
+          }
+        ],
+        "retry": false,
+        "status": null,
+        "url": "http://localhost:3040/my-books"
+      }
+    },
+    {
+      "step": "public_reload",
+      "at": "2026-09-30T21:42:59.804Z",
+      "state": {
+        "books": [
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000001",
+            "label": "QA one\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000002",
+            "label": "QA two\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000003",
+            "label": "QA three\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000004",
+            "label": "QA four\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000005",
+            "label": "QA five\n\nSynthetic Author"
+          },
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000006",
+            "label": "QA six\n\nSynthetic Author"
+          }
+        ],
+        "retry": false,
+        "status": null,
+        "url": "http://localhost:3040/my-books"
+      }
+    },
+    {
+      "step": "three_second_manifest",
+      "startedAt": "2026-09-30T21:43:37.460Z",
+      "observations": [
+        {
+          "at": 159,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 325,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 552,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 739,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 926,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 1101,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 1269,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 1450,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 1626,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 1794,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 1968,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 2149,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 2329,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 2496,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 2681,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 2847,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 3020,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        },
+        {
+          "at": 3185,
+          "books": [
+            {
+              "href": "/reader/10000000-0000-4000-8000-000000000001?share=checkpoint-delay",
+              "label": "QA one\n\nSynthetic Author"
+            }
+          ],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-delay"
+        }
+      ]
+    },
+    {
+      "step": "five_second_deadline",
+      "startedAt": "2026-09-30T21:43:54.410Z",
+      "observations": [
+        {
+          "at": 118,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 281,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 445,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 615,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 817,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 979,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 1146,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 1313,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 1482,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 1643,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 1807,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 1974,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 2141,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 2304,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 2473,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 2643,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 2815,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 3003,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 3180,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 3372,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 3636,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 3810,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 4006,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 4194,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 4370,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 4555,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 4729,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 4906,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 5091,
+          "books": [],
+          "retry": false,
+          "status": null,
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        },
+        {
+          "at": 5284,
+          "books": [],
+          "retry": true,
+          "status": "The library took too long to respond. Changes and uploads are unavailable.\n\nTry again",
+          "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+        }
+      ]
+    },
+    {
+      "step": "retry_recovered",
+      "elapsedMs": 315,
+      "at": "2026-09-30T21:44:19.397Z",
+      "state": {
+        "books": [
+          {
+            "href": "/reader/10000000-0000-4000-8000-000000000001?share=checkpoint-timeout",
+            "label": "QA one\n\nSynthetic Author"
+          }
+        ],
+        "retry": false,
+        "status": null,
+        "url": "http://localhost:3040/my-books?share=checkpoint-timeout"
+      }
+    }
+  ],
+  "livePreviousDevPublicReader": [
+    {
+      "step": "first_text",
+      "at": "2026-09-30T21:35:51.620Z",
+      "state": {
+        "fingerprint": "dcab44d0",
+        "paragraphs": 5,
+        "position": [
+          "Introduction\n0%"
+        ],
+        "retry": false,
+        "skeletons": 0,
+        "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+      }
+    },
+    {
+      "step": "forward_1",
+      "at": "2026-09-30T21:35:51.959Z",
+      "state": {
+        "fingerprint": "f6096809",
+        "paragraphs": 3,
+        "position": [
+          "Introduction\n21%"
+        ],
+        "retry": false,
+        "skeletons": 0,
+        "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+      }
+    },
+    {
+      "step": "forward_2",
+      "at": "2026-09-30T21:35:52.259Z",
+      "state": {
+        "fingerprint": "f1096089",
+        "paragraphs": 4,
+        "position": [
+          "Introduction\n31%"
+        ],
+        "retry": false,
+        "skeletons": 0,
+        "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+      }
+    },
+    {
+      "step": "forward_3",
+      "at": "2026-09-30T21:35:52.562Z",
+      "state": {
+        "fingerprint": "22742d85",
+        "paragraphs": 5,
+        "position": [
+          "Introduction\n45%"
+        ],
+        "retry": false,
+        "skeletons": 0,
+        "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+      }
+    },
+    {
+      "step": "back",
+      "at": "2026-09-30T21:36:01.380Z",
+      "state": {
+        "fingerprint": "f1096089",
+        "paragraphs": 4,
+        "position": [
+          "Introduction\n31%"
+        ],
+        "retry": false,
+        "skeletons": 0,
+        "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+      }
+    },
+    {
+      "step": "reload",
+      "at": "2026-09-30T21:36:03.492Z",
+      "state": {
+        "fingerprint": "f1096089",
+        "paragraphs": 4,
+        "position": [
+          "Introduction\n31%"
+        ],
+        "retry": false,
+        "skeletons": 0,
+        "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic fixture backend for local Next production UI.",
+    "Live Reader was guest original EN on preceding dev, no translation error recovery proven.",
+    "User auth not available during live continuation test."
+  ]
+}

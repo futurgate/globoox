@@ -4,7 +4,8 @@
  * Mode JSON: {mode:"normal|reordered|old-then-new|delay|timeout|empty|auth401|unsupported404",
  *   reset_id:"case-name", delay_ms:1200, order:[6,1,2,3,4,5], broken_cover:3,
  *   cover_delay_ms:0, cover_version:"v1", activity_delay_ms:0, activity_status:200,
- *   reader_delay_ms:0, reader_error:false, mutation_status:200, book_count:18, upload_process_delay_ms:4000, upload_fail:false, upload_dedup:false}
+ *   reader_delay_ms:0, reader_error:false, mutation_status:200, book_count:18, share_book_count:1,
+ *   upload_process_delay_ms:4000, upload_fail:false, upload_dedup:false}
  * Changing reset_id resets in-memory fixture state. GET /__qa returns bounded, token-free evidence.
  * Supabase fixture base URL: http://127.0.0.1:3018, with a synthetic public anon key.
  */
@@ -91,7 +92,7 @@ function context(req, url) {
   if (user !== 'guest' && !users.includes(user)) return null
   if (typeof guest !== 'string' || !UUID.test(guest)) return null
   const actor = user === 'guest' ? `guest:${guest}` : `user:${user}`
-  return { user: user === 'guest' ? null : user, key: `${actor}::${digest(url.searchParams.get('share') ?? '')}` }
+  return { user: user === 'guest' ? null : user, shared: !!url.searchParams.get('share'), key: `${actor}::${digest(url.searchParams.get('share') ?? '')}` }
 }
 function scopeState(key) {
   let state = scopes.get(key)
@@ -120,6 +121,9 @@ function manifest(ctx, mode) {
   const initialRank = new Map(ids.map((id, index) => [id, index]))
   ids.sort((a, b) => (state.readAt.get(b) ?? 0) - (state.readAt.get(a) ?? 0) || initialRank.get(a) - initialRank.get(b))
   ids = mode.mode === 'empty' ? [] : ids.filter(id => mutations.get(id)?.status !== 'deleted')
+  if (ctx.shared && Number.isSafeInteger(mode.share_book_count)) {
+    ids = ids.slice(0, Math.max(0, Math.min(18, mode.share_book_count)))
+  }
   const items = ids.map(id => {
     const index = bookIds.indexOf(id)
     const book = legacyBook(id, !!ctx.user)

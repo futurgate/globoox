@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
+import LoadingMyBooks from './loading';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Check, SlidersHorizontal, BookMarked, Smartphone, Globe } from 'lucide-react';
 import IOSBottomDrawer from '@/components/ui/ios-bottom-drawer';
@@ -30,13 +32,19 @@ import GoogleOneTap from '@/components/GoogleOneTap';
 import PageHeader from '@/components/ui/PageHeader';
 import { trackBookOpened } from '@/lib/posthog';
 import { getGuestScopeKey, getShareToken } from '@/lib/api';
+import { shareTokenFromSearch, withShareContext } from '@/lib/shareNavigation';
 
 const BOOKS_BATCH_SIZE = 6;
 
 export default function MyBooksPage() {
+  return <Suspense fallback={<LoadingMyBooks />}><ScopedBookshelf /></Suspense>;
+}
+
+function ScopedBookshelf() {
+  const searchParams = useSearchParams();
   const auth = useAuth();
   const identity = auth.isAuthenticated ? auth.user?.id : auth.loading ? undefined : null;
-  const share = getShareToken();
+  const share = shareTokenFromSearch(searchParams.toString());
   const [lifetime, setLifetime] = useState({ identity, share, epoch: 0 });
   if (identity !== undefined && (identity !== lifetime.identity || share !== lifetime.share)) {
     // Resolving the initial identity must keep the deadline started on entry.
@@ -120,7 +128,8 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     const params = new URLSearchParams(window.location.search);
     if (params.get('upload') === '1') {
       setIsUploadOpen(true);
-      window.history.replaceState({}, '', '/my-books');
+      params.delete('upload');
+      window.history.replaceState(window.history.state, '', `/my-books${params.size ? `?${params}` : ''}`);
     }
   }, [authLoading, isAuthenticated]);
 
@@ -129,7 +138,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     if (isAuthenticated) {
       setIsUploadOpen(true);
     } else {
-      window.location.href = '/auth?next=/my-books';
+      window.location.href = `/auth?next=${encodeURIComponent(withShareContext('/my-books', getShareToken()))}`;
     }
   };
 
@@ -424,7 +433,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
                 <Button
                   size="sm"
                   className="h-8 rounded-full px-4"
-                  onClick={() => { window.location.href = '/auth?next=/my-books'; }}
+                  onClick={() => { window.location.href = `/auth?next=${encodeURIComponent(withShareContext('/my-books', getShareToken()))}`; }}
                 >
                   Sign In
                 </Button>

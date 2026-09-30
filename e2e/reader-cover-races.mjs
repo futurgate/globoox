@@ -9,6 +9,7 @@ const fixtures = {
     return <main data-reader={props.bookId}><img data-reader-cover src={props.coverUrl||undefined}/></main>;
   }`,
   link: `import React from 'react'; export default function Link(props){return <a {...props}/>}`,
+  navigation: `export const useSearchParams=()=>new URLSearchParams(globalThis.__readerFixture.share?{share:globalThis.__readerFixture.share}:{});`,
   api: `export const getShareToken=()=>globalThis.__readerFixture.share;`,
   auth: `export const useAuth=()=>({user:globalThis.__readerFixture.user?{id:globalThis.__readerFixture.user}:null,isAuthenticated:!!globalThis.__readerFixture.user,loading:false});`,
   session: `export const createClient=()=>({auth:{getSession:async()=>({error:null,data:{session:globalThis.__readerFixture.user?{user:{id:globalThis.__readerFixture.user},access_token:'fixture-'+globalThis.__readerFixture.user}:null}})}});`,
@@ -66,7 +67,7 @@ export async function buildReaderCoverHarness({ readerPageSource } = {}) {
     };
   `
   const mapping = new Map([
-    ['@/components/Reader/ReaderView', 'reader'], ['next/link', 'link'],
+    ['@/components/Reader/ReaderView', 'reader'], ['next/link', 'link'], ['next/navigation', 'navigation'],
     ['@/lib/api', 'api'], ['./api', 'api'], ['@/lib/hooks/useAuth', 'auth'],
     ['./supabase/client', 'session'], ['@/lib/catalogCache', 'cache'], ['./catalogCache', 'cache'],
     ['@/lib/readingActivity', 'activity'], ['@/lib/store', 'store'],
@@ -87,12 +88,39 @@ export async function runReaderCoverCases(browser, bundle) {
   const a = '00000000-0000-4000-8000-000000000001'
   const b = '00000000-0000-4000-8000-000000000002'
   const passed = []
-  const run = (page, method, ...args) => page.evaluate(({ method, args }) => window.check[method](...args), { method, args })
+  const run = async (page, method, ...args) => {
+    const result = await page.evaluate(({ method, args }) => window.check[method](...args), { method, args })
+    if (method === 'mount' || method === 'update') {
+      // Nested Suspense commits and the cover effect can outlive act's initial
+      // render. Wait for the real observable boundary the scenario exercises:
+      // its scoped cover request, or a rendered cache hit. No response is faked.
+      await page.waitForFunction(async () => {
+        const state = await window.check.state()
+        const fixture = globalThis.__readerFixture
+        if (!state.reader) return false
+        if (fixture.cachedCover) return !!state.src
+        return state.requests.some(request => {
+          const url = new URL(request.url, location.origin)
+          return !request.aborted
+            && request.headers['X-Catalog-User'] === (fixture.user ?? 'guest')
+            && url.searchParams.get('share') === fixture.share
+            && url.searchParams.get('version') === fixture.version
+        })
+      }, undefined, { timeout: 2000 })
+    }
+    return result
+  }
   async function scenario(name, options, body) {
     const page = await browser.newPage()
     try {
       await page.route('**/*', route => route.abort())
-      await page.setContent('<div id="root"></div>')
+      // Catalog identity uses crypto.randomUUID and localStorage. An opaque
+      // about:blank document provides neither; use an intercepted secure origin
+      // so the actual identity code runs without any external network request.
+      await page.route('https://reader-cover-fixture.test/**', route => route.fulfill({
+        status: 200, contentType: 'text/html', body: '<div id="root"></div>',
+      }))
+      await page.goto('https://reader-cover-fixture.test/')
       await page.addScriptTag({ content: bundle })
       await run(page, 'mount', options)
       await body(page)
@@ -169,6 +197,21 @@ export async function runReaderCoverCases(browser, bundle) {
     state = await run(page, 'state')
     assert.notEqual(state.src, previous)
     assert.equal(state.created[1].body, 'second-share-cover')
+  })
+  await scenario('ordinary URL removes the guest share scope and rejects its late cover response', { user: null, share: 'fixture-share' }, async page => {
+    const before = await run(page, 'state')
+    await run(page, 'update', { share: null })
+    let state = await run(page, 'state')
+    assert.notEqual(state.scope, before.scope)
+    assert.equal(state.requests[0].aborted, true)
+    assert.equal(new URL(state.requests[1].url, 'http://fixture').searchParams.has('share'), false)
+    await run(page, 'network', 0, 'obsolete-share-cover')
+    state = await run(page, 'state')
+    assert.equal(state.src, null)
+    await run(page, 'network', 1, 'public-cover')
+    state = await run(page, 'state')
+    assert.equal(state.created.length, 1)
+    assert.equal(state.created[0].body, 'public-cover')
   })
   await scenario('unmount aborts in-flight cover and cannot create a late object URL', { user: a }, async page => {
     await run(page, 'unmount')

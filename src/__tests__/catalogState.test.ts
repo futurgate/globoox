@@ -39,7 +39,7 @@ describe('server-first catalog ownership and deadlines', () => {
     const fetch = vi.fn(async () => manifest(['late']))
     const { controller } = setup({ resolve: () => identity.promise, fetch })
     const run = controller.refresh()
-    await vi.advanceTimersByTimeAsync(2500)
+    await vi.advanceTimersByTimeAsync(5000)
     await run
     expect(controller.snapshot.books.map(book => book.id)).toEqual(['cached'])
     expect(controller.snapshot.error?.kind).toBe('timeout')
@@ -55,11 +55,11 @@ describe('server-first catalog ownership and deadlines', () => {
     const fetch = vi.fn(() => response.promise)
     const { controller } = setup({ flush: () => ack.promise, fetch })
     const run = controller.refresh()
-    await vi.advanceTimersByTimeAsync(1800)
+    await vi.advanceTimersByTimeAsync(3200)
     ack.resolve('23')
     await microtasks()
     expect(fetch).toHaveBeenCalledWith(context, expect.any(AbortSignal), '23')
-    await vi.advanceTimersByTimeAsync(700)
+    await vi.advanceTimersByTimeAsync(1800)
     await run
     expect(controller.snapshot.error?.kind).toBe('timeout')
     response.resolve(manifest(['late'], context.scopeKey, '23'))
@@ -67,12 +67,28 @@ describe('server-first catalog ownership and deadlines', () => {
     expect(controller.snapshot.books.map(book => book.id)).toEqual(['cached'])
   })
 
+  it('accepts a three-second validation without showing stale fallback or renewing on a late deadline', async () => {
+    const response = deferred<CatalogManifest>()
+    const { controller } = setup({ fetch: () => response.promise })
+    const run = controller.refresh()
+    await vi.advanceTimersByTimeAsync(3000)
+    expect(controller.snapshot.loading).toBe(true)
+    expect(controller.snapshot.offline).toBe(false)
+    expect(controller.snapshot.books).toEqual([])
+    response.resolve(manifest(['fresh']))
+    await run
+    expect(controller.snapshot.books.map(book => book.id)).toEqual(['fresh'])
+    await vi.advanceTimersByTimeAsync(3000)
+    expect(controller.snapshot.error).toBeNull()
+    expect(controller.snapshot.offline).toBe(false)
+  })
+
   it('keeps fallback during Retry and rejects late previous result/finally', async () => {
     const first = deferred<CatalogManifest>(), second = deferred<CatalogManifest>()
     const fetch = vi.fn().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
     const { controller } = setup({ fetch })
     const initial = controller.refresh()
-    await vi.advanceTimersByTimeAsync(2500)
+    await vi.advanceTimersByTimeAsync(5000)
     await initial
     const retry = controller.refresh()
     await microtasks()
@@ -136,7 +152,7 @@ describe('server-first catalog ownership and deadlines', () => {
     const fetch = vi.fn().mockReturnValueOnce(initial.promise).mockReturnValueOnce(firstRetry.promise).mockReturnValueOnce(secondRetry.promise)
     const { controller } = setup({ cache: () => disk.promise, fetch })
     const start = controller.refresh()
-    await vi.advanceTimersByTimeAsync(2500); await start
+    await vi.advanceTimersByTimeAsync(5000); await start
     expect(controller.snapshot.offline).toBe(true)
     expect(controller.snapshot.loading).toBe(false)
     expect(controller.snapshot.books).toEqual([])

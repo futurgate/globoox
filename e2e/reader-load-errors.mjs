@@ -107,7 +107,12 @@ export async function runReaderLoadCases(browser, bundle, { negativeControl = fa
   async function scenario(name, body) {
     const page = await browser.newPage()
     try {
-      await page.route('**/*', route => route.abort()); await page.setContent('<div id="root"></div>')
+      // A real origin supplies browser storage; every request stays intercepted.
+      const origin = 'https://reader-load-fixture.test/'
+      await page.route('**/*', route => route.request().url() === origin
+        ? route.fulfill({ contentType: 'text/html', body: '<div id="root"></div>' })
+        : route.abort())
+      await page.goto(origin)
       await page.addScriptTag({ content: bundle }); await run(page, 'mount'); await body(page); await run(page, 'unmount')
       unchangedPosition(await run(page, 'state')); passed.push(name)
     } finally { await page.close() }

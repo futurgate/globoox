@@ -4,7 +4,7 @@
   "git": {
     "deploymentEnabled": {
       "dev": true,
-      "main": false
+      "main": true
     }
   }
 }

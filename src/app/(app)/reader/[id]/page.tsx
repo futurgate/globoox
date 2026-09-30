@@ -1,9 +1,10 @@
 'use client';
 
-import { use, useEffect, useState } from 'react';
+import { Suspense, use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import ReaderView from '@/components/Reader/ReaderView';
-import { getShareToken } from '@/lib/api';
+import { shareTokenFromSearch, withShareContext } from '@/lib/shareNavigation';
 import { resolveCatalogContext, fetchCatalogManifest } from '@/lib/catalogApi';
 import { getCatalogBook, loadCatalogCache, putCatalogManifest } from '@/lib/catalogCache';
 import type { CatalogContext, CatalogItem } from '@/lib/catalogTypes';
@@ -19,6 +20,11 @@ interface ReaderPageProps {
 }
 
 export default function ReaderPage({ params }: ReaderPageProps) {
+  return <Suspense><ScopedReaderPage params={params} /></Suspense>;
+}
+
+function ScopedReaderPage({ params }: ReaderPageProps) {
+  const searchParams = useSearchParams();
   const { id } = use(params);
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const readerThemeId = useAppStore((s) => s.settings.readerTheme);
@@ -30,7 +36,7 @@ export default function ReaderPage({ params }: ReaderPageProps) {
   const readerUiColors = getReaderUiColors(READER_THEME_CONFIGS[safeReaderThemeId] ?? READER_THEME_CONFIGS.light);
   const themeStyle = getThemeStyle(safeReaderThemeId);
   const currentUserId = isAuthenticated ? user?.id ?? null : null;
-  const currentShareToken = getShareToken();
+  const currentShareToken = shareTokenFromSearch(searchParams.toString());
   const identityReady = !authLoading || isAuthenticated;
   const matchesIdentity = loaded?.context.userId === currentUserId
     && loaded.context.shareToken === currentShareToken && loaded.book.id === id;
@@ -110,7 +116,7 @@ export default function ReaderPage({ params }: ReaderPageProps) {
       <div className="min-h-screen flex items-center justify-center p-6 text-center" style={{ ...themeStyle, backgroundColor: readerUiColors.background, color: readerUiColors.text }}>
         <div>
           <p className="text-lg font-semibold mb-2">{loadFailed ? 'Book could not be loaded' : 'Book not found'}</p>
-          <Link href="/my-books" style={{ color: readerUiColors.accent }}>
+          <Link href={withShareContext('/my-books', currentShareToken)} style={{ color: readerUiColors.accent }}>
             Back to My Books
           </Link>
         </div>

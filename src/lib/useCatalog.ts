@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { createBook, deleteBook, getShareToken, updateBook } from './api'
 import { catalogContextHint, fetchCatalogManifest, resolveCatalogContext } from './catalogApi'
 import { getCatalogManifestSync, loadCatalogCache, putCatalogManifest } from './catalogCache'
-import { CatalogController } from './catalogState'
+import { CATALOG_REFRESH_TIMEOUT_MS, CatalogController } from './catalogState'
 import { flushReadingActivity, getPendingReadingRecency } from './readingActivity'
 import { CatalogError, type CatalogItem } from './catalogTypes'
 
@@ -59,7 +59,7 @@ function createOwnedCatalog(expectedUserId: string | null | undefined, legacySco
 }
 
 export function useCatalog(options: UseCatalogOptions) {
-  const { userId, identityReady = true, legacyScopeKey, timeoutMs = 2500 } = options
+  const { userId, identityReady = true, legacyScopeKey, timeoutMs = CATALOG_REFRESH_TIMEOUT_MS } = options
   const expectedUserId = identityReady ? userId : undefined
   const shareToken = getShareToken()
   const [owned, setOwned] = useState(() => createOwnedCatalog(expectedUserId, legacyScopeKey, shareToken, timeoutMs))

@@ -3,9 +3,9 @@ type: plan
 status: in-progress
 owner: library
 created: 2026-09-25
-last_verified: 2026-09-26
+last_verified: 2026-09-30
 implementation_status: implemented-locally
-deployment_status: backend-database-dev-live-reader-resume-investigation
+deployment_status: frontend-checkpoint-prepared
 ---
 
 # План быстрого каталога — 25 сентября 2026
@@ -16,6 +16,12 @@ deployment_status: backend-database-dev-live-reader-resume-investigation
 
 ## Текущее состояние и следующий шаг
 
+Пользователь разрешил промежуточный перенос нового frontend на production после небольших исправлений. Интегрированы origin/dev bb2e016 и origin/main 8a3c257 (merge c3c82a4). Подготовлены deadline5000мс, явный URL-контекст shared-подборки и сохранение безопасного next при отказе/ошибке входа. Последняя локальная проверка:333unit,3cataloghook,10Readercover/scope,5Readererror/retry; production webpack+TypeScript PASS. Полная локальная UI-проверка и последующий dev→production rollout выполняются; push ещё не является доказательством deployment. [Подготовка и условия выпуска](evidence/checkpoint-2026-09-30/README.md).
+
+Backend и БД в этом выпуске не меняются. Общая для прежнего и нового Reader ошибка фонового перевода остаётся известным ограничением; увеличение deadline не является ускорением серверных стадий. Старый persistent share token игнорируется: shared Reader без явного контекста следует открывать через исходную специальную ссылку. Перед публикацией требуется dev smoke; rollback предусматривает обратную Git-сборку с прежним main8a3c257. Исходный Production artifact235ddff сохранён в release evidence, мгновенное переключение провайдера не подтверждено.
+
+### Историческая проверка 26 сентября
+
 | Участок | Состояние |
 | --- | --- |
 | Анализ | Проверены исходники, production схема/права и guest/authenticated API. Живые замеры выявили неприемлемую задержку индекса: сетевой путь Europe → Vercel US East → Render Oregon → Supabase Ireland; точные результаты в evidence. |
@@ -23,7 +29,7 @@ deployment_status: backend-database-dev-live-reader-resume-investigation
 | Локальная интеграция веток | Frontend dev `f23b5ad3a2f8a12ae6f87ec057b6abe88144bd0b` включает origin/main `92799bc3d26430a95b65b1a1b0b66d6a97b6c2c4`; backend `feat/catalog-speed` fast-forward до origin/main `173f4903800398c0ca8794a3bb65805cc6c40ca9`. Обновления без конфликтов. Локальная реализация и пользовательские файлы сохранены; в backend временно откладывался только OpenAPI и восстановлен автоматическим merge. Это исходная интеграционная база; актуальные push/deploy указаны в строке «Следующее действие». |
 | Проверки интеграции | Предыдущая чистая интеграция: frontend 158/158, TypeScript и webpack build; backend 28/28. [Исходная запись](evidence/integration-checks-2026-09-25.json). После последнего upstream повторены проверки текущей реализации; [актуальные команды, база исходников и ограничения](evidence/implementation-checks-2026-09-25.json). В основном checkout остаются 9 прежних TypeScript ошибок в незатреканных landing-backup/landing-backup-2 и старых generated Next types; пользовательские файлы сохранены. |
 | Условия upstream-интеграции | Новые frontend/backend DTO fiction-costs совпадают. Это upstream-изменение неверсированного admin API: новый frontend со старым backend может сломать таблицу стоимости; развёртывать согласованную пару. Отсутствующая glossary estimate считается нулём при подписи worst-case, отсутствие измерений — нулевым measured total: отдельные upstream ограничения, каталог их не исправляет. Миграция fiction_revision_runs ранее не обнаружена через REST рабочей БД; чужая миграция автоматически не применяется. Полный admin flow NOT RUN. |
-| Реализация нового каталога | Написаны отдельные v2 API, аддитивная транзакционная SQL-миграция, server-first loader/cache, отдельные thumbnails и Reader activity с ACK. Legacy server handlers каталогом не изменены. SQL в изолированном Postgres: 40 assertions + 2 expected exceptions, 1103 книги без обрезки, повторное применение и атомарный COMMIT прошли. Frontend: 217/217 unit tests, 3 React hook и 5 cover hook сценариев. Backend: 54/54 теста. [Backend контракт и проверки](../../../../../globooks/docs/catalog-v2.md). |
+| Реализация нового каталога | Написаны отдельные v2 API, аддитивная транзакционная SQL-миграция, server-first loader/cache, отдельные thumbnails и Reader activity с ACK. Legacy server handlers каталогом не изменены. SQL в изолированном Postgres: 40 assertions + 2 expected exceptions, 1103 книги без обрезки, повторное применение и атомарный COMMIT прошли. Frontend: 217/217 unit tests, 3 React hook и 5 cover hook сценариев. Backend: 54/54 теста. [Backend контракт и проверки](https://github.com/tanya124/globooks/blob/26ea1e524f0093d5e79cd3b8a636e8f5bde7d43e/docs/catalog-v2.md). |
 | Production build и браузер | Изолированная frontend webpack сборка с TypeScript прошла, 53 static pages. Исправлен пропуск нативного Sharp в Nitro: самостоятельный пакет бэка вне репозитория создаёт WebP, 8 HTTP/SSR checks прошли. Browser fixtures на production frontend: первоначальный skeleton, чтение вперёд/назад и возврат с ACK, timeout без публикации позднего ответа, Retry без исчезновения карточек, empty, 401, unsupported API, одна повреждённая обложка и mobile 390 px. Реальные 6 публичных обложек сжаты с 3 802 722 до 90 476 байт суммарно; все просмотрены. Это не замер производственной задержки. |
 | Уточнение bookshelf, 26 сентября | Три доработки `/my-books` реализованы и проверены локально: 10 с reuse полного подтверждённого индекса точного scope с инвалидированием по мутациям; FIFO всех обложек полки без viewport-приоритетов, максимум 4 активных запроса; мгновенный локальный upload-placeholder сверху, наполнение без дублей/задержки 1,5 с. Закрытие модалки сохраняет процесс, поздний результат не закрывает новую модалку; закрытие страницы может прервать загрузку по согласованному упрощению. 234/234 unit tests, 3 hook + 5 cover + 4 upload component-сценария, scoped lint и финальный production webpack build/TypeScript (53 static pages) прошли. Browser: 18 cover GET без скролла при 6 смонтированных карточках; повтор внутри кулдауна без нового list GET; Reader ACK1 и правильный возврат. [Команды, точные результаты и границы доказательств](evidence/implementation-checks-2026-09-25.json). |
 | Следующее действие | Бэк `fb6786d` / Render `dep-darvddvf3r2c73afgmr0` и production SQL применены и проверены. Dev обновлён до `3af5dbe` / `dpl_82A1BuqtsnPdC9YZNNjngvrdpdN6`; исправление Reader прошло живую проверку. Production frontend остаётся `92799bc` / `BEDnRV2fqt83szaCVHZSDY8azbyb`. Следующий этап — устранить измеренную сетевую задержку; скорость пока **не принята**. План переноса с отдельным Redis и сохранением Oregon для отката ниже; инфраструктура не перенесена. |
@@ -31,7 +37,7 @@ deployment_status: backend-database-dev-live-reader-resume-investigation
 
 Временные QA-сервисы на 3017/3018, follow-up стенд на 3027/3028 и изолированный Postgres на 55439 остановлены. Проверенные сборки, SQL fixture и evidence сохранены для воспроизведения перед рабочей миграцией; действующие dev-серверы и пользовательские файлы не затронуты.
 
-Эта таблица — единственное текущее состояние плана. Обновлять её и список решений ниже, а не добавлять параллельную хронологию. Evidence хранить отдельно и ссылаться на него; не копировать raw traces в план.
+Таблица выше сохранена как историческое evidence предыдущего этапа; действующий статус — в начале раздела. Raw traces остаются в evidence.
 
 ## Принятые ограничения
 

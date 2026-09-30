@@ -1,6 +1,8 @@
 import { trackApiRequest, trackTranslateStreamClient } from './posthog'
 import { setCachedBookMeta } from './contentCache'
 import { createReadingPositionWriter } from './readingPositionWriter'
+import { getShareToken } from './shareNavigation'
+export { getShareToken } from './shareNavigation'
 
 // In browser we must call local Next.js API routes (/api/*), so auth can be injected by proxy.
 // Direct backend calls are allowed only during server-side execution.
@@ -218,40 +220,7 @@ const recentGetResponses = new Map<string, { expiresAt: number; value: unknown }
 const inflightChromeTranslationRequests = new Map<string, Promise<unknown>>()
 let browserTokenCache: { token: string | null; expiresAt: number } | null = null
 const ACCESS_TOKEN_STORAGE_KEY = 'globoox:access_token'
-const SHARE_TOKEN_STORAGE_KEY = 'globoox:share_token'
 let lastBooksAuthWarnAt = 0
-
-/**
- * Curated share link support: an unregistered visitor arrives via /s/<token>,
- * we persist the token, and every /api/books request carries `?share=<token>` so
- * the backend returns ONLY that link's curated books (never the public catalog).
- */
-export function getShareToken(): string | null {
-  if (typeof window === 'undefined') return null
-  try {
-    return window.localStorage.getItem(SHARE_TOKEN_STORAGE_KEY)
-  } catch {
-    return null
-  }
-}
-
-export function setShareToken(token: string): void {
-  if (typeof window === 'undefined') return
-  try {
-    window.localStorage.setItem(SHARE_TOKEN_STORAGE_KEY, token)
-  } catch {
-    // Ignore storage failures (private mode / quota).
-  }
-}
-
-export function clearShareToken(): void {
-  if (typeof window === 'undefined') return
-  try {
-    window.localStorage.removeItem(SHARE_TOKEN_STORAGE_KEY)
-  } catch {
-    // Ignore storage failures.
-  }
-}
 
 /**
  * Cache scope key for unauthenticated users. In share mode it is namespaced by

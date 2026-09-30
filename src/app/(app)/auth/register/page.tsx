@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/lib/supabase/client';
+import { safeLocalReturnPath } from '@/lib/authNavigation';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export default function RegisterPage() {
@@ -23,7 +24,7 @@ export default function RegisterPage() {
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get('next') || '/my-books';
+  const nextUrl = safeLocalReturnPath(searchParams.get('next'));
   const supabaseRef = useRef<SupabaseClient | null>(null);
 
   function getSupabase() {
@@ -215,7 +216,7 @@ function RegisterForm() {
 
             <p className="text-center text-sm text-[var(--app-text-muted)]">
               Already have an account?{' '}
-              <Link href="/auth" className="text-primary underline-offset-4 hover:underline">
+              <Link href={`/auth?next=${encodeURIComponent(nextUrl)}`} className="text-primary underline-offset-4 hover:underline">
                 Sign in
               </Link>
             </p>

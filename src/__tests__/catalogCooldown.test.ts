@@ -115,10 +115,10 @@ describe('confirmed 10-second shelf cooldown', () => {
     const f = setup(['private-a'])
     const page = f.page()
     await page.refresh()
-    await vi.advanceTimersByTimeAsync(5000)
+    await vi.advanceTimersByTimeAsync(2500)
     f.fetcher.mockImplementation(() => new Promise(() => {}))
     const retry = page.refresh(true)
-    await vi.advanceTimersByTimeAsync(2500)
+    await vi.advanceTimersByTimeAsync(5000)
     await retry
     expect(page.snapshot.error?.kind).toBe('timeout')
     expect(page.snapshot.books.map(book => book.id)).toEqual(['private-a'])

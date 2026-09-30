@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useAppStore, Language, ReadingAnchor } from '@/lib/store';
 import { fetchBlockBatch, fetchContent, fetchReadingPosition, hasPendingReadingPosition, saveReadingPosition, translateBlocksStreaming, updateBookLanguage, checkTranslationLimit } from '@/lib/api';
 import { createReaderAnchorGuard, queueReadingAnchorCacheWrite } from '@/lib/readingPositionWriter';
+import { withShareContext } from '@/lib/shareNavigation';
 import { carryBlockEmphasis } from '@/lib/inlineMarks';
 import type { BatchContentBlock } from '@/lib/api';
 import { useChapters } from '@/lib/hooks/useChapters';
@@ -2472,7 +2473,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                 <div className="flex min-h-11 items-center px-1 py-1">
                     <div className="flex h-full items-center justify-start shrink-0">
                         <Link
-                            href="/my-books"
+                            href={withShareContext('/my-books', catalogContext?.shareToken ?? null)}
                             onClick={() => {
                                 try {
                                     sessionStorage.setItem(
