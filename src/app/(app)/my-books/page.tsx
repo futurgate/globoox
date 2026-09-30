@@ -232,7 +232,16 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
       <div className="container max-w-2xl mx-auto px-4 sm:px-6 pt-[calc(2rem+env(safe-area-inset-top)+72px)] pb-4 space-y-6 overflow-x-clip">
         {(error || offline) && (
           <div role="status" aria-live="polite" className="flex items-center justify-between gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-bg)] p-3 text-sm">
-            <p>{refreshing ? 'Checking the library. Saved books remain available.' : offline && (!error || error.kind === 'network' || error.kind === 'timeout') ? 'Offline mode. Showing saved books; changes and uploads are unavailable.' : `${error?.message ?? ''}${offline ? ' Showing saved books; changes are unavailable.' : ''}`}</p>
+            <p>
+              {refreshing ? (
+                <>Checking the library.{books.length > 0 && ' Saved books remain available.'}</>
+              ) : (
+                <>
+                  {error?.message ?? 'The library connection is unavailable'}
+                  {offline && <>{!/[.!?]$/.test(error?.message ?? '') && '.'}{books.length > 0 && ' Showing saved books.'} Changes and uploads are unavailable.</>}
+                </>
+              )}
+            </p>
             <Button size="sm" variant="outline" onClick={() => void refresh()} disabled={refreshing}>
               {refreshing ? 'Retrying…' : 'Try again'}
             </Button>
