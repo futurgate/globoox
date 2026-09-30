@@ -1,0 +1,121 @@
+{
+  "at": "2026-09-30T22:36:33.455Z",
+  "result": "PASS",
+  "cases": [
+    {
+      "name": "competing first insert: delayed request cannot overwrite winner",
+      "observations": [
+        null,
+        null
+      ],
+      "latest": {
+        "persisted": true,
+        "position": {
+          "chapter_id": "44444444-4444-4444-4444-444444444444",
+          "block_id": null,
+          "block_position": 20,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.386+02:00"
+        }
+      },
+      "delayed": {
+        "persisted": false,
+        "position": {
+          "chapter_id": "44444444-4444-4444-4444-444444444444",
+          "block_id": null,
+          "block_position": 20,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.386+02:00"
+        }
+      }
+    },
+    {
+      "name": "conditional UPDATE rejects stale observation; intentional backwards save succeeds",
+      "before": {
+        "chapter_id": "33333333-3333-3333-3333-333333333333",
+        "block_id": null,
+        "block_position": 2,
+        "sentence_index": 0,
+        "updated_at": "2026-10-01T00:36:33.401+02:00"
+      },
+      "latest": {
+        "persisted": true,
+        "position": {
+          "chapter_id": "44444444-4444-4444-4444-444444444444",
+          "block_id": null,
+          "block_position": 20,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.403+02:00"
+        }
+      },
+      "delayed": {
+        "persisted": false,
+        "position": {
+          "chapter_id": "44444444-4444-4444-4444-444444444444",
+          "block_id": null,
+          "block_position": 20,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.403+02:00"
+        }
+      },
+      "backwards": {
+        "persisted": true,
+        "position": {
+          "chapter_id": "33333333-3333-3333-3333-333333333333",
+          "block_id": null,
+          "block_position": 2,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.416+02:00"
+        }
+      }
+    },
+    {
+      "name": "same millisecond advances compare token",
+      "before": "2026-10-01T00:36:33.422+02:00",
+      "after": "2026-10-01T00:36:33.423+02:00"
+    },
+    {
+      "name": "legacy null timestamp uses IS NULL condition",
+      "winner": {
+        "persisted": true,
+        "position": {
+          "chapter_id": "44444444-4444-4444-4444-444444444444",
+          "block_id": null,
+          "block_position": 20,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.431+02:00"
+        }
+      },
+      "loser": {
+        "persisted": false,
+        "position": {
+          "chapter_id": "44444444-4444-4444-4444-444444444444",
+          "block_id": null,
+          "block_position": 20,
+          "sentence_index": 0,
+          "updated_at": "2026-10-01T00:36:33.431+02:00"
+        }
+      }
+    },
+    {
+      "name": "same book remains isolated by authenticated user",
+      "first": "33333333-3333-3333-3333-333333333333",
+      "second": "44444444-4444-4444-4444-444444444444"
+    },
+    {
+      "name": "database write failure reports failure without success ACK",
+      "status": 503,
+      "message": "Reading position could not be saved"
+    }
+  ],
+  "environment": {
+    "postgres": "127.0.0.1:55591",
+    "postgrest": "127.0.0.1:30591",
+    "syntheticOnly": true,
+    "schemaChangesInProduction": false
+  },
+  "limitations": [
+    "Deterministic competing observations and commit order; not a production throughput benchmark.",
+    "Legacy client-clock vs server-ack timestamp policy is unchanged."
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "recorded_at_utc": "2026-09-30T22:47:35.594639+00:00",
+  "scope": "Local deterministic frontend position/snapshot verification; no network, production data or deployed-state claim",
+  "baseline": {
+    "hook_source": "useChapterContent.before.ts",
+    "reader_source": "ReaderView.before.tsx",
+    "reader_source_origin": "/Users/user/Documents/github/globoox_frontend/.local/bookshelf-checkpoint-20260930/src/components/Reader/ReaderView.tsx",
+    "provenance_note": "Saved full source copies retained. No git SHA inferred from the copy path.",
+    "sources_sha256": {
+      "useChapterContent.before.ts": "9ab822065cd19632645fa05ab4ec63f5827f064dc729c3a99601285c998d6d62",
+      "ReaderView.before.tsx": "e1631329644bb1ec536a506a9c70f4dba6e398c9d5747e5e64cf210959c14a5f"
+    }
+  },
+  "candidate_source_sha256": {
+    "src/lib/hooks/useChapterContent.ts": "da17155957f471aeaeb77d0326e9c69c3cef35a1540161a52a42220a4e930c2c",
+    "src/components/Reader/ReaderView.tsx": "c7b7f663a40314900b2588d8d1f238ce7750ce6c156261ff16d26aded7b47292",
+    "e2e/chapter-content-prefetch.mjs": "111adfdc320e190e171564c4a548eb1e456bd384e962c9a516df252f659445b5",
+    "e2e/reader-load-errors.mjs": "f08f1cc6d4eea8eae4d6e7fbbe454c57b174b34282392c81c7409312d3acf0fb",
+    "e2e/reader-position-races.mjs": "8de3d82122e90e0f30cb89d9f26d157f1be04ecd164a1e3689271bcb1880ce40"
+  },
+  "commands": [
+    {
+      "command": "node .local/position-recovery/run-jsdom.mjs",
+      "exit_code": 0,
+      "result": "11 existing hook cases + 5 ownership/recovery cases pass; saved baseline fails ownership assertion"
+    },
+    {
+      "command": "node .local/position-recovery/run-reader-jsdom.mjs",
+      "exit_code": 0,
+      "result": "3 actual Reader DOM assertions pass; saved baseline fails same-chapter TOC persistence"
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run src/__tests__/readingAnchorRace.test.ts",
+      "exit_code": 0,
+      "result": "8 helper tests pass; executed before final translation-only scope followup"
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false",
+      "exit_code": 0,
+      "result": "TypeScript passed before final translation-only scope followup; root owns final integrated check"
+    }
+  ],
+  "baseline_to_candidate": [
+    {
+      "case": "First render after chapter change while destination cache read is delayed",
+      "baseline_observed": {
+        "isStale": false
+      },
+      "required": {
+        "isStale": true,
+        "hasServerSnapshot": false,
+        "loading": true
+      },
+      "candidate": "PASS for chapter, language and book+chapter changes",
+      "baseline_assertion": {
+        "message": "the previous snapshot must become stale in the very first render of the new scope\n\nfalse !== true\n",
+        "actual": false,
+        "expected": true
+      }
+    },
+    {
+      "case": "Current-chapter TOC selection from final page, then reopen",
+      "baseline_observed": {
+        "visible": "chapter-a page 1",
+        "saved_block_id": "a-3"
+      },
+      "required": {
+        "saved_block_id": "a-1",
+        "reopened_visible": "chapter-a page 1"
+      },
+      "candidate": "PASS",
+      "baseline_assertion": {
+        "message": "same-chapter TOC jump must persist its destination instead of the old last-page anchor\n\n'a-3' !== 'a-1'\n",
+        "actual": "a-3",
+        "expected": "a-1"
+      }
+    },
+    {
+      "case": "Previous chapter LAST_PAGE then reopen",
+      "baseline": "PASS control",
+      "candidate": "PASS; chapter-b first page -> chapter-a third page; saved a-3; reopened same page"
+    },
+    {
+      "case": "Remote save ownership during previous chapter transition",
+      "candidate": "PASS; every synthetic PUT chapter_id agrees with its block_id"
+    }
+  ],
+  "artifacts": {
+    "hook": "hook-results.json",
+    "reader": "reader-results.json"
+  },
+  "diagnostics": {
+    "hook_count": 0,
+    "reader_count": 10,
+    "reader_unique": [
+      "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent"
+    ]
+  },
+  "limitations": [
+    "React/jsdom uses actual ReaderView and loading hooks; pagination geometry, UI chrome, local store and transport are fixtures. This is not a visual, browser-storage, two-device or production benchmark.",
+    "Remote position GET/PUT and authentication are fixtures in the Reader test. The eight helper tests cover stale callback guards; they are not an end-to-end concurrent browser proof.",
+    "The historic chapter 3 -> 4 jump is not conclusively attributed by these tests. Same-chapter TOC persistence and snapshot ownership are separately reproduced defects.",
+    "A first harness run resolved a background prefetch instead of the destination content promise; that fixture mistake was corrected before the retained candidate run.",
+    "React act warnings are retained in reader-results.json; no jsdom runtime errors were observed.",
+    "IndexedDB rejection/deadlock and device-clock skew are outside this frontend slice. Existing backend timestamp semantics and native CAS proof belong to the root backend verification."
+  ],
+  "final_read_only_review": {
+    "result": "PASS for latest useChapterContent + same-chapter TOC edits",
+    "notes": [
+      "Snapshot ownership invalidates readiness during render, before effect/cache completion. Same-scope refresh preserves visible content.",
+      "Same-chapter save uses the normalized destination page/block and existing anchor writer; previous-chapter LAST_PAGE path remains intact.",
+      "Latest Reader manual-refresh completion checks a scope object token, and translation acceptance waits for displayBlocksSource === blocks. This addresses the two earlier source-review findings; frontend owner supplies their integrated translation UI tests.",
+      "No product edits made during this evidence/final-review task."
+    ]
+  }
+}

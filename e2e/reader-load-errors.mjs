@@ -3,7 +3,7 @@ import { build } from 'esbuild'
 import assert from 'node:assert/strict'
 import { fileURLToPath } from 'node:url'
 
-const fixtures = {
+export const fixtures = {
   api: `const f=()=>globalThis.__readerLoad;
     export const fetchChapters=()=>f().request('chapters');
     export const fetchContent=()=>f().request('content');
@@ -30,7 +30,7 @@ const fixtures = {
     export const setCachedTranslatedBlockText=async()=>{};
     export const setCachedReadingPosition=async(...args)=>{f().writes.push({kind:'cache',args})};`,
   metadata: `const title=chapter=>chapter.title;export const useReaderMetadataTranslations=({title:bookTitle,author})=>({isBookMetaPending:false,isTocContentPending:false,readerBookTitle:bookTitle,readerBookAuthor:author,getResolvedChapterTitle:title,ensureTocTranslations:async()=>{}});`,
-  translation: `const noop=()=>{};const value={getRefCallback:()=>noop,isTranslatingAny:false,abortAll:noop,enqueueBlocks:noop,enqueueBlocksImmediate:noop,pendingBlockIds:new Set(),reconcileBlocks:noop};export const useViewportTranslation=()=>value;`,
+  translation: `const noop=()=>{};const value={getRefCallback:()=>noop,isTranslatingAny:false,abortAll:noop,enqueueBlocks:noop,enqueueBlocksImmediate:noop,pendingBlockIds:new Set(),failedBlockIds:new Set(),refreshRequiredBlockIds:new Set(),retryFailedBlocks:noop,resetFailedBlocks:noop,reconcileBlocks:noop};export const useViewportTranslation=()=>value;`,
   gestures: `export const usePageGestures=()=>({});export const getTapZones=()=>({});`,
   pagination: `export const normalizeBlocks=blocks=>blocks;
     export const computePages=blocks=>({pages:blocks.map(b=>[b.id]),finalBlocks:blocks,fragmentMap:new Map()});
@@ -49,7 +49,7 @@ const fixtures = {
   link: `import React from 'react';export default function Link({href,children}){return <a href={href}>{children}</a>};`,
 }
 
-export async function buildReaderLoadHarness({ readerSource } = {}) {
+export async function buildReaderLoadHarness({ readerSource, hookSource, sourceTransform, fixtureOverrides = {} } = {}) {
   const source = `
     import React,{act} from 'react';import{createRoot}from'react-dom/client';
     import ReaderView from './src/components/Reader/ReaderView';
@@ -89,12 +89,13 @@ export async function buildReaderLoadHarness({ readerSource } = {}) {
     ['@/components/ui/button', 'button'], ['@/components/ui/ios-alert-dialog', 'empty'], ['@/components/ui/ios-icon', 'empty'],
     ['@/components/ui/skeleton', 'skeleton'], ['@/components/TranslationLimitDialog', 'empty'],
   ])
-  const bundle = await build({ stdin: { contents: source, resolveDir: process.cwd(), sourcefile: 'readerLoadHarness.tsx', loader: 'tsx' },
+  const bundle = await build({ stdin: { contents: sourceTransform ? sourceTransform(source) : source, resolveDir: process.cwd(), sourcefile: 'readerLoadHarness.tsx', loader: 'tsx' },
     bundle: true, write: false, platform: 'browser', format: 'iife', define: { 'process.env.NODE_ENV': '"development"' },
     plugins: [{ name: 'reader-load-fixtures', setup(builder) {
       if (readerSource !== undefined) builder.onLoad({ filter: /\/Reader\/ReaderView\.tsx$/ }, () => ({ contents: readerSource, loader: 'tsx' }))
+      if (hookSource !== undefined) builder.onLoad({ filter: /\/useChapterContent\.ts$/ }, () => ({ contents: hookSource, loader: 'ts' }))
       builder.onResolve({ filter: /.*/ }, args => mapping.has(args.path) ? { path: mapping.get(args.path), namespace: 'fixture' } : null)
-      builder.onLoad({ filter: /.*/, namespace: 'fixture' }, args => ({ contents: fixtures[args.path], loader: 'tsx', resolveDir: process.cwd() }))
+      builder.onLoad({ filter: /.*/, namespace: 'fixture' }, args => ({ contents: fixtureOverrides[args.path] ?? fixtures[args.path], loader: 'tsx', resolveDir: process.cwd() }))
     } }],
   })
   return bundle.outputFiles[0].text

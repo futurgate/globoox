@@ -1,0 +1,103 @@
+{
+  "recorded_at_utc": "2026-09-30T22:46:56.641076+00:00",
+  "worktree": "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001",
+  "base_commit": "26ea1e524f0093d5e79cd3b8a636e8f5bde7d43e",
+  "scope": "Uncommitted Reader recovery backend candidate; build is local, not deployed.",
+  "commands": {
+    "prepare": "node .local/run-isolated.mjs prepare > .local/isolated-prepare.log 2>&1",
+    "build": "node .local/run-isolated.mjs build > .local/isolated-build.log 2>&1",
+    "suite": "node .local/run-isolated.mjs test > .local/isolated-full-suite.log 2>&1"
+  },
+  "isolation": {
+    "launcher": ".local/run-isolated.mjs",
+    "guard": ".local/network-guard.cjs",
+    "dotenv": ".local/empty.env; passed explicitly to Nuxt CLI; production .env not loaded",
+    "environment": "Whitelist: PATH/HOME/TMPDIR inherited; NODE_ENV=production for build, test for Vitest; CI=1; NUXT_TELEMETRY_DISABLED=1; SENTRY_DISABLE_AUTO_UPLOAD=true; SENTRY_TELEMETRY=false; SENTRY_AUTH_TOKEN empty; synthetic Supabase URL http://127.0.0.1:9 and synthetic keys; chapter summaries disabled; Vertex disabled. No production credentials passed.",
+    "node_options": "--require=<worktree>/.local/network-guard.cjs",
+    "build_network": "Denied fetch, sockets, DNS and native child commands except node/esbuild. Final guard also supports synthetic loopback DNS; build mode still permits no connections.",
+    "suite_network": "Only loopback fixture ports registered by server.listen in the same process are permitted; external network and arbitrary local services remain denied.",
+    "suite_execution": "Sandbox initially denied loopback listen (EPERM); final suite used approved exec escalation with the network guard still active.",
+    "tracked_configuration_changed": false,
+    "node_modules": "Reused existing backend node_modules symlink; no install or dependency changes.",
+    "production_services_contacted": false,
+    "model_inference_performed": false
+  },
+  "prepare": {
+    "exit_code": 0,
+    "result": "PASS"
+  },
+  "build": {
+    "exit_code": 0,
+    "result": "PASS",
+    "output_total_mb": 51.3,
+    "output_gzip_mb": 17.2,
+    "guard_blocked_https_attempts": 9,
+    "guard_blocked_exec_sync_attempts": 3,
+    "limitations": "External telemetry, native metadata commands and source-map upload were blocked, not verified. No built server was started. Build success is not a full static typecheck."
+  },
+  "full_suite": {
+    "exit_code": 1,
+    "passed": 315,
+    "failed": 38,
+    "skipped": 0,
+    "total": 353,
+    "passed_files": 23,
+    "failed_files": 1,
+    "total_files": 24,
+    "failed_test_suites": [
+      "server/utils/__tests__/epub-parser.test.ts"
+    ],
+    "failure_classification": "Existing missing qa-books EPUB fixtures: 10 ENOENT entries followed by dependent result/chapters undefined assertions. Parser code/tests are unchanged by this candidate; no parser repair attempted.",
+    "guard_blocked_attempts": 0
+  },
+  "focused_tests_within_full_suite": {
+    "passed": 18,
+    "suites": {
+      "server/utils/__tests__/translation-stream-recovery.test.ts": 9,
+      "server/utils/__tests__/reading-position-race.test.ts": 6,
+      "server/utils/__tests__/reading-position-commit.test.ts": 3
+    }
+  },
+  "http_fixtures_within_full_suite": {
+    "passed": 19,
+    "suites": {
+      "server/utils/__tests__/catalog-v2-routes.test.ts": 7,
+      "server/utils/__tests__/legacy-books-routes.test.ts": 12
+    }
+  },
+  "translation_negative_control": {
+    "passed": 2,
+    "failed": 6,
+    "total": 8,
+    "source": "Unmodified endpoint before candidate patch; mocked DB/model only. Ninth partial-found/model-mock test added subsequently."
+  },
+  "translation_delta_review": {
+    "blocking_findings": [],
+    "checked": [
+      "Requested block query remains constrained to path chapter_id; no fallback search across chapters.",
+      "Initial auth/translation-limit gate and 403 behavior remain unchanged, before cache/generation.",
+      "Cache lookup failure emits retryable errors and exits before pending writes or LLM calls; it is not treated as a cache miss.",
+      "Partial unmatched IDs receive non-retryable errors while matched rows keep their original cache/generation path.",
+      "Success DTO is unchanged; error reason/retryable fields are optional.",
+      "Log payloads retain sample IDs but use database error code instead of raw database message.",
+      "Summary counters include partial errors and errorRate cannot exceed 100 for counted successes/errors."
+    ],
+    "scope_limits": [
+      "This delta review does not establish complete endpoint authorization correctness.",
+      "Existing parse-miss/outer-stream interruption behavior is unchanged; frontend bounded recovery handles omitted results.",
+      "Synthetic model mocks prove request accounting and branching, not real model quality/latency."
+    ]
+  },
+  "logs": [
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/isolated-prepare.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/isolated-build.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/isolated-full-suite.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/translation-stream-baseline-contract.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/translation-stream-candidate.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/translation-focused-regression.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/isolated-full-suite-startup-denied.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/isolated-full-suite-fixture-dns-denied.log",
+    "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/.local/isolated-route-fixture-check.log"
+  ],
+  "adverse_setup_runs": "Preserved startup DNS denial, fixture DNS denial and sandbox loopback EPERM separately; these are harness/environment failures, not product regressions."
+}

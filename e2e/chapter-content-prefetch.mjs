@@ -11,24 +11,25 @@ export async function buildChapterContentHarness({ hookSource } = {}) {
     globalThis.IS_REACT_ACT_ENVIRONMENT=true;
     const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no});promise.catch(()=>{});return{promise,resolve,reject}};
     const key=(id,lang)=>JSON.stringify([id,lang]);
-    const f=globalThis.__chapterContent={cache:new Map(),calls:[],reads:[],writes:[],batch:deferred(),batchSettled:false,readGate:null,writeGate:null,key};
+    const f=globalThis.__chapterContent={cache:new Map(),calls:[],reads:[],writes:[],batch:deferred(),batchSettled:false,readGate:null,writeGate:null,refreshResults:[],key};
     f.fetch=(id,lang,signal)=>{const request={...deferred(),id,lang,signal};f.calls.push(request);return request.promise};
     f.read=(id,lang)=>{f.reads.push({id,lang});return f.readGate?.promise??Promise.resolve(f.cache.get(key(id,lang))??null)};
     f.write=async(id,lang,blocks)=>{f.writes.push({id,lang,blocks});if(f.writeGate)await f.writeGate.promise;f.cache.set(key(id,lang),{blocks,fresh:true})};
-    let snapshot,props={id:'chapter-a',lang:'EN'};
-    function Probe(){const value=useChapterContent(props.id,props.lang);snapshot=value;return <output>{value.blocks.map(b=>b.text).join('|')}</output>}
+    let snapshot,props={bookId:'book-a',id:'chapter-a',lang:'EN'};const renders=[];
+    function Probe(){const value=useChapterContent(props.id,props.lang,props.bookId);snapshot=value;renders.push({bookId:props.bookId,chapterId:props.id,lang:props.lang,blocksChapterId:value.blocksChapterId,blocksBookId:value.blocksBookId,isStale:value.isStale,hasServerSnapshot:value.hasServerSnapshot,loading:value.loading});return <output>{value.blocks.map(b=>b.text).join('|')}</output>}
     const root=createRoot(document.getElementById('root'));
     const render=()=>root.render(<Probe id={props.id} lang={props.lang}/>);
     window.check={
       async mount(options={}){props={...props,...options};if(options.cached)f.cache.set(key(props.id,props.lang),options.cached);if(options.stallRead)f.readGate=deferred();if(options.stallWrite)f.writeGate=deferred();await act(async()=>render())},
-      async update(next){props={...props,...next};await act(async()=>render())},
+      async update(next){props={...props,...next};if(next.stallRead)f.readGate=deferred();await act(async()=>render())},
+      async refresh(){await act(async()=>{void snapshot.refreshContent().then(value=>f.refreshResults.push(value))})},
       async reply(index,blocks,error){await act(async()=>error?f.calls[index].reject(new Error(error)):f.calls[index].resolve(blocks))},
       async finishBatch({id=props.id,lang=props.lang,blocks,error}={}){await act(async()=>{if(blocks)f.cache.set(key(id,lang),{blocks,fresh:true});f.batchSettled=true;if(error)f.batch.reject(new Error(error));else f.batch.resolve()})},
       async finishRead(entry){await act(async()=>{const gate=f.readGate;f.readGate=null;gate.resolve(entry)})},
       async finishWrite(){await act(async()=>{const gate=f.writeGate;f.writeGate=null;gate.resolve()})},
       async unmount(){await act(async()=>root.unmount())},
-      state(){return{blocks:snapshot.blocks,blocksLang:snapshot.blocksLang,loading:snapshot.loading,error:snapshot.error,isStale:snapshot.isStale,hasServerSnapshot:snapshot.hasServerSnapshot,
-        calls:f.calls.map(c=>({id:c.id,lang:c.lang,aborted:c.signal.aborted})),reads:f.reads,writes:f.writes,batchSettled:f.batchSettled}}
+      state(){return{blocks:snapshot.blocks,blocksLang:snapshot.blocksLang,blocksChapterId:snapshot.blocksChapterId,blocksBookId:snapshot.blocksBookId,loading:snapshot.loading,error:snapshot.error,isStale:snapshot.isStale,hasServerSnapshot:snapshot.hasServerSnapshot,renders,
+        calls:f.calls.map(c=>({id:c.id,lang:c.lang,aborted:c.signal.aborted})),reads:f.reads,writes:f.writes,batchSettled:f.batchSettled,refreshResults:f.refreshResults}}
     };
   `
   const fixtures = {
@@ -50,6 +51,71 @@ export async function buildChapterContentHarness({ hookSource } = {}) {
     } }],
   })
   return bundled.outputFiles[0].text
+}
+
+export async function runChapterContentOwnershipCases(browser, bundle) {
+  const passed = []
+  const block = id => [{ id, position: 0, type: 'paragraph', text: id }]
+  const run = (page, method, ...args) => page.evaluate(({ method, args }) => window.check[method](...args), { method, args })
+  for (const next of [{ id: 'chapter-b' }, { lang: 'RU' }, { bookId: 'book-b', id: 'chapter-b' }]) {
+    const page = await browser.newPage()
+    try {
+      await page.route('**/*', route => route.abort())
+      await page.setContent('<div id="root"></div>')
+      await page.addScriptTag({ content: bundle })
+      await run(page, 'mount', { cached: { blocks: block('old-chapter-block'), fresh: true } })
+      await run(page, 'update', { ...next, stallRead: true })
+      let state = await run(page, 'state')
+      assert.equal(state.isStale, true, 'the previous snapshot must become stale in the very first render of the new scope')
+      assert.equal(state.hasServerSnapshot, false, 'the previous chapter cannot authorize translation or persistence for the destination')
+      assert.equal(state.loading, true)
+      const destinationRenders = state.renders.filter(r => next.id ? r.chapterId === next.id : r.lang === next.lang)
+      assert.ok(destinationRenders.length > 0)
+      assert.ok(destinationRenders.every(r => r.isStale && !r.hasServerSnapshot), 'no transient ready render before the cache read finishes')
+      await run(page, 'finishRead', null)
+      state = await run(page, 'state')
+      assert.equal(state.loading, true)
+      assert.equal(state.hasServerSnapshot, false)
+      await run(page, 'reply', 0, block('destination-block'))
+      state = await run(page, 'state')
+      assert.equal(state.blocksChapterId, next.id ?? 'chapter-a')
+      assert.equal(state.blocksBookId, next.bookId ?? 'book-a')
+      assert.equal(state.blocksLang, next.lang ?? 'EN')
+      assert.deepEqual(state.blocks, block('destination-block'))
+      assert.equal(state.isStale, false)
+      assert.equal(state.hasServerSnapshot, true)
+      assert.equal(state.loading, false)
+      passed.push(`scope transition ${JSON.stringify(next)} rejects old readiness before delayed cache read`)
+      await run(page, 'unmount')
+    } finally { await page.close() }
+  }
+  for (const failure of [false, true]) {
+    const page = await browser.newPage()
+    try {
+      await page.route('**/*', route => route.abort())
+      await page.setContent('<div id="root"></div>')
+      await page.addScriptTag({ content: bundle })
+      await run(page, 'mount', { cached: { blocks: block('cached-old-id'), fresh: true } })
+      assert.equal((await run(page, 'state')).calls.length, 0)
+      await run(page, 'refresh')
+      let state = await run(page, 'state')
+      assert.equal(state.calls.length, 1, 'manual retry bypasses the fresh cache')
+      assert.equal(state.reads.length, 1, 'manual retry does not wait on another IDB read')
+      assert.deepEqual(state.blocks, block('cached-old-id'))
+      assert.equal(state.loading, false, 'readable same-chapter text remains visible during refresh')
+      await run(page, 'reply', 0, failure ? null : block('fresh-server-id'), failure ? 'temporary content failure' : undefined)
+      state = await run(page, 'state')
+      assert.deepEqual(state.blocks, block(failure ? 'cached-old-id' : 'fresh-server-id'))
+      assert.equal(state.isStale, false)
+      assert.equal(state.hasServerSnapshot, true)
+      assert.equal(state.error, null)
+      assert.deepEqual(state.refreshResults, [!failure])
+      assert.equal(state.writes.length, failure ? 0 : 1)
+      passed.push(`manual content recovery ${failure ? 'preserves readable cache on failure' : 'bypasses fresh cache and replaces obsolete block IDs'}`)
+      await run(page, 'unmount')
+    } finally { await page.close() }
+  }
+  return { passed, scope: 'Actual useChapterContent renders, synthetic delayed cache and transport' }
 }
 
 export async function runChapterContentCases(browser, bundle, { negativeControl = false } = {}) {

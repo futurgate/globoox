@@ -1,0 +1,46 @@
+{
+  "passed": [],
+  "failed": [
+    {
+      "name": "error remains retryable and success is never retransmitted",
+      "message": "Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "partial stream retries only missing IDs",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    [\n      'a',\n      'b'\n    ],\n-   [\n-     'b'\n-   ]\n  ]\n"
+    },
+    {
+      "name": "transport error has bounded retries and manual recovery",
+      "message": "Expected values to be strictly equal:\n\n1 !== 2\n"
+    },
+    {
+      "name": "permanent missing IDs do not auto retry",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ []\n- [\n-   'a'\n- ]\n"
+    },
+    {
+      "name": "late stream cannot write after chapter change",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     chapter: 'chapter',\n+     id: 'a',\n+     lang: 'FR',\n+     text: 'Translated a'\n+   }\n+ ]\n- []\n"
+    },
+    {
+      "name": "late stream cannot write after language change",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     chapter: 'chapter',\n+     id: 'a',\n+     lang: 'FR',\n+     text: 'Translated a'\n+   }\n+ ]\n- []\n"
+    },
+    {
+      "name": "late stream cannot write after account change",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     chapter: 'chapter',\n+     id: 'a',\n+     lang: 'FR',\n+     text: 'Translated a'\n+   }\n+ ]\n- []\n"
+    },
+    {
+      "name": "late stream cannot write after book change",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     chapter: 'chapter',\n+     id: 'a',\n+     lang: 'FR',\n+     text: 'Translated a'\n+   }\n+ ]\n- []\n"
+    },
+    {
+      "name": "unmount aborts and rejects late stream/cache writes",
+      "message": "Expected values to be strictly equal:\n\nfalse !== true\n"
+    },
+    {
+      "name": "unrequested IDs and empty successes cannot corrupt readiness",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     chapter: 'chapter',\n+     id: 'b',\n+     lang: 'FR',\n+     text: 'Translated b'\n+   }\n+ ]\n- []\n"
+    }
+  ],
+  "transport": "synthetic; no DB or LLM"
+}

@@ -1,0 +1,11 @@
+{
+  "passed": [
+    "first chapters failure is visible and explicit retry recovers the saved page",
+    "first content failure is visible and explicit retry recovers the saved page",
+    "normal initial loading has no error or automatic retries and becomes readable",
+    "already readable cached pages survive a background chapters failure",
+    "already readable cached pages survive a background content failure"
+  ],
+  "negativeControl": false,
+  "scope": "Actual ReaderView, useChapters, useChapterContent and anchor guard; mocked transport/cache/pagination geometry/chrome"
+}

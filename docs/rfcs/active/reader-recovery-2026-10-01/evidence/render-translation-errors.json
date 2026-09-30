@@ -1,0 +1,175 @@
+{
+  "at": "2026-09-30T22:27:22.935Z",
+  "source": "https://dashboard.render.com/web/srv-dat6imojo6nc73efa4u0/logs?t=app&r=1h",
+  "runtime": {
+    "at": "2026-09-30T22:26:47.908Z",
+    "commit": "https://github.com/tanya124/globooks/commit/26ea1e524f0093d5e79cd3b8a636e8f5bde7d43e",
+    "live": [
+      "/web/srv-dat6imojo6nc73efa4u0/deploys/dep-daui9vm0tbcc7396vo40"
+    ]
+  },
+  "errors": [
+    {
+      "chapterId": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "a957ed10-e118-4f9e-a8a7-47bdc2e85f6d",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 6,
+      "sampleBlockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf"
+      ],
+      "visibleTime": "11:52:33 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "23b23410-9240-4b52-ae96-7f737153ecc7",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 6,
+      "sampleBlockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf"
+      ],
+      "visibleTime": "11:52:34 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "7c797c8d-9b06-4686-ba26-35dc0953733b",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "1d098cf5-564f-48fb-bb16-63685df676d3",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 10,
+      "sampleBlockIds": [
+        "320975f5-8fd4-49f7-827c-3e09c3f0b0ed",
+        "9dc3457a-ed87-44f7-a716-e691359c812b",
+        "bcd13ea2-0c87-4955-b3cd-23ab8988129d",
+        "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee",
+        "032f946a-52e2-4811-ab9d-20a13899453c"
+      ],
+      "visibleTime": "11:52:34 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "7c797c8d-9b06-4686-ba26-35dc0953733b",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "e50be0e9-2f23-4575-be6b-c1e32b20aed7",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 10,
+      "sampleBlockIds": [
+        "320975f5-8fd4-49f7-827c-3e09c3f0b0ed",
+        "9dc3457a-ed87-44f7-a716-e691359c812b",
+        "bcd13ea2-0c87-4955-b3cd-23ab8988129d",
+        "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee",
+        "032f946a-52e2-4811-ab9d-20a13899453c"
+      ],
+      "visibleTime": "11:55:34 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "e68b64ec-5a5b-4844-9705-17614fd24ca7",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 6,
+      "sampleBlockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf"
+      ],
+      "visibleTime": "11:55:34 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "7c797c8d-9b06-4686-ba26-35dc0953733b",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "d06ff513-9c97-4e30-bf29-11ac32aa1b51",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 10,
+      "sampleBlockIds": [
+        "320975f5-8fd4-49f7-827c-3e09c3f0b0ed",
+        "9dc3457a-ed87-44f7-a716-e691359c812b",
+        "bcd13ea2-0c87-4955-b3cd-23ab8988129d",
+        "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee",
+        "032f946a-52e2-4811-ab9d-20a13899453c"
+      ],
+      "visibleTime": "11:55:41 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "aa5c9387-cf38-49ee-b96f-17fb61a7ebf5",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 6,
+      "sampleBlockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf"
+      ],
+      "visibleTime": "11:56:02 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "1f07fda1-adc7-48d3-a48d-97099bd25bfc",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 6,
+      "sampleBlockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf"
+      ],
+      "visibleTime": "11:56:19 PM\n[kgsqh]"
+    },
+    {
+      "chapterId": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+      "dbError": null,
+      "event": "translate_error",
+      "foundBlockCount": 0,
+      "jobId": "cd48ca40-ffd4-461a-906f-dcedfe505be1",
+      "lang": "RU",
+      "reason": "blocks_not_found",
+      "requestedBlockCount": 6,
+      "sampleBlockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf"
+      ],
+      "visibleTime": "11:56:35 PM\n[kgsqh]"
+    }
+  ]
+}

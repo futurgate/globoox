@@ -292,35 +292,43 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         })),
     });
 
-    const { blocks, loading: contentLoading, error: contentError, isStale, blocksLang, hasServerSnapshot } = useChapterContent(
+    const { blocks, loading: contentLoading, error: contentError, isStale, blocksLang, blocksChapterId, blocksBookId, hasServerSnapshot, refreshContent } = useChapterContent(
         currentChapterId,
-        activeLang.toUpperCase()
+        activeLang.toUpperCase(),
+        bookId,
     );
     
     // displayBlocks starts from fetched blocks, gets progressively updated with translations
     const [displayBlocks, setDisplayBlocks] = useState<ContentBlock[]>([]);
     // Track which language displayBlocks was derived from
     const [displayBlocksLang, setDisplayBlocksLang] = useState<string | undefined>(undefined);
+    const [displayBlocksChapterId, setDisplayBlocksChapterId] = useState<string | null>(null);
+    const [displayBlocksBookId, setDisplayBlocksBookId] = useState<string | undefined>(undefined);
+    const [displayBlocksSource, setDisplayBlocksSource] = useState<ContentBlock[] | null>(null);
 
     // Reset displayBlocks when blocks from the content hook change (new language loaded)
     useEffect(() => {
         // Only update if blocks are for the correct language (not stale)
-        if (blocksLang === activeLang.toUpperCase()) {
+        if (blocksLang === activeLang.toUpperCase() && blocksChapterId === currentChapterId && blocksBookId === bookId) {
             setDisplayBlocks((prev) =>
                 mergeDisplayBlocksPreservingTranslations(prev, blocks, {
                     // Never preserve translated text across different target languages.
-                    preserve: displayBlocksLang === blocksLang,
+                    preserve: displayBlocksLang === blocksLang && displayBlocksChapterId === blocksChapterId && displayBlocksBookId === bookId,
                 })
             );
             setDisplayBlocksLang(blocksLang);
+            setDisplayBlocksChapterId(blocksChapterId);
+            setDisplayBlocksBookId(bookId);
+            setDisplayBlocksSource(blocks);
         }
-    }, [blocks, blocksLang, activeLang, displayBlocksLang]);
+    }, [blocks, blocksLang, blocksChapterId, blocksBookId, bookId, currentChapterId, activeLang, displayBlocksLang, displayBlocksChapterId, displayBlocksBookId]);
 
     // Content is effectively loading if:
     // - fetch is in progress
     // - blocks are stale (from different language)
     // - displayBlocks hasn't been synced with current language yet
-    const isDisplayBlocksSynced = displayBlocksLang === activeLang.toUpperCase();
+    const isDisplayBlocksSynced = displayBlocksLang === activeLang.toUpperCase()
+        && displayBlocksChapterId === currentChapterId && displayBlocksBookId === bookId;
     const isContentLoading = contentLoading || isStale || !isDisplayBlocksSynced;
 
     // Merge translated blocks into displayBlocks
@@ -348,13 +356,14 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         paginatedBlocksUpdaterRef.current?.(applyMap);
     }, []);
 
-    const { getRefCallback, isTranslatingAny, abortAll, enqueueBlocks, enqueueBlocksImmediate, pendingBlockIds, reconcileBlocks } = useViewportTranslation({
+    const { getRefCallback, isTranslatingAny, abortAll, enqueueBlocks, enqueueBlocksImmediate, pendingBlockIds, reconcileBlocks, failedBlockIds, refreshRequiredBlockIds, retryFailedBlocks, resetFailedBlocks } = useViewportTranslation({
         bookId,
+        accountScopeKey: catalogContext?.scopeKey ?? user?.id ?? 'guest',
         chapterId: currentChapterId,
         lang: activeLang.toUpperCase(),
         blocks: displayBlocks,
         sourceLanguage: originalLanguage ?? null,
-        canTranslate: hasServerSnapshot,
+        canTranslate: hasServerSnapshot && isDisplayBlocksSynced && displayBlocksSource === blocks && !isStale,
         onBlocksTranslated: handleBlocksTranslated,
     });
     void isTranslatingAny; // used by AppleIntelligenceGlow indirectly
@@ -690,22 +699,8 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
             const currentIds = resolveBlockIds(currentFragmentIds);
             const anchorBlockId = currentIds[0] ?? null;
             const anchorIdx = anchorBlockId ? displayBlocks.findIndex((block) => block.id === anchorBlockId) : -1;
-            const chapterIdx = currentChapterIndex - 1;
-
-            const loadChapterBlocks = async (idx: number): Promise<ContentBlock[]> => {
-                const chapter = chapters[idx];
-                if (!chapter) return [];
-                const cachedChapter = await getCachedChapterContent(chapter.id, activeLang.toUpperCase());
-                if (cachedChapter?.blocks?.length) return cachedChapter.blocks;
-                try {
-                    const nextBlocks = await fetchContent(chapter.id, activeLang.toUpperCase());
-                    await setCachedChapterContent(chapter.id, activeLang.toUpperCase(), nextBlocks);
-                    return nextBlocks;
-                } catch {
-                    return [];
-                }
-            };
-
+            // This hook owns the current chapter only. The separate next-chapter
+            // warmup below sends neighboring IDs to their own chapter endpoint.
             const forwardIds: string[] = [];
             let forwardChars = 0;
             if (anchorIdx >= 0) {
@@ -717,25 +712,10 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                 forwardIds.push(...currentChapterForward.ids);
                 forwardChars += currentChapterForward.totalChars;
             }
-            for (let idx = chapterIdx + 1; forwardChars < PREFETCH_FORWARD_TARGET_CHARS && idx < chapters.length; idx += 1) {
-                const chapterBlocks = await loadChapterBlocks(idx);
-                const nextChapterForward = collectBlockIdsWithinCharacterBudget(
-                    chapterBlocks,
-                    PREFETCH_FORWARD_TARGET_CHARS - forwardChars,
-                );
-                forwardIds.push(...nextChapterForward.ids);
-                forwardChars += nextChapterForward.totalChars;
-            }
-
             const backwardIds: string[] = [];
             if (anchorIdx >= 0) {
                 backwardIds.unshift(...displayBlocks.slice(Math.max(0, anchorIdx - PREFETCH_BLOCKS_BACKWARD), anchorIdx).map((block) => block.id));
             }
-            for (let idx = chapterIdx - 1; backwardIds.length < PREFETCH_BLOCKS_BACKWARD && idx >= 0; idx -= 1) {
-                const ids = await getCachedChapterBlockIds(chapters[idx].id);
-                backwardIds.unshift(...ids);
-            }
-
             const boundedForwardIds = forwardIds;
             const boundedBackwardIds = backwardIds.slice(Math.max(0, backwardIds.length - PREFETCH_BLOCKS_BACKWARD));
 
@@ -781,6 +761,15 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         };
     }, [activePageIdx, pagesReady, pages, enqueueBlocks, enqueueBlocksImmediate, isSourceLang, isContentLoading, resolveBlockIds, displayBlocks, reconcileBlocks, chapters, currentChapterIndex, activeLang]);
 
+    const translationContextKey = JSON.stringify([catalogContext?.scopeKey, user?.id, bookId, currentChapterId, activeLang]);
+    const translationContextRef = useRef({ key: translationContextKey });
+    if (translationContextRef.current.key !== translationContextKey) translationContextRef.current = { key: translationContextKey };
+    useEffect(() => () => {
+        // Invalidate manual refresh and warmup completions on unmount, including
+        // an A → B → A lifetime that happens to reuse identical block IDs.
+        translationContextRef.current = { key: translationContextRef.current.key };
+    }, []);
+
     useEffect(() => {
         if (!pagesReady || isSourceLang || isContentLoading) return;
 
@@ -788,6 +777,9 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         if (!nextChapter) return;
 
         let cancelled = false;
+        const controller = new AbortController();
+        const requestContext = translationContextRef.current;
+        const isCurrentWarmup = () => !cancelled && !controller.signal.aborted && translationContextRef.current === requestContext;
         let timeoutId: number | null = null;
 
         const run = async () => {
@@ -796,21 +788,23 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
             const pending = getPendingChapterBatch(nextChapter.id);
             if (pending) {
                 try { await pending } catch {}
-                if (cancelled) return;
+                if (!isCurrentWarmup()) return;
             }
 
             let nextChapterBlocks = (await getCachedChapterContent(nextChapter.id, activeLang.toUpperCase()))?.blocks ?? [];
-            if (cancelled) return;
+            if (!isCurrentWarmup()) return;
 
             if (nextChapterBlocks.length === 0) {
                 try {
-                    nextChapterBlocks = await fetchContent(nextChapter.id, activeLang.toUpperCase());
+                    nextChapterBlocks = await fetchContent(nextChapter.id, activeLang.toUpperCase(), controller.signal);
+                    if (!isCurrentWarmup()) return;
                     await setCachedChapterContent(nextChapter.id, activeLang.toUpperCase(), nextChapterBlocks);
                 } catch {
                     return;
                 }
             }
 
+            if (!isCurrentWarmup()) return;
             const pendingBlocks = nextChapterBlocks.filter((block) => (
                 isTranslatableBlock(block) && !block.targetLangReady
             ));
@@ -840,7 +834,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                     nextChapterIds[0] ?? null,
                     'down',
                     (result) => {
-                        if (cancelled) return;
+                        if (!isCurrentWarmup() || !nextChapterIds.includes(result.blockId)) return;
                         if (result.status !== 'ok' || !result.translatedText) return;
 
                         const original = blocksById.get(result.blockId);
@@ -855,6 +849,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
 
                         void setCachedTranslatedBlockText(nextChapter.id, activeLang.toUpperCase(), translated);
                     },
+                    controller.signal,
                 );
             } catch {
                 // best-effort warmup for next chapter
@@ -862,17 +857,18 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         };
 
         timeoutId = window.setTimeout(() => {
-            if (cancelled) return;
+            if (!isCurrentWarmup()) return;
             void run();
         }, NEXT_CHAPTER_WARMUP_DELAY_MS);
 
         return () => {
             cancelled = true;
+            controller.abort();
             if (timeoutId != null) {
                 window.clearTimeout(timeoutId);
             }
         };
-    }, [pagesReady, isSourceLang, isContentLoading, chapters, currentChapterIndex, currentChapterId, activeLang]);
+    }, [pagesReady, isSourceLang, isContentLoading, chapters, currentChapterIndex, currentChapterId, activeLang, translationContextKey]);
 
     // Measure the available height for content after the header
     useEffect(() => {
@@ -1714,6 +1710,34 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         [currentPageBlocks]
     );
 
+    const visibleFailedTranslationIds = useMemo(() => Array.from(new Set(
+        [...currentPageBlocks, ...spreadRightPageBlocks].map(block => block.parentId ?? block.id)
+    )).filter(id => failedBlockIds.has(id)), [currentPageBlocks, spreadRightPageBlocks, failedBlockIds]);
+    const visibleTranslationNeedsRefresh = visibleFailedTranslationIds.some(id => refreshRequiredBlockIds.has(id));
+    const [translationRefreshOperation, setTranslationRefreshOperation] = useState<{ context: object } | null>(null);
+    const translationRefreshBusyRef = useRef<{ context: object } | null>(null);
+    const isRefreshingTranslation = translationRefreshOperation?.context === translationContextRef.current;
+    const retryVisibleTranslation = async () => {
+        const context = translationContextRef.current;
+        if (translationRefreshBusyRef.current?.context === context) return;
+        if (!visibleTranslationNeedsRefresh) {
+            retryFailedBlocks(visibleFailedTranslationIds);
+            return;
+        }
+        const operation = { context };
+        translationRefreshBusyRef.current = operation;
+        setTranslationRefreshOperation(operation);
+        try {
+            const refreshed = await refreshContent();
+            if (refreshed && translationContextRef.current === context) resetFailedBlocks(visibleFailedTranslationIds);
+        } finally {
+            if (translationRefreshBusyRef.current === operation) {
+                translationRefreshBusyRef.current = null;
+                setTranslationRefreshOperation(null);
+            }
+        }
+    };
+
     const currentPageHasReadyBlock = useMemo(
         () => currentPageTranslatableBlocks.some((block) => !isBlockPendingForActiveLang(block, pendingBlockIds)),
         [currentPageTranslatableBlocks, pendingBlockIds]
@@ -1896,8 +1920,8 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
     //   a not-yet-readable target-language chapter.
     // - And only while the current page still has zero ready translatable blocks.
     const shouldShowGlow = useMemo(() => {
-        return isTranslationTransitionActive && pageReadabilityGate;
-    }, [isTranslationTransitionActive, pageReadabilityGate]);
+        return isTranslationTransitionActive && pageReadabilityGate && visibleFailedTranslationIds.length === 0;
+    }, [isTranslationTransitionActive, pageReadabilityGate, visibleFailedTranslationIds.length]);
     const translationAlertKey = currentChapterId
         ? `${bookId}::${currentChapterId}::${activeLang.toLowerCase()}`
         : null;
@@ -1981,7 +2005,10 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
             if (index === currentChapterIndex) {
                 if (pages.length === 0) return;
                 const targetIdx = options?.targetPage === 'end' ? pages.length - 1 : 0;
-                setCurrentPageIdx(normalizeForLayout(Math.max(0, targetIdx)));
+                const normalizedIdx = normalizeForLayout(Math.max(0, targetIdx));
+                setCurrentPageIdx(normalizedIdx);
+                const block = paginatedBlocks.find((candidate) => candidate.id === pages[normalizedIdx]?.[0]);
+                if (block) saveAnchor(block.parentId ?? block.id, block.position, getSentenceIndex(block), block.id);
                 return;
             }
 
@@ -2023,7 +2050,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
             pendingChapterEntryPersistRef.current = index;
             setCurrentChapterIndex(index);
         }
-    }, [chapters.length, saveAnchor, currentChapter, currentChapterIndex, pages.length, normalizeForLayout]);
+    }, [chapters.length, saveAnchor, currentChapter, currentChapterIndex, pages, paginatedBlocks, normalizeForLayout]);
 
     useEffect(() => {
         if (pendingChapterEntryPersistRef.current == null) return;
@@ -2377,9 +2404,9 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
             const isFirstRenderable = !firstRenderableFound;
             if (!firstRenderableFound) firstRenderableFound = true;
             const isPending = isBlockPendingForActiveLang(block, pendingBlockIds);
-            const showTranslatingLabel = isPending && !firstPendingFound;
+            const showTranslatingLabel = isPending && !failedBlockIds.has(blockId) && !firstPendingFound;
             const pendingLabel = isSourceLang ? 'Loading...' : 'Translating...';
-            if (isPending && !firstPendingFound) firstPendingFound = true;
+            if (showTranslatingLabel) firstPendingFound = true;
             return (
                 <div
                     key={block.id}
@@ -2401,7 +2428,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                 </div>
             );
         });
-    }, [coverUrl, firstImageBlockId, getRefCallback, isSourceLang, pageHeight, pendingBlockIds, settings.fontSize, settings.lineHeightScale]);
+    }, [coverUrl, failedBlockIds, firstImageBlockId, getRefCallback, isSourceLang, pageHeight, pendingBlockIds, settings.fontSize, settings.lineHeightScale]);
 
     // ─── Render ───────────────────────────────────────────────────────────────
     return (
@@ -2630,6 +2657,16 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                             <div ref={widthProbeShellRef} className={PAGE_SHELL_CLASS} />
                         )}
                     </div>
+
+                    {visibleFailedTranslationIds.length > 0 && !isSourceLang && (
+                        <div role="alert" className="absolute inset-x-4 bottom-3 z-40 flex items-center justify-center gap-3 rounded-lg border p-3 text-sm"
+                            style={{ backgroundColor: readerSemanticTokens.panelBackground, color: readerSemanticTokens.danger }}>
+                            <span>Some text could not be translated.</span>
+                            <Button variant="outline" size="sm" disabled={isRefreshingTranslation} onClick={retryVisibleTranslation}>
+                                {visibleTranslationNeedsRefresh ? 'Reload chapter' : 'Try again'}
+                            </Button>
+                        </div>
+                    )}
 
                     {/* Visible page */}
                     <TranslationGlow>

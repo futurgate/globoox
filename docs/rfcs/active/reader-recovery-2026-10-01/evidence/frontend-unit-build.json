@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "numTotalTests": 333,
+  "numPassedTests": 333,
+  "numFailedTests": 0,
+  "numTotalTestSuites": 72,
+  "numFailedTestSuites": 0,
+  "commands": [
+    "npm test -- --reporter=json --outputFile=.local/verification/unit-results.json",
+    "node node_modules/typescript/bin/tsc --noEmit",
+    "npm run docs:check",
+    "env -i <whitelisted shell paths and synthetic loopback variables> node node_modules/next/dist/bin/next build --webpack"
+  ],
+  "typecheck": "PASS",
+  "docs": "PASS (129 governed files)",
+  "build": "PASS",
+  "buildEnv": {
+    "NODE_ENV": "production",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NEXT_PUBLIC_SUPABASE_URL": "http://127.0.0.1:3018",
+    "API_URL": "http://127.0.0.1:3018",
+    "keys": "synthetic-local-only"
+  },
+  "rawLogs": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification",
+  "limitations": [
+    "Synthetic local configuration. Production deployment and live reader smoke still pending."
+  ]
+}

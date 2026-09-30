@@ -1,0 +1,27 @@
+{
+  "at": "2026-09-30T22:25:15.487Z",
+  "mode": "read-only REST; exact previously observed chapter; no text/translation generation",
+  "chapter": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+  "results": [
+    {
+      "label": "chapter",
+      "status": 200,
+      "elapsedMs": 1174,
+      "contentRange": "0-0/1",
+      "body": [
+        {
+          "id": "1530661c-00d8-4ab7-b0f1-3c243a0490c4",
+          "book_id": "fd1c5886-908b-4fca-8e6d-a749ec775de5",
+          "chapter_number": 9
+        }
+      ]
+    },
+    {
+      "label": "block-count",
+      "status": 200,
+      "elapsedMs": 268,
+      "contentRange": "0-24/25",
+      "body": null
+    }
+  ]
+}

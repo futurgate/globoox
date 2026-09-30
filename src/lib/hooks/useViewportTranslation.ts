@@ -6,9 +6,11 @@ import { carryBlockEmphasis } from '@/lib/inlineMarks'
 import { trackTranslationBatch, trackTranslationSessionSummary, trackBookTranslationStarted } from '@/lib/posthog'
 import { setCachedTranslatedBlockText } from '@/lib/contentCache'
 import { hasTargetLangText } from '@/lib/translationState'
+import { runTranslationRequest } from '@/lib/translationRequest'
 
 interface UseViewportTranslationOptions {
   bookId: string
+  accountScopeKey?: string
   chapterId: string | null
   lang: string
   blocks: ContentBlock[]
@@ -25,6 +27,9 @@ const RECOVERY_POLL_MS = 1500
 const RECOVERY_BATCH_SIZE = 50
 const RECOVERY_RETRY_COOLDOWN_MS = 30000
 const RECOVERY_MAX_RETRIES = 3
+const RECOVERY_MAX_WAIT_MS = 120000
+const STREAM_TIMEOUT_MS = 60000
+const STATUS_TIMEOUT_MS = 10000
 const RECONCILE_COALESCE_MS = 120
 const RECENT_BLOCK_TEXT_TTL_MS = 2000
 
@@ -54,96 +59,9 @@ function applyTranslation(block: ContentBlock, translatedText: string): ContentB
   return null
 }
 
-function buildRecoveredTranslatedBlock(
-  payload: Awaited<ReturnType<typeof fetchBlockTexts>>['ok'][number],
-  fallbackType: ContentBlock['type'],
-): ContentBlock {
-  if (payload.type === 'list') {
-    return {
-      id: payload.blockId,
-      position: 0,
-      type: 'list',
-      ordered: false,
-      items: payload.items,
-      targetLangReady: true,
-      isTranslated: true,
-      is_pending: false,
-    }
-  }
-
-  const type = fallbackType === 'heading' || fallbackType === 'quote' ? fallbackType : 'paragraph'
-  if (type === 'heading') {
-    return {
-      id: payload.blockId,
-      position: 0,
-      type,
-      level: 1,
-      text: payload.text,
-      targetLangReady: true,
-      isTranslated: true,
-      is_pending: false,
-    }
-  }
-
-  return {
-    id: payload.blockId,
-    position: 0,
-    type,
-    text: payload.text,
-    targetLangReady: true,
-    isTranslated: true,
-    is_pending: false,
-  }
-}
-
-function buildRecoveredStreamBlock(
-  blockId: string,
-  fallbackType: ContentBlock['type'],
-  translatedText: string,
-): ContentBlock | null {
-  if (fallbackType === 'list') {
-    return {
-      id: blockId,
-      position: 0,
-      type: 'list',
-      ordered: false,
-      items: translatedText.split('\n').filter(Boolean),
-      targetLangReady: true,
-      isTranslated: true,
-      is_pending: false,
-    }
-  }
-
-  if (fallbackType === 'heading') {
-    return {
-      id: blockId,
-      position: 0,
-      type: 'heading',
-      level: 1,
-      text: translatedText,
-      targetLangReady: true,
-      isTranslated: true,
-      is_pending: false,
-    }
-  }
-
-  if (fallbackType === 'paragraph' || fallbackType === 'quote') {
-    return {
-      id: blockId,
-      position: 0,
-      type: fallbackType,
-      text: translatedText,
-      targetLangReady: true,
-      isTranslated: true,
-      is_pending: false,
-    }
-  }
-
-  return null
-}
-
 export function useViewportTranslation({
   bookId,
+  accountScopeKey = 'guest',
   chapterId,
   lang,
   blocks,
@@ -159,6 +77,19 @@ export function useViewportTranslation({
   const [isTranslatingAny, setIsTranslatingAny] = useState(false)
   // Expose pending block IDs as state for blur effect
   const [pendingBlockIds, setPendingBlockIds] = useState<Set<string>>(new Set())
+  const [failedBlockIds, setFailedBlockIds] = useState<Set<string>>(new Set())
+  const [refreshRequiredBlockIds, setRefreshRequiredBlockIds] = useState<Set<string>>(new Set())
+  const failedIds = useRef(new Map<string, { reason?: string; retryable?: boolean }>())
+  // Change ownership during render, before effect cleanup: an old callback must
+  // not become current again after A → B → A or an account switch.
+  const contextKey = JSON.stringify([accountScopeKey, bookId, chapterId, lang.toUpperCase(), canTranslate])
+  const contextRef = useRef({ key: contextKey, generation: 0 })
+  if (contextRef.current.key !== contextKey) {
+    contextRef.current = { key: contextKey, generation: contextRef.current.generation + 1 }
+  }
+  const isCurrentContext = useCallback((generation: number) => (
+    isMountedRef.current && contextRef.current.generation === generation
+  ), [])
 
   // Tracking sets (use refs to avoid re-renders)
   const translatedIds = useRef(new Set<string>())
@@ -181,7 +112,9 @@ export function useViewportTranslation({
   const recoveryTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const recoveryRetryAtRef = useRef(new Map<string, number>())
   const recoveryRetryCountRef = useRef(new Map<string, number>())
-  const recoveryRetryInFlightRef = useRef(new Set<string>())
+  const recoveryStartedAtRef = useRef(new Map<string, number>())
+  const recoveryPollInFlightRef = useRef(false)
+  const statusControllersRef = useRef(new Set<AbortController>())
   const reconcileQueueRef = useRef(new Map<string, Set<string>>())
   const reconcileTimerRef = useRef(new Map<string, ReturnType<typeof setTimeout>>())
   const recentBlockTextFetchRef = useRef(new Map<string, number>())
@@ -194,8 +127,15 @@ export function useViewportTranslation({
       ...queuedIds.current,
       ...highPriorityPendingIds.current,
       ...highPriorityQueuedIds.current,
+      ...Array.from(recoveryRef.current.values()).flatMap(ids => Array.from(ids.keys())),
     ])
     if (isMountedRef.current) setPendingBlockIds(allPending)
+  }, [])
+
+  const updateFailures = useCallback(() => {
+    if (!isMountedRef.current) return
+    setFailedBlockIds(new Set(failedIds.current.keys()))
+    setRefreshRequiredBlockIds(new Set(Array.from(failedIds.current).filter(([, failure]) => failure.retryable === false).map(([id]) => id)))
   }, [])
 
   // Mark blocks as translated and remove them from every pending/queued/inflight set.
@@ -211,9 +151,42 @@ export function useViewportTranslation({
       queuedIds.current.delete(id)
       highPriorityPendingIds.current.delete(id)
       highPriorityQueuedIds.current.delete(id)
+      failedIds.current.delete(id)
+      for (const recovery of recoveryRef.current.values()) recovery.delete(id)
     }
     updatePendingBlockIds()
-  }, [updatePendingBlockIds])
+    updateFailures()
+  }, [updatePendingBlockIds, updateFailures])
+
+  const recoverFailedBlocks = useCallback((ids: string[], failures = new Map<string, { reason?: string; retryable?: boolean }>()) => {
+    const key = `${chapterIdRef.current}::${langRef.current.toUpperCase()}`
+    const recovery = recoveryRef.current.get(key) ?? new Map<string, string>()
+    for (const id of ids) {
+      inflightIds.current.delete(id)
+      pendingIds.current.delete(id)
+      queuedIds.current.delete(id)
+      highPriorityPendingIds.current.delete(id)
+      highPriorityQueuedIds.current.delete(id)
+      if (translatedIds.current.has(id)) continue
+      const block = blocksRef.current.find(block => block.id === id)
+      if (!block || SKIP_TYPES.has(block.type)) continue
+      const failure = failures.get(id) ?? {}
+      const retryKey = `${key}::${id}`
+      if (!recoveryStartedAtRef.current.has(retryKey)) recoveryStartedAtRef.current.set(retryKey, Date.now())
+      if (failure.retryable === false || (recoveryRetryCountRef.current.get(retryKey) ?? 0) >= RECOVERY_MAX_RETRIES) {
+        recovery.delete(id)
+        failedIds.current.set(id, failure)
+      } else {
+        recovery.set(id, block.type)
+        // Initial failure and every failed attempt receive the same cooldown.
+        recoveryRetryAtRef.current.set(retryKey, Date.now())
+      }
+    }
+    if (recovery.size) recoveryRef.current.set(key, recovery)
+    else recoveryRef.current.delete(key)
+    updatePendingBlockIds()
+    updateFailures()
+  }, [updateFailures, updatePendingBlockIds])
 
   const getRecentFetchKey = useCallback((requestChapterId: string, requestLang: string, blockId: string) => {
     return `${requestChapterId}::${requestLang.toUpperCase()}::${blockId}`
@@ -265,22 +238,9 @@ export function useViewportTranslation({
       const key = getRecoveryRetryKey(requestChapterId, requestLang, blockId)
       recoveryRetryAtRef.current.delete(key)
       recoveryRetryCountRef.current.delete(key)
+      recoveryStartedAtRef.current.delete(key)
     }
   }, [getRecoveryRetryKey])
-
-  const hasExceededRecoveryRetries = useCallback((requestChapterId: string, requestLang: string, blockId: string) => {
-    const key = getRecoveryRetryKey(requestChapterId, requestLang, blockId)
-    return (recoveryRetryCountRef.current.get(key) ?? 0) >= RECOVERY_MAX_RETRIES
-  }, [getRecoveryRetryKey])
-
-  const pruneRecoveryRetryState = useCallback(() => {
-    const threshold = Date.now() - RECOVERY_RETRY_COOLDOWN_MS
-    for (const [key, timestamp] of recoveryRetryAtRef.current) {
-      if (timestamp < threshold) {
-        recoveryRetryAtRef.current.delete(key)
-      }
-    }
-  }, [])
 
   // ── Translation session tracking ─────────────────────────────────────────
   // Session = same book + language. Spans multiple chapters and flushes.
@@ -396,8 +356,16 @@ export function useViewportTranslation({
     reconcileTimerRef.current.clear()
     reconcileQueueRef.current.clear()
     recentBlockTextFetchRef.current.clear()
-    pruneRecoveryRetryState()
-  }, [lang, chapterId, pruneRecoveryRetryState])
+    recoveryRef.current.clear()
+    recoveryRetryAtRef.current.clear()
+    recoveryRetryCountRef.current.clear()
+    recoveryStartedAtRef.current.clear()
+    for (const controller of statusControllersRef.current) controller.abort()
+    statusControllersRef.current.clear()
+    recoveryPollInFlightRef.current = false
+    failedIds.current.clear()
+    updateFailures()
+  }, [contextKey, updateFailures])
 
   // Check if translation is needed (not source language)
   const isSourceLang = sourceLanguage
@@ -432,8 +400,8 @@ export function useViewportTranslation({
         abortControllerRef.current.abort()
         abortControllerRef.current = null
       }
-      // Move in-flight IDs back to low-priority pending (they're for old pages)
-      inflightIds.current.forEach((id) => pendingIds.current.add(id))
+      // First reconcile aborted work: the server may still finish it.
+      recoverFailedBlocks(Array.from(inflightIds.current))
       inflightIds.current.clear()
       isInflight.current = false
       isInflightHighPriority.current = false
@@ -476,6 +444,10 @@ export function useViewportTranslation({
     const controller = new AbortController()
     abortControllerRef.current = controller
     const requestLang = langRef.current
+    const generation = contextRef.current.generation
+    const ownsRequest = () => isCurrentContext(generation) && abortControllerRef.current === controller
+    const successfulIds = new Set<string>()
+    const failures = new Map<string, { reason?: string; retryable?: boolean }>()
     const requestBlocksById = new Map(
       blocksRef.current.map((b) => [b.id, b] as const)
     )
@@ -489,17 +461,27 @@ export function useViewportTranslation({
     console.log(JSON.stringify({ event: 'flush_start', chapterId: requestChapterId, lang: requestLang, batchSize: ids.length, overflowSize: overflow.length }))
 
     try {
-      await translateBlocksStreaming(
+      await runTranslationRequest(() => translateBlocksStreaming(
         requestChapterId,
         requestLang,
         ids,
         anchorBlockId,
         'down',
         (result: TranslatedBlockResult) => {
-          // Each block resolves here as soon as the server emits it — one-by-one.
-          // Clear from every queue, not just inflight — the same id may have been
-          // re-queued (e.g. after a high-priority abort moved it back to pending).
+          if (!ownsRequest() || controller.signal.aborted || !ids.includes(result.blockId) || successfulIds.has(result.blockId)) return
+          const original = requestBlocksById.get(result.blockId)
+          const translated = result.status === 'ok' && result.translatedText.trim() && original
+            ? applyTranslation(original, result.translatedText) : null
+          if (!translated) {
+            failures.set(result.blockId, { reason: result.reason, retryable: result.retryable })
+            errors++
+            return
+          }
+          successfulIds.add(result.blockId)
+          failures.delete(result.blockId)
           markBlocksAsTranslated([result.blockId])
+          onBlocksTranslatedRef.current([translated])
+          void setCachedTranslatedBlockText(requestChapterId, requestLang, translated)
 
           if (result.status === 'ok') {
             if (result.cache === 'hit') hits += 1
@@ -523,24 +505,10 @@ export function useViewportTranslation({
 
           console.log(JSON.stringify({ event: 'block_received', blockId: result.blockId, cache: result.cache, status: result.status }))
 
-          if (result.status === 'ok' && result.translatedText) {
-            const original = requestBlocksById.get(result.blockId)
-            if (original) {
-              const translated = applyTranslation(original, result.translatedText)
-              if (translated) {
-                const sameRequestContext =
-                  chapterIdRef.current === requestChapterId &&
-                  langRef.current === requestLang
-                if (isMountedRef.current && sameRequestContext) {
-                  onBlocksTranslatedRef.current([translated])
-                }
-                void setCachedTranslatedBlockText(requestChapterId, requestLang, translated)
-              }
-            }
-          }
         },
         controller.signal,
         (doneEvent) => {
+          if (!ownsRequest() || controller.signal.aborted) return
           console.log(JSON.stringify(doneEvent))
           // Accumulate session-level LLM usage (session spans multiple chapters/flushes)
           if (doneEvent.llmCalls > 0) {
@@ -557,16 +525,18 @@ export function useViewportTranslation({
             }, SESSION_INACTIVITY_MS)
           }
         },
-      )
-      abortControllerRef.current = null
+      ), controller, STREAM_TIMEOUT_MS)
     } catch (err) {
-      abortControllerRef.current = null
-      // On failure remove from inflight so blocks can be retried
-      ids.forEach((id) => inflightIds.current.delete(id))
+      if (!ownsRequest()) return
       if (!(err instanceof Error && err.name === 'AbortError')) {
         console.warn('[useViewportTranslation] Translation failed:', err)
       }
     } finally {
+      // A canceled old request must never clear a newer request's controller,
+      // pending IDs or busy state (including when it finishes after navigation).
+      if (!ownsRequest()) return
+      abortControllerRef.current = null
+      recoverFailedBlocks(ids.filter(id => !successfulIds.has(id)), failures)
       isInflight.current = false
       isInflightHighPriority.current = false
 
@@ -603,7 +573,7 @@ export function useViewportTranslation({
         if (isMountedRef.current) setIsTranslatingAny(false)
       }
     }
-  }, [markBlocksAsTranslated, updatePendingBlockIds, flushSession, resetSession, SESSION_INACTIVITY_MS])
+  }, [isCurrentContext, markBlocksAsTranslated, recoverFailedBlocks, updatePendingBlockIds, flushSession, resetSession, SESSION_INACTIVITY_MS])
 
   // Schedule a debounced flush
   const scheduleFlush = useCallback((isHighPriority = false) => {
@@ -623,69 +593,37 @@ export function useViewportTranslation({
     }
   }, [flushPending])
 
-  const retryRecoveryMissing = useCallback(async (
+  const retryRecoveryMissing = useCallback((
     recoveryChapterId: string,
     recoveryLang: string,
     idToType: Map<string, string>,
     ids: string[],
   ) => {
-    if (!recoveryChapterId || !recoveryLang || ids.length === 0) return
-
-    pruneRecoveryRetryState()
-    const queueKey = `${recoveryChapterId}::${recoveryLang.toUpperCase()}`
-    if (recoveryRetryInFlightRef.current.has(queueKey)) return
-
-    const retryIds = ids
-      .filter((blockId) => idToType.has(blockId))
-      .filter((blockId) => !wasRecoveryRetriedRecently(recoveryChapterId, recoveryLang, blockId))
+    if (!canTranslateRef.current || isInflight.current) return
+    if (chapterIdRef.current !== recoveryChapterId || langRef.current.toUpperCase() !== recoveryLang.toUpperCase()) return
+    const retryIds = ids.filter(id => idToType.has(id) && !failedIds.current.has(id))
+      .filter(id => !wasRecoveryRetriedRecently(recoveryChapterId, recoveryLang, id))
       .slice(0, MAX_BATCH_SIZE)
-    if (retryIds.length === 0) return
-
-    recoveryRetryInFlightRef.current.add(queueKey)
+    if (!retryIds.length) return
     markRecoveryRetried(recoveryChapterId, recoveryLang, retryIds)
-
-    try {
-      const requestBlocksById = new Map(
-        blocksRef.current.map((block) => [block.id, block] as const)
-      )
-
-      await translateBlocksStreaming(
-        recoveryChapterId,
-        recoveryLang,
-        retryIds,
-        retryIds[0] ?? null,
-        'down',
-        (result: TranslatedBlockResult) => {
-          if (result.status !== 'ok' || !result.translatedText) return
-
-          const fallbackType = idToType.get(result.blockId) as ContentBlock['type'] | undefined
-          if (!fallbackType) return
-
-          const original = requestBlocksById.get(result.blockId)
-          const translated = original
-            ? applyTranslation(original, result.translatedText)
-            : buildRecoveredStreamBlock(result.blockId, fallbackType, result.translatedText)
-          if (!translated) return
-
-          idToType.delete(result.blockId)
-          clearRecoveryRetryState(recoveryChapterId, recoveryLang, [result.blockId])
-          void setCachedTranslatedBlockText(recoveryChapterId, recoveryLang, translated)
-
-          const sameRequestContext =
-            chapterIdRef.current === recoveryChapterId &&
-            langRef.current === recoveryLang
-          if (sameRequestContext && isMountedRef.current) {
-            onBlocksTranslatedRef.current([translated])
-            markBlocksAsTranslated([result.blockId])
-          }
-        },
-      )
-    } catch {
-      // best-effort background retry
-    } finally {
-      recoveryRetryInFlightRef.current.delete(queueKey)
+    for (const id of retryIds) {
+      idToType.delete(id)
+      pendingIds.current.add(id)
     }
-  }, [clearRecoveryRetryState, markBlocksAsTranslated, markRecoveryRetried, pruneRecoveryRetryState, wasRecoveryRetriedRecently])
+    // Share the foreground queue and controller; recovery must not start a
+    // competing stream for the same block.
+    scheduleFlush(false)
+  }, [markRecoveryRetried, scheduleFlush, wasRecoveryRetriedRecently])
+
+  const readBlockTexts = useCallback(async (requestChapter: string, requestLang: string, ids: string[]) => {
+    const controller = new AbortController()
+    statusControllersRef.current.add(controller)
+    try {
+      return await runTranslationRequest(signal => fetchBlockTexts(requestChapter, requestLang, ids, signal), controller, STATUS_TIMEOUT_MS)
+    } finally {
+      statusControllersRef.current.delete(controller)
+    }
+  }, [])
 
   const reconcileBlocks = useCallback(async (ids: string[]) => {
     if (!canTranslateRef.current) return
@@ -693,6 +631,7 @@ export function useViewportTranslation({
     const requestLang = langRef.current
     if (!requestChapterId || !requestLang || ids.length === 0) return
 
+    const generation = contextRef.current.generation
     pruneRecentChecked()
     const uniqueIds = Array.from(new Set(ids)).filter((blockId) => {
       const block = blocksRef.current.find((b) => b.id === blockId)
@@ -711,6 +650,7 @@ export function useViewportTranslation({
     if (reconcileTimerRef.current.has(queueKey)) return
 
     const timer = setTimeout(async () => {
+      if (!isCurrentContext(generation)) return
       reconcileTimerRef.current.delete(queueKey)
       const pendingQueue = reconcileQueueRef.current.get(queueKey)
       if (!pendingQueue || pendingQueue.size === 0) {
@@ -731,13 +671,15 @@ export function useViewportTranslation({
       markRecentlyChecked(requestChapterId, requestLang, batchIds)
 
       try {
-        const res = await fetchBlockTexts(requestChapterId, requestLang, batchIds)
+        const res = await readBlockTexts(requestChapterId, requestLang, batchIds)
+        if (!isCurrentContext(generation)) return
         const translated: ContentBlock[] = []
         const blocksById = new Map(blocksRef.current.map((block) => [block.id, block] as const))
 
         for (const payload of res.ok) {
           const original = blocksById.get(payload.blockId)
-          if (!original) continue
+          if (!original || !batchIds.includes(payload.blockId)) continue
+          if (!(payload.type === 'list' ? payload.items.join('\n') : payload.text).trim()) continue
           const merged =
             payload.type === 'list'
               ? applyTranslation(original, payload.items.join('\n'))
@@ -760,7 +702,7 @@ export function useViewportTranslation({
     }, RECONCILE_COALESCE_MS)
 
     reconcileTimerRef.current.set(queueKey, timer)
-  }, [markBlocksAsTranslated, markRecentlyChecked, pruneRecentChecked, wasRecentlyChecked])
+  }, [isCurrentContext, markBlocksAsTranslated, markRecentlyChecked, pruneRecentChecked, readBlockTexts, wasRecentlyChecked])
 
   // Enqueue a single block for translation.
   // triggerFlush: when false, caller is responsible for calling scheduleFlush after
@@ -768,7 +710,13 @@ export function useViewportTranslation({
   // loop aborts the in-flight batch started by the previous block.
   const enqueueBlock = useCallback(
     (blockId: string, isHighPriority = false, triggerFlush = true): boolean => {
-      if (!canTranslateRef.current) return false
+      if (!canTranslateRef.current || !isMountedRef.current) return false
+      // This queue belongs to one chapter. Cross-chapter warmup has its own
+      // request; never route IDs from a neighboring chapter through this one.
+      const block = blocksRef.current.find((b) => b.id === blockId)
+      if (!block || SKIP_TYPES.has(block.type)) return false
+      if (failedIds.current.has(blockId)) return false
+      if (Array.from(recoveryRef.current.values()).some(ids => ids.has(blockId))) return false
       // Skip if already handled
       if (
         translatedIds.current.has(blockId) ||
@@ -778,8 +726,7 @@ export function useViewportTranslation({
       }
 
       // Skip if block is already translated (from content endpoint or IndexedDB cache)
-      const block = blocksRef.current.find((b) => b.id === blockId)
-      if (block && hasTargetLangText(block)) {
+      if (hasTargetLangText(block)) {
         translatedIds.current.add(blockId)
         // User is viewing a translated block — fire book_translation_started if not yet recorded
         const currentLang = langRef.current
@@ -898,27 +845,8 @@ export function useViewportTranslation({
   // Abort all in-flight and queued prefetch requests.
   // Called by navigateTo on any non-manual_scroll jump.
   const abortAll = useCallback(() => {
-    // Best-effort: add everything currently queued to recovery.
-    const requestChapterId = chapterIdRef.current
-    const requestLang = langRef.current
-    if (requestChapterId && requestLang) {
-      const key = `${requestChapterId}::${requestLang.toUpperCase()}`
-      const map = recoveryRef.current.get(key) ?? new Map<string, string>()
-      const all = new Set<string>([
-        ...pendingIds.current,
-        ...queuedIds.current,
-        ...highPriorityPendingIds.current,
-        ...highPriorityQueuedIds.current,
-        ...inflightIds.current,
-      ])
-      if (all.size > 0) {
-        for (const id of all) {
-          const block = blocksRef.current.find((b) => b.id === id)
-          if (block?.type) map.set(id, block.type)
-        }
-        recoveryRef.current.set(key, map)
-      }
-    }
+    // Only requests already sent can have server-side work to recover.
+    recoverFailedBlocks(Array.from(inflightIds.current))
 
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
@@ -939,98 +867,77 @@ export function useViewportTranslation({
       setIsTranslatingAny(false)
       setPendingBlockIds(new Set())
     }
-  }, [])
+  }, [recoverFailedBlocks])
 
-  // Background recovery loop: pull finished translations and persist to IDB.
+  // Reconcile failed/disconnected work before spending another model request.
+  // One check at a time; exhausted blocks leave this loop until manual Retry.
   useEffect(() => {
-    if (recoveryTimerRef.current) return
-
     recoveryTimerRef.current = setInterval(async () => {
-      if (!canTranslateRef.current) return
-      if (recoveryRef.current.size === 0) return
-
-      for (const [key, idToType] of recoveryRef.current) {
-        if (idToType.size === 0) {
-          recoveryRef.current.delete(key)
-          continue
-        }
-
-        const [recoveryChapterId, recoveryLangRaw] = key.split('::')
-        const recoveryLang = recoveryLangRaw || ''
-        if (!recoveryChapterId || !recoveryLang) {
-          recoveryRef.current.delete(key)
-          continue
-        }
-
-        pruneRecentChecked()
-        const ids = Array.from(idToType.keys())
-          .filter((blockId) => !wasRecentlyChecked(recoveryChapterId, recoveryLang, blockId))
-          .slice(0, RECOVERY_BATCH_SIZE)
-        if (ids.length === 0) continue
-        markRecentlyChecked(recoveryChapterId, recoveryLang, ids)
-
-        try {
-          const res = await fetchBlockTexts(recoveryChapterId, recoveryLang, ids)
-          const sameContext =
-            chapterIdRef.current === recoveryChapterId &&
-            langRef.current.toUpperCase() === recoveryLang.toUpperCase()
-          const blocksById = sameContext
-            ? new Map(blocksRef.current.map((block) => [block.id, block] as const))
-            : null
-          const uiUpdates: ContentBlock[] = []
-          for (const payload of res.ok) {
-            const type = idToType.get(payload.blockId)
-            if (!type) continue
-            const translatedBlock = buildRecoveredTranslatedBlock(payload, type as ContentBlock['type'])
-            void setCachedTranslatedBlockText(recoveryChapterId, recoveryLang, translatedBlock)
-            // If the user is still on this chapter+lang, push the translation
-            // through to the UI so the loader stops rendering. Without this,
-            // the recovery loop would only persist to IDB while the on-screen
-            // block stays stuck behind the "Translating..." overlay.
-            if (blocksById) {
-              const original = blocksById.get(payload.blockId)
-              const merged = original
-                ? applyTranslation(
-                    original,
-                    payload.type === 'list' ? payload.items.join('\n') : payload.text,
-                  )
-                : null
-              if (merged) uiUpdates.push(merged)
-            }
-            idToType.delete(payload.blockId)
-            clearRecoveryRetryState(recoveryChapterId, recoveryLang, [payload.blockId])
-          }
-          if (uiUpdates.length > 0 && isMountedRef.current) {
-            onBlocksTranslatedRef.current(uiUpdates)
-            markBlocksAsTranslated(uiUpdates.map((block) => block.id))
-          }
-          for (const blockId of res.missing) {
-            if (hasExceededRecoveryRetries(recoveryChapterId, recoveryLang, blockId)) {
-              idToType.delete(blockId)
-              clearRecoveryRetryState(recoveryChapterId, recoveryLang, [blockId])
+      if (!canTranslateRef.current || !isMountedRef.current || recoveryPollInFlightRef.current) return
+      if (!recoveryRef.current.size) return
+      const generation = contextRef.current.generation
+      recoveryPollInFlightRef.current = true
+      try {
+        for (const [key, idToType] of recoveryRef.current) {
+          if (!isCurrentContext(generation)) return
+          if (!idToType.size) { recoveryRef.current.delete(key); continue }
+          const [recoveryChapterId, recoveryLang] = key.split('::')
+          for (const id of idToType.keys()) {
+            const started = recoveryStartedAtRef.current.get(`${key}::${id}`)
+            if (started !== undefined && Date.now() - started >= RECOVERY_MAX_WAIT_MS) {
+              idToType.delete(id)
+              failedIds.current.set(id, { reason: 'recovery_timeout' })
             }
           }
-          if (res.missing.length > 0) {
-            void retryRecoveryMissing(recoveryChapterId, recoveryLang, idToType, res.missing)
+          updateFailures()
+          updatePendingBlockIds()
+          const ids = Array.from(idToType.keys()).filter(id => !wasRecentlyChecked(recoveryChapterId, recoveryLang, id)).slice(0, RECOVERY_BATCH_SIZE)
+          if (!ids.length) continue
+          markRecentlyChecked(recoveryChapterId, recoveryLang, ids)
+          let missing = ids
+          try {
+            const res = await readBlockTexts(recoveryChapterId, recoveryLang, ids)
+            if (!isCurrentContext(generation)) return
+            const updates: ContentBlock[] = []
+            for (const payload of res.ok) {
+              if (!ids.includes(payload.blockId)) continue
+              const original = blocksRef.current.find(block => block.id === payload.blockId)
+              const text = payload.type === 'list' ? payload.items.join('\n') : payload.text
+              if (!original || !text.trim()) continue
+              const translated = applyTranslation(original, text)
+              if (!translated) continue
+              updates.push(translated)
+              void setCachedTranslatedBlockText(recoveryChapterId, recoveryLang, translated)
+              clearRecoveryRetryState(recoveryChapterId, recoveryLang, [payload.blockId])
+            }
+            if (updates.length) {
+              onBlocksTranslatedRef.current(updates)
+              markBlocksAsTranslated(updates.map(block => block.id))
+            }
+            missing = res.missing
+          } catch {
+            if (!isCurrentContext(generation)) return
+            // A failed status read still uses the same retry cooldown and cap.
           }
-          if (idToType.size === 0) recoveryRef.current.delete(key)
-        } catch {
-          // ignore and retry later
+          retryRecoveryMissing(recoveryChapterId, recoveryLang, idToType, missing)
+          if (!idToType.size) recoveryRef.current.delete(key)
         }
+      } finally {
+        if (isCurrentContext(generation)) recoveryPollInFlightRef.current = false
       }
     }, RECOVERY_POLL_MS)
-
     return () => {
       if (recoveryTimerRef.current) clearInterval(recoveryTimerRef.current)
       recoveryTimerRef.current = null
     }
-  }, [clearRecoveryRetryState, hasExceededRecoveryRetries, markBlocksAsTranslated, markRecentlyChecked, pruneRecentChecked, retryRecoveryMissing, wasRecentlyChecked])
+  }, [clearRecoveryRetryState, isCurrentContext, markBlocksAsTranslated, markRecentlyChecked, readBlockTexts, retryRecoveryMissing, updateFailures, updatePendingBlockIds, wasRecentlyChecked])
 
   // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true
     const reconcileTimers = reconcileTimerRef.current
     const reconcileQueues = reconcileQueueRef.current
+    const statusControllers = statusControllersRef.current
     return () => {
       isMountedRef.current = false
       flushSession()
@@ -1047,8 +954,11 @@ export function useViewportTranslation({
       }
       reconcileTimers.clear()
       reconcileQueues.clear()
-      // Intentionally keep in-flight request alive across reader unmount,
-      // so translated blocks can still be persisted to IndexedDB.
+      contextRef.current.generation += 1
+      abortControllerRef.current?.abort()
+      abortControllerRef.current = null
+      for (const controller of statusControllers) controller.abort()
+      statusControllers.clear()
       observerRef.current?.disconnect()
     }
   }, [flushSession])
@@ -1086,5 +996,21 @@ export function useViewportTranslation({
     }
   }, [enqueueBlock, scheduleFlush])
 
-  return { getRefCallback, isTranslatingAny, abortAll, enqueueBlocks, enqueueBlocksImmediate, pendingBlockIds, reconcileBlocks }
+  const resetFailedBlocks = useCallback((ids?: string[]) => {
+    const retryIds = (ids ?? Array.from(failedIds.current.keys())).filter(id => failedIds.current.has(id))
+    for (const id of retryIds) {
+      failedIds.current.delete(id)
+      clearRecoveryRetryState(chapterIdRef.current ?? '', langRef.current, [id])
+    }
+    updateFailures()
+    return retryIds
+  }, [clearRecoveryRetryState, updateFailures])
+
+  const retryFailedBlocks = useCallback((ids?: string[]) => {
+    const retryIds = resetFailedBlocks(ids)
+    enqueueBlocksImmediate(retryIds)
+  }, [enqueueBlocksImmediate, resetFailedBlocks])
+
+  return { getRefCallback, isTranslatingAny, abortAll, enqueueBlocks, enqueueBlocksImmediate, pendingBlockIds, reconcileBlocks,
+    failedBlockIds, refreshRequiredBlockIds, retryFailedBlocks, resetFailedBlocks }
 }

@@ -9,6 +9,8 @@ implementation_status: not-started
 
 # RFC: Оптимизация Оркестрации Переводов И Догрузки
 
+> Текущая работа по ошибкам и повтору перевода ведётся в [Reader recovery](reader-recovery-2026-10-01/README.md). Полная перестройка оркестрации из этого RFC остаётся отдельным предложением.
+
 > Current behavior is documented in [Translation architecture](../../reference/architecture/translation.md). Adaptive chunks, `translate-window`, and staged viewport commits below are proposals. A superseded range-based proposal explicitly required “no adaptive batching”; the available documents do not record why that constraint was abandoned, so the conflict remains an explicit decision item rather than an invented rationale.
 
 ## Контекст

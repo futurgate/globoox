@@ -1,0 +1,38 @@
+{
+  "environment": "jsdom, not a real browser",
+  "layout": "Hook cases have no layout; existing Reader error cases mock geometry/chrome",
+  "network": "synthetic promises only",
+  "diagnostics": [],
+  "baselineFailure": {
+    "message": "the previous snapshot must become stale in the very first render of the new scope\n\nfalse !== true\n",
+    "actual": false,
+    "expected": true
+  },
+  "result": {
+    "passed": [
+      "unresolved batch cannot block foreground content or its display",
+      "foreground result survives a batch that omits chapter",
+      "foreground result survives a batch that fails",
+      "foreground result survives a batch that finishes late",
+      "completed fresh prefetch cache needs no foreground request",
+      "stale cached content stays readable if foreground revalidation fails",
+      "cold foreground failure is explicit while prefetch is still pending",
+      "late response cannot replace the new chapter",
+      "late response cannot replace the new language",
+      "late foreground response after unmount cannot write the cache",
+      "old cache read resolving after chapter change cannot start an obsolete request"
+    ],
+    "negativeControl": false,
+    "scope": "Actual useChapterContent in React; synthetic transport/cache/pending batch, no remote data or layout simulation"
+  },
+  "ownership": {
+    "passed": [
+      "scope transition {\"id\":\"chapter-b\"} rejects old readiness before delayed cache read",
+      "scope transition {\"lang\":\"RU\"} rejects old readiness before delayed cache read",
+      "scope transition {\"bookId\":\"book-b\",\"id\":\"chapter-b\"} rejects old readiness before delayed cache read",
+      "manual content recovery bypasses fresh cache and replaces obsolete block IDs",
+      "manual content recovery preserves readable cache on failure"
+    ],
+    "scope": "Actual useChapterContent renders, synthetic delayed cache and transport"
+  }
+}

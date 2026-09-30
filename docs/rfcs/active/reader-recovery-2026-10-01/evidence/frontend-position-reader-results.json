@@ -1,0 +1,1167 @@
+{
+  "environment": "jsdom, not a real browser",
+  "layout": "Actual ReaderView/content/chapter hooks; pagination geometry, chrome, local store and transport are fixtures",
+  "network": "synthetic promises only",
+  "diagnostics": [
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent",
+    "An update to %s inside a test was not wrapped in act(...).\n\nWhen testing, code that causes React state updates should be wrapped into act(...):\n\nact(() => {\n  /* fire events that update state */\n});\n/* assert on the output */\n\nThis ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act ReaderContent"
+  ],
+  "baselineFailure": {
+    "message": "same-chapter TOC jump must persist its destination instead of the old last-page anchor\n\n'a-3' !== 'a-1'\n",
+    "actual": "a-3",
+    "expected": "a-1",
+    "observations": [
+      {
+        "phase": "previous chapter before response",
+        "state": {
+          "alert": null,
+          "skeletons": 13,
+          "visibleBlocks": [],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-b",
+            "blockId": "b-1",
+            "fragmentId": "b-1",
+            "blockPosition": 0,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:17.376Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.376Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.376Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.376Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.376Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.376Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      },
+      {
+        "phase": "previous chapter settled",
+        "state": {
+          "alert": null,
+          "skeletons": 0,
+          "visibleBlocks": [
+            "chapter-a page 3"
+          ],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-a",
+            "blockId": "a-3",
+            "fragmentId": "a-3",
+            "blockPosition": 2,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:17.590Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.376Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.376Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.376Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.376Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.376Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-3",
+                "fragmentId": "a-3",
+                "blockPosition": 2,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.590Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-3",
+                  "block_position": 2,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.590Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-3",
+                    "block_position": 2,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.590Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.590Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-3",
+                    "fragmentId": "a-3",
+                    "blockPosition": 2,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.590Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      },
+      {
+        "phase": "reopened previous chapter",
+        "state": {
+          "alert": null,
+          "skeletons": 0,
+          "visibleBlocks": [
+            "chapter-a page 3"
+          ],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-a",
+            "blockId": "a-3",
+            "fragmentId": "a-3",
+            "blockPosition": 2,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:17.590Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.376Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.376Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.376Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.376Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.376Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-3",
+                "fragmentId": "a-3",
+                "blockPosition": 2,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.590Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-3",
+                  "block_position": 2,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.590Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-3",
+                    "block_position": 2,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.590Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.590Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-3",
+                    "fragmentId": "a-3",
+                    "blockPosition": 2,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.590Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      },
+      {
+        "phase": "TOC current chapter beginning",
+        "state": {
+          "alert": null,
+          "skeletons": 0,
+          "visibleBlocks": [
+            "chapter-a page 1"
+          ],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-a",
+            "blockId": "a-3",
+            "fragmentId": "a-3",
+            "blockPosition": 2,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:17.590Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.376Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.376Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.376Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.376Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.376Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-3",
+                "fragmentId": "a-3",
+                "blockPosition": 2,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:17.590Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-3",
+                  "block_position": 2,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:17.590Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-3",
+                    "block_position": 2,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:17.590Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:17.590Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-3",
+                    "fragmentId": "a-3",
+                    "blockPosition": 2,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:17.590Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      }
+    ]
+  },
+  "result": {
+    "passed": [
+      "previous chapter LAST_PAGE persists its own last block and survives reopen",
+      "all remote saves retain chapter/block ownership",
+      "same-chapter TOC persists and restores the destination"
+    ],
+    "observations": [
+      {
+        "phase": "previous chapter before response",
+        "state": {
+          "alert": null,
+          "skeletons": 13,
+          "visibleBlocks": [],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-b",
+            "blockId": "b-1",
+            "fragmentId": "b-1",
+            "blockPosition": 0,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:20.007Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.007Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.007Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.007Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.007Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.007Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      },
+      {
+        "phase": "previous chapter settled",
+        "state": {
+          "alert": null,
+          "skeletons": 0,
+          "visibleBlocks": [
+            "chapter-a page 3"
+          ],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-a",
+            "blockId": "a-3",
+            "fragmentId": "a-3",
+            "blockPosition": 2,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:20.056Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.007Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.007Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.007Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.007Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.007Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-3",
+                "fragmentId": "a-3",
+                "blockPosition": 2,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.056Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-3",
+                  "block_position": 2,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.056Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-3",
+                    "block_position": 2,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.056Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.056Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-3",
+                    "fragmentId": "a-3",
+                    "blockPosition": 2,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.056Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      },
+      {
+        "phase": "reopened previous chapter",
+        "state": {
+          "alert": null,
+          "skeletons": 0,
+          "visibleBlocks": [
+            "chapter-a page 3"
+          ],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-a",
+            "blockId": "a-3",
+            "fragmentId": "a-3",
+            "blockPosition": 2,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:20.056Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.007Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.007Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.007Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.007Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.007Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-3",
+                "fragmentId": "a-3",
+                "blockPosition": 2,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.056Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-3",
+                  "block_position": 2,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.056Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-3",
+                    "block_position": 2,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.056Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.056Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-3",
+                    "fragmentId": "a-3",
+                    "blockPosition": 2,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.056Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      },
+      {
+        "phase": "TOC current chapter beginning",
+        "state": {
+          "alert": null,
+          "skeletons": 0,
+          "visibleBlocks": [
+            "chapter-a page 1"
+          ],
+          "calls": [
+            {
+              "kind": "chapters"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-a"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            },
+            {
+              "kind": "content",
+              "id": "chapter-b"
+            }
+          ],
+          "anchor": {
+            "chapterId": "chapter-a",
+            "blockId": "a-1",
+            "fragmentId": "a-1",
+            "blockPosition": 0,
+            "sentenceIndex": 0,
+            "updatedAt": "2026-09-30T22:46:21.240Z"
+          },
+          "writes": [
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-b",
+                "blockId": "b-1",
+                "fragmentId": "b-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.007Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-b",
+                  "block_id": "b-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.007Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-b",
+                    "block_id": "b-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.007Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.007Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-b",
+                    "blockId": "b-1",
+                    "fragmentId": "b-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.007Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-3",
+                "fragmentId": "a-3",
+                "blockPosition": 2,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:20.056Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-3",
+                  "block_position": 2,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:20.056Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-3",
+                    "block_position": 2,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:20.056Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:20.056Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-3",
+                    "fragmentId": "a-3",
+                    "blockPosition": 2,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:20.056Z"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "local",
+              "value": {
+                "chapterId": "chapter-a",
+                "blockId": "a-1",
+                "fragmentId": "a-1",
+                "blockPosition": 0,
+                "sentenceIndex": 0,
+                "updatedAt": "2026-09-30T22:46:21.240Z"
+              }
+            },
+            {
+              "kind": "remote",
+              "args": [
+                "book",
+                {
+                  "chapter_id": "chapter-a",
+                  "block_id": "a-1",
+                  "block_position": 0,
+                  "sentence_index": 0,
+                  "lang": "EN",
+                  "updated_at_client": "2026-09-30T22:46:21.240Z"
+                },
+                "fixture-user"
+              ]
+            },
+            {
+              "kind": "cache",
+              "args": [
+                "fixture-user",
+                "book",
+                {
+                  "position": {
+                    "book_id": "book",
+                    "chapter_id": "chapter-a",
+                    "block_id": "a-1",
+                    "block_position": 0,
+                    "sentence_index": 0,
+                    "total_blocks": null,
+                    "lang": "EN",
+                    "updated_at": "2026-09-30T22:46:21.240Z"
+                  },
+                  "updatedAt": "2026-09-30T22:46:21.240Z",
+                  "pendingAnchor": {
+                    "chapterId": "chapter-a",
+                    "blockId": "a-1",
+                    "fragmentId": "a-1",
+                    "blockPosition": 0,
+                    "sentenceIndex": 0,
+                    "updatedAt": "2026-09-30T22:46:21.240Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "anchorUnchanged": false,
+          "retryButtons": 0
+        }
+      }
+    ]
+  }
+}

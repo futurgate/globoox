@@ -1,0 +1,10 @@
+{
+  "passed": [],
+  "failed": [
+    {
+      "name": "foreign chapter block IDs cannot enter the current chapter request",
+      "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'a',\n+   'next-chapter-block',\n+   'previous-chapter-block'\n  ]\n"
+    }
+  ],
+  "transport": "synthetic; no DB or LLM"
+}

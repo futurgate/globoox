@@ -2,7 +2,7 @@
 type: reference
 status: current
 owner: engineering
-last_verified: 2026-09-01
+last_verified: 2026-10-01
 implementation:
   - src/lib/hooks/useViewportTranslation.ts
   - src/lib/hooks/useChapterContent.ts
@@ -69,12 +69,14 @@ Current policy:
 
 1. The first two translatable blocks on the visible page are enqueued as high priority.
 2. The rest of the visible page is enqueued as low priority.
-3. Forward prefetch uses a 5,000-character budget and can cross chapter boundaries.
-4. Backward recovery/prefetch covers up to 10 blocks.
+3. Forward prefetch uses a 5,000-character budget within the current chapter.
+4. Backward recovery/prefetch covers up to 10 blocks within the current chapter.
 5. A separate next-chapter warmup starts after approximately 1.5 seconds with a 5,000-character budget.
 6. IntersectionObserver visibility with a 50% root margin can enqueue additional low-priority blocks.
 
 The maximum request batch is 10 blocks. Both queue flush paths currently schedule without an additional debounce delay.
+
+Every viewport queue request belongs to one book/account/chapter/language context. Unknown block IDs are rejected before enqueue. Neighboring chapter IDs must never be appended to the current chapter queue: the next-chapter warmup has its own chapter endpoint and cancellation context. Content and display snapshots carry their book/chapter identity in addition to language; a previous chapter's cached blocks cannot authorize translation for a newly selected chapter.
 
 When high-priority work arrives, it can abort any active request, not only a low-priority request. Unfinished IDs are returned to scheduling or recovery; stale responses are prevented from becoming the active result.
 
@@ -88,9 +90,15 @@ Current recovery parameters:
 - `/blocks/text` recovery polling runs approximately every 1.5 seconds;
 - recovery checks at most 50 blocks per batch;
 - retry cooldown is 30 seconds;
-- automatic recovery retry is capped at three attempts.
+- automatic recovery retry is capped at three attempts after the initial request;
+- an individual translation stream has a 60-second deadline and a status read has a 10-second deadline;
+- unresolved recovery leaves automatic polling after 120 seconds.
 
 If the backend has already persisted a translation, reconcile returns it. If work is still active, it remains pending. Missing or stale work can return to the translation queue.
+
+Only a non-empty successful result for a requested ID counts as translated. Explicit errors, empty successes and IDs omitted by a partial stream remain failed work; successful text/cache entries are retained. Recovery shares the foreground queue, so it cannot launch a competing stream for the same block. After exhaustion the visible page shows an error and a manual retry; repeated clicks cannot enqueue duplicate work. Optional backend `reason`/`retryable` fields suppress automatic regeneration for missing chapter/block IDs. Those errors offer a targeted chapter reload that bypasses fresh content cache; other chapters and the reading position are preserved.
+
+Generation and request-owner checks reject late stream/status callbacks after book, account, chapter or language changes and unmount. Cancellation aborts active transports. Already accepted successful text remains cached; aborted outstanding work may be reconciled in the active chapter, but old callbacks cannot update the new view or write additional cache entries.
 
 There is no durable cross-process queue guarantee in this frontend contract. A complete backend process loss can still lose in-flight work.
 

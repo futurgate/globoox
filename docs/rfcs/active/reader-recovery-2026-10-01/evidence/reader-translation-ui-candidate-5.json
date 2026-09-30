@@ -1,0 +1,10 @@
+{
+  "passed": [
+    "exhausted visible translation offers Retry and preserves the current page",
+    "permanent stale IDs offer a single targeted chapter reload",
+    "failed targeted refresh leaves the page and manual action available",
+    "actual queue resumes after fresh chapter content with same missing IDs",
+    "actual queue resumes after fresh chapter content with new missing IDs"
+  ],
+  "transport": "synthetic; actual ReaderView/content hook, fixture translation state and pagination geometry"
+}

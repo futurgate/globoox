@@ -116,6 +116,8 @@ export interface TranslatedBlockResult {
   status: 'ok' | 'error'
   cache: 'hit' | 'miss'
   translatedText: string
+  reason?: string
+  retryable?: boolean
 }
 
 export interface TranslateDoneEvent {
@@ -1268,9 +1270,10 @@ export async function translateBlocksStreaming(
   }
 }
 
-export function fetchBlockTexts(chapterId: string, lang: string, blockIds: string[]): Promise<FetchBlockTextsResponse> {
+export function fetchBlockTexts(chapterId: string, lang: string, blockIds: string[], signal?: AbortSignal): Promise<FetchBlockTextsResponse> {
   return request<FetchBlockTextsResponse>(`/api/chapters/${chapterId}/blocks/text`, {
     method: 'POST',
+    signal,
     body: JSON.stringify({ lang: lang.toUpperCase(), blockIds }),
   })
 }

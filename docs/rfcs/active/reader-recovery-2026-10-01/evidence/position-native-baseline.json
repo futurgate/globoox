@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-30T22:32:54.614Z",
+  "database": "isolated loopback PostgreSQL/PostgREST, synthetic rows",
+  "case": "Both requests observe absent row; newer commits first, older upsert commits last",
+  "initialSnapshots": [
+    null,
+    null
+  ],
+  "commitOrder": [
+    "44444444-4444-4444-4444-444444444444",
+    "33333333-3333-3333-3333-333333333333"
+  ],
+  "actual": {
+    "chapter_id": "33333333-3333-3333-3333-333333333333",
+    "updated_at": "2026-10-01T00:32:54.607+02:00"
+  },
+  "expectedChapter": "44444444-4444-4444-4444-444444444444",
+  "baselineViolation": true
+}
