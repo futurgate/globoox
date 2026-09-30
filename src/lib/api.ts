@@ -1722,10 +1722,18 @@ export interface FictionFlowResult {
   error?: string
 }
 
+/** Per-stage sampling temperature (each in [0,2]); undefined → model default. */
+export interface FictionFlowTemperatures {
+  glossary?: number
+  translate?: number
+  revision?: number
+}
+
 export interface FictionFlowResponse {
   targetLanguage: string
   sourceLanguage: string
   useGlossary: boolean
+  temperatures?: FictionFlowTemperatures
   blockCount: number
   results: FictionFlowResult[]
 }
@@ -1738,6 +1746,7 @@ export interface FictionFlowRequest {
   useGlossary?: boolean
   existingGlossary?: string
   prompts?: { glossary?: string; translate?: string; revision?: string }
+  temperatures?: FictionFlowTemperatures
 }
 
 export type FictionFlowStage = 'glossary' | 'translate' | 'revision'
