@@ -14,6 +14,7 @@ import {
   Maximize2,
   Copy,
   Check,
+  GitCompare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
@@ -23,7 +24,7 @@ import {
   runTranslationPlayground,
   fetchPlaygroundModels,
   fetchTranslationPrompt,
-  runFictionFlowPlayground,
+  runFictionFlowPlaygroundStream,
   fetchFictionFlowPrompts,
   type PlaygroundResult,
   type PlaygroundResponse,
@@ -31,6 +32,7 @@ import {
   type PlaygroundMode,
   type FictionFlowResponse,
   type FictionFlowResult,
+  type FictionFlowRevisionBlock,
 } from '@/lib/api';
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
@@ -160,6 +162,8 @@ export default function TranslationPlaygroundPage() {
   const [flowLoadingPrompts, setFlowLoadingPrompts] = useState(false);
   const [flowRunning, setFlowRunning] = useState(false);
   const [flowResponse, setFlowResponse] = useState<FictionFlowResponse | null>(null);
+  // Live progress while the flow streams: completed stages / total stages.
+  const [flowProgress, setFlowProgress] = useState<{ done: number; total: number } | null>(null);
 
   // Switching stage resets stale results and, for fiction stages, pins the
   // target to the supported RU→EN/FR coverage.
@@ -337,25 +341,49 @@ export default function TranslationPlaygroundPage() {
     setFlowRunning(true);
     setError(null);
     setFlowResponse(null);
+    setFlowProgress({ done: 0, total: 0 });
+    // Track stages completed per model so a failed model (which never emits all
+    // its stage events) still tops out the bar via its `model` event.
+    const perModel: Record<string, number> = {};
+    let stagesPerModel = 0;
+    const recompute = () => {
+      const done = Object.values(perModel).reduce((a, b) => a + b, 0);
+      setFlowProgress({ done, total: models.length * stagesPerModel });
+    };
     try {
-      const res = await runFictionFlowPlayground({
-        sourceText: sourceText.trim(),
-        targetLanguage,
-        sourceLanguage,
-        models,
-        useGlossary: flowUseGlossary,
-        existingGlossary: flowUseGlossary ? flowExistingGlossary.trim() || '{}' : undefined,
-        prompts: {
-          glossary: flowPrompts.glossary.trim() || undefined,
-          translate: flowPrompts.translate.trim() || undefined,
-          revision: flowPrompts.revision.trim() || undefined,
+      const res = await runFictionFlowPlaygroundStream(
+        {
+          sourceText: sourceText.trim(),
+          targetLanguage,
+          sourceLanguage,
+          models,
+          useGlossary: flowUseGlossary,
+          existingGlossary: flowUseGlossary ? flowExistingGlossary.trim() || '{}' : undefined,
+          prompts: {
+            glossary: flowPrompts.glossary.trim() || undefined,
+            translate: flowPrompts.translate.trim() || undefined,
+            revision: flowPrompts.revision.trim() || undefined,
+          },
         },
-      });
+        (ev) => {
+          if (ev.type === 'start') {
+            stagesPerModel = ev.stagesPerModel;
+            setFlowProgress({ done: 0, total: ev.totalModels * ev.stagesPerModel });
+          } else if (ev.type === 'stage') {
+            perModel[ev.model] = (perModel[ev.model] ?? 0) + 1;
+            recompute();
+          } else if (ev.type === 'model') {
+            perModel[ev.result.model] = stagesPerModel;
+            recompute();
+          }
+        },
+      );
       setFlowResponse(res);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Request failed');
     } finally {
       setFlowRunning(false);
+      setFlowProgress(null);
     }
   };
 
@@ -904,6 +932,29 @@ export default function TranslationPlaygroundPage() {
           )}
           {error && <span className="text-sm text-red-600 dark:text-red-400">{error}</span>}
         </div>
+
+        {/* Live progress while the full flow streams stage-by-stage. */}
+        {mode === 'flow' && flowRunning && flowProgress && (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-[var(--app-text-muted)]">
+              <span>Running full flow…</span>
+              <span>
+                {flowProgress.done}/{flowProgress.total || '…'} stages
+                {flowProgress.total > 0
+                  ? ` · ${Math.round((flowProgress.done / flowProgress.total) * 100)}%`
+                  : ''}
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--separator-opaque)]">
+              <div
+                className="h-full rounded-full bg-[var(--app-accent)] transition-[width] duration-300"
+                style={{
+                  width: `${flowProgress.total > 0 ? Math.round((flowProgress.done / flowProgress.total) * 100) : 5}%`,
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Full-flow results ── */}
@@ -1143,6 +1194,126 @@ function ResultCard({
   );
 }
 
+// ── Revision diff (draft → final) ────────────────────────────────────────────
+// A word-level diff so a reviewer can see exactly what the Revision stage fixed.
+
+type DiffSeg = { type: 'equal' | 'add' | 'del'; text: string };
+
+// Split into words AND the whitespace between them, so segments re-join with the
+// original spacing intact.
+function tokenizeWords(s: string): string[] {
+  return s.match(/\s+|[^\s]+/g) ?? [];
+}
+
+// Word-level LCS diff → merged segments. Blocks are short, so O(n·m) is fine.
+function diffWords(before: string, after: string): DiffSeg[] {
+  const a = tokenizeWords(before);
+  const b = tokenizeWords(after);
+  const n = a.length;
+  const m = b.length;
+  const lcs: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      lcs[i][j] = a[i] === b[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+    }
+  }
+  const raw: DiffSeg[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (a[i] === b[j]) { raw.push({ type: 'equal', text: a[i] }); i++; j++; }
+    else if (lcs[i + 1][j] >= lcs[i][j + 1]) { raw.push({ type: 'del', text: a[i] }); i++; }
+    else { raw.push({ type: 'add', text: b[j] }); j++; }
+  }
+  while (i < n) raw.push({ type: 'del', text: a[i++] });
+  while (j < m) raw.push({ type: 'add', text: b[j++] });
+  // Merge adjacent same-type segments (incl. the whitespace tokens between them).
+  const merged: DiffSeg[] = [];
+  for (const seg of raw) {
+    const last = merged[merged.length - 1];
+    if (last && last.type === seg.type) last.text += seg.text;
+    else merged.push({ ...seg });
+  }
+  return merged;
+}
+
+/** Inline unified diff: removed text struck through in red, added text in green. */
+function InlineDiff({ before, after }: { before: string; after: string }) {
+  const segs = diffWords(before, after);
+  return (
+    <p className="whitespace-pre-wrap text-sm leading-relaxed">
+      {segs.map((s, i) => {
+        if (s.type === 'equal') return <span key={i}>{s.text}</span>;
+        if (s.type === 'add') {
+          return (
+            <span key={i} className="rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+              {s.text}
+            </span>
+          );
+        }
+        return (
+          <span key={i} className="rounded bg-red-500/15 text-red-600 line-through dark:text-red-400">
+            {s.text}
+          </span>
+        );
+      })}
+    </p>
+  );
+}
+
+/** The Revision stage's per-block changes, changed blocks first (toggle for the rest). */
+function FlowRevisionDiff({ blocks }: { blocks: FictionFlowRevisionBlock[] }) {
+  const [showUnchanged, setShowUnchanged] = useState(false);
+  const changedCount = blocks.filter((b) => b.changed).length;
+
+  if (changedCount === 0) {
+    return (
+      <p className="mt-2 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3 text-xs text-[var(--app-text-muted)]">
+        Revision left every block unchanged.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-2 space-y-2 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[var(--app-text-muted)]">
+        <span className="flex items-center gap-1">
+          <span className="rounded bg-emerald-500/20 px-1 text-emerald-700 dark:text-emerald-300">added</span>
+          <span className="rounded bg-red-500/15 px-1 text-red-600 line-through dark:text-red-400">removed</span>
+        </span>
+        <label className="flex cursor-pointer items-center gap-1">
+          <input
+            type="checkbox"
+            checked={showUnchanged}
+            onChange={(e) => setShowUnchanged(e.target.checked)}
+          />
+          Show unchanged
+        </label>
+      </div>
+      <ol className="space-y-2">
+        {blocks.map((b, idx) => {
+          if (!showUnchanged && !b.changed) return null;
+          return (
+            <li key={idx} className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-2">
+              <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">
+                Block {idx + 1}
+                {!b.changed && ' · unchanged'}
+              </div>
+              {b.changed ? (
+                <InlineDiff before={b.draft} after={b.final} />
+              ) : (
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--app-text-muted)]">
+                  {b.final}
+                </p>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 /** One model's full-flow run: final translation + per-stage outputs and metrics. */
 function FlowResultCard({
   result: r,
@@ -1151,6 +1322,7 @@ function FlowResultCard({
   result: FictionFlowResult;
   onView: (title: string, content: string) => void;
 }) {
+  const [showDiff, setShowDiff] = useState(false);
   if (!r.ok) {
     return (
       <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
@@ -1164,6 +1336,7 @@ function FlowResultCard({
   const t = r.translate;
   const rev = r.revision;
   const secs = (ms?: number) => (ms != null ? `${(ms / 1000).toFixed(1)}s` : '—');
+  const revBlocks = rev?.blocks ?? [];
 
   return (
     <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
@@ -1243,13 +1416,27 @@ function FlowResultCard({
         {rev && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-medium text-[var(--app-text)]">Revision</span>
-            <span>{rev.parsedCount} revised</span>
+            <span className={rev.changedCount > 0 ? '' : 'text-[var(--app-text-muted)]'}>
+              {rev.changedCount}/{revBlocks.length} changed
+            </span>
             <span>{fmtCost(rev.costUsd)}</span>
             <span>{secs(rev.latencyMs)}</span>
             <span>{rev.tokensIn}→{rev.tokensOut} tok</span>
+            {revBlocks.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowDiff((s) => !s)}
+                className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+              >
+                <GitCompare className="h-3 w-3" /> {showDiff ? 'Hide changes' : 'Show changes'}
+              </button>
+            )}
           </div>
         )}
       </div>
+
+      {/* Revision diff — what the Revision stage changed, highlighted per block. */}
+      {rev && showDiff && <FlowRevisionDiff blocks={revBlocks} />}
     </div>
   );
 }
