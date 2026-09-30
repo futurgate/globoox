@@ -66,6 +66,7 @@ export default function AdminFictionPage() {
   const [revisionState, setRevisionState] = useState<string>('idle');
   const [revisionError, setRevisionError] = useState<string | null>(null);
   const [revisionUpdatedAt, setRevisionUpdatedAt] = useState<string | null>(null);
+  const [overwriteRevision, setOverwriteRevision] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [diffOpen, setDiffOpen] = useState(false);
   const [diffLoading, setDiffLoading] = useState(false);
@@ -84,6 +85,7 @@ export default function AdminFictionPage() {
   const [glossaryError, setGlossaryError] = useState<string | null>(null);
   const [glossary, setGlossary] = useState<BookGlossary | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const [rebuildGlossary, setRebuildGlossary] = useState(false);
 
   // Per-stage cost / tokens / time for the selected book+language.
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
@@ -222,7 +224,7 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startStylisticRevision(bookId, lang, onEvent, { signal: controller.signal });
+      await startStylisticRevision(bookId, lang, onEvent, { overwrite: overwriteRevision, signal: controller.signal });
       await loadRevisionProgress();
     } catch (e) {
       setRevisionError(e instanceof Error ? e.message : 'Revision failed');
@@ -232,7 +234,7 @@ export default function AdminFictionPage() {
       revisionAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, revisionRunning, loadRevisionProgress, loadFictionCosts]);
+  }, [bookId, lang, revisionRunning, overwriteRevision, loadRevisionProgress, loadFictionCosts]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -419,7 +421,7 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startGlossaryGeneration(bookId, lang, onEvent, { signal: controller.signal });
+      await startGlossaryGeneration(bookId, lang, onEvent, { restart: rebuildGlossary, signal: controller.signal });
       await loadGlossary();
       setGlossaryOpen(true);
     } catch (e) {
@@ -430,7 +432,7 @@ export default function AdminFictionPage() {
       glossaryAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, glossaryRunning, loadGlossary, loadFictionCosts]);
+  }, [bookId, lang, glossaryRunning, rebuildGlossary, loadGlossary, loadFictionCosts]);
 
   useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
 
@@ -661,11 +663,13 @@ export default function AdminFictionPage() {
                 {/* A server-side build that this tab isn't streaming (e.g. after a
                     reload, or one that stalled) can be picked up from where it
                     left off — resumes from chapters_done. */}
-                {glossaryState === 'building'
-                  ? 'Resume glossary'
-                  : glossary
-                    ? 'Regenerate glossary'
-                    : 'Generate glossary'}
+                {rebuildGlossary
+                  ? 'Rebuild glossary'
+                  : glossaryState === 'building'
+                    ? 'Resume glossary'
+                    : glossary
+                      ? 'Regenerate glossary'
+                      : 'Generate glossary'}
               </>
             )}
           </Button>
@@ -677,6 +681,23 @@ export default function AdminFictionPage() {
             </Button>
           )}
         </div>
+
+        <label
+          className="flex items-center gap-2 text-sm"
+          title="Discard the existing glossary and rebuild it from chapter 1 (needed to re-apply a new glossary prompt — existing entries are otherwise frozen)"
+        >
+          <input
+            type="checkbox"
+            checked={rebuildGlossary}
+            disabled={glossaryRunning}
+            onChange={(e) => setRebuildGlossary(e.target.checked)}
+            className="h-4 w-4 accent-[var(--app-accent)]"
+          />
+          <span>
+            Rebuild from scratch
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = resume/merge into existing)</span>
+          </span>
+        </label>
 
         {(glossaryBuilding || glossaryTotal > 0) && glossaryState !== 'idle' && (
           <div className="space-y-2">
@@ -748,6 +769,23 @@ export default function AdminFictionPage() {
             {diffOpen ? 'Hide changes' : 'View changes'}
           </Button>
         </div>
+
+        <label
+          className="flex items-center gap-2 text-sm"
+          title="Re-revise every block, replacing existing revisions (needed to re-revise an already-revised book, e.g. with a new revision prompt)"
+        >
+          <input
+            type="checkbox"
+            checked={overwriteRevision}
+            disabled={revisionRunning || running}
+            onChange={(e) => setOverwriteRevision(e.target.checked)}
+            className="h-4 w-4 accent-[var(--app-accent)]"
+          />
+          <span>
+            Overwrite existing revisions
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = skip already-revised blocks)</span>
+          </span>
+        </label>
 
         {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (() => {
           const stopped = !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
