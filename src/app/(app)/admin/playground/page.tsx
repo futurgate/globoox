@@ -159,6 +159,12 @@ export default function TranslationPlaygroundPage() {
     translate: '',
     revision: '',
   });
+  // Per-stage sampling temperature as raw strings; blank → model default for that stage.
+  const [flowTemperatures, setFlowTemperatures] = useState<{ glossary: string; translate: string; revision: string }>({
+    glossary: '',
+    translate: '',
+    revision: '',
+  });
   const [flowLoadingPrompts, setFlowLoadingPrompts] = useState(false);
   const [flowRunning, setFlowRunning] = useState(false);
   const [flowResponse, setFlowResponse] = useState<FictionFlowResponse | null>(null);
@@ -336,6 +342,18 @@ export default function TranslationPlaygroundPage() {
     setFlowPrompts((prev) => ({ ...prev, [stage]: value }));
   };
 
+  const updateFlowTemperature = (stage: 'glossary' | 'translate' | 'revision', value: string) => {
+    setFlowTemperatures((prev) => ({ ...prev, [stage]: value }));
+  };
+
+  // Blank/invalid/out-of-range → undefined (backend then uses the model default).
+  const parseTemp = (s: string): number | undefined => {
+    const t = s.trim();
+    if (!t) return undefined;
+    const n = Number(t);
+    return Number.isFinite(n) && n >= 0 && n <= 2 ? n : undefined;
+  };
+
   const handleRunFlow = async () => {
     if (!canRunFlow) return;
     setFlowRunning(true);
@@ -363,6 +381,11 @@ export default function TranslationPlaygroundPage() {
             glossary: flowPrompts.glossary.trim() || undefined,
             translate: flowPrompts.translate.trim() || undefined,
             revision: flowPrompts.revision.trim() || undefined,
+          },
+          temperatures: {
+            glossary: parseTemp(flowTemperatures.glossary),
+            translate: parseTemp(flowTemperatures.translate),
+            revision: parseTemp(flowTemperatures.revision),
           },
         },
         (ev) => {
@@ -741,6 +764,20 @@ export default function TranslationPlaygroundPage() {
                       <span className="ml-auto text-xs text-[var(--app-text-muted)]">
                         {value.trim() ? `${value.length} chars` : 'prod default'}
                       </span>
+                    </div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <label className="text-xs text-[var(--app-text-muted)]">Temperature</label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={2}
+                        step={0.1}
+                        value={flowTemperatures[s.key]}
+                        onChange={(e) => updateFlowTemperature(s.key, e.target.value)}
+                        placeholder="default"
+                        className="w-24 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-transparent px-2 py-1 text-xs"
+                      />
+                      <span className="text-xs text-[var(--app-text-muted)]">blank = model default · range 0–2</span>
                     </div>
                     <textarea
                       value={value}
