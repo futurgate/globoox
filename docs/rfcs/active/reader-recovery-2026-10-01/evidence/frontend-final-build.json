@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "unit": {
+    "passed": 333,
+    "failed": 0
+  },
+  "build": "production Next webpack build PASS with same synthetic loopback env as initial build",
+  "typecheck": "PASS",
+  "docs": "PASS129 governed files",
+  "diffCheck": "PASS",
+  "rawLogs": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification",
+  "buildLog": "build-final.log",
+  "unitLog": "unit-repair-results.json",
+  "regression": [
+    "c672 duplicated initial stream on stale same-chapter snapshot revalidation",
+    "new tracked e2e/reader-initial-stream.mjs asserts one stream and both results rendered"
+  ],
+  "limitations": [
+    "Real live request block IDs were not logged; regression proved by actual Reader synthetic comparison.",
+    "Backend and production database unchanged by this second frontend repair."
+  ]
+}

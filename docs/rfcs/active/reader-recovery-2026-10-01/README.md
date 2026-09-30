@@ -4,7 +4,7 @@ status: active
 owner: reader
 created: 2026-10-01
 last_verified: 2026-10-01
-implementation_status: releasing
+implementation_status: releasing-verified-repair
 ---
 
 # Восстановление перевода и позиции Reader
@@ -53,8 +53,15 @@ Frontend chapter ownership и actual Reader DOM проверены: back из ch
 
 - 2026-10-01: закрытый план bookshelf перемещён в архив; evidence оставлено по стабильным ссылкам. Апрельский my-books план superseded. Общие RFC новой оркестрации/state machine не реализуем целиком: восстановление существующего потока — текущая задача.
 - 2026-10-01: sampled translate errors вызваны смешением принадлежности блоков. Сервер не должен разрешать cross-chapter fallback; исправляем клиентскую очередь. Dedicated prefetch следующей главы остаётся. Полный сброс кешей не нужен.
+- 2026-10-01: dev smoke остановил frontend production release из-за доказанного duplicate request regression; исправляем до повторного dev smoke. Adverse result сохраняется.
 - 2026-10-01: новые backend изменения базируются на origin/main; отложенный EPUB import и старые backend auth/IP эксперименты не вливаются попутно.
 
 ## Следующее действие
 
-Backend `ddbc32f90be765ccb2f6840678b46c4ec7479b86` проверен, отправлен fast-forward в origin/main; Render LIVE `dep-daup2upsrm7s73b7udl0` подтверждён в 22:49 UTC, health HTTP200 `{status:ok}`. Frontend product заморожен и локально проверен; следующий шаг commit → dev → READY/live reader smoke → production. Production frontend пока не менялся. Перед backend commit/push origin/main повторно проверен; чужих новых commits не было. База production не менялась.
+Backend `ddbc32f90be765ccb2f6840678b46c4ec7479b86` проверен, отправлен fast-forward в origin/main; Render LIVE `dep-daup2upsrm7s73b7udl0` подтверждён в 22:49 UTC, health HTTP200 `{status:ok}`. Frontend `c672dc24f908055c1be4ac4daf7064fae7d6ac98` отправлен в origin/dev; Vercel `3MBGp3MUrJfRtFegZH9KRf87Yksr` READY, GitHub deployment `6771899879`; alias/artifact JS совпадают и содержат новый UI. Live dev smoke PASS: same-chapter TOC→reload, next chapter, Previous→last spread→reload; реальный ES перевод с llmCalls>0 и errors=0. Язык RU и исходная страница82% восстановлены. STOP production frontend: live ES показал два похожих начальных jobs. Actual Reader + both hooks synthetic reproduction подтвердило новый regression c672: stale cached snapshot заменяется свежим в той же главе → source gate canTranslate false→true входит в ownership key → abort и второй identical batch. Baseline677 держит один запрос. Исправлено: ownership только account/book/chapter/lang; временная readiness не обрывает stream. Принятый source snapshot фильтрует удалённые IDs и готовые переводы. Actual Reader revalidation case теперь держит один запрос и отображает результат; 21 hook +5 UI PASS; повторные production build, TypeScript,333 unit,docs PASS, независимый review PASS. Следующий шаг: исправленный dev SHA → smoke → production. Prod frontend остаётся8e7879d; backend ddbc32f работает. Повторная генерация ради диагностики не запускалась. Production frontend пока не менялся. Перед backend commit/push origin/main повторно проверен; чужих новых commits не было. База production не менялась.
+
+## Откат и ограничения выпуска
+
+Backend: вернуть предыдущий Render deploy `dep-daui9vm0tbcc7396vo40` (`26ea1e5`) или сделать `git revert ddbc32f` поверх актуального main. Миграции нет; сохранённые позиции остаются совместимыми. Frontend: предыдущий production artifact `https://globoox-3jfe7f4vv-lomovski.vercel.app`, application `8e7879d`; Git checkpoint `67700e2`. Откат продукта через revert с сохранением чужих последующих commits; production deployment требует временного `main:true`, после smoke вернуть прежнее `main:false`. Не продвигать Preview artifact с dev environment в prod.
+
+Native SQL evidence получено isolated PostgreSQL `127.0.0.1:55591` + PostgREST `127.0.0.1:30591`; scripts/schema/config сохранены в backend `.local/reader-recovery-runtime/`, commit helper компилировался из release worktree. После проверок оба owned процесса остановлены. Полный frontend suite повторён после freeze: 333/333, Reader loading regression 5/5 PASS.

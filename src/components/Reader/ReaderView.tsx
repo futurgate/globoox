@@ -356,12 +356,13 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         paginatedBlocksUpdaterRef.current?.(applyMap);
     }, []);
 
-    const { getRefCallback, isTranslatingAny, abortAll, enqueueBlocks, enqueueBlocksImmediate, pendingBlockIds, reconcileBlocks, failedBlockIds, refreshRequiredBlockIds, retryFailedBlocks, resetFailedBlocks } = useViewportTranslation({
+    const { getRefCallback, isTranslatingAny, abortAll, enqueueBlocks, enqueueBlocksImmediate, pendingBlockIds, reconcileBlocks, failedBlockIds, refreshRequiredBlockIds, retryFailedBlocks } = useViewportTranslation({
         bookId,
         accountScopeKey: catalogContext?.scopeKey ?? user?.id ?? 'guest',
         chapterId: currentChapterId,
         lang: activeLang.toUpperCase(),
         blocks: displayBlocks,
+        sourceBlocks: blocks,
         sourceLanguage: originalLanguage ?? null,
         canTranslate: hasServerSnapshot && isDisplayBlocksSynced && displayBlocksSource === blocks && !isStale,
         onBlocksTranslated: handleBlocksTranslated,
@@ -1729,7 +1730,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
         setTranslationRefreshOperation(operation);
         try {
             const refreshed = await refreshContent();
-            if (refreshed && translationContextRef.current === context) resetFailedBlocks(visibleFailedTranslationIds);
+            if (refreshed && translationContextRef.current === context) retryFailedBlocks(visibleFailedTranslationIds);
         } finally {
             if (translationRefreshBusyRef.current === operation) {
                 translationRefreshBusyRef.current = null;

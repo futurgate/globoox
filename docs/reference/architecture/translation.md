@@ -100,6 +100,8 @@ Only a non-empty successful result for a requested ID counts as translated. Expl
 
 Generation and request-owner checks reject late stream/status callbacks after book, account, chapter or language changes and unmount. Cancellation aborts active transports. Already accepted successful text remains cached; aborted outstanding work may be reconciled in the active chapter, but old callbacks cannot update the new view or write additional cache entries.
 
+Temporary display readiness is not a new request owner. When cached fallback is revalidated within the same chapter/language, binding the fresh snapshot must preserve an already running stream and its retry budget. New enqueue waits for binding; callbacks validate IDs against the accepted source snapshot immediately, including before display binding finishes. Ready source text wins over a late stream result. Replacing or completing IDs clears obsolete failure/pending markers without regenerating ready text.
+
 There is no durable cross-process queue guarantee in this frontend contract. A complete backend process loss can still lose in-flight work.
 
 ## Reader metadata and table of contents

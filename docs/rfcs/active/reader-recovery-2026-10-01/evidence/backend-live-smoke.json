@@ -1,0 +1,67 @@
+{
+  "checked_at_utc": "2026-09-30T22:52:38.857532+00:00",
+  "command": "python3 .local/verification/live-public-smoke.py",
+  "mode": "Two read-only unauthenticated public GETs; no cookies, credentials, LLM or content writes.",
+  "expected_backend_commit": "ddbc32f90be765ccb2f6840678b46c4ec7479b86",
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://globooks-eu.onrender.com/api/health",
+      "http_status": 200,
+      "elapsed_ms": 252,
+      "result": {
+        "status": "ok"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "https://globooks-eu.onrender.com/api/docs/openapi.json",
+      "http_status": 200,
+      "elapsed_ms": 268,
+      "expected_fields": {
+        "translation_reason": {
+          "type": "string",
+          "enum": [
+            "chapter_not_found",
+            "blocks_not_found",
+            "database_unavailable"
+          ],
+          "description": "Optional on error results. Not-found means a successful lookup found no matching chapter/block in the requested chapter, which can indicate stale or incorrectly grouped IDs. Database-unavailable means the lookup failed; it does not establish that data is missing."
+        },
+        "translation_retryable": {
+          "type": "boolean",
+          "description": "Optional on error results. True allows a bounded retry after a failed database read; false means retrying the same chapter/IDs is not useful without refreshing or correcting the request. Absence does not imply success."
+        },
+        "translation_required": [
+          "blockId",
+          "status",
+          "cache",
+          "translatedText"
+        ],
+        "position_response_codes": [
+          "200",
+          "400",
+          "503"
+        ],
+        "position_description": "Saves the authenticated user's reading position with a conditional commit against the server snapshot. An existing row is updated only while its updated_at still matches the snapshot; competing initial inserts never replace the winning row. Each successful position save advances updated_at, including saves within the same millisecond. A rejected client timestamp or concurrent change returns HTTP 200 with success:true, persisted:false, reason:stale_client and the current server position (nullable if the row disappeared); it is not HTTP 409. Intentional backwards navigation remains valid against a current snapshot. The existing client timestamp comparison remains in effect and is not a total ordering of actions across device clocks. Guests are acknowledged without persistence."
+      },
+      "checks": {
+        "error_properties_optional": true,
+        "expected_reasons": true,
+        "retryable_boolean": true,
+        "position_503": true,
+        "position_200_not_409": true,
+        "conditional_commit_documented": true
+      }
+    }
+  ],
+  "upstream": {
+    "command": "git ls-remote origin refs/heads/main",
+    "reported_at_utc": "2026-09-30T22:53:05.400968+00:00",
+    "exit_code": 0,
+    "stdout": "ddbc32f90be765ccb2f6840678b46c4ec7479b86\trefs/heads/main\n",
+    "new_commits_since_expected_release": false,
+    "local_refs_modified": false
+  },
+  "limitation": "Public health/schema smoke confirms availability and deployed contract. It does not exercise a translation, position mutation, authentication, model or production database write."
+}

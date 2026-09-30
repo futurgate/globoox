@@ -1,0 +1,74 @@
+{
+  "at": "2026-09-30T22:53:27.518Z",
+  "sha": "c672dc24f908055c1be4ac4daf7064fae7d6ac98",
+  "steps": [
+    {
+      "step": "same-chapter TOC selects beginning",
+      "blockIds": [
+        "532d27b7-235e-4e64-9ae4-a132e2468b79",
+        "332bc3d5-2e6d-4527-b804-30979c57ab1e",
+        "2f6651d7-d980-4a1c-9eae-8a8e7bd7c088"
+      ],
+      "alert": []
+    },
+    {
+      "step": "reload retains chapter beginning",
+      "blockIds": [
+        "532d27b7-235e-4e64-9ae4-a132e2468b79",
+        "332bc3d5-2e6d-4527-b804-30979c57ab1e",
+        "2f6651d7-d980-4a1c-9eae-8a8e7bd7c088"
+      ]
+    },
+    {
+      "step": "next chapter shows own blocks",
+      "blockIds": [
+        "76d68483-5301-4c32-b593-04179c94dc99",
+        "5a6f9e64-d1ab-4516-aceb-2655715dd787",
+        "331e1ff7-8642-40d6-82e6-f6418b187695",
+        "508e2f76-4022-46e6-a1d4-3005ea487149",
+        "7f90259f-0376-49e1-bdb4-5e9cd0b4badf",
+        "95d1fd4a-41d6-449e-b4da-0f771b0143f7"
+      ]
+    },
+    {
+      "step": "Previous from chapter 10 enters final spread of chapter 9",
+      "blockIds": [
+        "aee4374a-a9a2-4dd4-8af8-b808def5e064",
+        "092c5f6b-4bc5-4d0a-b5eb-659520ba7ab3",
+        "2b6636a5-4c85-4e19-911a-28c7e19893bf",
+        "9c649251-4617-4b52-8405-e0a265687522"
+      ]
+    },
+    {
+      "step": "reload retains previous chapter final spread",
+      "blockIds": [
+        "aee4374a-a9a2-4dd4-8af8-b808def5e064",
+        "092c5f6b-4bc5-4d0a-b5eb-659520ba7ab3",
+        "2b6636a5-4c85-4e19-911a-28c7e19893bf",
+        "9c649251-4617-4b52-8405-e0a265687522"
+      ],
+      "pass": true
+    }
+  ],
+  "generation": {
+    "startedAt": "2026-09-30T22:55:11.548Z",
+    "observedAt": "2026-09-30T22:56:25.245Z",
+    "language": "ES",
+    "visibleBlockIds": [
+      "092c5f6b-4bc5-4d0a-b5eb-659520ba7ab3",
+      "2b6636a5-4c85-4e19-911a-28c7e19893bf",
+      "9c649251-4617-4b52-8405-e0a265687522"
+    ],
+    "visibleError": false
+  },
+  "restored": {
+    "language": "RU",
+    "progressLabel": "82%",
+    "at": "2026-09-30T22:57:26.886Z",
+    "blockIds": [
+      "bd9e3a44-4a66-4a0f-bbe9-74f7830baeee",
+      "032f946a-52e2-4811-ab9d-20a13899453c",
+      "cdf08909-f514-4524-83ac-7b553d01edaa"
+    ]
+  }
+}

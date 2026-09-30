@@ -1,0 +1,27 @@
+{
+  "passed": [
+    "foreign chapter block IDs cannot enter the current chapter request",
+    "error remains retryable and success is never retransmitted",
+    "partial stream retries only missing IDs",
+    "transport error has bounded retries and manual recovery",
+    "permanent missing IDs do not auto retry",
+    "late stream cannot write after chapter change",
+    "late stream cannot write after language change",
+    "late stream cannot write after account change",
+    "late stream cannot write after book change",
+    "unmount aborts and rejects late stream/cache writes",
+    "unrequested IDs and empty successes cannot corrupt readiness",
+    "late old batch completion cannot release a newer high-priority request",
+    "late reconcile from an old account cannot write cache or UI",
+    "stalled stream deadline recovers only unfinished blocks",
+    "server pending has a finite recovery window without extra model requests",
+    "status reads time out, abort and cannot overlap without bounds",
+    "temporary readiness gate keeps a same-ID stream and accepts its completion",
+    "replacement source rejects removed IDs before display binding",
+    "a fresh ready snapshot wins over a late stream response",
+    "temporary readiness changes preserve failed-work cooldown",
+    "fresh ready or removed IDs clear obsolete failure without regeneration"
+  ],
+  "failed": [],
+  "transport": "synthetic; no DB or LLM"
+}

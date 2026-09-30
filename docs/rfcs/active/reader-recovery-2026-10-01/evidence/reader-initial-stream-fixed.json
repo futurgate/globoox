@@ -1,0 +1,28 @@
+{
+  "passed": [
+    "same-chapter cache revalidation preserves the initial stream and renders its result"
+  ],
+  "before": [
+    {
+      "chapter": "chapter",
+      "lang": "ES",
+      "ids": [
+        "block-1",
+        "block-2"
+      ],
+      "aborted": false
+    }
+  ],
+  "after": [
+    {
+      "chapter": "chapter",
+      "lang": "ES",
+      "ids": [
+        "block-1",
+        "block-2"
+      ],
+      "aborted": false
+    }
+  ],
+  "transport": "synthetic; actual ReaderView, useChapterContent and useViewportTranslation"
+}

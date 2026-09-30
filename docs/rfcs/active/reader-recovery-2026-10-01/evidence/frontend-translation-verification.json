@@ -1,0 +1,79 @@
+{
+  "recorded_at_utc": "2026-09-30T22:50:04.483330+00:00",
+  "working_directory": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001",
+  "base_commit": "67700e26556e2b46b1cde977c047788218de4493",
+  "baseline_source": {
+    "command": "git show 67700e2:src/lib/hooks/useViewportTranslation.ts > .local/verification/baseline-useViewportTranslation.ts",
+    "path": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/baseline-useViewportTranslation.ts",
+    "note": "Original hook replayed against the current synthetic harness; expected nonzero exit reproduces the failures. Product files were never reverted."
+  },
+  "runs": [
+    {
+      "name": "baseline_initial_10",
+      "command": "TRANSLATION_HOOK_SOURCE_FILE=.local/verification/baseline-useViewportTranslation.ts TRANSLATION_CASE='^(?!foreign chapter|late old batch|late reconcile|stalled stream|server pending|status reads)' node e2e/translation-recovery.mjs > .local/verification/translation-baseline-10.json 2> .local/verification/translation-baseline-10.stderr.log",
+      "exit_code": 1,
+      "passed": 0,
+      "failed": 10,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-baseline-10.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-baseline-10.stderr.log"
+    },
+    {
+      "name": "baseline_foreign_chapter",
+      "command": "TRANSLATION_HOOK_SOURCE_FILE=.local/verification/baseline-useViewportTranslation.ts TRANSLATION_CASE='foreign chapter' node e2e/translation-recovery.mjs > .local/verification/translation-baseline-foreign-chapter.json 2> .local/verification/translation-baseline-foreign-chapter.stderr.log",
+      "exit_code": 1,
+      "passed": 0,
+      "failed": 1,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-baseline-foreign-chapter.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-baseline-foreign-chapter.stderr.log"
+    },
+    {
+      "name": "candidate_hook_16",
+      "command": "node e2e/translation-recovery.mjs > .local/verification/translation-candidate-16.json 2> .local/verification/translation-candidate-16.stderr.log",
+      "exit_code": 0,
+      "passed": 16,
+      "failed": 0,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-candidate-16.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/translation-candidate-16.stderr.log"
+    },
+    {
+      "name": "candidate_reader_ui_5",
+      "command": "node e2e/reader-translation-ui.mjs > .local/verification/reader-translation-ui-candidate-5.json 2> .local/verification/reader-translation-ui-candidate-5.stderr.log",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "stdout": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/reader-translation-ui-candidate-5.json",
+      "stderr": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/reader-translation-ui-candidate-5.stderr.log"
+    }
+  ],
+  "root_unit_run": {
+    "command": "npm test -- --reporter=json --outputFile=.local/verification/unit-results.json",
+    "raw": "/Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/.local/verification/unit-results.json",
+    "passed": 333,
+    "failed": 0,
+    "owner": "root; not repeated by this agent"
+  },
+  "candidate_source_sha256": {
+    "src/lib/hooks/useViewportTranslation.ts": "8c95f5c95c6fe8bc58837c63c6dad4f139747ebff7502859ee0bed941a3c0b87",
+    "src/lib/translationRequest.ts": "731d7ddc2e77fa68f721a2bedf21790616892aa27093872610acb2ef5249bce2",
+    "src/components/Reader/ReaderView.tsx": "c7b7f663a40314900b2588d8d1f238ce7750ce6c156261ff16d26aded7b47292",
+    "src/lib/hooks/useChapterContent.ts": "da17155957f471aeaeb77d0326e9c69c3cef35a1540161a52a42220a4e930c2c",
+    "src/lib/api.ts": "2c6d28ff9eeb75abd4268918c6e5b404f0526b6afa568c795f8780d09f964f34",
+    "e2e/translation-recovery.mjs": "4ba9d70e8e55b39709bc9d2ed2fc8a09ccbb6c9c87e39d9a1194e7f34eed9eed",
+    "e2e/reader-translation-ui.mjs": "3ffbcd08007042445dc0a20c146ccf0195e25771cfc689cb4b3b242caa8283f8",
+    "e2e/reader-load-errors.mjs": "f08f1cc6d4eea8eae4d6e7fbbe454c57b174b34282392c81c7409312d3acf0fb"
+  },
+  "bounded_read_only_review": {
+    "blocking_findings": [],
+    "translation_callbacks": "handleBlocksTranslated changes displayBlocks/paginatedBlocks, not useChapterContent.blocks. Therefore displayBlocksSource===blocks stays true for ordinary stream results and does not reset the generation on every result.",
+    "refresh": "A newly accepted content array temporarily gates translation until displayBlocks is merged from that same source. The display-sync effect reaches a stable dependency set; no fetch is triggered by that effect. The visible loading gate does not include this array comparison.",
+    "ready_text": "Same book/chapter/language merges preserve prior ready target text when the refreshed block has only fallback; enqueueBlock independently skips targetLangReady blocks. The existing mergeDisplayBlocks tests and actual hook partial-success test cover those boundaries.",
+    "account_language": "Generation changes synchronously during render for account/book/chapter/language/canTranslate changes. Late callbacks and finally handlers require both generation and request ownership. The Reader route masks the previous metadata identity on account/share changes. Different-language merges disable text preservation.",
+    "bounded_cost": "A same-chapter content refresh can abort/restart unfinished work once when the snapshot is rebound; already ready IDs are skipped. Three recovery retries/30s cooldown, 60s stream deadline, 10s status deadline and 120s recovery window remain in force.",
+    "manual_refresh": "Context object identity scopes busy/completion handling, including A→B→A and unmount. The two integrated actual-queue UI cases hold the IDB write until the new source has committed, then verify exactly one retry for either the same or replacement missing ID."
+  },
+  "limitations": [
+    "All transport/cache effects in the harness are synthetic; no real LLM or production DB is called.",
+    "Reader UI fixtures omit production CSS and use simplified pagination rectangles; semantic button dispatch does not verify pixel hit testing.",
+    "Candidate was uncommitted when recorded; source hashes bind the tested files. Final build/release provenance is owned by root."
+  ]
+}

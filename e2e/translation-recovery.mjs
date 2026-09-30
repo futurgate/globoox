@@ -134,6 +134,35 @@ await scenario('status reads time out, abort and cannot overlap without bounds',
   await run(page,'checkMode','hold');await run(page,'enqueue',['a']);await run(page,'finish',0,[error('a')]);await advance(page,36000)
   const state=await run(page,'state');assert.equal(state.requests.length,2);assert.ok(state.checks.length<=4);assert.ok(state.checks.slice(0,-1).every(check=>check.aborted))
 })
+const sourceBlock=(id,ready=false)=>({id,type:'paragraph',position:1,text:ready?'Fresh accepted translation':'Original '+id,targetLangReady:ready,is_pending:!ready})
+await scenario('temporary readiness gate keeps a same-ID stream and accepts its completion',async page=>{
+  await run(page,'enqueue');await run(page,'context',{canTranslate:false,sourceBlocks:[sourceBlock('a'),sourceBlock('b')]})
+  assert.equal((await run(page,'state')).requests[0].aborted,false)
+  await run(page,'finish',0,[ok('a'),ok('b')]);await run(page,'context',{canTranslate:true});await run(page,'enqueue')
+  const state=await run(page,'state');assert.equal(state.requests.length,1);assert.deepEqual(state.updates,['a','b'])
+})
+await scenario('replacement source rejects removed IDs before display binding',async page=>{
+  await run(page,'enqueue',['a']);await run(page,'context',{canTranslate:false,sourceBlocks:[sourceBlock('fresh')]})
+  await run(page,'finish',0,[ok('a')]);let state=await run(page,'state');assert.deepEqual(state.saved,[]);assert.deepEqual(state.updates,[])
+  await run(page,'context',{canTranslate:true,blocks:[sourceBlock('fresh')]});await run(page,'enqueue',['fresh']);state=await run(page,'state')
+  assert.deepEqual(state.requests.map(request=>request.ids),[['a'],['fresh']])
+})
+await scenario('a fresh ready snapshot wins over a late stream response',async page=>{
+  await run(page,'enqueue',['a']);await run(page,'context',{canTranslate:false,sourceBlocks:[sourceBlock('a',true)]})
+  await run(page,'finish',0,[ok('a')]);await run(page,'context',{canTranslate:true,blocks:[sourceBlock('a',true)]});await run(page,'enqueue',['a'])
+  const state=await run(page,'state');assert.equal(state.requests.length,1);assert.deepEqual(state.saved,[]);assert.deepEqual(state.updates,[]);assert.equal(state.blocks[0].text,'Fresh accepted translation')
+})
+await scenario('temporary readiness changes preserve failed-work cooldown',async page=>{
+  await run(page,'enqueue',['a']);await run(page,'finish',0,[error('a')]);await run(page,'context',{canTranslate:false,sourceBlocks:[sourceBlock('a')]})
+  await run(page,'context',{canTranslate:true});await run(page,'enqueue',['a']);assert.equal((await run(page,'state')).requests.length,1)
+  await advance(page,33001);assert.equal((await run(page,'state')).requests.length,2)
+})
+await scenario('fresh ready or removed IDs clear obsolete failure without regeneration',async page=>{
+  await run(page,'enqueue');await run(page,'finish',0,[error('a',{retryable:false}),error('b',{retryable:false})])
+  assert.deepEqual((await run(page,'state')).failed,['a','b'])
+  await run(page,'context',{canTranslate:false,sourceBlocks:[sourceBlock('a',true)]})
+  const state=await run(page,'state');assert.deepEqual(state.failed,[]);assert.deepEqual(state.pending,[]);assert.equal(state.requests.length,1)
+})
 await browser.close()
 console.log(JSON.stringify({passed,failed,transport:'synthetic; no DB or LLM'},null,2))
 if(failed.length) process.exitCode=1

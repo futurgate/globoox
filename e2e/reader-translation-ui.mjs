@@ -13,7 +13,7 @@ export function useViewportTranslation(options){
  const resetFailedBlocks=ids=>{f.resets.push(ids);setFailed(new Set())};
  return {getRefCallback:()=>noop,isTranslatingAny:false,abortAll:noop,enqueueBlocks:noop,enqueueBlocksImmediate:noop,pendingBlockIds:new Set(),reconcileBlocks:noop,
  failedBlockIds:failed,refreshRequiredBlockIds:f.permanent?failed:new Set(),resetFailedBlocks,
- retryFailedBlocks:ids=>{f.retries.push(ids);setFailed(new Set());options.onBlocksTranslated(options.blocks.filter(b=>ids.includes(b.id)).map(b=>({...b,text:'Recovered visible translation',targetLangReady:true,isTranslated:true,is_pending:false})))} }
+ retryFailedBlocks:ids=>{f.retries.push(ids);setFailed(new Set());if(f.permanent)return;options.onBlocksTranslated(options.blocks.filter(b=>ids.includes(b.id)).map(b=>({...b,text:'Recovered visible translation',targetLangReady:true,isTranslated:true,is_pending:false})))} }
 }
 `
 const bundle=await buildReaderLoadHarness({fixtureOverrides:{translation}})
@@ -63,7 +63,7 @@ try{
   assert.equal(await page.getByRole('button',{name:'Reload chapter'}).isDisabled(),true)
   await run(page,'settle',1,true);await run(page,'flush');state=await run(page,'state')
   assert.equal(state.alert,null);assert.deepEqual(state.visibleBlocks,['Saved reading position']);assert.equal(state.anchorUnchanged,true)
-  const fixture=await page.evaluate(()=>globalThis.__translationUi);assert.deepEqual(fixture.retries,[]);assert.deepEqual(fixture.resets,[['block-2']])
+  const fixture=await page.evaluate(()=>globalThis.__translationUi);assert.deepEqual(fixture.retries,[['block-2']]);assert.deepEqual(fixture.resets,[])
  })
  await scenario('failed targeted refresh leaves the page and manual action available',true,async page=>{
   await page.getByRole('button',{name:'Reload chapter'}).evaluate(button=>button.click());await run(page,'settle',1,false);await run(page,'flush')

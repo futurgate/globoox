@@ -1,0 +1,66 @@
+{
+  "results": [
+    {
+      "version": "67700e2",
+      "condition": "same chapter/lang, cached fallback older than pending TTL, background content completes before initial stream",
+      "before": [
+        {
+          "chapter": "chapter",
+          "lang": "ES",
+          "ids": [
+            "block-1",
+            "block-2"
+          ],
+          "aborted": false
+        }
+      ],
+      "after": [
+        {
+          "chapter": "chapter",
+          "lang": "ES",
+          "ids": [
+            "block-1",
+            "block-2"
+          ],
+          "aborted": false
+        }
+      ]
+    },
+    {
+      "version": "c672dc2",
+      "condition": "same chapter/lang, cached fallback older than pending TTL, background content completes before initial stream",
+      "before": [
+        {
+          "chapter": "chapter",
+          "lang": "ES",
+          "ids": [
+            "block-1",
+            "block-2"
+          ],
+          "aborted": false
+        }
+      ],
+      "after": [
+        {
+          "chapter": "chapter",
+          "lang": "ES",
+          "ids": [
+            "block-1",
+            "block-2"
+          ],
+          "aborted": true
+        },
+        {
+          "chapter": "chapter",
+          "lang": "ES",
+          "ids": [
+            "block-1",
+            "block-2"
+          ],
+          "aborted": false
+        }
+      ]
+    }
+  ],
+  "transport": "synthetic; actual ReaderView, chapter content hook and translation hook; original stream deliberately held"
+}
