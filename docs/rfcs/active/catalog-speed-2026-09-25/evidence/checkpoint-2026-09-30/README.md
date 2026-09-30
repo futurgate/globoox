@@ -1,18 +1,45 @@
 ---
 type: report
-status: prepared
+status: released
 owner: library
 last_verified: 2026-09-30
 ---
 
 # Промежуточный frontend выпуск
 
-Пользователь разрешил исправить небольшие остатки и выпустить dev на production. Проверенный кандидат включает dev bb2e016 и main8a3c257 (mergec3c82a4), без изменений backend/БД.
+Пользователь разрешил исправить небольшие остатки и выпустить dev на production. Release `8e7879d976e589ae5af9a26b655c320cc1cc14e2` включает dev `bb2e016` и main `8a3c257` (merge `c3c82a4`). Backend и база в этом выпуске не меняются.
 
-Изменения:5секунд на общую цепочку identity/activity/manifest; share только в явномURL, обычная гостеваяполка не зависит от прежнейссылки; Reader/back/auth/ошибкаOAuth сохраняют безопасный локальный next. Старый bookmark shared Reader безshare потребуется открыть через исходный /s/token. Cooldown остаётся10секунд от подтверждённойпроверки, без продления на пустомreload.
+## Изменения
 
-Проверено:333unit,3cataloghook,10Readercover/scope,5Readererror/retry; productionwebpack/TypeScript; независимыйreview. ДваinitialDOMharnessfail были вызваныopaqueabout:blank безsecurecrypto/storage и преждевременным наблюдениемпослеSuspense; исправлено окружениетеста, assertions сохранены. Вполнерабочий публичныйReaderdev:3страницывперёд,1назад,reload восстановилтуже31%страницу. Это оригиналEN и существующийlive dev, не доказательство восстановленияошибокперевода.
+- Общий deadline identity/activity/manifest увеличен до 5 секунд. Это уменьшает преждевременный переход в ограниченный режим; скорость сервера от этого не меняется.
+- Shared-подборка определяется явным URL. Обычная гостевая полка больше не зависит от ранее открытой специальной ссылки. Reader, возврат, перезагрузка и вход сохраняют явный контекст.
+- Единая проверка безопасного локального `next` для входа, регистрации и OAuth callback. Гостевой возврат и повтор после ошибки входа сохраняют подборку.
+- Кулдаун остаётся 10 секунд от подтверждённой проверки. Чтение кеша при повторной перезагрузке не продлевает его.
 
-Остаются:общие main/dev streamed translation block errors и неполнаявидимостьстадий в аналитике. Личная сессия вбраузере сейчасguest; signed-inlive smoke ожидает входа пользователя, account/share guards проверены синтетически. Локальный production UI прошёл public6→shared1→Reader→reload→Backshared1→MyBookspublic6→reload; ответmanifestза3185мс безошибки, timeoutк5284мс, Retry315мс. [Точные UIнаблюдения](browser-before-publish.json), [проверки иsourcefingerprints](verification.json). Постдеплойфакты будут записаны отдельно после исполнения.
+Старый bookmark shared Reader без параметра `share` следует открывать через исходную `/s/token` ссылку. Новые ссылки Reader сохраняют параметр.
 
-[Исходныеdeployment/rollbackданные](deployment-before.json). Выпуск требует Production build с productionenv: Previewнепродвигается. Дляодного Gitrelease main=true; послеуспешнойпроверки вернётсяconfig-onlymain=false. RollbackчерезGit:возвратproducttree к8a3c257, main=trueдляоткатнойсборки, затемпроверкадоменов иmain=false. Это новаясборка прежнегоGitmain с текущимиenv, не обещаниеоднокнопочногопереключения настарыйruntime235ddff.
+## Проверки
+
+333 unit tests, 3 catalog hook, 10 Reader cover/scope и 5 Reader error/retry сценариев прошли. Production webpack build с TypeScript, профильный lint, docs check и независимый review прошли. Два первоначальных сбоя DOM harness сохранены в evidence: небезопасный `about:blank` без crypto/storage и преждевременная проверка после Suspense. Исправлено окружение теста, продуктовый код ради теста не менялся.
+
+Локальный production UI: public 6 → shared 1 → Reader → reload → Back shared 1 → My Books public 6 → reload. Ответ manifest с задержкой 3 секунды появился к 3185 мс без offline; ответ с задержкой 6,5 секунды ограничен к 5284 мс; Retry восстановил полку за 315 мс. Это синтетическое поведение, не производственный benchmark.
+
+Опубликованный dev на release SHA: личная полка без offline, открытие Protocols на сохранённой позиции 86%, русский текст, переход к следующей главе 0%, возврат и reload сохраняют 86% и fingerprint видимого текста. До выпуска EN Reader также прошёл три страницы вперёд, одну назад и reload с сохранением позиции. Проверки готового текста не доказывают исправление генерации отсутствующего перевода.
+
+- [Команды, результаты и fingerprint исходников](verification.json)
+- [Локальные UI-наблюдения](browser-before-publish.json)
+- [Dev deployment и соответствие alias](dev-deployment.json)
+- [Live dev smoke](dev-browser-smoke.json)
+- [Production deployment, alias и гостевой API](prod-deployment.json)
+- [Live production smoke, включая неблагоприятные наблюдения](prod-browser-smoke.json)
+- [Исходные deployment и rollback данные](deployment-before.json)
+
+## Выпуск и ограничения
+
+Dev READY на `8e7879d`: GitHub deployment `6770890560`, success 2026-09-30 21:47:04 UTC; все 19 JS-файлов alias совпали с exact Preview. Тот же SHA собран для Production: deployment `6771002679`, success 21:53:56 UTC. www, apex → www и exact production artifact вернули HTTP 200 и одинаковые 19 JS-файлов. Preview в production не продвигался: выполнена отдельная сборка с production environment. Anonymous v2 manifest: 200, 482,9 мс, 3813 байт, complete=true, правильные 6 книг, без What We Owe the Future. Это один запрос, не распределение задержек.
+
+Live production: личная полка без offline, готовый русский текст Protocols, возврат на полку. При одновременно открытых dev/prod Reader наблюдался переход на следующую главу после reload. После выхода из dev Reader, возврата назад на production и ожидания обычного сохранения две перезагрузки сохранили главу 3, 85% и fingerprint `9b08a4bd`. Причина первоначального межсессионного расхождения не установлена. Чтение local-first с последующей загрузкой более новой server position и отдельные origin caches объясняют возможный механизм; runtime-доказательства причины нет. Не считать синхронизацию между вкладками полностью проверенной.
+
+Общие прежнему main и dev ошибки фонового перевода отдельных блоков и неполная детализация аналитики остаются отдельной задачей. Увеличение deadline не является оптимизацией серверных стадий. Браузерный smoke ограничен перечисленными действиями, а не всеми возможными книгами и аккаунтами.
+
+Для одного выпуска использовалось `main=true`; последующий коммит конфигурации и evidence возвращает прежнюю политику `main=false`. Продуктовый код остаётся идентичным release SHA. Факт push этого завершающего коммита проверяется отдельно. Rollback через Git: вернуть product tree к `8a3c257`, включить `main=true` для откатной сборки, проверить домены и снова отключить. Это новая сборка прежнего Git main с текущими environment, а не подтверждённое мгновенное переключение на исторический runtime `235ddff`.

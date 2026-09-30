@@ -1,0 +1,131 @@
+{
+  "recorded_at_utc": "2026-09-30T21:48:58.952Z",
+  "candidate_sha": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+  "environment": "Preview",
+  "target_branch": "dev",
+  "verdict": "READY confirmed by successful exact-SHA GitHub/Vercel status and dev alias matching the successful Preview scripts",
+  "github_deployment": {
+    "id": 6770890560,
+    "sha": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+    "ref": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+    "environment": "Preview",
+    "created_at": "2026-09-30T21:47:04Z",
+    "state": "success",
+    "status_at": "2026-09-30T21:47:04Z",
+    "description": "Deployment has completed",
+    "environment_url": "https://globoox-2hqjecszu-lomovski.vercel.app"
+  },
+  "vercel": {
+    "dashboard_url": "https://vercel.com/lomovski/globoox/6CvL5T2aXNHVNbBCS9NzCKaDHAsH",
+    "deployment_reference": "6CvL5T2aXNHVNbBCS9NzCKaDHAsH",
+    "preview_url": "https://globoox-2hqjecszu-lomovski.vercel.app",
+    "pending_at": "2026-09-30T21:45:46Z",
+    "success_at": "2026-09-30T21:47:03Z",
+    "github_status_interval_seconds": 77,
+    "interval_limit": "Elapsed between GitHub pending and success status timestamps; not a separately measured provider build duration."
+  },
+  "commit_status_observations": [
+    {
+      "checked_at": "2026-09-30T21:46:51.998Z",
+      "state": "pending",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "created_at": "2026-09-30T21:45:46Z",
+          "description": "Vercel is deploying your app",
+          "state": "pending",
+          "target_url": "https://vercel.com/lomovski/globoox/6CvL5T2aXNHVNbBCS9NzCKaDHAsH",
+          "updated_at": "2026-09-30T21:45:46Z"
+        }
+      ]
+    },
+    {
+      "checked_at": "2026-09-30T21:47:32.234Z",
+      "state": "success",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "created_at": "2026-09-30T21:47:03Z",
+          "description": "Deployment has completed",
+          "state": "success",
+          "target_url": "https://vercel.com/lomovski/globoox/6CvL5T2aXNHVNbBCS9NzCKaDHAsH",
+          "updated_at": "2026-09-30T21:47:03Z"
+        }
+      ]
+    }
+  ],
+  "alias_html_checks": [
+    {
+      "label": "dev_alias",
+      "requested": "https://dev.globoox.co/my-books",
+      "final_url": "https://dev.globoox.co/my-books",
+      "status": 200,
+      "utc": "2026-09-30T21:48:24.280053+00:00",
+      "script_sources": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3172e0270f19ed22.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/7ddc7629dde9a922.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "scripts_sha256": "700eb9f688ba58b3af6551026f3c2d9ac1be31190ba9c2ad998213026d62fe6a"
+    },
+    {
+      "label": "exact_preview",
+      "requested": "https://globoox-2hqjecszu-lomovski.vercel.app/my-books",
+      "final_url": "https://globoox-2hqjecszu-lomovski.vercel.app/my-books",
+      "status": 200,
+      "utc": "2026-09-30T21:48:24.654141+00:00",
+      "script_sources": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3172e0270f19ed22.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/7ddc7629dde9a922.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "scripts_sha256": "700eb9f688ba58b3af6551026f3c2d9ac1be31190ba9c2ad998213026d62fe6a"
+    }
+  ],
+  "alias_matches_successful_preview_scripts": true,
+  "api_live_smoke": "Not executed by this deployment subtask; root performs browser checks of published dev API/UI. HTML success alone does not certify authenticated API behavior.",
+  "limitations": [
+    "No production deployment, promotion, config mutation or push performed by this subtask.",
+    "No authenticated provider build log fetched; success reported by GitHub Vercel integration.",
+    "Two public HTML GETs only after success. No repeated load probes.",
+    "Read-only polling stopped immediately on success; evidence file is initially uncommitted."
+  ],
+  "source_queries": [
+    "GET repos/futurgate/globoox/commits/8e7879d976e589ae5af9a26b655c320cc1cc14e2/status",
+    "GET repos/futurgate/globoox/deployments?sha=8e7879d976e589ae5af9a26b655c320cc1cc14e2&environment=Preview&per_page=3",
+    "GET repos/futurgate/globoox/deployments/6770890560/statuses"
+  ],
+  "secrets_or_private_content_stored": false
+}

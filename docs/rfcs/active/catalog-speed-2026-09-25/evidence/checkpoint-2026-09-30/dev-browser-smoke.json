@@ -1,0 +1,117 @@
+{
+  "observedAt": "2026-09-30T21:51:41.635Z",
+  "sha": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+  "shelf": {
+    "at": 2562,
+    "books": [
+      {
+        "href": "/reader/93ed2d75-d82a-4120-83fb-d1df912f6520",
+        "text": "Mutual Aid: A Factor of Evolution\n\nPeter Kropotkin"
+      },
+      {
+        "href": "/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+        "text": "Protocols\n\nAndrew Huberman"
+      },
+      {
+        "href": "/reader/6851ec14-318d-4c9b-8a5a-ddd3b76457a1",
+        "text": "Проект «Работяга»\n\nАлексей Витальевич Осадчук"
+      },
+      {
+        "href": "/reader/c544447f-8cb5-4c74-acce-a30186780303",
+        "text": "A wrinkle in time\n\nMadeleine L'Engle"
+      },
+      {
+        "href": "/reader/9ada5be4-a653-4abf-b388-3bd8b3d6a202",
+        "text": "Облик книги\n\nЯн Чихольд"
+      },
+      {
+        "href": "/reader/308f7700-54c8-4e7c-b056-957c1794c208",
+        "text": "The Feedback Loop 1-3\n\nHarmon Cooper"
+      }
+    ],
+    "retry": false,
+    "status": null,
+    "url": "https://dev.globoox.co/my-books"
+  },
+  "reader": [
+    {
+      "action": "reopen-after-deploy",
+      "fingerprint": "f1096089",
+      "paragraphs": 4,
+      "position": [
+        "Introduction\n31%"
+      ],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+    },
+    {
+      "action": "reload",
+      "fingerprint": "811c9dc5",
+      "paragraphs": 0,
+      "position": [],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/93ed2d75-d82a-4120-83fb-d1df912f6520"
+    },
+    {
+      "action": "open-private-Protocols",
+      "fingerprint": "9b08a4bd",
+      "paragraphs": 6,
+      "position": [
+        "Протокол сна 3: избегайте яркого света в последний час перед сном\n86%"
+      ],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5"
+    },
+    {
+      "action": "reload-private-Protocols",
+      "fingerprint": "9b08a4bd",
+      "paragraphs": 6,
+      "position": [
+        "Протокол сна 3: избегайте яркого света в последний час перед сном\n86%"
+      ],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5"
+    },
+    {
+      "action": "forward-private-Protocols",
+      "fingerprint": "569b380b",
+      "paragraphs": 2,
+      "position": [
+        "Протокол сна 4: определите идеальное время отхода ко сну и пробуждения и старайтесь его придерживаться\n0%"
+      ],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5"
+    },
+    {
+      "action": "restore-private-Protocols-position",
+      "fingerprint": "9b08a4bd",
+      "paragraphs": 6,
+      "position": [
+        "Протокол сна 3: избегайте яркого света в последний час перед сном\n86%"
+      ],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "waitMs": 15
+    },
+    {
+      "action": "reload-restored-private-position",
+      "fingerprint": "9b08a4bd",
+      "paragraphs": 6,
+      "position": [
+        "Протокол сна 3: избегайте яркого света в последний час перед сном\n86%"
+      ],
+      "retry": false,
+      "skeletons": 0,
+      "url": "https://dev.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "waitMs": 734
+    }
+  ],
+  "auth": "Upload book present; authenticated personal shelf",
+  "translationScope": "Displayed Russian text on saved page and first page of next chapter. Does not prove uncached generation or resolve earlier prefetch failures."
+}

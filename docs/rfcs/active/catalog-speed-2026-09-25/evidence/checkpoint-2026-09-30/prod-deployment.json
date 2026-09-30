@@ -1,0 +1,182 @@
+{
+  "recorded_at_utc": "2026-09-30T21:55:54.569Z",
+  "candidate_sha": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+  "environment": "Production",
+  "target_branch": "main",
+  "verdict": "READY: exact-SHA Production success; www/apex scripts match production artifact; anonymous guest manifest passes focused smoke",
+  "github_deployment": {
+    "id": 6771002679,
+    "sha": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+    "ref": "8e7879d976e589ae5af9a26b655c320cc1cc14e2",
+    "environment": "Production",
+    "created_at": "2026-09-30T21:53:56Z",
+    "state": "success",
+    "status_at": "2026-09-30T21:53:56Z",
+    "description": "Deployment has completed",
+    "environment_url": "https://globoox-3jfe7f4vv-lomovski.vercel.app"
+  },
+  "vercel": {
+    "dashboard_url": "https://vercel.com/lomovski/globoox/5zGbX3BCXsm5runVFUdNeSUvUdL7",
+    "deployment_reference": "5zGbX3BCXsm5runVFUdNeSUvUdL7",
+    "production_artifact_url": "https://globoox-3jfe7f4vv-lomovski.vercel.app",
+    "pending_at": "2026-09-30T21:52:41Z",
+    "success_at": "2026-09-30T21:53:56Z",
+    "github_status_interval_seconds": 75,
+    "interval_limit": "Elapsed between GitHub pending/success status timestamps, not separately measured provider build duration."
+  },
+  "commit_status_observations": [
+    {
+      "at": "2026-09-30T21:53:18.216Z",
+      "state": "pending",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "created_at": "2026-09-30T21:52:41Z",
+          "description": "Vercel is deploying your app",
+          "state": "pending",
+          "target_url": "https://vercel.com/lomovski/globoox/5zGbX3BCXsm5runVFUdNeSUvUdL7",
+          "updated_at": "2026-09-30T21:52:41Z"
+        }
+      ]
+    },
+    {
+      "at": "2026-09-30T21:54:08.695Z",
+      "state": "success",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "created_at": "2026-09-30T21:53:56Z",
+          "description": "Deployment has completed",
+          "state": "success",
+          "target_url": "https://vercel.com/lomovski/globoox/5zGbX3BCXsm5runVFUdNeSUvUdL7",
+          "updated_at": "2026-09-30T21:53:56Z"
+        }
+      ]
+    }
+  ],
+  "alias_html_checks": [
+    {
+      "label": "www",
+      "requested": "https://www.globoox.co/my-books",
+      "final_url": "https://www.globoox.co/my-books",
+      "status": 200,
+      "utc": "2026-09-30T21:55:19.378048+00:00",
+      "elapsed_ms": 309.5,
+      "script_sources": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3172e0270f19ed22.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/7ddc7629dde9a922.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "scripts_sha256": "700eb9f688ba58b3af6551026f3c2d9ac1be31190ba9c2ad998213026d62fe6a"
+    },
+    {
+      "label": "apex",
+      "requested": "https://globoox.co/my-books",
+      "final_url": "https://www.globoox.co/my-books",
+      "status": 200,
+      "utc": "2026-09-30T21:55:20.071931+00:00",
+      "elapsed_ms": 693.8,
+      "script_sources": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3172e0270f19ed22.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/7ddc7629dde9a922.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "scripts_sha256": "700eb9f688ba58b3af6551026f3c2d9ac1be31190ba9c2ad998213026d62fe6a"
+    },
+    {
+      "label": "production_artifact",
+      "requested": "https://globoox-3jfe7f4vv-lomovski.vercel.app/my-books",
+      "final_url": "https://globoox-3jfe7f4vv-lomovski.vercel.app/my-books",
+      "status": 200,
+      "utc": "2026-09-30T21:55:20.429041+00:00",
+      "elapsed_ms": 357.1,
+      "script_sources": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/3172e0270f19ed22.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/7ddc7629dde9a922.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "scripts_sha256": "700eb9f688ba58b3af6551026f3c2d9ac1be31190ba9c2ad998213026d62fe6a"
+    }
+  ],
+  "aliases_match_successful_production_artifact": true,
+  "anonymous_guest_manifest": {
+    "url": "https://www.globoox.co/api/v2/library?min_activity_version=0",
+    "status": 200,
+    "utc": "2026-09-30T21:55:20.911902+00:00",
+    "elapsed_ms": 482.9,
+    "decoded_bytes": 3813,
+    "content_type": "application/json",
+    "cache_control": "private, no-store",
+    "contract_version": 2,
+    "complete": true,
+    "item_count": 6,
+    "what_we_owe_the_future_present": false,
+    "identity": "fresh synthetic guest UUID, no auth/cookie/share headers; UUID omitted",
+    "response_content_retained": false
+  },
+  "guest_manifest_pass": true,
+  "rollback_reference_file": "deployment-before.json",
+  "authenticated_ui_smoke": "Owned by root's browser checks; not performed by this subtask.",
+  "main_auto_deploy_bookkeeping": "Root will restore main=false in a later config-only commit after production smoke. This record certifies the published release SHA, not that future bookkeeping step.",
+  "source_queries": [
+    "GET repos/futurgate/globoox/commits/8e7879d976e589ae5af9a26b655c320cc1cc14e2/status",
+    "GET repos/futurgate/globoox/deployments?sha=8e7879d976e589ae5af9a26b655c320cc1cc14e2&environment=Production&per_page=3",
+    "GET repos/futurgate/globoox/deployments/6771002679/statuses"
+  ],
+  "limitations": [
+    "No push, promotion, application/config edit or cloud mutation by this subtask.",
+    "Polling stopped after exact-SHA Production success; only three HTML GETs and one anonymous API GET followed.",
+    "Script filename fingerprints establish matching artifacts served by aliases; no browser paint/Reader performance claimed.",
+    "Anonymous API request includes expected X-Catalog-User guest and fresh synthetic X-Catalog-Guest identity, no authorization/cookie/share token. Guest UUID and response content not retained.",
+    "The one482.9ms public API sample is not a p95, cold-cache proof, or signed-in performance benchmark."
+  ],
+  "secrets_or_private_content_stored": false
+}

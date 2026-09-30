@@ -4,8 +4,8 @@ status: in-progress
 owner: library
 created: 2026-09-25
 last_verified: 2026-09-30
-implementation_status: implemented-locally
-deployment_status: frontend-checkpoint-prepared
+implementation_status: frontend-checkpoint-released
+deployment_status: frontend-dev-and-production-8e7879d-live
 ---
 
 # План быстрого каталога — 25 сентября 2026
@@ -16,9 +16,11 @@ deployment_status: frontend-checkpoint-prepared
 
 ## Текущее состояние и следующий шаг
 
-Пользователь разрешил промежуточный перенос нового frontend на production после небольших исправлений. Интегрированы origin/dev bb2e016 и origin/main 8a3c257 (merge c3c82a4). Подготовлены deadline5000мс, явный URL-контекст shared-подборки и сохранение безопасного next при отказе/ошибке входа. Последняя локальная проверка:333unit,3cataloghook,10Readercover/scope,5Readererror/retry; production webpack+TypeScript PASS. Полная локальная UI-проверка и последующий dev→production rollout выполняются; push ещё не является доказательством deployment. [Подготовка и условия выпуска](evidence/checkpoint-2026-09-30/README.md).
+Промежуточный frontend release `8e7879d976e589ae5af9a26b655c320cc1cc14e2` выпущен на dev и production по разрешению пользователя. Он объединяет dev `bb2e016` и main `8a3c257`. Dev deployment `6770890560` успешен в 21:47:04 UTC; Production `6771002679` — в 21:53:56 UTC 30 сентября. Домены сверены с JS-файлами точных артефактов. [Результаты выпуска и ограничения](evidence/checkpoint-2026-09-30/README.md).
 
-Backend и БД в этом выпуске не меняются. Общая для прежнего и нового Reader ошибка фонового перевода остаётся известным ограничением; увеличение deadline не является ускорением серверных стадий. Старый persistent share token игнорируется: shared Reader без явного контекста следует открывать через исходную специальную ссылку. Перед публикацией требуется dev smoke; rollback предусматривает обратную Git-сборку с прежним main8a3c257. Исходный Production artifact235ddff сохранён в release evidence, мгновенное переключение провайдера не подтверждено.
+Изменения: общий deadline 5 секунд, shared-подборка только в явном URL, сохранение безопасного next при гостевом возврате и ошибке OAuth. Проверки: 333 unit, 3 catalog hook, 10 Reader cover/scope, 5 Reader error/retry, production build с TypeScript, lint и docs. Live dev и production показывают личную полку без offline; production guest API отдаёт правильные 6 книг. Reader отображает русский текст, возврат и две изолированные перезагрузки сохраняют страницу.
+
+Backend и БД в этом выпуске не менялись. Ошибки фонового перевода остаются отдельной задачей. При двух одновременно открытых Reader наблюдалось расхождение позиции после reload; в одной активной читалке не воспроизвелось, точная причина ещё не подтверждена. Следующий инженерный этап — диагностика этих двух случаев и корреляция задержек API, без утверждения, что повышение deadline ускорило сервер. Прежняя политика main=false возвращается завершающим коммитом без изменений приложения; rollback возможен новой Git-сборкой product tree прежнего main `8a3c257`.
 
 ### Историческая проверка 26 сентября
 
