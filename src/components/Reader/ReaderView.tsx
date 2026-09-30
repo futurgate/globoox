@@ -207,7 +207,12 @@ const paginationCache = new Map<string, PaginationCacheEntry>();
 const setCachedReadingPosition = (...args: Parameters<typeof writeCachedReadingPosition>) =>
     queueReadingAnchorCacheWrite(`${args[0]}::${args[1]}`, () => writeCachedReadingPosition(...args));
 
-export default function ReaderView({ bookId, title, author, availableLanguages, originalLanguage, serverLanguage, coverUrl, catalogContext }: ReaderViewProps) {
+export default function ReaderView(props: ReaderViewProps) {
+    const [retryAttempt, setRetryAttempt] = useState(0);
+    return <ReaderContent key={retryAttempt} {...props} onRetry={() => setRetryAttempt((attempt) => attempt + 1)} />;
+}
+
+function ReaderContent({ bookId, title, author, availableLanguages, originalLanguage, serverLanguage, coverUrl, catalogContext, onRetry }: ReaderViewProps & { onRetry: () => void }) {
     const { user, isAlpha, isAuthenticated, loading: authLoading } = useAuth();
     const {
         hasHydrated,
@@ -2350,6 +2355,7 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
     }, [spreadModeEnabled, pageWidth]);
 
     const isLoading = chaptersLoading || isContentLoading;
+    const hasReadablePage = hasServerSnapshot && pagesReady && visiblePagesReady && !isContentLoading && currentPageBlocks.length > 0;
     const renderPageBlocks = useCallback((pageBlocks: ContentBlock[]) => {
         let firstPendingFound = false;
         let firstRenderableFound = false;
@@ -2630,7 +2636,12 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                     {/* Visible page */}
                     <TranslationGlow>
                         <div className="h-full select-none" lang={activeLang}>
-                            {isLoading || !visiblePagesReady ? (
+                            {(chaptersError || contentError) && !hasReadablePage ? (
+                                <div role="alert" className="py-8 text-center text-sm">
+                                    <p style={{ color: readerSemanticTokens.danger }}>{chaptersError || contentError}</p>
+                                    <Button className="mt-4" variant="outline" onClick={onRetry}>Try again</Button>
+                                </div>
+                            ) : isLoading || !visiblePagesReady ? (
                                 <div className={PAGE_SHELL_CLASS}>
                                     <Skeleton className="h-7 w-64 mb-5" style={{ backgroundColor: readerContentTokens.skeletonFill }} />
                                     <div className="space-y-5">
@@ -2639,10 +2650,6 @@ export default function ReaderView({ bookId, title, author, availableLanguages, 
                                         ))}
                                     </div>
                                 </div>
-                            ) : chaptersError ? (
-                                <p className="py-8 text-center text-sm" style={{ color: readerSemanticTokens.danger }}>{chaptersError}</p>
-                            ) : contentError ? (
-                                <p className="py-8 text-center text-sm" style={{ color: readerSemanticTokens.danger }}>{contentError}</p>
                             ) : spreadModeEnabled ? (
                                 <div
                                     className="mx-auto flex h-full w-full items-stretch justify-center"

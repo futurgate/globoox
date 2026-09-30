@@ -3,10 +3,11 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import ReaderView from '@/components/Reader/ReaderView';
-import type { ApiBook } from '@/lib/api';
-import { resolveCatalogContext, fetchCatalogManifest, catalogItemToApiBook } from '@/lib/catalogApi';
-import { getCachedCatalogBook, loadCatalogCache, putCatalogManifest } from '@/lib/catalogCache';
-import type { CatalogContext } from '@/lib/catalogTypes';
+import { getShareToken } from '@/lib/api';
+import { resolveCatalogContext, fetchCatalogManifest } from '@/lib/catalogApi';
+import { getCatalogBook, loadCatalogCache, putCatalogManifest } from '@/lib/catalogCache';
+import type { CatalogContext, CatalogItem } from '@/lib/catalogTypes';
+import { useCatalogCover } from '@/lib/useCatalogCover';
 import { flushReadingActivity } from '@/lib/readingActivity';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAppStore } from '@/lib/store';
@@ -22,15 +23,17 @@ export default function ReaderPage({ params }: ReaderPageProps) {
   const { user, isAuthenticated, loading: authLoading } = useAuth();
   const readerThemeId = useAppStore((s) => s.settings.readerTheme);
   const safeReaderThemeId = isThemeId(readerThemeId) ? readerThemeId : 'light';
-  const [loaded, setLoaded] = useState<{ book: ApiBook; context: CatalogContext } | null>(null);
+  const [loaded, setLoaded] = useState<{ book: CatalogItem; context: CatalogContext } | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const readerUiColors = getReaderUiColors(READER_THEME_CONFIGS[safeReaderThemeId] ?? READER_THEME_CONFIGS.light);
   const themeStyle = getThemeStyle(safeReaderThemeId);
   const currentUserId = isAuthenticated ? user?.id ?? null : null;
+  const currentShareToken = getShareToken();
   const identityReady = !authLoading || isAuthenticated;
-  const matchesIdentity = loaded?.context.userId === currentUserId && loaded.book.id === id;
+  const matchesIdentity = loaded?.context.userId === currentUserId
+    && loaded.context.shareToken === currentShareToken && loaded.book.id === id;
   const book = matchesIdentity ? loaded.book : null;
 
   useEffect(() => {
@@ -49,13 +52,13 @@ export default function ReaderPage({ params }: ReaderPageProps) {
     const loadBook = async () => {
       try {
         const context = await resolveCatalogContext(controller.signal, currentUserId);
-        let nextBook = await getCachedCatalogBook(context.scopeKey, id);
+        let nextBook = await getCatalogBook(context.scopeKey, id);
         if (controller.signal.aborted) return;
         if (!nextBook) {
           const legacyScope = context.userId ?? (context.shareToken ? `share:${context.shareToken}` : 'guest');
           const cached = await loadCatalogCache(context, legacyScope);
           const item = cached?.manifest.items.find((entry) => entry.id === id);
-          if (item) nextBook = catalogItemToApiBook(item);
+          if (item) nextBook = item;
         }
         if (controller.signal.aborted) return;
         if (!nextBook) {
@@ -64,7 +67,7 @@ export default function ReaderPage({ params }: ReaderPageProps) {
           if (controller.signal.aborted) return;
           await putCatalogManifest(manifest);
           const item = manifest.items.find((entry) => entry.id === id);
-          nextBook = item ? catalogItemToApiBook(item) : null;
+          nextBook = item ?? null;
         }
         if (controller.signal.aborted) return;
         setLoaded(nextBook ? { book: nextBook, context } : null);
@@ -86,7 +89,7 @@ export default function ReaderPage({ params }: ReaderPageProps) {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [id, identityReady, currentUserId]);
+  }, [id, identityReady, currentUserId, currentShareToken]);
 
   if (loading || (loaded !== null && !matchesIdentity)) {
     return (
@@ -116,16 +119,27 @@ export default function ReaderPage({ params }: ReaderPageProps) {
   }
 
   return (
-    <ReaderView
+    <CatalogReader
       key={`${loaded!.context.scopeKey}:${book.id}`}
+      book={book}
+      context={loaded!.context}
+    />
+  );
+}
+
+function CatalogReader({ book, context }: { book: CatalogItem; context: CatalogContext }) {
+  const cover = useCatalogCover(book, context, false);
+
+  return (
+    <ReaderView
       bookId={book.id}
       title={book.title}
       author={book.author}
       availableLanguages={book.available_languages}
       originalLanguage={book.original_language}
       serverLanguage={book.selected_language}
-      coverUrl={book.cover_url}
-      catalogContext={loaded!.context}
+      coverUrl={cover.url || null}
+      catalogContext={context}
     />
   );
 }
