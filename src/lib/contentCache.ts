@@ -993,6 +993,7 @@ export async function setCachedChapterContent(
   chapterId: string,
   lang: string | undefined,
   blocks: ContentBlock[],
+  options?: { fillMissing?: boolean },
 ): Promise<void> {
   try {
     const normalizedLang = normalizeLang(lang)
@@ -1007,18 +1008,11 @@ export async function setCachedChapterContent(
     const db = await openDb()
     await new Promise<void>((resolve, reject) => {
       const tx = db.transaction([STORE_CHAPTER_SKELETON, STORE_BLOCK_TEXT], 'readwrite')
-      const skeletonStore = tx.objectStore(STORE_CHAPTER_SKELETON)
-      skeletonStore.put(skeleton)
-
-      const textStore = tx.objectStore(STORE_BLOCK_TEXT)
-      for (const block of blocks) {
-        const entry = toBlockText(chapterId, normalizedLang, block)
-        if (!entry) continue
-        // Only persist text for the requested lang when that lang is actually ready.
-        if (block.targetLangReady !== true) continue
-        textStore.put(entry)
+      const abortWrite = (error: unknown) => {
+        tx.abort()
+        db.close()
+        reject(error)
       }
-
       tx.oncomplete = () => {
         db.close()
         resolve()
@@ -1030,6 +1024,34 @@ export async function setCachedChapterContent(
       tx.onabort = () => {
         db.close()
         reject(tx.error ?? new Error('IndexedDB transaction aborted'))
+      }
+
+      const write = (store: IDBObjectStore, key: IDBValidKey, value: unknown) => {
+        if (!options?.fillMissing) {
+          store.put(value)
+          return
+        }
+        // Check and insert within this transaction: a late prefetch must not
+        // replace foreground/translated content or renew its cache freshness.
+        const existing = store.get(key)
+        existing.onsuccess = () => {
+          if (existing.result !== undefined) return
+          try { store.put(value) } catch (error) { abortWrite(error) }
+        }
+      }
+
+      try {
+        write(tx.objectStore(STORE_CHAPTER_SKELETON), chapterId, skeleton)
+        const textStore = tx.objectStore(STORE_BLOCK_TEXT)
+        for (const block of blocks) {
+          const entry = toBlockText(chapterId, normalizedLang, block)
+          if (!entry) continue
+          // Untranslated/pending blocks must never replace a ready translation.
+          if (block.targetLangReady !== true) continue
+          write(textStore, entry.key, entry)
+        }
+      } catch (error) {
+        abortWrite(error)
       }
     })
   } catch {
@@ -1045,12 +1067,9 @@ export function isCacheFresh(entry: CachedAssembledChapter, ttlMs: number = DEFA
 // ─── In-flight batch prefetch registry ───────────────────────────────────────
 // When ReaderView kicks off a first-open batch prefetch, it claims each
 // chapter against a per-chapter promise that resolves the moment that
-// chapter's cache write completes. useChapterContent consults this map before
-// firing its own /content request — if a batch is inbound for the chapter it's
-// about to load, it awaits only that chapter's promise (not the whole batch)
-// and reads the cache as soon as its write lands. This sidesteps the "loader
-// flashes between tiny early chapters" race without making later chapters
-// wait on earlier chapters' writes.
+// chapter's cache write completes. Background prefetch/translation warmups use
+// this to avoid duplicate work. Foreground useChapterContent reads completed
+// cache but does not wait for unfinished prefetch.
 
 const pendingBatchByChapter = new Map<string, Promise<void>>()
 

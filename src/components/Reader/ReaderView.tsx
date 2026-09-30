@@ -1002,10 +1002,8 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
 
         // If we started at a mid-chapter anchor, the batch's first chapter is
         // partial (blocks from the anchor onward). Skip caching it — a partial
-        // skeleton would overwrite the full one. Also don't claim that chapter
-        // as batch-pending: that chapter is the user's current position, so
-        // making its useChapterContent wait on the batch would add pointless
-        // latency to the screen they're already looking at.
+        // skeleton would not contain the entire chapter. Also don't claim that
+        // chapter as batch-pending because this batch cannot warm it completely.
         const skipFirstBatchChapter = hasMidChapterAnchor;
         const firstClaimIdx = skipFirstBatchChapter ? startChapterIdx + 1 : startChapterIdx;
         const candidateChapterIds = chapters.slice(firstClaimIdx).map((c) => c.id);
@@ -1046,9 +1044,8 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                 const firstIdx = skipFirstBatchChapter ? 1 : 0;
                 const completeChapterIds = new Set(chapterIds.slice(firstIdx, -1));
 
-                // Unblock any waiters for chapters we aren't going to write
-                // (not in response, skipped partial/cut-off) so they fall
-                // straight through to /content without hanging on this batch.
+                // Release background warmups for chapters we aren't writing
+                // (not in response, skipped partial/cut-off).
                 for (const [chapterId, resolve] of resolvers) {
                     if (!completeChapterIds.has(chapterId)) {
                         resolve();
@@ -1065,7 +1062,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
                         const resolve = resolvers.get(chapterId);
                         try {
                             if (chapterBlocks && chapterBlocks.length > 0) {
-                                await setCachedChapterContent(chapterId, prefetchLang, chapterBlocks);
+                                await setCachedChapterContent(chapterId, prefetchLang, chapterBlocks, { fillMissing: true });
                             }
                         } finally {
                             resolve?.();
@@ -1084,8 +1081,8 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
     // chapters in the background so moving forward is instant. The first-open
     // batch already warms up the initial run of chapters; this kicks in from
     // chapter ~N onward and any time the user jumps ahead via TOC/search.
-    // Each prefetch is registered in the pending-chapter registry so
-    // useChapterContent awaits it rather than firing a duplicate /content.
+    // Pending registration deduplicates background warmups. Foreground content
+    // loading remains independent of prefetch completion.
     useEffect(() => {
         if (!hasHydrated) return;
         if (chaptersLoading || chapters.length === 0) return;
@@ -1116,7 +1113,7 @@ function ReaderContent({ bookId, title, author, availableLanguages, originalLang
             try {
                 const blocks = await fetchContent(chapterId, lang);
                 if (cancelled) return;
-                await setCachedChapterContent(chapterId, lang, blocks);
+                await setCachedChapterContent(chapterId, lang, blocks, { fillMissing: true });
             } catch {
                 // best-effort prefetch
             } finally {
