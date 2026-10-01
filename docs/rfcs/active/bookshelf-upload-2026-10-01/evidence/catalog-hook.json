@@ -1,0 +1,9 @@
+{
+  "passed": 3,
+  "fixtureOnly": true,
+  "results": [
+    "memory cache hidden before server; successful empty does not resurrect cache",
+    "unknown→known auth retains original deadline; hung identity falls back without late fetch",
+    "StrictMode cleanup excludes stale request; retry keeps cards and rejects expired body"
+  ]
+}

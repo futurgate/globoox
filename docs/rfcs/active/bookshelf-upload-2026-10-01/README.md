@@ -4,16 +4,18 @@ status: accepted
 owner: library
 created: 2026-10-01
 last_verified: 2026-10-01
-implementation_status: in-progress
+implementation_status: released
 ---
 
 # Загрузка книги: карточка, метаданные и порядок полки
 
 ## Текущее состояние
 
-Цель создана по прямому запросу пользователя. Реализация и локальные gates завершены; 2026-10-01 10:18 UTC production DB получила аддитивную migration. Старые books/reading_progress строки проверены неизменными в транзакции. Backend candidate `ed7b30d` подготовлен к автоматическому Render release; frontend dev ещё прежний, ручная live-приёмка впереди. Единственный изменяемый статус — этот файл в основном frontend checkout. Проверенная исходная версия: frontend dev `01e2fe2`; frontend main `bff9935` / production `88d3a4c` (старый лендинг); backend main `b993ec3` (включает новые fiction prompts разработчицы). Frontend production в этой цели не выпускаем. Перед каждым push повторно fetch upstream; интегрируем новые backend commits с повторением затронутых проверок.
+**Dev-приёмка завершена.** Frontend application `edea9ed` (Vercel READY, исходная story `80819d9`), общий backend `ed7b30d` (Render Live), production DB migration применена 2026-10-01 10:18 UTC. Живые upload/reload/dedup/Reader/фильтры/ошибки прошли. Найденный вручную бесконечный skeleton после ошибки и пустое название в delete confirmation исправлены и повторно проверены на dev. Все четыре собственные QA-книги удалены; прежние 13 книг / 18 progress / 19 recency фактического владельца сохранились без изменений в проверенном интервале.
 
-Работа в существующих чистых worktrees `.local/reader-recovery-20261001` обоих репозиториев, branch `feat/upload-story-dev-20261001`; зависимости переиспользуются. Старые `feat/catalog-speed`, dirty worktrees и пользовательские AGENTS/billing/library/landing изменения сохраняются. В Render подтверждён один активный backend `globooks-eu` (общий dev/production), deployed `b993ec3`; старый Oregon service suspended. Отдельный платный сервис не создаём. После локальных gates — совместимый выпуск общего backend/DB в рамках уже данного разрешения; frontend только dev. До gates никаких cloud writes.
+Frontend production в этой цели не выпускали: deployed `88d3a4c`, прежний лендинг подтверждён сравнением артефактов. Единственный изменяемый статус — этот файл в основном frontend checkout. Последующее обновление только документов в dev не меняет проверенный application code. Следующее решение пользователя — выпуск frontend на production либо выбор пункта из остатка ниже.
+
+Рабочие ветки: `feat/upload-story-dev-20261001` в существующих чистых `.local/reader-recovery-20261001` worktrees обоих репозиториев. Backend основан на latest programmer main `b993ec3`, fiction prompts v11 сохранены; повторный fetch после выпуска подтвердил main `ed7b30d`, более новых commits нет. Старый `feat/catalog-speed` с atomic/auth/IP экспериментами не переносился. Dirty AGENTS/billing/library/landing изменения пользователя сохранены. Render `globooks-eu` общий для dev/production; отдельный платный сервис не создавали. Оба backend commits отправлены в main, frontend только в dev.
 
 ## Согласованная история пользователя
 
@@ -61,20 +63,44 @@ Budget: начать существующими 8 upload component cases + но�
 
 Порядок: локальные доказательства → migration preflight/rollback → доступный backend staging или явно зафиксированный compatible rollout общего backend → frontend dev → живые HTTP и UI проверки. Backend/DB действия уже разрешены пользователем в сессии при тестах и наличии отката; новый production frontend не входит. Root проверит фактический deployed commit, не только push. Shared DB migration только аддитивный, без массового обновления/перепарсинга. Revert поверх нового main сохраняет чужие commits; никакого force push. UI errors/500/ordering/identity нарушения останавливают rollout.
 
-## Промежуточные доказательства
+## Результаты проверок
 
-- Native PostgreSQL: 74 проверки прошли (старые строки/порядок/progress неизменны, metadata gates, owner scope, service-only ACL, конкурентные upload/read, idempotency, rollback). Итог backend после реальных EPUB и SDK correction: 389 PASS / 11 прежних missing-fixture failures, 46 upload checks PASS; повторный production build PASS. Native service integration 7 PASS с настоящими PostgreSQL/PostgREST/Redis и synthetic Auth/Storage, без облака/LLM.
-- Production preflight (до migration), read-only: 193 books, 1 прежний pending/processing; новых upload полей/RPC на preflight не было. Production manifest body совпадает с rollback; действующий ограниченный cover trigger не меняем.
-- `docs:check` в clean release worktree: PASS, 130 governed files. В основном dirty checkout остались 3 прежние ошибки у двух untracked historical release README; они не включаются в выпуск.
-- Dev browser вход и системный выбор EPUB доступны. На localhost вручную проверены skeleton → metadata → cover → Ready и порядок после reload; это контролируемый transport, не live скорость. Созданы свои маленькие синтетические файлы с отличающимся filename/title, без cover/title и malformed; cloud uploads ещё не выполнялись.
-- Независимое review выявило race polling/canonical ID, неоднозначный ответ записи ready и опасный reset chapters. Они исправляются до release; это не результаты успешного prod-теста.
+| Уровень | Результат | Что подтверждает / предел |
+|---|---|---|
+| Frontend unit / TypeScript / build | 344/344; TS и production build PASS | Локальная корректность; реальные cloud policy/latency этим не доказываются |
+| Реальная страница MyBooks с управляемым transport | 17/17; прежние modal races 8/8 | Порядок, partial metadata, canonical dedup, late callbacks, scope, delete/archive, polling deadline; ошибка текста воспроизведена до поправки и устранена после |
+| Существующие cache/Reader регрессии | Hook 3/3, cover 5/5, Reader position 3/3 | Дополнительно проверены соседние flows; исправление origin у test runner не меняло продукт |
+| Backend full suite | **389 PASS / 11 FAIL** | 11 FAIL относятся к четырём отсутствующим оригинальным EPUB fixtures. Первоначальные 38 FAIL сохранены; найденные реальные EPUB позволили выполнить ещё 27 тестов. Полный suite не называется зелёным |
+| Backend targeted / build | 46 upload checks PASS; production build PASS | Parser callback, checked writes, canonical protection, ownership, lost response paths |
+| Native SQL | 74/74 | Порядок/старые tuples/progress, service-only ACL, concurrency, idempotency, rollback; реальный PostgreSQL |
+| Native handlers + parser + queue | 7/7 | Реальные PostgreSQL/PostgREST/Redis/BullMQ; Auth/Storage синтетические. Реальный SDK bug PromiseLike обнаружен, исправлен и перепроверен до deploy |
+| Production migration | PASS | В самой транзакции старые books/reading_progress tuples неизменны; cover trigger сохранён; без backfill |
+| Живая ручная dev-проверка | PASS, включая финальную ошибку после UI-поправки | Мгновенная первая карточка; close modal; готовность; reload до чтения; cover/no-cover/no-title; архив/restore; сортировка; pagination; malformed; dedup; Reader EN 0→60%→повтор→60% |
+| Живая DB-сверка dedup | PASS | Тот же canonical ID и исходный файл, 1 глава/25 блоков и все их ID/данные неизменны; вся запись progress прежняя (block15/EN). Прежние 13 книг / 18 progress / 19 recency текущего владельца неизменны |
+| Выпуск | Backend Live / dev READY / prod frontend unchanged | Не только push: GitHub deployment + фактические alias/artifact assets проверены |
+
+Доказательства: [frontend](evidence/frontend-verification.json), [unit](evidence/frontend-unit.txt), [page](evidence/frontend-page.txt), [backend](evidence/backend-verification.json), [SQL](evidence/sql-native.json), [native integration](evidence/backend-integration.json), [SDK adverse](evidence/backend-sdk-adverse.json), [migration](evidence/production-migration.json), [rollout](evidence/rollout-independent.json), [живая DB-сверка](evidence/live-db-checks.json), [ручная приёмка](evidence/manual-live.json), [финальная UI-поправка](evidence/error-ui-verification.json), [финальный dev rollout](evidence/rollout-error-fix.json), [очистка QA](evidence/live-db-cleanup-final.json). Точные собственные EPUB сохранены в [fixtures](evidence/fixtures/inputs.json). Полные private snapshots не публикуются: baseline первого выбранного account отклонён как неверный scope, использован отдельный снимок фактического владельца. Live-сверка старых строк относится к интервалу dedup/error, а не доказывает неизменность всей базы на протяжении каждого действия.
+
+`docs:check` в release checkout: PASS, 130 governed files; в dirty основном checkout остаются 3 прежних замечания у двух untracked historical README, не включённых в выпуск. Контролируемая ручная localhost-проверка отдельно показала title→cover→Ready и восстановление processing после reload; маленькие live EPUB проходят слишком быстро, чтобы гарантированно увидеть каждый промежуточный poll. Искусственные задержки не выдаём за live performance.
+
+## Риски и защиты
+
+- **Ложное Ready / потеря готового оригинала.** Проверяются результаты записи глав/блоков; неоднозначный ответ финальной записи не переводит уже Ready обратно в error. Dedup сохраняет canonical EPUB, главы, блоки, переводы и позицию. Native injection и живая повторная загрузка это проверили.
+- **Скачки порядка и вечный pin.** Новый upload фиксирует stable server timestamp в `catalog_v2_recency`; `reading_progress` не используется как поддельное чтение. Poll/retry/reload не обновляют время; готовая карточка возвращается к обычному серверному порядку. SQL concurrency/idempotency проверены.
+- **Старые книги / миграция.** Аддитивные nullable поле и service RPC; без массового UPDATE и backfill. Сверка tuples в production-транзакции и native rollback проходят. Откат не должен стирать последующее реальное чтение.
+- **Поздние ответы / другой scope / удаление.** Владение проверяется сервером; frontend прекращает полномочия попытки после delete/archive и смены scope. Прежние modal race tests сохранены.
+- **Неполный импорт.** Полной атомарности ещё нет: частичные главы могут остаться при сбое. Автоматический destructive reset запрещён; failed attempt освобождает только свой hash и предлагает повторную загрузку. Полное fencing одновременно застрявших workers остаётся отдельной задачей.
+- **Пределы доступности.** Закрытие страницы до регистрации может прервать файл (согласованное поведение). Одновременный отказ Redis+DB не покрывается новой durable-job инфраструктурой; её не добавляли. Metadata приходит через polling, а не push.
+- **Пределы испытаний.** 11 missing-fixture tests остаются открыты; маленькие QA EPUB не доказывают память/скорость огромных файлов на 512MB. Deferred cleanup при dedup может оставить неиспользуемую обложку; canonical обложка сохраняется.
+
+Откат: сначала dev frontend на `01e2fe2`, затем revert только наших backend commits поверх актуального main (`b993ec3` — база выпуска), затем при необходимости `supabase/rollback/catalog_v2_upload_story.sql`. Не force-push и не сброс чужих коммитов. SQL rollback восстанавливает прежний manifest, убирает новые RPC, оставляет nullable флаг и подтверждённую recency/version: автоматическое удаление этих времён может стереть более позднее чтение. Проверенный rollback не трогает позиции/контент.
 
 ## Остаток планов для обзора
 
 | Статус | Остаток | Владелец / следующий шаг |
 |---|---|---|
-| Текущая реализация | Upload story и dev-приёмка | Этот план; выпуск production frontend — отдельно после обзора |
-| Передано разработчице, не закрыто | Скорость API: полный trace, auth reuse внутри запроса, IP write вне ожидания, thumbnails и лишние DB roundtrips | Датированный `catalog-speed-2026-09-25/developer-handoff-2026-09-30.md`, §6; подтвердить актуальность на её новом main и измерить |
+| Готово на dev; ожидает обзора | Upload story и dev-приёмка | Этот план; выпуск production frontend — отдельное решение после обзора |
+| Передано разработчице, не закрыто | Скорость API и Reader: полный trace, auth reuse, IP write вне ожидания, thumbnails/DB roundtrips; ожидания cache/layout/fonts/images и контракты partial-result/error | Датированный `catalog-speed-2026-09-25/developer-handoff-2026-09-30.md`, §6 (включая §6.4/6.6); подтвердить актуальность на её новом main и измерить |
 | Отдельное исследование | Атомарный import из старой локальной ветки; память и ограниченные batch | Не выпускать старую реализацию одним JSON без проверки памяти; не входит в эту загрузку |
 | Известное ограничение | Порядок сохранения позиции между устройствами при client clock / server ACK | Отдельное решение о серверной монотонной версии; выпущенные Reader guards это не заменяют |
 | Предложения, не внедрены | Adaptive typography, translation orchestration, unified translation state, offline/versioned sync | Широкие RFC сохраняются в индексе; новые обязательства из них не выводим |
@@ -93,3 +119,5 @@ Budget: начать существующими 8 upload component cases + но�
 - 2026-10-01: отказались от нового destructive reset chapters. Частичный импорт не перестраивается автоматическим retry; готовый контент сохраняется, failed attempt освобождает только свой hash и предлагает reupload. Полное fencing нескольких stalled workers остаётся отдельным пределом старой архитектуры.
 
 - 2026-10-01 10:18 UTC: production migration применена успешно, без изменения прежних book/progress tuples. Gate обнаружил и помог исправить реальный SDK PromiseLike bug до публикации backend; adverse evidence сохранено.
+
+- 2026-10-01: dev live QA завершён на `edea9ed`; error skeleton/delete title исправлены по результату ручной проверки. Все QA DB-объекты удалены, localhost manual server и принадлежащий задаче PostgreSQL остановлены; сырые проверки сохранены, дубли EPUB в Downloads удалены после сверки. Production frontend остаётся прежним.

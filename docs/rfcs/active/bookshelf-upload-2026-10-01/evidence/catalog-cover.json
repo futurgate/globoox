@@ -1,0 +1,11 @@
+{
+  "fixtureOnly": true,
+  "passed": [
+    "offline cache hit after 150ms still becomes visible",
+    "same cover remains live when entering fallback/Retry",
+    "four network slots survive cancellation without a slot leak",
+    "late previous version and account never replace current cover",
+    "expired offline cache read cannot publish a late blob"
+  ],
+  "failures": []
+}

@@ -1,0 +1,68 @@
+
+> globoox_preview@0.1.0 test
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 <frontend-worktree>
+
+ ✓ src/__tests__/libraryReadingState.test.ts (11 tests) 7ms
+ ✓ src/__tests__/catalogCache.test.ts (13 tests) 36ms
+ ✓ src/__tests__/bookJobPolling.test.ts (12 tests) 30ms
+ ✓ src/__tests__/catalogCooldown.test.ts (28 tests) 56ms
+ ✓ src/__tests__/paginatorUtils.test.ts (18 tests) 4ms
+ ✓ src/__tests__/catalogState.test.ts (21 tests) 94ms
+ ✓ src/__tests__/readingActivity.test.ts (24 tests) 76ms
+ ✓ src/__tests__/shareNavigation.test.ts (9 tests) 10ms
+ ✓ src/__tests__/catalogCoverQueue.test.ts (6 tests) 47ms
+ ✓ src/__tests__/readingAnchorRace.test.ts (8 tests) 3ms
+ ✓ src/__tests__/catalogApi.test.ts (9 tests) 11ms
+ ✓ src/__tests__/activeEditorialSection.test.ts (10 tests) 4ms
+stderr | src/__tests__/bookshelfSession.test.ts > public bookshelf session renewal with the real Supabase SDK > clears an expired session when refresh is rejected, without retaining a private identity
+AuthApiError: Refresh token revoked
+    at handleError (<frontend-main>/node_modules/@supabase/auth-js/src/lib/fetch.ts:102:9)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _handleRequest (<frontend-main>/node_modules/@supabase/auth-js/src/lib/fetch.ts:195:5)
+    at _request (<frontend-main>/node_modules/@supabase/auth-js/src/lib/fetch.ts:157:16)
+    at <frontend-main>/node_modules/@supabase/auth-js/src/GoTrueClient.ts:2497:18
+    at <frontend-main>/node_modules/@supabase/auth-js/src/lib/helpers.ts:232:26 {
+  __isAuthError: true,
+  status: 400,
+  code: undefined
+}
+AuthApiError: Refresh token revoked
+    at handleError (<frontend-main>/node_modules/@supabase/auth-js/src/lib/fetch.ts:102:9)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _handleRequest (<frontend-main>/node_modules/@supabase/auth-js/src/lib/fetch.ts:195:5)
+    at _request (<frontend-main>/node_modules/@supabase/auth-js/src/lib/fetch.ts:157:16)
+    at <frontend-main>/node_modules/@supabase/auth-js/src/GoTrueClient.ts:2497:18
+    at <frontend-main>/node_modules/@supabase/auth-js/src/lib/helpers.ts:232:26 {
+  __isAuthError: true,
+  status: 400,
+  code: undefined
+}
+
+ ✓ src/__tests__/bookshelfSession.test.ts (10 tests) 38ms
+ ✓ src/__tests__/libraryPositionScope.test.ts (9 tests) 455ms
+ ✓ src/__tests__/editorialServerRouting.test.ts (23 tests) 10ms
+ ✓ src/__tests__/authNavigation.test.ts (24 tests) 122ms
+ ✓ src/__tests__/useBooksState.test.ts (7 tests) 4ms
+ ✓ src/__tests__/subscription.test.ts (10 tests) 78ms
+ ✓ src/__tests__/catalogProxy.test.ts (5 tests) 68ms
+ ✓ src/__tests__/libraryReadingStore.test.ts (4 tests) 29ms
+ ✓ src/__tests__/sectionNavigationMotion.test.ts (6 tests) 34ms
+ ✓ src/__tests__/landingConsentPath.test.ts (34 tests) 6ms
+ ✓ src/__tests__/bookshelfUploads.test.ts (4 tests) 128ms
+ ✓ src/__tests__/readingPositionProxy.test.ts (5 tests) 57ms
+ ✓ src/__tests__/inlineMarks.test.ts (11 tests) 147ms
+ ✓ src/__tests__/mergeDisplayBlocks.test.ts (2 tests) 2ms
+ ✓ src/__tests__/editorialLegalCopy.test.ts (2 tests) 2ms
+ ✓ src/__tests__/editorialHeroCopy.test.ts (5 tests) 3ms
+ ✓ src/__tests__/editorialLocale.test.ts (12 tests) 25ms
+ ✓ src/__tests__/shareLinks.test.ts (2 tests) 11ms
+
+ Test Files  30 passed (30)
+      Tests  344 passed (344)
+   Start at  12:39:49
+   Duration  2.19s (transform 1.79s, setup 0ms, collect 4.60s, tests 1.60s, environment 3ms, prepare 2.58s)
+

@@ -1,0 +1,7 @@
+{
+  "checked_at_utc": "2026-10-01T10:18:12.590366+00:00",
+  "migration_sha256": "0f260e4c26a93bc7b3c53ded3fc96cc9f3d2a79f9f8f2d35e4e68da5204d8d54",
+  "exit": 0,
+  "stdout": "{\"new_flag\": true, \"migration\": \"add_catalog_v2_upload_story\", \"public_scope\": \"0\", \"old_book_and_progress_rows_preserved\": true}\n",
+  "stderr": ""
+}

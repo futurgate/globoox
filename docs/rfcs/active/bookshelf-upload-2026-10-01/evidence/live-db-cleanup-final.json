@@ -1,0 +1,83 @@
+{
+  "started_at_utc": "2026-10-01T10:48:19.490Z",
+  "finished_at_utc": "2026-10-01T10:48:20.187Z",
+  "phase": "final",
+  "scope": "GET only, actual QA owner. Exclude exactly four named QA IDs from old-row comparison.",
+  "checks": {
+    "removed_qa_ids": [
+      "fc76e305-a8c5-49a1-b710-5f9e049c984f",
+      "dc290a45-f4bd-458c-a8de-5d2d60b0cbe6",
+      "20a2057d-be20-41b6-989c-d8af91f28e0f",
+      "2d3f9747-8c38-4257-ad13-6ee0895c9c70"
+    ],
+    "qa_book_rows_remaining": 0,
+    "qa_chapter_rows_remaining": 0,
+    "qa_progress_rows_remaining": 0,
+    "qa_recency_rows_remaining": 0,
+    "qa_preference_rows_remaining": 0,
+    "known_canonical_block_rows_remaining": 0,
+    "malformed": null,
+    "oldRows": {
+      "books": {
+        "baseline_rows": 13,
+        "unchanged": 13,
+        "missing": 0,
+        "changed": 0,
+        "added": 0
+      },
+      "progress": {
+        "baseline_rows": 18,
+        "unchanged": 18,
+        "missing": 0,
+        "changed": 0,
+        "added": 0
+      },
+      "recency": {
+        "baseline_rows": 19,
+        "unchanged": 19,
+        "missing": 0,
+        "changed": 0,
+        "added": 0
+      }
+    }
+  },
+  "delete_semantics": {
+    "handler": "server/api/books/[id]/index.delete.ts",
+    "no_hash": "Owner check, attempt Storage file/cover deletion, delete book row; storage failures warn rather than fail response.",
+    "with_hash": "Soft-delete current-user preference; count nondeleted preferences. If count is zero, attempt Storage cleanup and physically delete book row. Otherwise preserve shared canonical book.",
+    "verified": "Database rows and known content IDs queried after UI action. Storage object removal is not independently queried by this check."
+  },
+  "requests": [
+    {
+      "table": "chapters",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "table": "user_book_preferences",
+      "status": 200,
+      "rows": 0
+    },
+    {
+      "table": "catalog_v2_recency",
+      "status": 200,
+      "rows": 19
+    },
+    {
+      "table": "reading_progress",
+      "status": 200,
+      "rows": 18
+    },
+    {
+      "table": "books",
+      "status": 200,
+      "rows": 13
+    },
+    {
+      "table": "content_blocks",
+      "status": 200,
+      "rows": 0
+    }
+  ],
+  "private_evidence": "qa-cleanup-final-private.json (0600)"
+}
