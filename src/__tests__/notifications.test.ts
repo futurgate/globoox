@@ -14,6 +14,8 @@ beforeEach(() => {
   setNotificationScope(null);
   setNotificationsSuppressed(false);
   setNotificationsSuppressed(false, 'second-modal');
+  setNotificationsSuppressed(false, 'delete');
+  setNotificationsSuppressed(false, 'sort');
   notificationIdentityChanged(null, true);
   vi.clearAllMocks();
 });
@@ -68,7 +70,78 @@ describe('App notification ownership and transitions', () => {
     expect(notify({ ...input, event: 'updated' })).toBeNull();
     setNotificationsSuppressed(false, 'second-modal');
     expect(sonner.info).toHaveBeenCalledTimes(1);
-    expect(notify({ ...input, event: 'updated' })).toBeTypeOf('string');
+    expect(notify({ ...input, event: 'updated' })).toBeNull();
+    expect(notify({ ...input, event: 'manual-check-1' })).toBeTypeOf('string');
+  });
+
+  it('releases only the latest deferred transition after every unrelated dialog closes', () => {
+    const scope = setNotificationScope('guest:a::share');
+    const onClick = vi.fn();
+    const input = { scope, operationId: 'upload', event: 'unknown', title: 'Checking' };
+    setNotificationsSuppressed(true, 'delete', 'defer');
+    setNotificationsSuppressed(true, 'sort', 'defer');
+    expect(notify(input)).toBeNull();
+    const ready = { ...input, event: 'ready', title: 'Ready', action: { label: 'Open', onClick } };
+    expect(notify(ready)).toBeNull();
+    expect(notify(ready)).toBeNull();
+    setNotificationsSuppressed(false, 'delete');
+    expect(sonner.info).not.toHaveBeenCalled();
+    setNotificationsSuppressed(false, 'sort');
+    expect(sonner.info).toHaveBeenCalledTimes(1);
+    expect(sonner.info).toHaveBeenCalledWith('Ready', expect.objectContaining({ duration: ACTION_NOTIFICATION_DURATION_MS }));
+    sonner.info.mock.calls[0][1].action.onClick();
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(notify(ready)).toBeNull();
+  });
+
+  it('bounds deferred operations and keeps the most recently updated results', () => {
+    const scope = setNotificationScope('guest:a::share');
+    setNotificationsSuppressed(true, 'delete', 'defer');
+    for (const operationId of ['old', 'updated', 'third']) notify({ scope, operationId, event: 'ready', title: operationId });
+    notify({ scope, operationId: 'updated', event: 'changed', title: 'Latest update' });
+    notify({ scope, operationId: 'new', event: 'ready', title: 'Newest' });
+    setNotificationsSuppressed(false, 'delete');
+    expect(sonner.info.mock.calls.map(([title]) => title)).toEqual(['third', 'Latest update', 'Newest']);
+    expect(sonner.info).toHaveBeenCalledTimes(MAX_VISIBLE_NOTIFICATIONS);
+    expect(notify({ scope, operationId: 'old', event: 'ready', title: 'Old poll' })).toBeNull();
+  });
+
+  it('an upload modal drops deferred and incoming events even while another dialog defers', () => {
+    const scope = setNotificationScope('guest:a::share');
+    const input = { scope, operationId: 'upload', event: 'ready', title: 'Ready' };
+    setNotificationsSuppressed(true, 'delete', 'defer');
+    notify(input);
+    setNotificationsSuppressed(true);
+    notify({ ...input, operationId: 'inside' });
+    setNotificationsSuppressed(false);
+    setNotificationsSuppressed(false, 'delete');
+    expect(sonner.info).not.toHaveBeenCalled();
+    expect(notify(input)).toBeNull();
+    expect(notify({ ...input, operationId: 'inside' })).toBeNull();
+  });
+
+  it.each(['logout', 'navigation', 'account-switch'])('discards deferred results on %s', reason => {
+    notificationIdentityChanged('a');
+    const scope = setNotificationScope('user:a::share');
+    setNotificationsSuppressed(true, 'delete', 'defer');
+    notify({ scope, operationId: 'upload', event: 'ready', title: 'Ready' });
+    if (reason === 'logout') notificationIdentityChanged(null, true);
+    else if (reason === 'account-switch') notificationIdentityChanged('b');
+    else setNotificationScope(null);
+    setNotificationsSuppressed(false, 'delete');
+    expect(sonner.info).not.toHaveBeenCalled();
+    expect(notify({ scope, operationId: 'late', event: 'ready', title: 'Late' })).toBeNull();
+  });
+
+  it('cancellation removes a deferred result and rejects later results from that operation', () => {
+    const scope = setNotificationScope('guest:a::share');
+    setNotificationsSuppressed(true, 'delete', 'defer');
+    const input = { scope, operationId: 'cancelled', event: 'ready', title: 'Ready' };
+    notify(input);
+    dismissNotification(scope, input.operationId);
+    setNotificationsSuppressed(false, 'delete');
+    expect(sonner.info).not.toHaveBeenCalled();
+    expect(notify({ ...input, event: 'late' })).toBeNull();
   });
 
   it('bounds active messages and invalidates cancelled operations', () => {

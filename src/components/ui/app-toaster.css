@@ -10,7 +10,7 @@
 
 .app-toaster [data-sonner-toast][data-styled='true'] {
   gap: 12px;
-  padding: 16px 42px 16px 16px;
+  padding: 16px;
   font-size: var(--app-type-caption-size, 15px);
   line-height: var(--app-type-caption-line, 1.4);
 }
@@ -44,30 +44,16 @@
   white-space: normal;
 }
 
-[data-sonner-toaster].app-toaster [data-sonner-toast][data-styled='true'] [data-close-button] {
-  inset: 0 0 auto auto;
-  width: 40px;
-  height: 44px;
-  transform: none;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--app-text-muted);
-}
-
-.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:hover,
-[data-sonner-toaster].app-toaster [data-sonner-toast][data-styled='true'] [data-close-button]:hover {
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:hover {
   background: var(--fill-tertiary);
 }
 
-.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:active,
-[data-sonner-toaster].app-toaster [data-sonner-toast][data-styled='true'] [data-close-button]:active {
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:active {
   background: var(--fill-secondary);
 }
 
 .app-toaster [data-sonner-toast]:focus-visible,
-.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:focus-visible,
-.app-toaster [data-sonner-toast][data-styled='true'] [data-close-button]:focus-visible {
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:focus-visible {
   outline: 2px solid var(--app-accent);
   outline-offset: 2px;
   box-shadow: none;

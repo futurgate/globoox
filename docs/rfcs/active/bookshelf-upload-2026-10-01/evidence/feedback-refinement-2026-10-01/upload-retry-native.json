@@ -1,0 +1,131 @@
+{
+  "passed": [
+    "forward migration is repeatable",
+    "anon cannot execute retry",
+    "authenticated cannot execute retry",
+    "service_role can execute retry",
+    "function uses invoker rights",
+    "replacement uses new ID with fresh server upload timestamp",
+    "old failed row and incomplete chapters/blocks removed atomically",
+    "replacement starts pending with unknown metadata and fresh path",
+    "ready book original and progress remain unchanged",
+    "automatic retries retain one upload activity timestamp/version",
+    "obsolete worker chapter insert rejected by old-book FK",
+    "obsolete worker block insert rejected by old-chapter FK",
+    "protected state ready",
+    "no writes for state ready",
+    "protected state pending",
+    "no writes for state pending",
+    "protected state processing",
+    "no writes for state processing",
+    "protected state None",
+    "no writes for state None",
+    "foreign owner hidden",
+    "missing source rejected",
+    "foreign/missing rejection has no writes",
+    "same Storage path rejected",
+    "another book Storage path rejected",
+    "replacement ID collision rolls back entire operation",
+    "same replacement/source ID rejected",
+    "path traversal rejected in SQL",
+    "rejected registration retains source and all original content",
+    "delete failure rolls back inserted replacement",
+    "failed deletion leaves exact prior database state",
+    "simultaneous retries yield exactly one replacement",
+    "losing concurrent retry leaves no extra placeholder",
+    "ready commit winning row lock prevents replacement",
+    "already-in-flight old chapter is removed by replacement transaction",
+    "resumed old worker cannot attach children after replacement",
+    "new pending replacement unaffected by stale FK failure",
+    "rollback removes additive function and preserves all book data",
+    "forward applies again after rollback"
+  ],
+  "results": {
+    "replacement uses new ID with fresh server upload timestamp": {
+      "id": "00000000-0000-0000-0000-000000000103",
+      "created_at": "2026-10-01T23:26:16.835065+02:00"
+    },
+    "replacement starts pending with unknown metadata and fresh path": [
+      "pending",
+      false,
+      null,
+      null,
+      "new-00000000-0000-0000-0000-000000000103.epub",
+      null
+    ],
+    "obsolete worker chapter insert rejected by old-book FK": {
+      "sqlstate": "23503"
+    },
+    "obsolete worker block insert rejected by old-chapter FK": {
+      "sqlstate": "23503"
+    },
+    "protected state ready": {
+      "sqlstate": "55000"
+    },
+    "protected state pending": {
+      "sqlstate": "55000"
+    },
+    "protected state processing": {
+      "sqlstate": "55000"
+    },
+    "protected state None": {
+      "sqlstate": "55000"
+    },
+    "foreign owner hidden": {
+      "sqlstate": "P0002"
+    },
+    "missing source rejected": {
+      "sqlstate": "P0002"
+    },
+    "same Storage path rejected": {
+      "sqlstate": "23505"
+    },
+    "another book Storage path rejected": {
+      "sqlstate": "23505"
+    },
+    "replacement ID collision rolls back entire operation": {
+      "sqlstate": "23505"
+    },
+    "same replacement/source ID rejected": {
+      "sqlstate": "22023"
+    },
+    "path traversal rejected in SQL": {
+      "sqlstate": "22023"
+    },
+    "delete failure rolls back inserted replacement": {
+      "sqlstate": "P0001"
+    },
+    "simultaneous retries yield exactly one replacement": [
+      {
+        "error": "P0002"
+      },
+      {
+        "result": {
+          "id": "00000000-0000-0000-0000-000000000282",
+          "created_at": "2026-10-01T23:26:16.84924+02:00"
+        }
+      }
+    ],
+    "ready commit winning row lock prevents replacement": {
+      "error": "55000"
+    },
+    "already-in-flight old chapter is removed by replacement transaction": {
+      "result": {
+        "id": "00000000-0000-0000-0000-000000000302",
+        "created_at": "2026-10-01T23:26:16.86144+02:00"
+      }
+    },
+    "resumed old worker cannot attach children after replacement": {
+      "sqlstate": "23503"
+    }
+  },
+  "scope": "Synthetic native SQL correctness, not production latency or parser capacity.",
+  "source_sha256": {
+    "supabase/migrations/add_catalog_v2_upload_retry.sql": "f2e13ca42640dba9a43473ae9e13b52dc8037b8082a2dd1e2120d8be8f7defa0",
+    "supabase/rollback/catalog_v2_upload_retry.sql": "41bf89256ab3ea1763871278e561b7021963c77aa77939e35f730309f847f8ae"
+  },
+  "postgres": "PostgreSQL 15.18 (Homebrew) on aarch64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit",
+  "cleanup": {
+    "synthetic_database_dropped": true
+  }
+}

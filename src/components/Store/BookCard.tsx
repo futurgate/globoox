@@ -10,7 +10,7 @@ import { StarIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, CircleAlert } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import BookActionsMenu from './BookActionsMenu';
 import { useAuth } from '@/lib/hooks/useAuth';
 
@@ -374,6 +374,7 @@ interface BookCardProps {
   hideLabel?: string;
   onOpen?: () => void;
   processingStatus?: 'pending' | 'processing' | 'ready' | 'error' | null;
+  processingLabel?: string;
   metadataLoading?: boolean;
   uploadError?: string;
   uploadIssue?: UploadIssue;
@@ -403,8 +404,8 @@ export default function BookCard({
   hideLabel,
   onOpen,
   processingStatus,
+  processingLabel,
   metadataLoading = false,
-  uploadError,
   uploadIssue,
   onRetryUpload,
   onCheckStatus,
@@ -415,13 +416,21 @@ export default function BookCard({
   const ready = processingStatus == null || processingStatus === 'ready';
   const unresolved = Boolean(uploadIssue && uploadIssue !== 'order_unconfirmed' && uploadIssue !== 'upload_rejected');
   const problemCover = !ready && (failed || unresolved);
-  const problemTitle = uploadIssue === 'auth_required' ? 'Sign in to check this book'
-    : uploadIssue === 'forbidden' ? 'Access to this book is unavailable'
-    : uploadIssue === 'upload_unconfirmed' || uploadIssue === 'job_not_found' ? 'Unable to confirm upload'
-    : unresolved ? 'Unable to check readiness'
-    : uploadIssue === 'upload_rejected' ? 'Upload was rejected' : 'Unable to process this book';
+  const problemTitle = uploadIssue === 'auth_required' ? 'Sign in required'
+    : uploadIssue === 'forbidden' ? 'Access unavailable'
+    : uploadIssue === 'upload_unconfirmed' || uploadIssue === 'job_not_found' ? 'Upload unconfirmed'
+    : unresolved ? 'Status unavailable'
+    : uploadIssue === 'upload_rejected' ? 'Upload rejected' : 'Unable to process this book';
+  // Recovery copy is deliberately bounded. Raw transport/parser messages remain
+  // available to the upload flow, but must not stretch or fill a book cover.
+  const problemDescription = uploadIssue === 'auth_required' ? 'Sign in to check this book.'
+    : uploadIssue === 'forbidden' ? 'Refresh your library to check access.'
+    : uploadIssue === 'upload_unconfirmed' || uploadIssue === 'job_not_found' ? 'Check your library before trying again.'
+    : unresolved ? 'The book may still be processing.'
+    : uploadIssue === 'upload_rejected' ? 'The file was not accepted.' : 'Try uploading it again.';
   const checkLabel = uploadIssue === 'auth_required' ? 'Sign in'
-    : uploadIssue === 'job_not_found' || uploadIssue === 'upload_unconfirmed' || uploadIssue === 'forbidden' ? 'Refresh bookshelf' : 'Check status';
+    : uploadIssue === 'job_not_found' || uploadIssue === 'upload_unconfirmed' ? 'Review upload'
+    : uploadIssue === 'forbidden' ? 'Refresh bookshelf' : 'Check status';
   const displayTitle = failed ? title || 'Untitled book' : title;
   const displayAuthor = failed ? author || 'Unknown author' : author;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -504,12 +513,17 @@ export default function BookCard({
           </div>
         )}
         {problemCover ? (
-          <div data-upload-problem={uploadIssue ?? 'processing_failed'} className="aspect-[2/3] flex flex-col items-center justify-center gap-3 rounded-[3px] border border-dashed border-[var(--app-text-subtle)] bg-transparent px-3 py-5 text-center">
-            <CircleAlert className={`size-5 shrink-0 ${unresolved ? 'text-[var(--app-text-muted)]' : 'text-destructive'}`} aria-hidden="true" />
-            <p className="text-sm font-medium leading-snug text-[var(--app-text)]">{problemTitle}</p>
-            <p className="break-words text-xs leading-relaxed text-[var(--app-text-muted)]">{uploadError || (unresolved ? 'The server may still be processing it.' : 'Try uploading the file again.')}</p>
-            {unresolved && onCheckStatus ? <button type="button" className="min-h-11 text-xs font-medium text-[var(--app-accent)] underline underline-offset-4 disabled:opacity-50" disabled={checkingStatus} onClick={onCheckStatus}>{checkingStatus ? 'Checking…' : checkLabel}</button>
-              : !unresolved && onRetryUpload ? <button type="button" className="min-h-11 text-xs font-medium text-[var(--app-accent)] underline underline-offset-4" onClick={onRetryUpload}>Upload again</button> : null}
+          <div data-book-cover-slot data-upload-problem={uploadIssue ?? 'processing_failed'} className="relative aspect-[2/3] w-full rounded-[3px] border border-dashed border-[var(--app-text-subtle)] bg-transparent text-center">
+            <div data-upload-problem-content className="absolute inset-0 overflow-y-auto rounded-[3px] px-2 py-3">
+              <div className="flex min-h-full flex-col items-center justify-center gap-2">
+                <div className="shrink-0 space-y-1">
+                  <p className="text-sm font-medium leading-snug text-[var(--app-text)]">{problemTitle}</p>
+                  <p className="text-xs leading-snug text-[var(--app-text-muted)]">{problemDescription}</p>
+                </div>
+                {unresolved && onCheckStatus ? <button type="button" className="min-h-11 shrink-0 px-1 text-xs font-medium text-[var(--app-accent)] underline underline-offset-4 disabled:opacity-50" disabled={checkingStatus} onClick={onCheckStatus}>{checkingStatus ? 'Checking…' : checkLabel}</button>
+                  : !unresolved && onRetryUpload ? <button type="button" className="min-h-11 shrink-0 px-1 text-xs font-medium text-[var(--app-accent)] underline underline-offset-4" onClick={onRetryUpload}>Upload again</button> : null}
+              </div>
+            </div>
           </div>
         ) : <BookCardLink
           href={withShareContext(`/reader/${id}`, shareToken)}
@@ -517,7 +531,7 @@ export default function BookCard({
           disabled={isMenuOpen || processing || failed}
           onOpen={onOpen}
         >
-          <div className="aspect-[2/3] relative">
+          <div data-book-cover-slot className="aspect-[2/3] relative">
             <div className="absolute left-0 bottom-0" style={effectiveCoverFrameStyle}>
               <div className="relative h-full w-full">
                 <div
@@ -542,10 +556,15 @@ export default function BookCard({
                       onError={() => setFailedCoverSrc(displayCover)}
                     />
                   ) : coverLoading || processing ? (
-                    <Skeleton className="h-full w-full" aria-label="Loading cover" />
+                    <Skeleton className="h-full w-full motion-reduce:animate-none" aria-label="Loading cover" />
                   ) : (
                     <FallbackCover id={id} title={displayTitle} author={displayAuthor} />
                   )}
+
+                  {processing && <div data-upload-progress role="status" className={`absolute inset-0 flex flex-col items-center justify-center gap-3 px-2 text-center ${hasValidCover ? 'bg-black/55 text-white' : 'text-[var(--app-text-muted)]'}`}>
+                    <Loader2 className="size-8 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                    <span className="text-xs leading-snug">{processingLabel || (processingStatus === 'pending' ? 'Uploading book…' : 'Processing book…')}</span>
+                  </div>}
 
                   {progress > 0 && (
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
@@ -568,21 +587,13 @@ export default function BookCard({
         onOpen={onOpen}
       >
         {metadataLoading && !failed && !problemCover ? <div className="space-y-1.5" aria-label="Loading book details">
-          <Skeleton className="h-4 w-4/5" aria-label="Loading title" />
-          <Skeleton className="h-3 w-3/5" aria-label="Loading author" />
+          <Skeleton className="h-4 w-4/5 motion-reduce:animate-none" aria-label="Loading title" />
+          <Skeleton className="h-3 w-3/5 motion-reduce:animate-none" aria-label="Loading author" />
         </div> : <>
           <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{displayTitle || 'Untitled book'}</p>
           <p className="text-xs text-muted-foreground line-clamp-1">{displayAuthor}</p>
         </>}
       </BookCardLink>
-      {processing && !problemCover && <p className="mt-2 flex items-center gap-1.5 text-xs text-[var(--app-text-muted)]">
-        <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
-        {processingStatus === 'pending' ? 'Uploading book…' : 'Processing book…'}
-      </p>}
-      {ready && (uploadError || uploadIssue) && <div className="mt-2 text-xs text-[var(--app-text-muted)]">
-        <p>{uploadIssue === 'order_unconfirmed' ? 'Book ready. Unable to update the bookshelf.' : uploadError || 'Book ready. Check the bookshelf for updates.'}</p>
-        {onCheckStatus && <button type="button" className="min-h-11 font-medium text-[var(--app-accent)] underline underline-offset-4 disabled:opacity-50" disabled={checkingStatus} onClick={onCheckStatus}>{checkingStatus ? 'Checking…' : 'Refresh bookshelf'}</button>}
-      </div>}
     </div>
   );
 }

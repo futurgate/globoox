@@ -1442,10 +1442,10 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
 }
 
 /** Process an already-uploaded EPUB file */
-export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal): Promise<ProcessBookResponse> {
+export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string): Promise<ProcessBookResponse> {
   return request<ProcessBookResponse>('/api/books/process', {
     method: 'POST',
-    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize }),
+    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}) }),
     signal,
   })
 }

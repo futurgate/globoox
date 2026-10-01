@@ -30,6 +30,22 @@ describe('parsed upload metadata and operation identity', () => {
 
 
 describe('upload recovery identity', () => {
+  it('replaces a failed attempt in place at explicit retry start and ignores its late result', () => {
+    const failure = { attemptId: 'failed', fileName: 'old.epub', phase: 'error' as const, bookId: 'same' };
+    const other = { attemptId: 'other', fileName: 'other.epub', phase: 'processing' as const, bookId: 'other-book' };
+    const retry = { attemptId: 'retry', fileName: 'fixed.epub', phase: 'uploading' as const,
+      retryBookId: 'same', bookId: 'same', replacesAttemptId: 'failed' };
+    const replaced = applyUploadEvent([other, failure], retry);
+    expect(replaced.map(entry => entry.attemptId)).toEqual(['other', 'retry']);
+    expect(applyUploadEvent(replaced, { ...failure, phase: 'error', error: 'Late old result' })).toEqual(replaced);
+    expect(applyUploadEvent(replaced, { ...retry, phase: 'complete', bookId: 'canonical-ready' })).toHaveLength(2);
+  });
+  it('replaces a local failed placeholder without a server id, preserving unrelated attempts', () => {
+    const entries = [{ attemptId: 'old', fileName: 'old.epub', phase: 'error' as const },
+      { attemptId: 'other', fileName: 'other.epub', phase: 'processing' as const }];
+    const replaced = applyUploadEvent(entries, { attemptId: 'new', fileName: 'new.epub', phase: 'uploading', replacesAttemptId: 'old' });
+    expect(replaced.map(entry => entry.attemptId)).toEqual(['new', 'other']);
+  });
   it('keeps authoritative ready previews readable while nonterminal error previews remain processing', () => {
     expect(uploadedCatalogItem({ ...item('ready'), metadata_ready: true, processing_status: 'ready' }, false)?.processing_status).toBe('ready')
     expect(uploadedCatalogItem({ ...item('retrying'), metadata_ready: true, processing_status: 'error' }, false)?.processing_status).toBe('processing')

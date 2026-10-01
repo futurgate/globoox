@@ -23,7 +23,10 @@ export type AppNotification = {
 let generation = 0;
 let currentScope: NotificationScope | null = null;
 let identity: string | null | undefined;
-const suppressedBy = new Set<string>();
+export type NotificationSuppression = 'drop' | 'defer';
+
+const suppressedBy = new Map<string, NotificationSuppression>();
+const deferred = new Map<string, AppNotification>();
 const seenEvents = new Map<string, Set<string>>();
 const invalidatedOperations = new Set<string>();
 const active = new Map<string, {
@@ -44,6 +47,7 @@ function dismissActive() {
 export function setNotificationScope(key: string | null): NotificationScope | null {
   if (currentScope?.key === key) return currentScope;
   dismissActive();
+  deferred.clear();
   seenEvents.clear();
   invalidatedOperations.clear();
   currentScope = key ? Object.freeze({ key, generation: ++generation }) : null;
@@ -70,25 +74,47 @@ function toastId(scope: NotificationScope, operationId: string) {
   return `app-notification:${scope.generation}:${operationId}`;
 }
 
-/** Modal owners release their own suppression; dropped events are never queued behind a dialog. */
-export function setNotificationsSuppressed(suppressed: boolean, owner = 'modal') {
+/** Upload results live inside their modal; unrelated dialogs defer a bounded set of new results. */
+export function setNotificationsSuppressed(suppressed: boolean, owner = 'modal', mode: NotificationSuppression = 'drop') {
   if (suppressed) {
-    suppressedBy.add(owner);
+    suppressedBy.set(owner, mode);
+    if (mode === 'drop') deferred.clear();
     dismissActive();
   } else {
     suppressedBy.delete(owner);
+    if (!suppressedBy.size) {
+      const waiting = [...deferred.values()];
+      deferred.clear();
+      for (const input of waiting) presentNotification(input);
+    }
   }
 }
 
 /** All current product notifications use Sonner's single polite live region. */
 export function notify(input: AppNotification): string | null {
-  const { scope, operationId, event, title, description, action, kind = 'info' } = input;
-  if (!isCurrent(scope) || suppressedBy.size || !operationId || !event || invalidatedOperations.has(operationId)) return null;
+  const { scope, operationId, event } = input;
+  if (!isCurrent(scope) || !operationId || !event || invalidatedOperations.has(operationId)) return null;
   const events = seenEvents.get(operationId) ?? new Set<string>();
   if (events.has(event)) return null;
   events.add(event);
   seenEvents.set(operationId, events);
 
+  if (suppressedBy.size) {
+    if (![...suppressedBy.values()].includes('drop')) {
+      // Only the latest transition matters when a dialog closes. Renew its position
+      // so the bounded queue retains the most recent operations, not stale results.
+      deferred.delete(operationId);
+      deferred.set(operationId, input);
+      if (deferred.size > MAX_VISIBLE_NOTIFICATIONS) deferred.delete(deferred.keys().next().value!);
+    }
+    return null;
+  }
+  return presentNotification(input);
+}
+
+function presentNotification(input: AppNotification): string | null {
+  const { scope, operationId, title, description, action, kind = 'info' } = input;
+  if (!isCurrent(scope) || invalidatedOperations.has(operationId)) return null;
   const id = toastId(scope, operationId);
   // Sonner owns presentation and all timing. Retire the oldest visible operation instead of
   // leaving an unbounded backlog of hidden, actionable notifications in its stack.
@@ -126,6 +152,7 @@ export function notify(input: AppNotification): string | null {
 export function dismissNotification(scope: NotificationScope | null, operationId: string) {
   if (!isCurrent(scope)) return;
   invalidatedOperations.add(operationId);
+  deferred.delete(operationId);
   const id = toastId(scope, operationId);
   active.delete(id);
   toast.dismiss(id);

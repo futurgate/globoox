@@ -1,0 +1,15 @@
+{
+  "applied_at": "2026-10-01T21:27:24.909973+00:00",
+  "migration": "supabase/migrations/add_catalog_v2_upload_retry.sql",
+  "sha256": "f2e13ca42640dba9a43473ae9e13b52dc8037b8082a2dd1e2120d8be8f7defa0",
+  "native_check_count": 39,
+  "result": "BEGIN\nSET\nSET\nCREATE FUNCTION\nREVOKE\nGRANT\nNOTIFY\nCOMMIT",
+  "acl": {
+    "exists": true,
+    "anon": false,
+    "authenticated": false,
+    "service_role": true,
+    "security_definer": false
+  },
+  "scope": "Additive function only; no production book rows changed by migration."
+}

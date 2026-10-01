@@ -1,17 +1,30 @@
 ---
 type: rfc
-status: implemented
+status: in_progress
 owner: library
 created: 2026-10-01
 last_verified: 2026-10-01
-implementation_status: released_on_dev
+implementation_status: feedback_refinement_in_progress
 ---
 
-# Bookshelf upload: завершённый dev checkpoint и оставшаяся работа
+# Bookshelf upload: уточнение обратной связи и повтор загрузки
 
 **Upload feedback и общие уведомления реализованы и проверены на dev**, application `865354a`. Production frontend не обновлялся; backend/DB для этого выпуска не изменялись. Завершённый план, решения, приёмка и откат — в [архивном отчёте](../../../archive/2026-10-01-bookshelf-feedback/README.md). Первоначальная upload story — в [предыдущем отчёте](../../../archive/2026-10-01-bookshelf-upload/README.md).
 
 [Проверки и скриншоты](evidence/feedback-2026-10-01/README.md): 370 unit, 46 browser/page, 4 mobile visual PASS; TypeScript/build/docs PASS; scoped lint без ошибок (2 прежних warning). Ручные локальные recovery-сценарии и live dev success/dedup/failure/Reader/archive/restore/reload/cleanup выполнены. Точные [live результаты](evidence/feedback-2026-10-01/live-acceptance.json) и [deployment proof](evidence/feedback-2026-10-01/deployment.json) сохраняют границы проверок. Rollback dev — `426b9ba`, без отката БД.
+
+## Текущая доработка — 2026-10-01
+
+Авторизовано пользователем после просмотра 14 скриншотов: убрать крестик toast, текст Reading progress is safe; одинаковые компактные 2:3 карточки неизвестной готовности/ошибки без иконки; индикатор внутри обложки; одно сообщение вместо banner+toast. Исправить обнаруженные 403/повторное уведомление/отложенное уведомление под чужим диалогом/подписи recovery. Связать Upload again с исходной failed-книгой, чтобы новая попытка не оставляла старую ошибочную запись после reload. Сначала проверки и dev; production frontend не менять.
+
+- Frontend: presentation и notification helper делегированы отдельно; root — интеграция страницы, upload modal/API, приёмка и Git.
+- Backend: optional retry_book_id; малая additive SQL RPC под row lock атомарно заменяет собственную error-запись новой pending с новым ID. Старые chapter/block writes не могут попасть в новую книгу; ready/processing/чужие записи защищены. Отвергнут same-ID reset: одного file_path fence недостаточно для уже начатых child inserts зависшего worker. Native PostgreSQL проверяет транзакцию/конкуренцию/FK перед production migration и push main.
+- Контроль: unit/API/processor/notification; browser fixtures с потерей сети, повтором/отменой/двумя запросами/сменой аккаунта/reload; TS, scoped lint, production build. Скриншоты actual UI 320/390/desktop, dark/light, увеличенный текст, без дублирующих баннеров и растянутых cover slots. Живой dev — только собственные маленькие EPUB, удаление QA-книг после приёмки.
+- Хорошо: одна карточка повторяемой книги, готовая canonical-книга и чтение сохранены, ошибка/неизвестность различаются, действие тоста совпадает с подписью, явный повтор сообщает свой исход, тихие poll не спамят. Плохо/стоп: повреждение чужой/ready книги, старый worker меняет новый повтор, скрытая ошибка без recovery, ложный offline, две карточки после принятого retry, переполнение/недоступная кнопка.
+- Локальные transport fixtures доказывают UI-переходы, а mocked backend — guards; они не доказывают Supabase/BullMQ поведение. После backend deploy проверить реальный retry/reload и защиту готовой QA-книги. Нагрузку больших EPUB не тестировать на общем production.
+- Исходные checkpoints: frontend dev 0a4a793 (application 865354a), backend main deeb312. Перед push повторно fetch и интеграция программистки. Откат: frontend предыдущий dev артефакт; backend revert текущего самостоятельного изменения. SQL rollback удаляет только новую функцию; структуры/данные обычных книг не мигрируются. Проверенный same-ID прототип не выпускается.
+
+Текущий статус: код и локальная приёмка готовы. Front379unit/65browser, backend68targeted, nativeSQL39, обе сборки PASS. Полный backend:419pass/11fail — только 4 отсутствующих старых EPUB. Production additiveRPC применена, ACL проверены; backend commit74e977b подготовлен к автоматической выкладке. Live dev/QA и конечная проверка развёртывания ещё впереди. Предыдущий выпуск ниже — историческая проверенная точка, не доказательство новых изменений.
 
 ## Что действительно осталось
 
@@ -28,6 +41,6 @@ implementation_status: released_on_dev
 
 Исключённые пользователем отмена обработки, надёжное распознавание DRM, новые durable upload tasks, приоритетная очередь обложек и проект смешанных frontend не возвращаются в обязательный объём.
 
-## Решение о завершении
+## Предыдущая завершённая точка
 
 2026-10-01: UI-план завершён на dev и архивирован; доказательства остаются по прежним путям. Product worktree — `.local/reader-recovery-20261001`. Этот checkpoint — единственный изменяемый статус оставшейся работы; исторические отчёты не служат активными чеклистами.

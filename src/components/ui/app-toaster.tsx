@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FocusEvent } from 'react';
 import { usePathname } from 'next/navigation';
-import { CircleCheck, CircleAlert, Info, TriangleAlert, X } from 'lucide-react';
+import { CircleCheck, CircleAlert, Info, TriangleAlert } from 'lucide-react';
 import { Toaster } from 'sonner';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { createClient } from '@/lib/supabase/client';
@@ -74,15 +74,12 @@ export default function AppToaster() {
         visibleToasts={MAX_VISIBLE_NOTIFICATIONS}
         expand={hasFocus}
         duration={NOTIFICATION_DURATION_MS}
-        closeButton
         containerAriaLabel="Notifications"
-        toastOptions={{ closeButtonAriaLabel: 'Dismiss notification' }}
         icons={{
           success: <CircleCheck size={20} aria-hidden="true" />,
           info: <Info size={20} aria-hidden="true" />,
           warning: <TriangleAlert size={20} aria-hidden="true" />,
           error: <CircleAlert size={20} aria-hidden="true" />,
-          close: <X size={16} aria-hidden="true" />,
         }}
       />
     </div>

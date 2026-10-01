@@ -6,7 +6,7 @@ const fixture = `
 import React from 'react';
 export const getSignedUploadUrl=(bucket,path,signal)=>window.pending('signed',{path},signal);
 export const uploadToStorage=(url,file,type,signal)=>window.pending('storage',{name:file.name},signal);
-export const processBook=(path,name,size,signal)=>window.pending('process',{path,name,size},signal);
+export const processBook=(path,name,size,signal,retryBookId)=>window.pending('process',{path,name,size,retryBookId},signal);
 export {waitForBookJob,ApiRequestError,BookJobError} from './src/lib/api';
 export const trackApiRequest=()=>{};export const trackTranslateStreamClient=()=>{};export const setCachedBookMeta=()=>{};
 export const trackBookUploadStarted=()=>{};export const trackBookUploaded=()=>{};export const trackBookUploadFailed=()=>{};
@@ -26,7 +26,7 @@ import {applyUploadEvent} from './src/lib/bookshelfUploads';
 window.IS_REACT_ACT_ENVIRONMENT=true;window.calls={signed:[],storage:[],process:[],job:[]};window.events=[];
 window.pending=(kind,data,signal)=>new Promise((resolve,reject)=>{const abort=()=>reject(new Error('aborted'));signal?.addEventListener('abort',abort,{once:true});window.calls[kind].push({data,resolve:value=>{signal?.removeEventListener('abort',abort);resolve(value)},reject:error=>{signal?.removeEventListener('abort',abort);reject(new Error(error))},signal});});
 window.fetch=(url,init)=>window.pending('job',{url:String(url)},init?.signal).then(value=>new Response(JSON.stringify(value),{status:value.httpStatus??200,headers:{'content-type':'application/json'}}));
-function App(){const[open,setOpen]=useState(true);const[uploads,setUploads]=useState([]);const[disabled,setDisabled]=useState(false);const[resume,setResume]=useState(null);const[refreshes,setRefreshes]=useState(0);return <><button onClick={()=>{setResume(null);setOpen(true)}}>Open upload</button><button onClick={()=>setDisabled(value=>!value)}>Toggle offline</button><output aria-label="Refresh count">{refreshes}</output><div id="shelf">{uploads.map(upload=><div key={upload.attemptId} data-attempt={upload.attemptId}>{upload.phase==='complete'?<article>Ready {upload.bookId}</article>:<article aria-label="Book upload"><p>{upload.phase==='error'?'Upload failed':upload.phase==='status_unknown'?'Status unknown':'Processing book…'}</p><p>{upload.error}</p><button onClick={()=>{setResume(upload);setOpen(true)}}>Resume upload</button><button onClick={()=>setUploads(items=>items.filter(item=>item.attemptId!==upload.attemptId))}>Dismiss</button></article>}</div>)}</div><UploadBookModal disabled={disabled} resumeUpload={resume} onRefreshLibrary={()=>setRefreshes(value=>value+1)} onSignIn={()=>{window.signInCalls=(window.signInCalls??0)+1}} isOpen={open} onClose={()=>setOpen(false)} onUploadEvent={event=>{window.events.push(event);setUploads(items=>applyUploadEvent(items,event));}}/></>}
+function App(){const[open,setOpen]=useState(true);const[uploads,setUploads]=useState([]);const[disabled,setDisabled]=useState(false);const[resume,setResume]=useState(null);const[refreshes,setRefreshes]=useState(0);return <><button onClick={()=>{setResume(null);setOpen(true)}}>Open upload</button><button onClick={()=>setDisabled(value=>!value)}>Toggle offline</button><output aria-label="Refresh count">{refreshes}</output><div id="shelf">{uploads.map(upload=><div key={upload.attemptId} data-attempt={upload.attemptId}>{upload.phase==='complete'?<article>Ready {upload.bookId}</article>:<article aria-label="Book upload"><p>{upload.phase==='error'?'Upload failed':upload.phase==='status_unknown'?'Status unknown':'Processing book…'}</p><p>{upload.error}</p><button onClick={()=>{setResume(upload);setOpen(true)}}>Resume upload</button><button onClick={()=>setUploads(items=>items.filter(item=>item.attemptId!==upload.attemptId))}>Dismiss</button></article>}</div>)}</div><UploadBookModal disabled={disabled} resumeUpload={resume} onRefreshLibrary={()=>{setRefreshes(value=>value+1);return {books:[],error:null,offline:false,refreshing:false}}} onSignIn={()=>{window.signInCalls=(window.signInCalls??0)+1}} isOpen={open} onClose={()=>setOpen(false)} onUploadEvent={event=>{window.events.push(event);setUploads(items=>applyUploadEvent(items,event));}}/></>}
 
 const root=createRoot(document.getElementById('root'));await act(async()=>root.render(<App/>));
 window.check={async flush(){await act(async()=>{})},async resolve(kind,index,value){await act(async()=>window.calls[kind][index].resolve(value))},async reject(kind,index,error){await act(async()=>window.calls[kind][index].reject(error))},async unmount(){await act(async()=>root.unmount())},state(){return {events:window.events,calls:Object.fromEntries(Object.entries(window.calls).map(([k,v])=>[k,v.map(x=>({data:x.data,aborted:x.signal?.aborted}))]))}}};
@@ -143,10 +143,10 @@ try {
  await resolve(page,'signed',0,{signedUrl:'http://synthetic/order'});await resolve(page,'storage',0,null);
  await resolve(page,'process',0,{id:'ready-order-book',order_confirmed:false});
  assert.equal((await state(page)).events.at(-1).phase,'complete');assert.equal((await state(page)).events.at(-1).issue,'order_unconfirmed');
- assert.equal(await page.getByText('The book is ready. Your library could not be updated.',{exact:true}).count(),1);
+ assert.equal(await page.getByRole('dialog').count(),0);
  assert.equal(await page.getByRole('button',{name:'Upload',exact:true}).count(),0);
- await page.getByRole('button',{name:'Refresh library',exact:true}).click();assert.equal((await state(page)).calls.process.length,1);
- passed.push('sync ready orderfalse preserves completion and offers library refresh, never file-format guidance/reimport');await page.close();
+ assert.equal((await state(page)).calls.process.length,1);
+ passed.push('sync ready orderfalse preserves completion and closes its modal; the page owns library recovery without ready-warning duplication/reimport');await page.close();
  page=await create();await page.locator('input[type=file]').setInputFiles({name:'offline.epub',mimeType:'application/epub+zip',buffer:Buffer.from('PK synthetic')});
  await page.getByRole('button',{name:'Toggle offline'}).click();
  assert.equal(await page.getByRole('button',{name:'Upload',exact:true}).isDisabled(),true);assert.equal(await page.locator('input[type=file]').isDisabled(),true);

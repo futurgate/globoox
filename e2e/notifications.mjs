@@ -20,7 +20,8 @@ window.check = {
   notify(operationId='upload',event='ready',action=true) { return notifications.notify({ scope,operationId,event,title:'Book ready to read',description:'Your new book is available.',kind:'success',action:action?{label:'Open',onClick:()=>actions++}:undefined }); },
   scope(key) { savedScope=scope; scope=notifications.setNotificationScope(key); },
   late() { return notifications.notify({scope:savedScope,operationId:'late',event:'ready',title:'Stale title'}); },
-  suppress(value) { notifications.setNotificationsSuppressed(value); },
+  suppress(value,owner='modal',mode='drop') { notifications.setNotificationsSuppressed(value,owner,mode); },
+  cancel(operationId) { notifications.dismissNotification(scope,operationId); },
   auth(userId,event='SIGNED_IN') { window.__auth(event,userId?{user:{id:userId}}:null); },
   actions() { return actions; },
 };
@@ -72,6 +73,8 @@ try {
   assert.equal(await page.locator('[role="status"], [role="alert"]').count(), 0);
   const toast = page.locator(selector);
   assert.equal(await toast.locator('[data-button]').count(), 1);
+  assert.equal(await toast.locator('[data-close-button]').count(), 0);
+  assert.equal(await toast.evaluate(node => getComputedStyle(node).paddingRight), '16px');
   const style = await toast.evaluate(node => ({ color: getComputedStyle(node).backgroundColor, bottom: getComputedStyle(node.parentElement).bottom, zIndex: getComputedStyle(node.parentElement).zIndex }));
   assert.equal(style.color, 'rgb(255, 255, 255)');
   assert.equal(style.bottom, '76px');
@@ -128,7 +131,7 @@ try {
       probe.style.color = 'var(--app-text-muted)';
       document.body.appendChild(probe);
       const expected = getComputedStyle(probe);
-      const result = getComputedStyle(node).backgroundColor === expected.backgroundColor && getComputedStyle(node.querySelector('[data-close-button]')).color === expected.color;
+      const result = getComputedStyle(node).backgroundColor === expected.backgroundColor && getComputedStyle(node.querySelector('[data-description]')).color === expected.color;
       probe.remove();
       return result;
     });
@@ -161,6 +164,31 @@ try {
   await page.locator(`${selector} [data-button]`).click();
   assert.equal(await run(page, 'actions'), 1);
   results.push('same-event dedup, modal clears without backlog, auth reset rejects late results, current action works');
+  await page.close();
+
+  page = await fixture();
+  await run(page, 'suppress', true, 'delete', 'defer');
+  for (const operation of ['old', 'cancelled', 'third', 'fourth']) await run(page, 'notify', operation);
+  await run(page, 'cancel', 'cancelled');
+  await run(page, 'notify', 'third', 'updated');
+  assert.equal(await page.locator(selector).count(), 0);
+  await run(page, 'suppress', false, 'delete');
+  assert.equal(await page.locator(selector).count(), 2);
+  assert.equal(await page.locator(`${selector}[data-testid$=":old"], ${selector}[data-testid$=":cancelled"]`).count(), 0);
+  assert.equal(await page.locator('[data-close-button]').count(), 0);
+  await page.locator(`${selector}[data-testid$=":third"] [data-button]`).click();
+  assert.equal(await run(page, 'actions'), 1);
+  results.push('unrelated dialog defers bounded latest results; cancelled result is discarded; released action works without close buttons');
+  await page.close();
+
+  page = await fixture();
+  await run(page, 'suppress', true, 'sort', 'defer');
+  await run(page, 'notify', 'before-navigation');
+  await run(page, 'scope', null);
+  await run(page, 'suppress', false, 'sort');
+  assert.equal(await page.locator(selector).count(), 0);
+  assert.equal(await run(page, 'late'), null);
+  results.push('navigation scope cleanup discards deferred results and rejects the previous scope');
   await page.close();
   console.log(JSON.stringify({ passed: results.length, fixtureOnly: true, results }, null, 2));
 } finally {

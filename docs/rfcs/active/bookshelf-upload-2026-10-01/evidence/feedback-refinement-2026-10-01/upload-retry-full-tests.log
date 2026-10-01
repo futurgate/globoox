@@ -1,0 +1,1420 @@
+
+ RUN  v4.0.18 /Users/user/Documents/github/globooks/.local/reader-recovery-20261001
+
+ ✓ server/utils/__tests__/chapters-timing.test.ts (14 tests) 203ms
+ ✓ server/utils/__tests__/translation-stream-recovery.test.ts (9 tests) 231ms
+stderr | server/utils/__tests__/legacy-books-routes.test.ts > legacy books HTTP contract > database metadata errors remain JSON failure or NDJSON error without done
+[h3] [unhandled] H3Error: share-links: synthetic statement timeout
+    at fetchFromDb (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/share-links.ts:48:20)
+    ... 3 lines matching cause stack trace ...
+    at Server.toNodeHandle (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2303:7) {
+  cause: Error: share-links: synthetic statement timeout
+      at fetchFromDb (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/share-links.ts:48:20)
+      at processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at Object.handler (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/api/books.get.ts:123:8)
+      at Object.handler (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2011:19)
+      at Server.toNodeHandle (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2303:7),
+  statusCode: 500,
+  fatal: false,
+  unhandled: true,
+  statusMessage: undefined,
+  data: undefined
+}
+
+ ✓ server/utils/__tests__/catalog-v2-covers.test.ts (5 tests) 116ms
+stderr | server/utils/__tests__/legacy-books-routes.test.ts > legacy bounded cover query contract > keeps full public/share TTL caches and clears failed cache promises for retry
+[h3] [unhandled] H3Error: books cover: synthetic statement timeout
+    at readCover (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/legacy-book-covers.ts:26:19)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at worker (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/legacy-book-covers.ts:61:25)
+    at async Promise.all (index 0)
+    at hydrate (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/legacy-book-covers.ts:68:5)
+    at Object.handler (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/api/books.get.ts:123:8)
+    at Object.handler (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2011:19)
+    at Server.toNodeHandle (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2303:7) {
+  cause: { message: 'synthetic statement timeout', code: '57014' },
+  statusCode: 500,
+  fatal: false,
+  unhandled: true,
+  statusMessage: undefined,
+  data: undefined
+}
+
+ ✓ server/utils/__tests__/epub-writer.test.ts (13 tests) 210ms
+stderr | server/utils/__tests__/legacy-books-routes.test.ts > legacy bounded cover query contract > preserves null covers, drops concurrently deleted books and does not hide cover failures
+[h3] [unhandled] H3Error: books cover: synthetic statement timeout
+    at readCover (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/legacy-book-covers.ts:26:19)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at worker (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/legacy-book-covers.ts:61:25)
+    at async Promise.all (index 0)
+    at hydrate (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/legacy-book-covers.ts:68:5)
+    at Object.handler (/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/api/books.get.ts:133:25)
+    at Object.handler (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2011:19)
+    at Server.toNodeHandle (file:///Users/user/Documents/github/globooks/node_modules/h3/dist/index.mjs:2303:7) {
+  cause: { message: 'synthetic statement timeout', code: '57014' },
+  statusCode: 500,
+  fatal: false,
+  unhandled: true,
+  statusMessage: undefined,
+  data: undefined
+}
+
+ ✓ server/utils/__tests__/legacy-books-routes.test.ts (12 tests) 290ms
+ ✓ server/utils/__tests__/content-cover-lazy.test.ts (14 tests) 30ms
+ ✓ server/utils/__tests__/legacy-book-covers.test.ts (6 tests) 84ms
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves process no-Redis response fields and canonical dedup ID
+[process][backend] {
+  uploadRequestId: 'srv_1790890001063_ikf7kg',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'owner/new.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves multipart no-Redis response fields and canonical dedup ID
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001067_h459zq',
+  stage: 'file_received',
+  elapsedMs: 0,
+  fileName: 'file.epub',
+  fileSize: 4,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves multipart no-Redis response fields and canonical dedup ID
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001067_h459zq',
+  stage: 'file_stored',
+  elapsedMs: 1,
+  storagePath: 'owner/1790890001068-file.epub'
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > never returns a process success when the shared processor reports a persistence failure
+[process][backend] {
+  uploadRequestId: 'srv_1790890001069_n3xhxc',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'owner/new.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > never returns a multipart success when the shared processor reports a persistence failure
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001069_bv3smb',
+  stage: 'file_received',
+  elapsedMs: 0,
+  fileName: 'file.epub',
+  fileSize: 4,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > never returns a multipart success when the shared processor reports a persistence failure
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001069_bv3smb',
+  stage: 'file_stored',
+  elapsedMs: 0,
+  storagePath: 'owner/1790890001069-file.epub'
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > rejects failed multipart storage before registering or processing a book
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001070_5ytozi',
+  stage: 'file_received',
+  elapsedMs: 0,
+  fileName: 'file.epub',
+  fileSize: 4,
+  userId: 'owner',
+  queueMode: false
+}
+
+ ✓ server/utils/__tests__/reading-position-race.test.ts (6 tests) 66ms
+stderr | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > rejects failed multipart storage before registering or processing a book
+[upload] Storage upload failed: Synthetic storage failure
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves process malformed EPUB 422 from the shared processor
+[process][backend] {
+  uploadRequestId: 'srv_1790890001070_jwyazb',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'owner/bad.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves multipart malformed EPUB 422 from the shared processor
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001071_kmdwep',
+  stage: 'file_received',
+  elapsedMs: 0,
+  fileName: 'file.epub',
+  fileSize: 4,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves multipart malformed EPUB 422 from the shared processor
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001071_kmdwep',
+  stage: 'file_stored',
+  elapsedMs: 0,
+  storagePath: 'owner/1790890001071-file.epub'
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > keeps the queued process body and uses server-created timestamp even when caller supplies another
+[process][backend] {
+  uploadRequestId: 'srv_1790890001071_tmk56i',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'owner/new.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: true
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > keeps the queued multipart body and uses server-created timestamp even when caller supplies another
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001074_f6t9bq',
+  stage: 'file_received',
+  elapsedMs: 0,
+  fileName: 'file.epub',
+  fileSize: 4,
+  userId: 'owner',
+  queueMode: true
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > keeps the queued multipart body and uses server-created timestamp even when caller supplies another
+[upload][backend] {
+  uploadRequestId: 'srv_1790890001074_f6t9bq',
+  stage: 'file_stored',
+  elapsedMs: 0,
+  storagePath: 'owner/1790890001074-file.epub'
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > replaces an explicit retry with a new ID and new server upload time (queue true)
+[process][backend] {
+  uploadRequestId: 'srv_1790890001074_sw36m8',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'fresh-uuid.epub',
+  file_size: 123,
+  userId: 'owner',
+  queueMode: true
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > replaces an explicit retry with a new ID and new server upload time (queue false)
+[process][backend] {
+  uploadRequestId: 'srv_1790890001075_pgbm8b',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'fresh-uuid.epub',
+  file_size: 123,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves retry rejection 404 and never falls back to a new upload
+[process][backend] {
+  uploadRequestId: 'srv_1790890001075_2xo2cd',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'fresh-uuid.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves retry rejection 409 and never falls back to a new upload
+[process][backend] {
+  uploadRequestId: 'srv_1790890001075_56x0bq',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'fresh-uuid.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: false
+}
+
+stdout | server/utils/__tests__/upload-entrypoints.test.ts > upload entrypoints share durable inline and queued processor > preserves retry rejection 503 and never falls back to a new upload
+[process][backend] {
+  uploadRequestId: 'srv_1790890001076_mkjb7x',
+  stage: 'request_received',
+  elapsedMs: 0,
+  file_path: 'fresh-uuid.epub',
+  file_size: undefined,
+  userId: 'owner',
+  queueMode: false
+}
+
+ ✓ server/utils/__tests__/upload-entrypoints.test.ts (16 tests) 95ms
+ ✓ server/utils/__tests__/upload-job-preview.test.ts (9 tests) 55ms
+ ✓ server/utils/__tests__/catalog-v2-routes.test.ts (7 tests) 80ms
+ ✓ server/utils/__tests__/lemonsqueezy.test.ts (25 tests) 8ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > awaits the PromiseLike failure write without masking the original error: saved
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > awaits the PromiseLike failure write without masking the original error: saved
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 1,
+  error: 'Storage download failed: original storage outage'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > awaits the PromiseLike failure write without masking the original error: returned error
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stderr | server/utils/__tests__/translation-limit.test.ts > evaluateTranslationUsage > fails open (allowed) when the RPC errors
+[translation-limit] RPC error: { message: 'db down' }
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > awaits the PromiseLike failure write without masking the original error: returned error
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 0,
+  error: 'Storage download failed: original storage outage'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > awaits the PromiseLike failure write without masking the original error: rejected
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > awaits the PromiseLike failure write without masking the original error: rejected
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 0,
+  error: 'Storage download failed: original storage outage'
+}
+
+ ✓ server/utils/__tests__/translation-limit.test.ts (21 tests) 8ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 2,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 5,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 11
+}
+
+ ✓ server/utils/__tests__/upload-retry.test.ts (19 tests) 39ms
+ ✓ server/utils/__tests__/fiction-pipeline.test.ts (15 tests) 6ms
+ ✓ server/utils/__tests__/llm-provider.test.ts (16 tests) 22ms
+ ✓ server/utils/__tests__/inline.test.ts (14 tests) 140ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parsed',
+  elapsedMs: 107,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'chapters_inserted',
+  elapsedMs: 107,
+  count: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_start',
+  elapsedMs: 107,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_batch_done',
+  elapsedMs: 107,
+  batchNo: 1,
+  batchSize: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > new book: sets file_hash, inserts chapters + blocks, marks ready, never deletes
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'book_ready',
+  elapsedMs: 107,
+  totalDurationMs: 107
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > dedup match: links user to existing book, deletes the pending row, skips parsing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > dedup match: links user to existing book, deletes the pending row, skips parsing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > dedup match: links user to existing book, deletes the pending row, skips parsing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 11,
+  fileHash: '0fc103a75151a4f60074cc18b0fd4e52d7f7a58e73e02f62f15e630dea50fe9e'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > dedup match: links user to existing book, deletes the pending row, skips parsing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'dedup_match',
+  elapsedMs: 11,
+  existingBookId: 'existing-1',
+  title: 'Existing Book'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a metadata write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a metadata write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a metadata write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 5,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+ ✓ server/utils/__tests__/block-batch.test.ts (31 tests) 7ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a metadata write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 5
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a metadata write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 29,
+  error: 'Parsed book metadata could not be saved'
+}
+
+ ✓ server/utils/__tests__/upload-enqueue.test.ts (6 tests) 9ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a chapters write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 8,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a chapters write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 8,
+  fileSize: 1848
+}
+
+ ✓ server/utils/__tests__/subscription.test.ts (20 tests) 72ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a chapters write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 90,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a chapters write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 90
+}
+
+ ✓ server/utils/__tests__/fiction-overwrite.test.ts (5 tests) 9ms
+ ✓ server/utils/__tests__/reading-position-commit.test.ts (3 tests) 93ms
+ ✓ server/utils/__tests__/epub-metadata-preview.test.ts (3 tests) 312ms
+ ✓ server/utils/__tests__/catalog-v2.test.ts (8 tests) 6ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a chapters write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parsed',
+  elapsedMs: 144,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a chapters write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 145,
+  error: 'Upload chapters could not be saved completely'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 3,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 3
+}
+
+ ✓ server/utils/__tests__/translation-usage-rpc.test.ts (11 tests) 4ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parsed',
+  elapsedMs: 19,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'chapters_inserted',
+  elapsedMs: 20,
+  count: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_start',
+  elapsedMs: 20,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a blocks write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 20,
+  error: 'Content blocks batch 1 failed: undefined'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 1,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parsed',
+  elapsedMs: 20,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'chapters_inserted',
+  elapsedMs: 21,
+  count: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_start',
+  elapsedMs: 21,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_batch_done',
+  elapsedMs: 21,
+  batchNo: 1,
+  batchSize: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never reports ready after a ready write failure
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 21,
+  error: 'Ready state could not be saved'
+}
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 5 }
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 15 }
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 3,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 3
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parsed',
+  elapsedMs: 18,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 30 }
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'chapters_inserted',
+  elapsedMs: 18,
+  count: 1
+}
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 45 }
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_start',
+  elapsedMs: 18,
+  totalBlocks: 2
+}
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 90 }
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_batch_done',
+  elapsedMs: 18,
+  batchNo: 1,
+  batchSize: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'book_ready',
+  elapsedMs: 18,
+  totalDurationMs: 18
+}
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 98 }
+
+stderr | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > publishes parsed metadata before inserting chapters and tolerates broken progress delivery
+[epub-worker] Progress delivery failed { bookId: 'pending-1', pct: 100 }
+
+ ✓ server/utils/__tests__/blocklist.test.ts (10 tests) 3ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > resumes a ready book without downloading or modifying content, and preserves it when ordering fails
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 0,
+  error: 'Upload order could not be confirmed'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never changes another account book when the persisted upload owner mismatches
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 0,
+  error: 'Upload owner mismatch'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > resumes canonical dedup after an ordering outage with the original upload stamp and never removes its source file
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'shared/original.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > resumes canonical dedup after an ordering outage with the original upload stamp and never removes its source file
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > resumes canonical dedup after an ordering outage with the original upload stamp and never removes its source file
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 0,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > resumes canonical dedup after an ordering outage with the original upload stamp and never removes its source file
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'dedup_match',
+  elapsedMs: 0,
+  existingBookId: 'existing-1',
+  title: 'Existing title'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > resumes canonical dedup after an ordering outage with the original upload stamp and never removes its source file
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 1,
+  error: 'Upload order could not be confirmed'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt or delete a hash match that is still processing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt or delete a hash match that is still processing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt or delete a hash match that is still processing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 1,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt or delete a hash match that is still processing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'dedup_match',
+  elapsedMs: 1,
+  existingBookId: 'other-pending',
+  title: undefined
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt or delete a hash match that is still processing
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 2,
+  error: 'Identical book is still being processed; retry required'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt a canonical book when explicit retry already removed the old failed source
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt a canonical book when explicit retry already removed the old failed source
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt a canonical book when explicit retry already removed the old failed source
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 1,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt a canonical book when explicit retry already removed the old failed source
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'dedup_match',
+  elapsedMs: 1,
+  existingBookId: 'canonical',
+  title: undefined
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > does not adopt a canonical book when explicit retry already removed the old failed source
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 1,
+  error: 'Upload attempt is no longer available'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 1,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 1,
+  error: 'A partial import already exists. Upload this file again to retry safely.'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'file_hash_computed',
+  elapsedMs: 1,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'epub_parse_start',
+  elapsedMs: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'epub_parsed',
+  elapsedMs: 18,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'chapters_inserted',
+  elapsedMs: 18,
+  count: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'blocks_start',
+  elapsedMs: 18,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'blocks_batch_done',
+  elapsedMs: 18,
+  batchNo: 1,
+  batchSize: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > preserves partial content, releases its hash, and allows a fresh upload to complete
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'fresh-2',
+  stage: 'book_ready',
+  elapsedMs: 18,
+  totalDurationMs: 18
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 1,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 1,
+  fileSize: 1848
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'file_hash_computed',
+  elapsedMs: 1,
+  fileHash: '4ed59d82c515163bbadb35acae960a1ad5d18c01ad1fdcfb8467a91ed077475f'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parse_start',
+  elapsedMs: 1
+}
+
+ ✓ server/utils/__tests__/translation-cost.test.ts (11 tests) 4ms
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'epub_parsed',
+  elapsedMs: 18,
+  title: 'Tiny Book',
+  chapters: 1,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'chapters_inserted',
+  elapsedMs: 18,
+  count: 1
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_start',
+  elapsedMs: 18,
+  totalBlocks: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'blocks_batch_done',
+  elapsedMs: 18,
+  batchNo: 1,
+  batchSize: 2
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > never downgrades or clears the hash when ready committed but its response was lost
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 18,
+  error: 'Ready state could not be saved'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > reports malformed EPUB as 422 without claiming parsed metadata or readiness
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_start',
+  elapsedMs: 0,
+  filePath: 'user/123-tiny.epub'
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > reports malformed EPUB as 422 without claiming parsed metadata or readiness
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'download_done',
+  elapsedMs: 0,
+  fileSize: 15
+}
+
+stdout | server/jobs/__tests__/epub-processor.test.ts > processEpubJob > reports malformed EPUB as 422 without claiming parsed metadata or readiness
+[epub-worker] {
+  uploadRequestId: 'req-1',
+  bookId: 'pending-1',
+  stage: 'failed',
+  elapsedMs: 0,
+  error: 'File is not a readable EPUB archive'
+}
+
+ ✓ server/jobs/__tests__/epub-processor.test.ts (18 tests) 464ms
+ ✓ server/utils/__tests__/fiction-stage-costs.test.ts (6 tests) 3ms
+ ❯ server/utils/__tests__/epub-parser.test.ts (77 tests | 11 failed) 6322ms
+     ✓ extracts title, author and language from OPF metadata 115ms
+     ✓ falls back to filename when title is missing 36ms
+     ✓ falls back to "Unknown" when author is missing 101ms
+     ✓ returns null language when not specified 56ms
+     ✓ throws on missing container.xml 2ms
+     ✓ throws on malformed container.xml (no rootfile) 19ms
+     ✓ extracts cover image as base64 data URL 18ms
+     ✓ returns null cover when EPUB has no cover image 15ms
+     ✓ returns empty chapters array when there are no TOC entries 10ms
+     ✓ parses chapters from EPUB 3 nav document 26ms
+     ✓ parses chapters from EPUB 2 NCX 24ms
+     ✓ extracts paragraph blocks 18ms
+     ✓ captures inline emphasis as marks over plain text 17ms
+     ✓ captures <br> as a line-break mark 13ms
+     ✓ extracts heading blocks with correct level 14ms
+     ✓ extracts blockquote as quote block 11ms
+     ✓ extracts ul/ol as list block with items array 14ms
+     ✓ extracts img as image block with src and alt 10ms
+     ✓ extracts hr as hr block 12ms
+     ✓ recurses into div containers with block children 10ms
+     ✓ treats div with only text (no block children) as paragraph 13ms
+     ✓ recurses into section elements 10ms
+     ✓ skips empty paragraphs and headings 12ms
+     ✓ skips img blocks with empty src 11ms
+     ✓ handles mixed content: heading, paragraph, list, quote, hr 9ms
+     ✓ extracts content for fragment-based chapters from the same file 13ms
+     ✓ preserves chapter order across fragment chapters from different files 16ms
+     ✓ sets depth=1 and parentIndex=null for top-level chapters 8ms
+     ✓ parses nested TOC entries with depth and parentIndex 19ms
+     ✓ derives content as joined text from non-image, non-hr blocks 12ms
+     ✓ includes list items joined by newline in content 10ms
+     ✓ uses spine order when EPUB has no TOC document 11ms
+       ✓ parses successfully  1435ms
+       ✓ extracts correct metadata 0ms
+       ✓ has cover image 0ms
+       ✓ extracts multiple chapters with content blocks 0ms
+       ✓ extracts at least 500 total content blocks 0ms
+       ✓ includes paragraph blocks 0ms
+       ✓ includes heading blocks 0ms
+       ✓ has chapters with TOC hierarchy (parentIndex set on some chapters) 0ms
+       ✓ each chapter has href and title 1ms
+       ✓ paragraph blocks have non-empty text 1ms
+       ✓ heading blocks have level between 1-6 4ms
+       ✓ list blocks have items array with strings 20ms
+       ✓ content field is derived correctly (non-empty for chapters with text blocks) 0ms
+       ✓ parses successfully  912ms
+       ✓ extracts correct metadata 0ms
+       ✓ has cover image 0ms
+       ✓ extracts chapters with content blocks 0ms
+       ✓ extracts at least 500 total content blocks 0ms
+       ✓ includes all expected block types 0ms
+       ✓ parses without throwing  2696ms
+       ✓ extracts correct metadata 0ms
+       ✓ has cover image 0ms
+       ✓ extracts many TOC chapters 0ms
+       ✓ has deep TOC hierarchy (depth > 1) 0ms
+     ✓ block fields match DB insertion requirements 11ms
+     ✓ every chapter has all required ParsedChapter fields 11ms
+       × parses successfully 3ms
+       × extracts meaningful content blocks (nav-in-subdir + heading-anchored TOC) 0ms
+       × content chapters have paragraph blocks, not just headings 0ms
+     ✓ captures full chapter content when fragment id points to h2 inside <header> 12ms
+     ✓ extracts content from next spine file when fragment is a <pagebreak> at end of file 16ms
+     ✓ extracts content from next spine file when fragment is an empty <a> anchor at end of file 12ms
+     × parses successfully 0ms
+     × extracts substantial content for main chapters 0ms
+     ✓ parses successfully  477ms
+     ✓ keeps Пролог before Глава 1 (does not swap file-sharing siblings) 0ms
+     ✓ does not steal Глава 1 content into the title entry 0ms
+     × parses successfully 0ms
+     × extracts blocks (nav hrefs with ../ segments resolve correctly) 0ms
+     × detects French language 0ms
+     × parses successfully 0ms
+     × splits chapters wrapped in nested <span> into many blocks 0ms
+     × promotes <div class="titleN"> titles to heading blocks at the right level 0ms
+     ✓ descends into <span><span><p/></span></span> instead of flattening 10ms
+     ✓ keeps purely inline <span><span>text</span></span> as a single paragraph 9ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > parseEpubBuffer — real books (qa-books) > The Anxious Person's Guide to Non-Monogamy (nav-in-subdir + heading-fragment TOC) > parses successfully
+Error: ENOENT: no such file or directory, open '/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/qa-books/dokumen_pub_the_anxious_persons_guide_to_non_monogamy_1839972130.epub'
+ ❯ loadEpub server/utils/__tests__/epub-parser.test.ts:12:10
+     10|
+     11| function loadEpub(filename: string): Buffer {
+     12|   return readFileSync(resolve(QA_BOOKS, filename))
+       |          ^
+     13| }
+     14|
+ ❯ server/utils/__tests__/epub-parser.test.ts:879:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > parseEpubBuffer — real books (qa-books) > The Anxious Person's Guide to Non-Monogamy (nav-in-subdir + heading-fragment TOC) > extracts meaningful content blocks (nav-in-subdir + heading-anchored TOC)
+Error: ENOENT: no such file or directory, open '/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/qa-books/dokumen_pub_the_anxious_persons_guide_to_non_monogamy_1839972130.epub'
+ ❯ loadEpub server/utils/__tests__/epub-parser.test.ts:12:10
+     10|
+     11| function loadEpub(filename: string): Buffer {
+     12|   return readFileSync(resolve(QA_BOOKS, filename))
+       |          ^
+     13| }
+     14|
+ ❯ server/utils/__tests__/epub-parser.test.ts:886:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > parseEpubBuffer — real books (qa-books) > The Anxious Person's Guide to Non-Monogamy (nav-in-subdir + heading-fragment TOC) > content chapters have paragraph blocks, not just headings
+Error: ENOENT: no such file or directory, open '/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/qa-books/dokumen_pub_the_anxious_persons_guide_to_non_monogamy_1839972130.epub'
+ ❯ loadEpub server/utils/__tests__/epub-parser.test.ts:12:10
+     10|
+     11| function loadEpub(filename: string): Buffer {
+     12|   return readFileSync(resolve(QA_BOOKS, filename))
+       |          ^
+     13| }
+     14|
+ ❯ server/utils/__tests__/epub-parser.test.ts:894:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: The Sociopath Next Door > parses successfully
+Error: ENOENT: no such file or directory, open '/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/qa-books/_OceanofPDF.com_The_Sociopath_Next_Door_-_Martha_Stout.epub'
+ ❯ loadEpub server/utils/__tests__/epub-parser.test.ts:12:10
+     10|
+     11| function loadEpub(filename: string): Buffer {
+     12|   return readFileSync(resolve(QA_BOOKS, filename))
+       |          ^
+     13| }
+     14|
+ ❯ server/utils/__tests__/epub-parser.test.ts:1124:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: The Sociopath Next Door > extracts substantial content for main chapters
+TypeError: Cannot read properties of undefined (reading 'chapters')
+ ❯ server/utils/__tests__/epub-parser.test.ts:1140:25
+    1138|     ]
+    1139|     for (const title of mainChapters) {
+    1140|       const ch = result.chapters.find(c => c.title === title)
+       |                         ^
+    1141|       expect(ch, `chapter "${title}" should exist`).toBeDefined()
+    1142|       expect(ch!.blocks.length, `chapter "${title}" should have more t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: La Vie des Abeilles > parses successfully
+Error: ENOENT: no such file or directory, open '/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/qa-books/maeterlinck_la_vie_des_abeilles.epub'
+ ❯ loadEpub server/utils/__tests__/epub-parser.test.ts:12:10
+     10|
+     11| function loadEpub(filename: string): Buffer {
+     12|   return readFileSync(resolve(QA_BOOKS, filename))
+       |          ^
+     13| }
+     14|
+ ❯ server/utils/__tests__/epub-parser.test.ts:1191:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: La Vie des Abeilles > extracts blocks (nav hrefs with ../ segments resolve correctly)
+TypeError: Cannot read properties of undefined (reading 'chapters')
+ ❯ server/utils/__tests__/epub-parser.test.ts:1197:32
+    1195|
+    1196|   it('extracts blocks (nav hrefs with ../ segments resolve correctly)'…
+    1197|     const totalBlocks = result.chapters.reduce((sum, ch) => sum + ch.b…
+       |                                ^
+    1198|     expect(totalBlocks).toBeGreaterThan(100)
+    1199|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: La Vie des Abeilles > detects French language
+TypeError: Cannot read properties of undefined (reading 'language')
+ ❯ server/utils/__tests__/epub-parser.test.ts:1202:19
+    1200|
+    1201|   it('detects French language', () => {
+    1202|     expect(result.language).toBe('FR')
+       |                   ^
+    1203|   })
+    1204| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: Моя жизнь > parses successfully
+Error: ENOENT: no such file or directory, open '/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/qa-books/МояЖизнь2.epub'
+ ❯ loadEpub server/utils/__tests__/epub-parser.test.ts:12:10
+     10|
+     11| function loadEpub(filename: string): Buffer {
+     12|   return readFileSync(resolve(QA_BOOKS, filename))
+       |          ^
+     13| }
+     14|
+ ❯ server/utils/__tests__/epub-parser.test.ts:1214:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: Моя жизнь > splits chapters wrapped in nested <span> into many blocks
+TypeError: Cannot read properties of undefined (reading 'chapters')
+ ❯ server/utils/__tests__/epub-parser.test.ts:1222:23
+    1220|     // Chapters in this book are wrapped as <body><span><span><span>..…
+    1221|     // Direct-children block detection collapsed everything into one p…
+    1222|     const ch = result.chapters.find(c => c.title === 'Упрямство')
+       |                       ^
+    1223|     expect(ch, 'chapter "Упрямство" should exist').toBeDefined()
+    1224|     expect(ch!.blocks.length).toBeGreaterThan(20)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯
+
+ FAIL  server/utils/__tests__/epub-parser.test.ts > real book: Моя жизнь > promotes <div class="titleN"> titles to heading blocks at the right level
+TypeError: Cannot read properties of undefined (reading 'chapters')
+ ❯ server/utils/__tests__/epub-parser.test.ts:1230:23
+    1228|     // Chapter titles in this book are marked as <div class="title4"><…
+    1229|     // rather than semantic <hN>. The parser should recognize the clas…
+    1230|     const ch = result.chapters.find(c => c.title === 'Упрямство')
+       |                       ^
+    1231|     expect(ch!.blocks[0]).toEqual(
+    1232|       expect.objectContaining({ type: 'heading', level: 4, text: 'Упря…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/11]⎯
+
+
+ Test Files  1 failed | 29 passed (30)
+      Tests  11 failed | 419 passed (430)
+   Start at  23:26:40
+   Duration  7.31s (transform 2.00s, setup 0ms, import 5.76s, tests 8.99s, environment 2ms)

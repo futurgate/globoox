@@ -17,7 +17,12 @@ export interface UploadBookEvent {
   jobId?: string;
   issue?: UploadIssue;
   orderConfirmed?: boolean;
+  retryBookId?: string;
+  replacesAttemptId?: string;
+  checkNumber?: number;
 }
+
+export type UploadRetryTarget = { bookId?: string; attemptId?: string };
 
 interface UploadBookModalProps {
   isOpen: boolean;
@@ -27,6 +32,7 @@ interface UploadBookModalProps {
   disabled?: boolean;
   /** Opening a previous attempt never resubmits its file or starts polling by itself. */
   resumeUpload?: UploadBookEvent | null;
+  retryUpload?: UploadRetryTarget | null;
   onRefreshLibrary?: () => void | Promise<unknown>;
   onSignIn?: () => void;
 }
@@ -62,7 +68,7 @@ function getUploadHelp(validation: boolean, failed: boolean) {
   }
 }
 
-export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadEvent, disabled = false, resumeUpload, onRefreshLibrary, onSignIn }: UploadBookModalProps) {
+export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadEvent, disabled = false, resumeUpload, retryUpload, onRefreshLibrary, onSignIn }: UploadBookModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
@@ -71,6 +77,8 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
   const [operation, setOperation] = useState<UploadBookEvent | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [reconciled, setReconciled] = useState(false);
+  const [reconciledRetry, setReconciledRetry] = useState<UploadRetryTarget | null | undefined>(undefined);
+  const [libraryHasUpload, setLibraryHasUpload] = useState(false);
   const activeAttempts = useRef(new Set<string>());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dialogEpoch = useRef(0);
@@ -93,6 +101,8 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
     setFile(null);
     setUploading(false);
     setReconciled(false);
+    setReconciledRetry(undefined);
+    setLibraryHasUpload(false);
   }, [isOpen, resumeAttemptId]);
   const uploadHelp = getUploadHelp(!!error && !operation, operation?.phase === 'error' && !operation.issue)
 
@@ -183,14 +193,14 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
       const book = uploadedCatalogItem(snapshot, true);
       publish('complete', { bookId: result.bookId, book, orderConfirmed: result.orderConfirmed,
         issue: result.orderConfirmed ? undefined : 'order_unconfirmed',
-        error: result.orderConfirmed ? undefined : 'The book is ready. Your library could not be updated.' });
+        error: result.orderConfirmed ? undefined : 'Unable to update the bookshelf.' });
       if (!alive()) return;
       Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: result.bookId }, level: 'info' });
       trackBookUploaded({ title: selected?.name ?? initial.fileName, author: 'Unknown', language: 'unknown', chapter_count: result.chapterCount, file_size_kb: fileSizeKb });
       onUploaded?.(result.bookId);
       if (currentDialog()) {
         setUploading(false);
-        if (result.orderConfirmed) handleClose();
+        handleClose();
       }
     };
     setUploading(true);
@@ -210,7 +220,7 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
         controller.signal.throwIfAborted();
         publish('processing');
         progress('Processing book…');
-        const response = await processBook(fileName, selected.name, selected.size, controller.signal);
+        const response = await processBook(fileName, selected.name, selected.size, controller.signal, initial.retryBookId);
         controller.signal.throwIfAborted();
         if ('jobId' in response && response.jobId) {
           publish('processing', { jobId: response.jobId, bookId: response.bookId });
@@ -236,6 +246,7 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
       if (!alive()) return;
       const status = err instanceof ApiRequestError ? err.status : undefined;
       const kind = err instanceof BookJobError ? err.kind : status === 401 ? 'auth_required' : status === 403 ? 'forbidden'
+        : status === 404 || status === 409 ? 'job_not_found'
         : status && [400, 413, 415, 422].includes(status) ? 'upload_rejected' : latest.jobId ? 'status_unknown' : 'upload_unconfirmed';
       if (err instanceof BookJobError && err.book) {
         const book = uploadedCatalogItem(err.book, false);
@@ -266,25 +277,42 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
 
   const handleUpload = () => {
     if (!file || uploading || disabled) return;
-    void runAttempt({ attemptId: crypto.randomUUID(), fileName: file.name, phase: 'uploading' }, file);
+    const retry = operation?.phase === 'error'
+      ? { bookId: operation.bookId, attemptId: operation.attemptId }
+      : reconciledRetry !== undefined ? reconciledRetry : retryUpload;
+    void runAttempt({ attemptId: crypto.randomUUID(), fileName: file.name, phase: 'uploading',
+      bookId: retry?.bookId, retryBookId: retry?.bookId, replacesAttemptId: retry?.attemptId }, file);
   };
   const checkStatus = () => {
     if (!operation?.jobId || uploading || operation.issue === 'job_not_found' || operation.issue === 'forbidden' || operation.issue === 'auth_required') return;
-    void runAttempt(operation);
+    void runAttempt({ ...operation, checkNumber: (operation.checkNumber ?? 0) + 1 });
   };
   const refreshLibrary = async () => {
     if (refreshing || !onRefreshLibrary) return;
     const epoch = dialogEpoch.current;
     setRefreshing(true);
-    try { await onRefreshLibrary(); } catch { /* The shelf retains its persistent connection message. */ }
+    try {
+      const response = await onRefreshLibrary();
+      if (!mounted.current || dialogEpoch.current !== epoch) return;
+      const view = response && typeof response === 'object' ? response as { books?: CatalogItem[]; error?: unknown; offline?: boolean; refreshing?: boolean } : null;
+      const confirmed = Boolean(view && Array.isArray(view.books) && !view.error && !view.offline && !view.refreshing);
+      setReconciled(confirmed);
+      if (confirmed) {
+        const id = operation?.bookId ?? operation?.retryBookId ?? retryUpload?.bookId;
+        const book = view!.books!.find(entry => entry.id === id);
+        setLibraryHasUpload(Boolean(book && book.processing_status !== 'error'));
+        setReconciledRetry({ bookId: book?.processing_status === 'error' ? book.id : undefined, attemptId: operation?.attemptId });
+      }
+    } catch { /* The shelf retains its persistent connection message. */ }
     finally {
-      if (mounted.current && dialogEpoch.current === epoch) { setRefreshing(false); setReconciled(true); }
+      if (mounted.current && dialogEpoch.current === epoch) setRefreshing(false);
     }
   };
   const chooseAgain = () => {
     setOperation(null);
     setError(null);
     setReconciled(false);
+    setLibraryHasUpload(false);
   };
 
   const handleClose = () => {
@@ -297,6 +325,8 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
     setOperation(null);
     setRefreshing(false);
     setReconciled(false);
+    setReconciledRetry(undefined);
+    setLibraryHasUpload(false);
     onClose();
   };
 
@@ -312,13 +342,14 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
         {disabled && <p role="status" className="text-sm text-muted-foreground">Uploads are unavailable while the library is offline. Refresh your library to reconnect.</p>}
         {!uploading && operation && (operation.phase === 'status_unknown' || operation.phase === 'complete') ? (
           <div className={`${sectionClassName} space-y-4`}>
-            <p role="status" className="text-sm">{operation.error ?? 'The book is ready.'}</p>
-            {(operation.issue === 'job_not_found' || operation.issue === 'upload_unconfirmed') && <p className="text-sm text-muted-foreground">The earlier upload may still appear in your library. Check there before choosing to upload the file again.</p>}
+            <p role="status" className="text-sm">{libraryHasUpload ? 'This book is already in your library.' : operation.error ?? 'The book is ready.'}</p>
+            {!libraryHasUpload && (operation.issue === 'job_not_found' || operation.issue === 'upload_unconfirmed') && <p className="text-sm text-muted-foreground">The earlier upload may still appear in your library. Check there before choosing to upload the file again.</p>}
             <IOSActionStack>
+              {libraryHasUpload && <IOSAction onClick={handleClose} emphasized>Back to library</IOSAction>}
               {operation.phase === 'status_unknown' && operation.jobId && !['job_not_found', 'auth_required', 'forbidden'].includes(operation.issue ?? '') && <IOSAction onClick={checkStatus} emphasized>Check status</IOSAction>}
               {operation.issue === 'auth_required' && onSignIn && <IOSAction onClick={onSignIn} emphasized>Sign in</IOSAction>}
               {onRefreshLibrary && <IOSAction onClick={() => void refreshLibrary()} disabled={refreshing}>{refreshing ? 'Refreshing…' : 'Refresh library'}</IOSAction>}
-              {(operation.issue === 'job_not_found' || operation.issue === 'upload_unconfirmed') && <IOSAction onClick={chooseAgain} disabled={disabled || !reconciled}>Upload again</IOSAction>}
+              {!libraryHasUpload && (operation.issue === 'job_not_found' || operation.issue === 'upload_unconfirmed') && <IOSAction onClick={chooseAgain} disabled={disabled || !reconciled}>Upload again</IOSAction>}
             </IOSActionStack>
           </div>
         ) : !uploading ? (
