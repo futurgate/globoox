@@ -43,6 +43,7 @@ The Supabase signup investigation remains unresolved. Its confirmed and unknown 
 |---|---|---|
 | [Bookshelf and Reader checkpoints](2026-10-01-reader-recovery/README.md) | Bookshelf v2 and Reader recovery released; old production landing restored; superseded loading plans and release evidence retained | [API and sync](../reference/architecture/api-and-sync.md), [current upload follow-up](../rfcs/active/bookshelf-upload-2026-10-01/README.md) |
 | [Bookshelf upload dev release](2026-10-01-bookshelf-upload/README.md) | Initial story accepted on dev; shared backend/DB released. Exact inputs, adverse results and rollback retained; this is not a production frontend release | [Feedback and recovery plan](../rfcs/active/bookshelf-upload-2026-10-01/README.md) |
+| [Upload feedback and notifications](2026-10-01-bookshelf-feedback/README.md) | Dev release accepted; truthful uncertain states, recoverable cards and shared Sonner; tests, live QA and rollback retained | [Remaining work checkpoint](../rfcs/active/bookshelf-upload-2026-10-01/README.md) |
 
 ## Archive rules
 

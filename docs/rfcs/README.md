@@ -13,7 +13,6 @@ RFCs describe proposed behavior and never override current reference documentati
 
 | RFC | Implementation | Main unresolved decision |
 |---|---|---|
-| [Bookshelf upload: feedback and recovery](active/bookshelf-upload-2026-10-01/README.md) | Implemented locally; dev acceptance pending | Verify deployment and live upload recovery; memory capacity remains unproven |
 | [Billing, entitlements, and translation access](active/billing-entitlements-and-translation-access.md) | Proposed; backend billing/quota skeleton exists but the target contract is not aligned | Align demo-only access, stable quota identity, and observable checkout activation |
 | [Reader adaptive typography](active/reader-adaptive-typography.md) | Not started | Language profiles and whether font auto-fit may override user settings |
 | [Translation orchestration](active/translation-orchestration.md) | Not started | Adaptive chunks and staged commits vs previous no-adaptive constraint |
@@ -21,6 +20,8 @@ RFCs describe proposed behavior and never override current reference documentati
 | [Offline-first and versioned sync](active/offline-first-sync.md) | Proposed | Delta/tombstone/outbox contracts and realistic online-only boundaries |
 
 ## Completed checkpoint
+
+- [Upload feedback and shared notifications](../archive/2026-10-01-bookshelf-feedback/README.md): dev `865354a`, automated and manual acceptance complete; production frontend unchanged. [Remaining work](active/bookshelf-upload-2026-10-01/README.md), including unproven EPUB memory capacity.
 
 - [Bookshelf upload dev release](../archive/2026-10-01-bookshelf-upload/README.md): initial upload story accepted on dev; shared backend/DB released, production frontend unchanged. Follow-up UX work is tracked separately above.
 

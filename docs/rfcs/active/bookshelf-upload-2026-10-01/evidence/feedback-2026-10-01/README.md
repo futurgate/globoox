@@ -7,7 +7,7 @@ last_verified: 2026-10-01
 
 # Upload feedback: release verification
 
-Local acceptance complete; dev deployment/live acceptance pending. Frontend base `426b9ba`; backend upload contract audited at `ed7b30d`, subsequent main `deeb312` changes admin fiction overwrite only. Backend checkout fast-forwarded; no backend push, deploy or DB migration performed for this release.
+Application `865354a` deployed and manually accepted on dev. [Deployment proof](deployment.json) confirms the dev alias matches its Vercel artifact and production JavaScript paths are unchanged. [Live acceptance](live-acceptance.json) preserves exact own-card/notification/Reader observations and scope limits. Frontend base `426b9ba`; backend upload contract audited at `ed7b30d`, subsequent main `deeb312` changes admin fiction overwrite only. Backend checkout fast-forwarded; no backend push, deploy or DB migration performed for this release.
 
 ## Automated evidence
 
@@ -32,7 +32,7 @@ Adverse API output includes expected DTO changes as well as recovery cases, not 
 
 ## Manual local acceptance
 
-Browser UI on loopback, actual MyBooks/cards/modal/AppToaster/controller, synthetic transport: start shows skeleton instead of filename; metadata fills parsed title; close modal and lose job connection shows unknown readiness inside transparent dashed cover plus toast; Check status resumes the same job; Ready keeps one readable card and Open toast. Confirmed failure shows permanent error and Upload again, opening the existing upload dialog. No live service failures were injected.
+Browser UI on loopback, actual MyBooks/cards/modal/AppToaster/controller, synthetic transport: start shows skeleton instead of filename; metadata fills parsed title; close modal and lose job connection shows unknown readiness inside transparent dashed cover plus toast; Check status resumes the same job; Ready keeps one readable card and Open toast. Confirmed failure shows permanent error and Upload again, opening the existing upload dialog. Ready + failed order was also manually exercised: Reader remained available, Restore connection + Refresh accepted the server manifest and showed Bookshelf updated. No live service failures were injected.
 
 - [Ready screenshot](manual-ready.png)
 - [Confirmed failure screenshot](manual-failed.png)
@@ -41,7 +41,7 @@ Four mobile visual cases at 390×844 cover unknown/Ready+order warning in light/
 
 ## Live inputs and limits
 
-[Exact own QA inputs](live-inputs.json): valid EPUB 1,902 bytes with filename deliberately different from parsed title; invalid 71-byte non-ZIP EPUB. Files are original disposable test material. Live execution/cleanup is recorded after deployment; their existence alone is not proof of upload.
+[Exact own QA inputs](live-inputs.json): valid EPUB 1,902 bytes with filename deliberately different from parsed title; invalid 71-byte non-ZIP EPUB. Files are original disposable test material. Live execution succeeded: initial skeleton at top, parsed title/cover, Ready/Open with closed modal, Reader EN text, repeat with same canonical ID and one card, confirmed failure with dashed cover/toast/retry, archive/restore, reload. Two own QA books removed; a later reload shows the six prior visible IDs, no QA cards and no offline banner.
 
 [Backend contract audit](backend-contract.json) explains why no server change is required. [Memory preflight](memory-preflight.json) records exact four real fixture hashes/sizes and a bounded protocol. Imports executed: **0**, concurrent pairs: **0**; no working equivalent 512 MiB Linux/container environment. No safe EPUB size or production memory resilience is claimed. Historical backend suite 389 PASS / 11 missing-fixture FAIL was not rerun for UI changes.
 

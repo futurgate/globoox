@@ -1,0 +1,119 @@
+{
+  "checked_at": "2026-10-01T15:11:29.107426+00:00",
+  "application_sha": "865354a582b355838fbb933f0b369241fe964bab",
+  "github_deployment": 6787781425,
+  "vercel_deployment": "HCK1reuSbJJCU7Pcs6fB6wnUKZqv",
+  "deployment_state": "success",
+  "pages": {
+    "dev": {
+      "status": 200,
+      "host": "https://dev.globoox.co",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/1deab49f97dac8b3.js",
+        "/_next/static/chunks/3d30082b55a4f985.js",
+        "/_next/static/chunks/57220301a7b58d39.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/c6c95dae778c2779.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "html_sha256": "28b7ee334f244b005fa83a7d5340416ccc0170798630e530a9ced966b5917b25"
+    },
+    "artifact": {
+      "status": 200,
+      "host": "https://globoox-am9bp220l-lomovski.vercel.app",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/1deab49f97dac8b3.js",
+        "/_next/static/chunks/3d30082b55a4f985.js",
+        "/_next/static/chunks/57220301a7b58d39.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/c6c95dae778c2779.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "html_sha256": "28b7ee334f244b005fa83a7d5340416ccc0170798630e530a9ced966b5917b25"
+    },
+    "production": {
+      "status": 200,
+      "host": "https://www.globoox.co",
+      "script_paths": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/782ebf24ddd7045d.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/aadc25fc394156f4.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ],
+      "html_sha256": "43dd84a6a9ddff71cce8aa7b64af393df7dcc813a2a1502bb24433a642beb986"
+    }
+  },
+  "dev_matches_artifact": true,
+  "production_script_paths_unchanged": true,
+  "marker_chunks": [
+    {
+      "path": "/_next/static/chunks/1deab49f97dac8b3.js",
+      "status": 200,
+      "sha256": "e083e47b68ffeb01b04f582c8420a21ce8bfa7550994fa431f94f10f731e4591",
+      "markers": [
+        "Notifications",
+        "app-toaster"
+      ]
+    },
+    {
+      "path": "/_next/static/chunks/3d30082b55a4f985.js",
+      "status": 200,
+      "sha256": "1d7976fb960b78051c5d39b426abbf49f079693d0dd19854a3b7db1040e9acdc",
+      "markers": [
+        "Unable to check readiness",
+        "Unable to confirm book readiness",
+        "Notifications"
+      ]
+    },
+    {
+      "path": "/_next/static/chunks/57220301a7b58d39.js",
+      "status": 200,
+      "sha256": "eba9fb0c7ff0eb07a3bbae34d16fbf369ec5d2e2729a673372cb0d5d24487272",
+      "markers": [
+        "Unable to check readiness"
+      ]
+    }
+  ],
+  "all_markers_found": true
+}
