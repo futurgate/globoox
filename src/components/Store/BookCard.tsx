@@ -404,6 +404,8 @@ export default function BookCard({
 }: BookCardProps) {
   const processing = processingStatus === 'pending' || processingStatus === 'processing';
   const failed = processingStatus === 'error';
+  const displayTitle = failed ? title || 'Untitled book' : title;
+  const displayAuthor = failed ? author || 'Unknown author' : author;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canHover, setCanHover] = useState<boolean | null>(null);
   const [isCardHovered, setIsCardHovered] = useState(false);
@@ -516,7 +518,7 @@ export default function BookCard({
                   ) : coverLoading || processing ? (
                     <Skeleton className="h-full w-full" aria-label="Loading cover" />
                   ) : (
-                    <FallbackCover id={id} title={title} author={author} />
+                    <FallbackCover id={id} title={displayTitle} author={displayAuthor} />
                   )}
 
                   {progress > 0 && (
@@ -539,12 +541,12 @@ export default function BookCard({
         disabled={isMenuOpen || processing || failed}
         onOpen={onOpen}
       >
-        {metadataLoading ? <div className="space-y-1.5" aria-label="Loading book details">
+        {metadataLoading && !failed ? <div className="space-y-1.5" aria-label="Loading book details">
           <Skeleton className="h-4 w-4/5" aria-label="Loading title" />
           <Skeleton className="h-3 w-3/5" aria-label="Loading author" />
         </div> : <>
-          <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{title || 'Untitled book'}</p>
-          <p className="text-xs text-muted-foreground line-clamp-1">{author}</p>
+          <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{displayTitle || 'Untitled book'}</p>
+          <p className="text-xs text-muted-foreground line-clamp-1">{displayAuthor}</p>
         </>}
       </BookCardLink>
       {(processing || failed || uploadError) && <p role="status" className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">

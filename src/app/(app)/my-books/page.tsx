@@ -190,7 +190,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
   const handleRequestDelete = useCallback((bookId: string) => {
     const book = books.find((entry) => entry.id === bookId);
     if (!book) return;
-    setDeleteTarget({ id: book.id, title: book.title });
+    setDeleteTarget({ id: book.id, title: book.metadata_ready === false ? 'Untitled book' : book.title.trim() || 'Untitled book' });
   }, [books]);
 
   const handleCancelDelete = useCallback(() => {

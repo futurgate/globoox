@@ -25,7 +25,7 @@ const mocks = {
   image: `import React from 'react';export default function Image({fill,unoptimized,priority,...props}){return <img {...props}/>} `,
   empty: `export default function Empty(){return null}`,
   dialog: `import React from 'react';export default function Dialog({open,onOpenChange,title,children}){return open?<div role="dialog" aria-label={title}><button onClick={()=>onOpenChange(false)}>Close dialog</button>{children}</div>:null}`,
-  alert: `import React from 'react';export default function Alert({open,onConfirm,onOpenChange,title}){return open?<div role="dialog" aria-label={title}><button onClick={onConfirm}>Confirm delete</button><button onClick={()=>onOpenChange(false)}>Cancel</button></div>:null}`,
+  alert: `import React from 'react';export default function Alert({open,onConfirm,onOpenChange,title,description}){return open?<div role="dialog" aria-label={title}>{description}<button onClick={onConfirm}>Confirm delete</button><button onClick={()=>onOpenChange(false)}>Cancel</button></div>:null}`,
   wrapper: `import React from 'react';export default function Wrapper({children}){return <div>{children}</div>}`,
   actions: `import React from 'react';export const IOSAction=({children,onClick,disabled})=><button onClick={onClick} disabled={disabled}>{children}</button>;export const IOSActionStack=({children})=><div>{children}</div>;`,
 }
@@ -240,6 +240,12 @@ try {
   await page.getByRole('button', { name: 'Close dialog' }).click()
   await run(page, 'resolve', 'job', 0, { state: 'failed', failReason: 'Synthetic parse failure' })
   await page.getByText('Upload failed', { exact: true }).waitFor()
+  const failedLocal = page.locator('[data-upload-attempt]')
+  assert.equal(await failedLocal.getByLabel('Loading title', { exact: true }).count(), 0, 'Failed unparsed local upload must stop the title skeleton')
+  assert.equal(await failedLocal.getByLabel('Loading author', { exact: true }).count(), 0)
+  assert.equal(await failedLocal.locator('a').count(), 0)
+  assert.ok((await failedLocal.innerText()).includes('Untitled book'))
+  assert.ok((await failedLocal.innerText()).includes('Unknown author'))
   await page.clock.runFor(10000)
   assert.equal((await state(page)).calls.process.length, 1)
   assert.equal((await state(page)).calls.job.length, 1)
@@ -280,15 +286,20 @@ try {
   results.push('successful authoritative index recovery clears an earlier upload warning without removing the ready book')
   await page.close()
 
-  page = await fixture([item('failed-server', { processing_status: 'error' }), ...original])
+  page = await fixture([item('failed-server', { title: '', author: null, metadata_ready: false, processing_status: 'error' }), ...original])
   await page.reload()
   const failed = page.locator('[data-book-id="failed-server"]')
   await failed.waitFor()
   assert.equal(await failed.locator('a').count(), 0)
+  assert.equal(await failed.getByLabel('Loading title', { exact: true }).count(), 0, 'Failed unparsed server book must stop the title skeleton after reload')
+  assert.equal(await failed.getByLabel('Loading author', { exact: true }).count(), 0)
+  assert.equal(await failed.getByLabel('Loading cover', { exact: true }).count(), 0)
+  assert.ok((await failed.innerText()).includes('Untitled book'))
   await failed.getByRole('button', { name: 'Book actions' }).click({ force: true })
   await page.clock.runFor(30)
   assert.equal(await failed.getByRole('button', { name: 'Archive', exact: true }).count(), 0)
   await failed.getByRole('button', { name: 'Delete', exact: true }).click({ force: true })
+  assert.equal(await page.getByRole('dialog', { name: 'Delete Book?' }).getByText('Untitled book', { exact: true }).count(), 1, 'Failed unparsed book deletion must identify the book with a neutral title')
   await page.getByRole('button', { name: 'Confirm delete' }).click()
   await failed.waitFor({ state: 'detached' })
   results.push('failed server row stays nonreadable after reload and offers Delete plus Upload again, without Archive')
