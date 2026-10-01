@@ -1,0 +1,153 @@
+[
+  {
+    "stage": "uploading",
+    "cards": [
+      {
+        "effects": [],
+        "id": "upload-52881e6f-fad4-4225-9ee0-c8fc6e5e8eb1",
+        "skeleton": true
+      },
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(159, 40, 31, 0.72) 0%, rgba(159, 40, 31, 0.52) 42%, rgba(159, 40, 31, 0.2) 70%, rgba(159, 40, 31, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(26, 96, 33) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(26, 96, 33) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(26, 96, 33) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "old-a",
+        "skeleton": false
+      },
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(169, 186, 184, 0.72) 0%, rgba(169, 186, 184, 0.52) 42%, rgba(169, 186, 184, 0.2) 70%, rgba(169, 186, 184, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(97, 48, 21) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(97, 48, 21) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(97, 48, 21) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "old-z",
+        "skeleton": false
+      }
+    ]
+  },
+  {
+    "stage": "processing",
+    "cards": [
+      {
+        "effects": [],
+        "id": "manual-upload",
+        "skeleton": true
+      },
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(159, 40, 31, 0.72) 0%, rgba(159, 40, 31, 0.52) 42%, rgba(159, 40, 31, 0.2) 70%, rgba(159, 40, 31, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(26, 96, 33) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(26, 96, 33) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(26, 96, 33) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "old-a",
+        "skeleton": false
+      },
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(169, 186, 184, 0.72) 0%, rgba(169, 186, 184, 0.52) 42%, rgba(169, 186, 184, 0.2) 70%, rgba(169, 186, 184, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(97, 48, 21) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(97, 48, 21) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(97, 48, 21) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "old-z",
+        "skeleton": false
+      }
+    ]
+  },
+  {
+    "stage": "ready",
+    "cards": [
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(141, 182, 184, 0.72) 0%, rgba(141, 182, 184, 0.52) 42%, rgba(141, 182, 184, 0.2) 70%, rgba(141, 182, 184, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(20, 28, 87) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(20, 28, 87) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(20, 28, 87) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "manual-upload",
+        "skeleton": false
+      },
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(159, 40, 31, 0.72) 0%, rgba(159, 40, 31, 0.52) 42%, rgba(159, 40, 31, 0.2) 70%, rgba(159, 40, 31, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(26, 96, 33) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(26, 96, 33) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(26, 96, 33) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "old-a",
+        "skeleton": false
+      },
+      {
+        "effects": [
+          {
+            "background": "radial-gradient(rgba(169, 186, 184, 0.72) 0%, rgba(169, 186, 184, 0.52) 42%, rgba(169, 186, 184, 0.2) 70%, rgba(169, 186, 184, 0) 90%)",
+            "shadow": ""
+          },
+          {
+            "background": "",
+            "shadow": "color-mix(in srgb, rgb(97, 48, 21) 32%, transparent 68%) 0px 1px 2px, color-mix(in srgb, rgb(97, 48, 21) 40%, transparent 60%) 0px 12px 26px"
+          },
+          {
+            "background": "color-mix(in srgb, rgb(97, 48, 21) 46%, transparent 54%)",
+            "shadow": ""
+          }
+        ],
+        "id": "old-z",
+        "skeleton": false
+      }
+    ]
+  }
+]

@@ -8,6 +8,8 @@ last_verified: 2026-10-01
 
 # Upload feedback refinement: приёмка
 
+Уточнение 2026-10-02: у скелетона отключены все три декоративных слоя (reflex, box shadow, ambient shadow). Эффекты включаются только при показе настоящей или штатной запасной обложки. Локально через UI проверены uploading → processing → ready: эффекты 0 → 0 → 3, соседние готовые обложки сохраняют оформление. [DOM-проверки](skeleton-shadow/checks.json), [скриншот](skeleton-shadow/processing.jpg). TypeScript, scoped lint (0 errors, 2 прежних warnings) и production build PASS. Изменение только frontend BookCard; основной release report ниже относится к предыдущей полной приёмке.
+
 Выпущено на **dev**: frontend application `93ec25b`, backend main `74e977b`, production additive RPC `catalog_v2_retry_upload`. Production frontend main остался `bff9935`. [Deployment](deployment.json), [backend](backend-deployment.json), [RPC и ACL](upload-retry-prod-migration.json).
 
 379 unit / 31 files PASS; browser recovery26 + story17 + races15 + notifications7 PASS. TypeScript и обе production builds PASS. Scoped lint: 0 errors, 2 прежних unused-helper warnings BookCard. Backend: 68 targeted + 39 native PostgreSQL checks PASS. Полный backend suite: 419 PASS / 11 FAIL из-за четырёх отсутствующих исторических EPUB; зелёным целиком его не считаем. Native PostgreSQL15 на Mac проверяет корректность SQL, не производительность production PostgreSQL17.

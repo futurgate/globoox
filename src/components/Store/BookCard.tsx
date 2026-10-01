@@ -443,6 +443,8 @@ export default function BookCard({
   const displayCover = sourceCover;
   const [failedCoverSrc, setFailedCoverSrc] = useState<string | null>(null);
   const hasValidCover = Boolean(displayCover) && failedCoverSrc !== displayCover;
+  const showCoverSkeleton = !hasValidCover && (coverLoading || processing);
+  const showCoverEffects = !problemCover && !showCoverSkeleton;
   const { aspect: coverAspect, isReady: isAspectReady } = useImageAspect(hasValidCover ? displayCover : '', coverVersionKey);
   const coverAccent = useMemo(() => {
     const hash = hashString(`${id}-${title}`);
@@ -489,7 +491,7 @@ export default function BookCard({
       }}
     >
       <div className="relative mb-2">
-        {!problemCover && <div
+        {showCoverEffects && <div
           aria-hidden="true"
           className="pointer-events-none absolute left-[4%] right-[4%] bottom-[-14px] h-[34px] rounded-full blur-[8px]"
           style={{
@@ -534,7 +536,7 @@ export default function BookCard({
           <div data-book-cover-slot className="aspect-[2/3] relative">
             <div className="absolute left-0 bottom-0" style={effectiveCoverFrameStyle}>
               <div className="relative h-full w-full">
-                <div
+                {showCoverEffects && <><div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 -z-10 rounded-[3px]"
                   style={{ boxShadow: hasValidCover ? 'var(--book-card-shadow)' : fallbackShadow }}
@@ -543,7 +545,7 @@ export default function BookCard({
                   aria-hidden="true"
                   className="pointer-events-none absolute left-[7%] right-[7%] -bottom-[8px] h-[14px] -z-10 rounded-full blur-[8px]"
                   style={{ background: ambientShadowColor }}
-                />
+                /></>}
                 <div className="relative h-full w-full overflow-hidden rounded-[3px]">
                   {hasValidCover ? (
                     <Image
@@ -555,7 +557,7 @@ export default function BookCard({
                       unoptimized={displayCover.startsWith('blob:')}
                       onError={() => setFailedCoverSrc(displayCover)}
                     />
-                  ) : coverLoading || processing ? (
+                  ) : showCoverSkeleton ? (
                     <Skeleton className="h-full w-full motion-reduce:animate-none" aria-label="Loading cover" />
                   ) : (
                     <FallbackCover id={id} title={displayTitle} author={displayAuthor} />
