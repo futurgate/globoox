@@ -1,0 +1,148 @@
+{
+  "recorded_at_utc": "2026-10-01T08:53:43.132117+00:00",
+  "baseline": "235ddffd63f9ad1eb6202a2b928e089cd80e99f5",
+  "release_base": "01e2fe2c31ae264d202638a0dac2e471fd785d77",
+  "application_change": [
+    "src/app/[locale]/page.tsx"
+  ],
+  "component_css_dictionary_diff_from_baseline": [],
+  "unit": {
+    "success": true,
+    "numTotalTests": 69,
+    "numPassedTests": 69,
+    "numFailedTests": 0
+  },
+  "build": {
+    "command": "next build --webpack with synthetic loopback environment",
+    "exit": 0,
+    "raw_log": ".local/landing-rollback-20261001/build.log"
+  },
+  "routes": [
+    {
+      "path": "/en",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/en",
+      "legacy_landing": true,
+      "canonical": [
+        "http://127.0.0.1:3091/en"
+      ],
+      "hreflang": [
+        "en",
+        "es",
+        "fr",
+        "ru"
+      ],
+      "web_application_count": 1,
+      "script_count": 14
+    },
+    {
+      "path": "/es",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/es",
+      "legacy_landing": true,
+      "canonical": [
+        "http://127.0.0.1:3091/es"
+      ],
+      "hreflang": [
+        "en",
+        "es",
+        "fr",
+        "ru"
+      ],
+      "web_application_count": 1,
+      "script_count": 14
+    },
+    {
+      "path": "/fr",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/fr",
+      "legacy_landing": true,
+      "canonical": [
+        "http://127.0.0.1:3091/fr"
+      ],
+      "hreflang": [
+        "en",
+        "es",
+        "fr",
+        "ru"
+      ],
+      "web_application_count": 1,
+      "script_count": 14
+    },
+    {
+      "path": "/ru",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/ru",
+      "legacy_landing": true,
+      "canonical": [
+        "http://127.0.0.1:3091/ru"
+      ],
+      "hreflang": [
+        "en",
+        "es",
+        "fr",
+        "ru"
+      ],
+      "web_application_count": 1,
+      "script_count": 14
+    },
+    {
+      "path": "/unknown",
+      "status": 404
+    },
+    {
+      "path": "/",
+      "status": 500
+    },
+    {
+      "path": "/en/landing",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/en",
+      "legacy_landing": true,
+      "canonical": [
+        "http://127.0.0.1:3091/en"
+      ],
+      "hreflang": [
+        "en",
+        "es",
+        "fr",
+        "ru"
+      ],
+      "web_application_count": 1,
+      "script_count": 14
+    },
+    {
+      "path": "/my-books",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/my-books",
+      "legacy_landing": false,
+      "canonical": [
+        "http://127.0.0.1:3091/my-books"
+      ],
+      "hreflang": [],
+      "web_application_count": 0,
+      "script_count": 24
+    },
+    {
+      "path": "/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "status": 200,
+      "url": "http://127.0.0.1:3091/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "legacy_landing": false,
+      "canonical": [
+        "http://127.0.0.1:3091"
+      ],
+      "hreflang": [],
+      "web_application_count": 0,
+      "script_count": 24
+    }
+  ],
+  "browser": {
+    "legacy_design_seen": true,
+    "english_to_russian_switch": true,
+    "landing_to_bookshelf": true,
+    "bookshelf_marketing_wrapper": false,
+    "bookshelf_body_background": "rgb(26, 36, 25)",
+    "bookshelf_body_font": "-apple-system, system-ui, SF Pro Text, SF Pro Display, system-ui, sans-serif"
+  },
+  "local_limitation": "Webpack root / returns pre-existing duplicate route client-manifest error; both root source files unchanged. Live root / verified200 before release, must be checked after deployment."
+}
