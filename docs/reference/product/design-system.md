@@ -2,9 +2,10 @@
 type: reference
 status: current
 owner: design-system
-last_verified: 2026-09-01
+last_verified: 2026-10-01
 implementation:
   - src/lib/themes.ts
+  - src/lib/notifications.ts
   - src/components/ui
   - src/app/(app)/dev/components-preview/page.tsx
 ---
@@ -104,6 +105,19 @@ Use canonical patterns before inventing new modal shapes:
 4. Reader bottom-drawer pattern
 
 Feature code should choose a pattern first, not start from `IOSModalShell`.
+
+## Notifications
+
+The App uses Sonner 2.0.8 through one [AppToaster](../../../src/components/ui/app-toaster.tsx), mounted in the App layout. Feature code calls the [shared notification API](../../../src/lib/notifications.ts); it must not mount another host or create a separate timer/queue. The [dedicated styles](../../../src/components/ui/app-toaster.css) use App semantic roles and inherit the App palette independently of Reader surfaces.
+
+1. Call `setNotificationScope(scopeKey)` with the current account/guest/share scope and capture its returned handle when an operation starts. Pass that handle to `notify({ scope, operationId, event, title, description?, kind?, action? })`. Scope changes/logout clear messages and retire old handles, including an A → B → A switch. A matching session/token refresh keeps the scope.
+2. Use a unique `operationId` per attempt and a stable `event` per transition. The same operation updates one message; repeated events are ignored. `dismissNotification(scope, operationId)` also rejects later results for that operation. Deduplication is in memory for the current scope lifetime; features must not manufacture completion events on reload.
+3. A message has at most one action. At most three operations remain active; a new one retires the oldest without keyboard focus. Message lifetime is six seconds, or ten with an action. Sonner owns timers, hover/document-hidden pause and dismissal. The wrapper suspends expiry during keyboard focus, expands the stack, and grants a full lifetime after focus leaves; a focused action is not evicted by a new notification.
+4. Modal owners call `setNotificationsSuppressed(true, owner)` and release the same owner on close/unmount. This clears visible messages and drops new ones without a backlog. Errors and recovery actions belonging to an open modal stay inside it. Persistent offline, failed-operation and unknown-status recovery remain in their card/banner/modal after a toast disappears.
+
+The host sits above bottom navigation and the safe area, with a `visualViewport` adjustment for keyboard occlusion. It does not move focus on arrival. All current kinds, including `error`, use **one native Sonner polite live region**; there is no urgent/assertive alert API. Do not add a second live region around the same message.
+
+The [preview catalog](../../../src/app/%28app%29/dev/components-preview/page.tsx) demonstrates success, one-action recovery and deduplication. Focused checks are `src/__tests__/notifications.test.ts` and `e2e/notifications.mjs`; the browser fixture checks real Sonner behavior, not a full product flow or physical-device keyboard behavior.
 
 ## Inline Style Rule
 

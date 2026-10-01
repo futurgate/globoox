@@ -1,0 +1,68 @@
+
+> globoox_preview@0.1.0 test
+> vitest run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001
+
+ ✓ src/__tests__/libraryReadingState.test.ts (11 tests) 5ms
+ ✓ src/__tests__/notifications.test.ts (8 tests) 4ms
+ ✓ src/__tests__/catalogCache.test.ts (13 tests) 18ms
+ ✓ src/__tests__/readingActivity.test.ts (24 tests) 32ms
+ ✓ src/__tests__/paginatorUtils.test.ts (18 tests) 6ms
+ ✓ src/__tests__/catalogState.test.ts (26 tests) 47ms
+ ✓ src/__tests__/bookJobPolling.test.ts (23 tests) 49ms
+ ✓ src/__tests__/catalogCooldown.test.ts (28 tests) 49ms
+ ✓ src/__tests__/readingAnchorRace.test.ts (8 tests) 3ms
+ ✓ src/__tests__/shareNavigation.test.ts (9 tests) 6ms
+ ✓ src/__tests__/catalogApi.test.ts (9 tests) 8ms
+ ✓ src/__tests__/bookshelfUploads.test.ts (6 tests) 3ms
+ ✓ src/__tests__/catalogCoverQueue.test.ts (6 tests) 31ms
+stderr | src/__tests__/bookshelfSession.test.ts > public bookshelf session renewal with the real Supabase SDK > clears an expired session when refresh is rejected, without retaining a private identity
+AuthApiError: Refresh token revoked
+    at handleError (/Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/fetch.ts:102:9)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _handleRequest (/Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/fetch.ts:195:5)
+    at _request (/Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/fetch.ts:157:16)
+    at /Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/GoTrueClient.ts:2497:18
+    at /Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/helpers.ts:232:26 {
+  __isAuthError: true,
+  status: 400,
+  code: undefined
+}
+AuthApiError: Refresh token revoked
+    at handleError (/Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/fetch.ts:102:9)
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at _handleRequest (/Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/fetch.ts:195:5)
+    at _request (/Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/fetch.ts:157:16)
+    at /Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/GoTrueClient.ts:2497:18
+    at /Users/user/Documents/github/globoox_frontend/node_modules/@supabase/auth-js/src/lib/helpers.ts:232:26 {
+  __isAuthError: true,
+  status: 400,
+  code: undefined
+}
+
+ ✓ src/__tests__/bookshelfSession.test.ts (10 tests) 40ms
+ ✓ src/__tests__/editorialServerRouting.test.ts (23 tests) 8ms
+ ✓ src/__tests__/libraryPositionScope.test.ts (9 tests) 459ms
+ ✓ src/__tests__/useBooksState.test.ts (7 tests) 5ms
+ ✓ src/__tests__/subscription.test.ts (10 tests) 17ms
+ ✓ src/__tests__/activeEditorialSection.test.ts (10 tests) 4ms
+ ✓ src/__tests__/authNavigation.test.ts (24 tests) 30ms
+ ✓ src/__tests__/catalogProxy.test.ts (5 tests) 13ms
+ ✓ src/__tests__/sectionNavigationMotion.test.ts (6 tests) 6ms
+ ✓ src/__tests__/libraryReadingStore.test.ts (4 tests) 38ms
+ ✓ src/__tests__/readingPositionProxy.test.ts (5 tests) 19ms
+ ✓ src/__tests__/inlineMarks.test.ts (11 tests) 22ms
+ ✓ src/__tests__/mergeDisplayBlocks.test.ts (2 tests) 2ms
+ ✓ src/__tests__/landingConsentPath.test.ts (34 tests) 6ms
+ ✓ src/__tests__/editorialLocale.test.ts (12 tests) 38ms
+ ✓ src/__tests__/editorialHeroCopy.test.ts (5 tests) 2ms
+ ✓ src/__tests__/editorialLegalCopy.test.ts (2 tests) 2ms
+ ✓ src/__tests__/shareLinks.test.ts (2 tests) 12ms
+
+ Test Files  31 passed (31)
+      Tests  370 passed (370)
+   Start at  17:02:21
+   Duration  1.52s (transform 1.30s, setup 0ms, collect 3.26s, tests 985ms, environment 6ms, prepare 1.93s)

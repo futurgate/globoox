@@ -34,6 +34,7 @@
     "posthog-node": "^5.21.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "sonner": "2.0.8",
     "tailwind-merge": "^3.4.0",
     "typograf": "^7.6.0",
     "zustand": "^5.0.9"

@@ -93,7 +93,10 @@ export function useCatalog(options: UseCatalogOptions) {
     controller.prefetchCache()
   }, [controller, updateOptions, expectedUserId, legacyScopeKey])
   const view = rendered.controller === controller ? rendered.view : controller.snapshot
-  const refresh = useCallback(() => controller.refresh(true), [controller])
+  const refresh = useCallback(async () => {
+    await controller.refresh(true)
+    return controller.snapshot
+  }, [controller])
   const beginExternalMutation = useCallback(() => controller.beginExternalMutation(), [controller])
   const acceptUploadedBook = useCallback((book: CatalogItem, previousBookId?: string) => controller.acceptUploadedBook(book, previousBookId), [controller])
   const hideBook = useCallback((id: string) => controller.mutate(id, 'hidden'), [controller])

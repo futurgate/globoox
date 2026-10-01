@@ -5,15 +5,18 @@ import { Upload, Loader2, FileText } from 'lucide-react';
 import { IOSAction, IOSActionStack } from '@/components/ui/ios-action-group';
 import IOSFlowDialog from '@/components/ui/ios-flow-dialog';
 import IOSDialogFooter from '@/components/ui/ios-dialog-footer';
-import { getSignedUploadUrl, uploadToStorage, processBook, waitForBookJob } from '@/lib/api';
+import { ApiRequestError, BookJobError, getSignedUploadUrl, uploadToStorage, processBook, waitForBookJob, type BookJobResult, type UploadIssue } from '@/lib/api';
 import { trackBookUploadStarted, trackBookUploaded, trackBookUploadFailed } from '@/lib/posthog';
 import * as Sentry from '@sentry/nextjs';
 import type { CatalogItem } from '@/lib/catalogTypes';
 import { uploadedCatalogItem } from '@/lib/bookshelfUploads';
 
 export interface UploadBookEvent {
-  attemptId: string; fileName: string; phase: 'uploading' | 'processing' | 'complete' | 'error'; bookId?: string; error?: string;
+  attemptId: string; fileName: string; phase: 'uploading' | 'processing' | 'complete' | 'error' | 'status_unknown'; bookId?: string; error?: string;
   book?: CatalogItem;
+  jobId?: string;
+  issue?: UploadIssue;
+  orderConfirmed?: boolean;
 }
 
 interface UploadBookModalProps {
@@ -21,6 +24,11 @@ interface UploadBookModalProps {
   onClose: () => void;
   onUploaded?: (bookId: string) => void;
   onUploadEvent?: (event: UploadBookEvent) => void;
+  disabled?: boolean;
+  /** Opening a previous attempt never resubmits its file or starts polling by itself. */
+  resumeUpload?: UploadBookEvent | null;
+  onRefreshLibrary?: () => void | Promise<unknown>;
+  onSignIn?: () => void;
 }
 
 const SUPPORT_EMAIL = 'support@globoox.co'
@@ -42,49 +50,28 @@ function createUploadFileName(originalName: string): string {
   return `${slug}-${uniqueSuffix}.epub`
 }
 
-function getUploadHelp(error: string | null) {
-  if (!error) return null
-
-  const normalized = error.toLowerCase()
-
-  if (normalized.includes('please select an epub file')) {
-    return {
-      title: 'This file does not look like a valid EPUB.',
-      tips: [
-        'Make sure the file ends in .epub.',
-        'If it opens in another reading app, export it again as EPUB and retry.',
-        'DRM-protected books usually cannot be imported.',
-      ],
-    }
+function getUploadHelp(validation: boolean, failed: boolean) {
+  if (validation) return {
+    title: 'This file does not look like a valid EPUB.',
+    tips: ['Make sure the file ends in .epub.', 'If it opens in another reading app, export it again as EPUB and retry.'],
   }
-
-  if (normalized.includes('storage upload failed') || normalized.includes('network') || normalized.includes('failed to fetch')) {
-    return {
-      title: 'The upload did not finish.',
-      tips: [
-        'Check your connection and try again.',
-        'If the file is very large, wait a moment before retrying.',
-        `If this keeps happening, contact ${SUPPORT_EMAIL}.`,
-      ],
-    }
-  }
-
+  if (!failed) return null
   return {
-    title: 'This book may use an EPUB format we cannot read cleanly yet.',
-    tips: [
-      'Try opening the file in another EPUB reader to confirm it works.',
-      'If possible, re-export it as EPUB 2 or EPUB 3 and upload it again.',
-      `If you want us to look into it, contact ${SUPPORT_EMAIL}.`,
-    ],
+    title: 'The server could not process this book.',
+    tips: ['Try opening the file in another EPUB reader to confirm it works.', 'If possible, re-export it as EPUB 2 or EPUB 3 and upload it again.', `If this keeps happening, contact ${SUPPORT_EMAIL}.`],
   }
 }
 
-export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadEvent }: UploadBookModalProps) {
+export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadEvent, disabled = false, resumeUpload, onRefreshLibrary, onSignIn }: UploadBookModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isDropActive, setIsDropActive] = useState(false);
+  const [operation, setOperation] = useState<UploadBookEvent | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [reconciled, setReconciled] = useState(false);
+  const activeAttempts = useRef(new Set<string>());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dialogEpoch = useRef(0);
   const mounted = useRef(true);
@@ -95,7 +82,20 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
     return () => { mounted.current = false; for (const controller of controllers) controller.abort(); };
   }, []);
   useEffect(() => { if (!isOpen) dialogEpoch.current += 1; }, [isOpen]);
-  const uploadHelp = getUploadHelp(error)
+  const resumeAttemptId = resumeUpload?.attemptId;
+  const resumeRef = useRef(resumeUpload);
+  resumeRef.current = resumeUpload;
+  useEffect(() => {
+    if (!isOpen || !resumeAttemptId) return;
+    dialogEpoch.current += 1;
+    setOperation(resumeRef.current ?? null);
+    setError(null);
+    setFile(null);
+    setUploading(false);
+    setReconciled(false);
+  }, [isOpen, resumeAttemptId]);
+  const uploadHelp = getUploadHelp(!!error && !operation, operation?.phase === 'error' && !operation.issue)
+
   const sectionClassName = 'rounded-[20px] bg-[var(--bg-grouped)] p-5'
 
   const isLikelyEpub = async (selectedFile: File): Promise<boolean> => {
@@ -120,7 +120,7 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
   };
 
   const handleSelectedFile = async (selectedFile: File | null) => {
-    if (!selectedFile) return false;
+    if (!selectedFile || disabled) return false;
     const valid = await isLikelyEpub(selectedFile);
     if (!valid) {
       setError('Please select an EPUB file');
@@ -140,7 +140,7 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!uploading) setIsDropActive(true);
+    if (!uploading && !disabled) setIsDropActive(true);
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -154,69 +154,137 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
     e.preventDefault();
     e.stopPropagation();
     setIsDropActive(false);
-    if (uploading) return;
+    if (uploading || disabled) return;
     const droppedFile = e.dataTransfer.files?.[0] ?? null;
     const isAccepted = await handleSelectedFile(droppedFile);
     if (!isAccepted && fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  const handleUpload = async () => {
-    if (!file || uploading) return;
-    const selected = file;
-    const attemptId = crypto.randomUUID();
+  const runAttempt = async (initial: UploadBookEvent, selected?: File) => {
+    if (activeAttempts.current.has(initial.attemptId)) return;
+    if (selected && disabled) return;
+    activeAttempts.current.add(initial.attemptId);
     const epoch = dialogEpoch.current;
     const controller = new AbortController();
     activeUploads.current.add(controller);
-    const currentDialog = () => mounted.current && dialogEpoch.current === epoch;
-    const notify = (phase: UploadBookEvent['phase'], extra: Partial<UploadBookEvent> = {}) =>
-      onUploadEvent?.({ attemptId, fileName: selected.name, phase, ...extra });
-    const message = (text: string) => { if (currentDialog()) setMessage(text); };
+    const alive = () => mounted.current && !controller.signal.aborted;
+    const currentDialog = () => alive() && dialogEpoch.current === epoch;
+    let latest: UploadBookEvent = initial;
+    const publish = (phase: UploadBookEvent['phase'], extra: Partial<UploadBookEvent> = {}) => {
+      if (!alive()) return;
+      latest = { ...latest, phase, error: undefined, issue: undefined, ...extra };
+      onUploadEvent?.(latest);
+      if (currentDialog()) setOperation(latest);
+    };
+    const progress = (text: string) => { if (currentDialog()) setMessage(text); };
+    const fileSizeKb = selected ? Math.round(selected.size / 1024) : 0;
+    const complete = (result: BookJobResult) => {
+      const snapshot = result.book?.id === result.bookId ? result.book : latest.book?.id === result.bookId ? latest.book : undefined;
+      const book = uploadedCatalogItem(snapshot, true);
+      publish('complete', { bookId: result.bookId, book, orderConfirmed: result.orderConfirmed,
+        issue: result.orderConfirmed ? undefined : 'order_unconfirmed',
+        error: result.orderConfirmed ? undefined : 'The book is ready. Your library could not be updated.' });
+      if (!alive()) return;
+      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: result.bookId }, level: 'info' });
+      trackBookUploaded({ title: selected?.name ?? initial.fileName, author: 'Unknown', language: 'unknown', chapter_count: result.chapterCount, file_size_kb: fileSizeKb });
+      onUploaded?.(result.bookId);
+      if (currentDialog()) {
+        setUploading(false);
+        if (result.orderConfirmed) handleClose();
+      }
+    };
     setUploading(true);
-    setMessage('Preparing upload…');
     setError(null);
-    const fileSizeKb = Math.round(selected.size / 1024);
-    trackBookUploadStarted({ file_size_kb: fileSizeKb });
+    setReconciled(false);
     try {
-      notify('uploading');
-      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.started', data: { fileName: selected.name, fileSize: selected.size }, level: 'info' });
-      const fileName = createUploadFileName(selected.name);
-      const { signedUrl } = await getSignedUploadUrl('books', fileName, controller.signal);
-      controller.signal.throwIfAborted();
-      message('Uploading book…');
-      await uploadToStorage(signedUrl, selected, 'application/epub+zip', controller.signal);
-      controller.signal.throwIfAborted();
-      notify('processing');
-      message('Processing book…');
-      const response = await processBook(fileName, selected.name, selected.size, controller.signal);
-      controller.signal.throwIfAborted();
-      if ('jobId' in response) notify('processing', { bookId: response.bookId });
-      const completed = 'jobId' in response
-        ? await waitForBookJob(response.jobId, controller.signal, pct => message(`Processing book… ${pct}%`), snapshot => {
+      if (selected) {
+        publish('uploading');
+        progress('Preparing upload…');
+        trackBookUploadStarted({ file_size_kb: fileSizeKb });
+        Sentry.addBreadcrumb({ category: 'upload', message: 'upload.started', data: { fileSize: selected.size }, level: 'info' });
+        const fileName = createUploadFileName(selected.name);
+        const { signedUrl } = await getSignedUploadUrl('books', fileName, controller.signal);
+        controller.signal.throwIfAborted();
+        progress('Uploading book…');
+        await uploadToStorage(signedUrl, selected, 'application/epub+zip', controller.signal);
+        controller.signal.throwIfAborted();
+        publish('processing');
+        progress('Processing book…');
+        const response = await processBook(fileName, selected.name, selected.size, controller.signal);
+        controller.signal.throwIfAborted();
+        if ('jobId' in response && response.jobId) {
+          publish('processing', { jobId: response.jobId, bookId: response.bookId });
+        } else if ('id' in response && response.id) {
+          complete({ bookId: response.id, chapterCount: response.chapter_count ?? 0, book: response.book ?? undefined, orderConfirmed: response.order_confirmed !== false });
+          return;
+        } else {
+          throw new Error('The upload response could not be confirmed.');
+        }
+      } else {
+        publish('processing');
+        progress('Checking book status…');
+      }
+      if (!latest.jobId) throw new Error('This upload has no status reference.');
+      const result = await waitForBookJob(latest.jobId, controller.signal,
+        pct => progress(`Processing book… ${pct}%`), snapshot => {
           const book = uploadedCatalogItem(snapshot, false);
-          if (book) notify('processing', { bookId: book.id, book });
-        })
-        : { bookId: response.id, chapterCount: response.chapter_count ?? 0, book: response.book };
+          if (book) publish('processing', { bookId: book.id, book });
+        });
       controller.signal.throwIfAborted();
-      if (!('jobId' in response) && response.order_confirmed === false) {
-        throw new Error('Book order could not be confirmed. Please refresh your library.');
-      }
-      trackBookUploaded({ title: selected.name, author: 'Unknown', language: 'unknown', chapter_count: completed.chapterCount, file_size_kb: fileSizeKb });
-      Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: completed.bookId }, level: 'info' });
-      const book = 'book' in completed ? uploadedCatalogItem(completed.book, true) : undefined;
-      notify('complete', { bookId: completed.bookId, ...(book ? { book } : {}) });
-      onUploaded?.(completed.bookId);
-      if (currentDialog()) handleClose();
+      complete(result);
     } catch (err: unknown) {
-      const errorMessage = getErrorMessage(err, 'Upload failed');
-      notify('error', { error: errorMessage });
-      if (!controller.signal.aborted) {
-        Sentry.captureException(err, { contexts: { upload: { fileName: selected.name, fileSize: selected.size, fileSizeKb } } });
-        trackBookUploadFailed({ error: errorMessage, file_size_kb: fileSizeKb });
+      if (!alive()) return;
+      const status = err instanceof ApiRequestError ? err.status : undefined;
+      const kind = err instanceof BookJobError ? err.kind : status === 401 ? 'auth_required' : status === 403 ? 'forbidden'
+        : status && [400, 413, 415, 422].includes(status) ? 'upload_rejected' : latest.jobId ? 'status_unknown' : 'upload_unconfirmed';
+      if (err instanceof BookJobError && err.book) {
+        const book = uploadedCatalogItem(err.book, false);
+        if (book) latest = { ...latest, bookId: book.id, book };
       }
-      if (currentDialog()) { setError(errorMessage); setUploading(false); }
+      if (latest.book?.processing_status === 'ready' && kind !== 'auth_required' && kind !== 'forbidden') {
+        complete({ bookId: latest.book.id, chapterCount: 0, book: latest.book, orderConfirmed: false });
+        return;
+      }
+      const confirmedFailure = kind === 'processing_failed' || kind === 'upload_rejected';
+      const message = kind === 'processing_failed' ? getErrorMessage(err, 'The server could not process this book.')
+        : kind === 'upload_rejected' ? 'The server rejected this upload. Check the file and try again.'
+        : kind === 'auth_required' ? 'Sign in to check this upload.'
+        : kind === 'forbidden' ? 'You do not have access to check this upload.'
+        : kind === 'job_not_found' || kind === 'upload_unconfirmed' ? 'This upload could not be confirmed. Refresh your library before uploading again.'
+        : getErrorMessage(err, 'Could not check whether the book is ready.');
+      publish(confirmedFailure ? 'error' : 'status_unknown', { error: message, issue: kind === 'processing_failed' ? undefined : kind });
+      if (confirmedFailure) {
+        Sentry.captureException(err, { contexts: { upload: { fileSizeKb, jobId: latest.jobId } } });
+        trackBookUploadFailed({ error: message, file_size_kb: fileSizeKb });
+      }
+      if (currentDialog()) setUploading(false);
     } finally {
       activeUploads.current.delete(controller);
+      activeAttempts.current.delete(initial.attemptId);
     }
+  };
+
+  const handleUpload = () => {
+    if (!file || uploading || disabled) return;
+    void runAttempt({ attemptId: crypto.randomUUID(), fileName: file.name, phase: 'uploading' }, file);
+  };
+  const checkStatus = () => {
+    if (!operation?.jobId || uploading || operation.issue === 'job_not_found' || operation.issue === 'forbidden' || operation.issue === 'auth_required') return;
+    void runAttempt(operation);
+  };
+  const refreshLibrary = async () => {
+    if (refreshing || !onRefreshLibrary) return;
+    const epoch = dialogEpoch.current;
+    setRefreshing(true);
+    try { await onRefreshLibrary(); } catch { /* The shelf retains its persistent connection message. */ }
+    finally {
+      if (mounted.current && dialogEpoch.current === epoch) { setRefreshing(false); setReconciled(true); }
+    }
+  };
+  const chooseAgain = () => {
+    setOperation(null);
+    setError(null);
+    setReconciled(false);
   };
 
   const handleClose = () => {
@@ -226,6 +294,9 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
     setMessage('');
     setError(null);
     setIsDropActive(false);
+    setOperation(null);
+    setRefreshing(false);
+    setReconciled(false);
     onClose();
   };
 
@@ -238,10 +309,22 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
       description="Add an EPUB from your device and we&apos;ll prepare it for reading and translation."
     >
       <div className="space-y-4">
-        {!uploading ? (
+        {disabled && <p role="status" className="text-sm text-muted-foreground">Uploads are unavailable while the library is offline. Refresh your library to reconnect.</p>}
+        {!uploading && operation && (operation.phase === 'status_unknown' || operation.phase === 'complete') ? (
+          <div className={`${sectionClassName} space-y-4`}>
+            <p role="status" className="text-sm">{operation.error ?? 'The book is ready.'}</p>
+            {(operation.issue === 'job_not_found' || operation.issue === 'upload_unconfirmed') && <p className="text-sm text-muted-foreground">The earlier upload may still appear in your library. Check there before choosing to upload the file again.</p>}
+            <IOSActionStack>
+              {operation.phase === 'status_unknown' && operation.jobId && !['job_not_found', 'auth_required', 'forbidden'].includes(operation.issue ?? '') && <IOSAction onClick={checkStatus} emphasized>Check status</IOSAction>}
+              {operation.issue === 'auth_required' && onSignIn && <IOSAction onClick={onSignIn} emphasized>Sign in</IOSAction>}
+              {onRefreshLibrary && <IOSAction onClick={() => void refreshLibrary()} disabled={refreshing}>{refreshing ? 'Refreshing…' : 'Refresh library'}</IOSAction>}
+              {(operation.issue === 'job_not_found' || operation.issue === 'upload_unconfirmed') && <IOSAction onClick={chooseAgain} disabled={disabled || !reconciled}>Upload again</IOSAction>}
+            </IOSActionStack>
+          </div>
+        ) : !uploading ? (
           <>
             <div
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => !disabled && fileInputRef.current?.click()}
               onDragOver={handleDragOver}
               onDragEnter={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -264,14 +347,15 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
             <input
               ref={fileInputRef}
               type="file"
+              disabled={disabled}
               accept=".epub"
               onChange={handleFileSelect}
               className="hidden"
             />
 
-            {error && (
+            {(error || operation?.error) && (
               <div className={`${sectionClassName} space-y-3 text-left`}>
-                <p className="text-sm font-medium text-destructive">{error}</p>
+                <p className="text-sm font-medium text-destructive">{error ?? operation?.error}</p>
                 {uploadHelp && (
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-foreground">{uploadHelp.title}</p>
@@ -287,7 +371,7 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
 
             <IOSDialogFooter>
               <IOSActionStack>
-                <IOSAction onClick={handleUpload} disabled={!file} emphasized>
+                <IOSAction onClick={handleUpload} disabled={!file || disabled} emphasized>
                   Upload
                 </IOSAction>
               </IOSActionStack>

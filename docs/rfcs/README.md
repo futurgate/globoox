@@ -13,7 +13,7 @@ RFCs describe proposed behavior and never override current reference documentati
 
 | RFC | Implementation | Main unresolved decision |
 |---|---|---|
-| [Bookshelf upload](active/bookshelf-upload-2026-10-01/README.md) | Released and manually accepted on dev | Production frontend rollout after review; remaining backlog is recorded in the plan |
+| [Bookshelf upload: feedback and recovery](active/bookshelf-upload-2026-10-01/README.md) | Implemented locally; dev acceptance pending | Verify deployment and live upload recovery; memory capacity remains unproven |
 | [Billing, entitlements, and translation access](active/billing-entitlements-and-translation-access.md) | Proposed; backend billing/quota skeleton exists but the target contract is not aligned | Align demo-only access, stable quota identity, and observable checkout activation |
 | [Reader adaptive typography](active/reader-adaptive-typography.md) | Not started | Language profiles and whether font auto-fit may override user settings |
 | [Translation orchestration](active/translation-orchestration.md) | Not started | Adaptive chunks and staged commits vs previous no-adaptive constraint |
@@ -22,9 +22,11 @@ RFCs describe proposed behavior and never override current reference documentati
 
 ## Completed checkpoint
 
+- [Bookshelf upload dev release](../archive/2026-10-01-bookshelf-upload/README.md): initial upload story accepted on dev; shared backend/DB released, production frontend unchanged. Follow-up UX work is tracked separately above.
+
 - [Reader recovery](active/reader-recovery-2026-10-01/README.md): translation recovery and position guards shipped; exact release, tests, limits and rollback recorded.
 
-- [Bookshelf v2 release](active/catalog-speed-2026-09-25/README.md): dev and production shipped; subsequent Reader fixes also shipped; upload story has its own dev release and next-decision plan.
+- [Bookshelf v2 release](active/catalog-speed-2026-09-25/README.md): dev and production shipped; subsequent Reader fixes also shipped; upload story has a completed dev checkpoint and an active feedback/recovery plan.
 
 ## Superseded
 

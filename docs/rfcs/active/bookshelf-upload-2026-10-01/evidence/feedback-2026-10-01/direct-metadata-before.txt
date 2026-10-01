@@ -1,0 +1,91 @@
+PASS polling network unknown → dashed card → same-job Check status → ready without POST
+PASS ready/orderfalse preserves actual cover, Reader links and separate library warning
+PASS unknown process receipt offers honest refresh before explicit reupload; no pretend status endpoint
+PASS lost archive response → Retry reconciles server state and does not repeat the applied mutation
+PASS failed archive response → Retry checks then repeats the original archive action
+PASS account switch clears shown notification and captured stale action cannot request previous job
+PASS closed-modal completion toasts once; existing membership is distinguished from global canonical dedup
+PASS manual refresh while another upload is pending does not claim the bookshelf was updated
+FAIL direct card Check status promotes prior parsed metadata when completion has only ID and manifest is unavailable AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ 'processing'
+- 'ready'
+
+DOM My Books
+
+Unable to contact the library server. Showing saved books. Changes and uploads are unavailable.
+
+Try again
+Visible
+VisibleArchivedAllRecently Read
+
+Metadata retained across retry
+
+Fixture author
+
+Processing book…
+
+A old book
+
+Fixture author
+
+A old book
+
+Fixture author
+
+Z old book
+
+Fixture author
+
+Z old book
+
+Fixture author
+
+Need help? support@globoox.co
+Book ready
+Open
+{
+  "fixtureOnly": true,
+  "actualPage": true,
+  "actualSonner": true,
+  "results": [
+    {
+      "name": "polling network unknown → dashed card → same-job Check status → ready without POST",
+      "status": "PASS"
+    },
+    {
+      "name": "ready/orderfalse preserves actual cover, Reader links and separate library warning",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown process receipt offers honest refresh before explicit reupload; no pretend status endpoint",
+      "status": "PASS"
+    },
+    {
+      "name": "lost archive response → Retry reconciles server state and does not repeat the applied mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "failed archive response → Retry checks then repeats the original archive action",
+      "status": "PASS"
+    },
+    {
+      "name": "account switch clears shown notification and captured stale action cannot request previous job",
+      "status": "PASS"
+    },
+    {
+      "name": "closed-modal completion toasts once; existing membership is distinguished from global canonical dedup",
+      "status": "PASS"
+    },
+    {
+      "name": "manual refresh while another upload is pending does not claim the bookshelf was updated",
+      "status": "PASS"
+    },
+    {
+      "name": "direct card Check status promotes prior parsed metadata when completion has only ID and manifest is unavailable",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'processing'\n- 'ready'\n"
+    }
+  ]
+}

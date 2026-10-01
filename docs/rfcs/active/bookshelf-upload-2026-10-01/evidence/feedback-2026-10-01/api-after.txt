@@ -1,0 +1,10 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001
+
+ ✓ src/__tests__/bookJobPolling.test.ts (23 tests) 19ms
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  16:44:38
+   Duration  261ms (transform 73ms, setup 0ms, collect 81ms, tests 19ms, environment 0ms, prepare 31ms)

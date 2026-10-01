@@ -1,0 +1,29 @@
+Starting page fixture
+Page fixture ready
+PASS actual page: immediate title/author skeleton, metadata then cover in the same card, modal close continues, completion opens before the index returns
+PASS later reading can overtake the completed upload; server order survives SPA remount and document reload
+PASS completed uploads respect Archived/All and alphabetical sorting
+PASS account switch aborts operation ownership and rejects a late cover without leaking the prior account card
+PASS server pending row and local attempt deduplicate; final canonical existing ID replaces the pending row exactly once
+PASS final absent title/author/cover leave normal Untitled/Unknown author/fallback, never an endless skeleton
+PASS failed upload remains visible and opens an explicit new upload; no automatic process/poll retry
+PASS sync complete consumes full book DTO immediately without polling or waiting for the index
+PASS order confirmation failure remains visible but never downgrades an already ready canonical book, including an unavailable index
+PASS successful authoritative index recovery clears an earlier upload warning without removing the ready book
+PASS failed server row stays nonreadable after reload and offers Delete plus Upload again, without Archive
+PASS reload resumes only bounded index checks; parsed metadata then readiness arrives without a job ID or reprocessing, and polling stops when ready
+PASS pending reload polling ends after five minutes; explicit status retry can reveal terminal failure without resubmitting the upload
+PASS starting upload during a delayed first index does not cancel the existing library; queued metadata and cover bind when its scope arrives
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 7000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-book-id="old-a"]').getByRole('button', { name: 'Delete', exact: true })[22m
+
+    at /Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001/e2e/bookshelf-upload-story.mjs:370:71 {
+  name: 'TimeoutError'
+}
+
+Node.js v22.23.2

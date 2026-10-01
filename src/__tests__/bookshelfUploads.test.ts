@@ -27,3 +27,23 @@ describe('parsed upload metadata and operation identity', () => {
     expect(applyUploadEvent([], { ...first, phase: 'complete', bookId: 'late' })).toEqual([])
   })
 })
+
+
+describe('upload recovery identity', () => {
+  it('keeps authoritative ready previews readable while nonterminal error previews remain processing', () => {
+    expect(uploadedCatalogItem({ ...item('ready'), metadata_ready: true, processing_status: 'ready' }, false)?.processing_status).toBe('ready')
+    expect(uploadedCatalogItem({ ...item('retrying'), metadata_ready: true, processing_status: 'error' }, false)?.processing_status).toBe('processing')
+  })
+  it('checking the same upload retains its job identity and clears stale feedback after recovery', () => {
+    const first = { attemptId: 'attempt', fileName: 'name.epub', phase: 'uploading' as const }
+    const unknown = applyUploadEvent([first], { ...first, phase: 'status_unknown', jobId: 'same-job', issue: 'status_unknown', error: 'No connection' })
+    const checking = applyUploadEvent(unknown, { ...first, phase: 'processing' })
+    expect(checking).toHaveLength(1)
+    expect(checking[0]).toMatchObject({ attemptId: 'attempt', jobId: 'same-job', phase: 'processing' })
+    expect(checking[0].error).toBeUndefined()
+    expect(checking[0].issue).toBeUndefined()
+    const ready = applyUploadEvent(checking, { ...first, phase: 'complete', bookId: 'canonical', orderConfirmed: true })
+    expect(ready[0]).toMatchObject({ bookId: 'canonical', orderConfirmed: true })
+    expect(ready[0].issue).toBeUndefined()
+  })
+})

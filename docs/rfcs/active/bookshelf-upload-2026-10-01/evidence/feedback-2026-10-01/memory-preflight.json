@@ -1,0 +1,128 @@
+{
+  "checked_at_utc": "2026-10-01T14:37:13.702589+00:00",
+  "question": "Peak process RSS/cgroup memory, metadata/ready latency and API responsiveness for four real fixtures on current backend; then at most one concurrent pair only if measured headroom allows.",
+  "scope": "Preflight and exact fixture inventory only. No imports, cloud calls, paid LLM, product edits or infrastructure installation.",
+  "backend": {
+    "HEAD": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+    "origin_main_after_fetch": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+    "new_upstream_commits": 0,
+    "product_worktree_clean": true
+  },
+  "host": {
+    "platform": "macOS-15.7.3-arm64-arm-64bit-Mach-O",
+    "node": {
+      "node": "v22.23.2",
+      "v8": "12.4.254.21-node.56",
+      "arch": "arm64"
+    },
+    "free_disk_GiB": 32.51,
+    "linux_cgroup_memory_max_present": false,
+    "docker_link": "/Applications/Docker.app/Contents/Resources/bin/docker",
+    "docker_target_exists": false,
+    "docker_socket_exists": false,
+    "runtime_commands_found": {
+      "docker": null,
+      "podman": null,
+      "colima": null,
+      "limactl": null,
+      "container": null,
+      "vfkit": null,
+      "qemu-system-aarch64": null,
+      "multipass": null
+    },
+    "fixed_app_paths_present": []
+  },
+  "status": "not_run_required_memory_isolation_unavailable",
+  "constraint": "macOS host has no working Linux/container runtime. V8 heap cap or sampled RSS watchdog does not establish a hard process/cgroup 512 MiB budget. Do not claim Mac capacity as Render capacity.",
+  "budget": {
+    "real_fixtures_max": 4,
+    "concurrent_pairs_max": 1,
+    "imports_executed": 0,
+    "pairs_executed": 0,
+    "planned_max_seconds_per_import": 60,
+    "planned_max_total_seconds": 300,
+    "planned_artifact_budget_MiB": 5
+  },
+  "proposed_protocol_not_executed": {
+    "isolation": "Linux runtime with application cgroup memory.max=536870912 bytes and memory.swap.max=0; record actual platform/Node/CPU/memory configuration. PostgreSQL/PostgREST/Redis and tiny fixture Storage outside measured app cgroup; egress restricted to those fixture services. No production credentials.",
+    "application": "Current production build/parser/processor and existing job/HTTP contract with synthetic identity and local native DB/Redis/Storage; preserve application worker concurrency2. Do not include obsolete atomic-import candidate.",
+    "sequential_order": [
+      "Nexus_A_Brief_History_of_Information_Networks_from_the_Stone_Age_to_AI_Yuval_Noah_Harari.epub",
+      "Ra_D._Imperskiyivor1._Imperskiyi_Vor_Tom_1.epub",
+      "_OceanofPDF.com_The_Venture_Mindset_-_Ilya_Strebulaev.epub",
+      "epub30-spec.epub"
+    ],
+    "no_dedup_bypass": "Fresh isolated fixture database / distinct import membership and inspect unique hashes before each measured scenario; reset only owned fixture state between sequential and pair, without source changes.",
+    "samples_ms": 100,
+    "stop_cgroup_bytes": 469762048,
+    "stop_process_RSS_bytes": 469762048,
+    "stop_memory_reason": "Reserve at least64MiB under512MiB hard limit; samples can miss a transient peak so cgroup OOM remains independent stop.",
+    "health_probe_interval_ms": 250,
+    "health_probe_timeout_ms": 1000,
+    "stop_health_failures_in_a_row": 2,
+    "stop_also": [
+      "Any process/cgroup OOM",
+      "Any import error",
+      "Any request crosses60s",
+      "Overall300s deadline"
+    ],
+    "concurrent_pair_gate": "Only after four successful singles: post-settle baseline plus the two greatest single-import RSS increases must stay at or below384MiB, and no stop condition occurred. This forecast is only admission to a measured pair, never a safety proof. Otherwise skip pair and preserve insufficient-headroom outcome.",
+    "record": [
+      "exact source/ref/lock/runtime/config",
+      "inputSHA256 and archive/unpacked/html counts",
+      "RSS and cgroup peak",
+      "time to first parsed metadata",
+      "time to durable ready and completed order receipt",
+      "health response latency/loss",
+      "actual DB chapter/block counts",
+      "exit/OOM/stop reason and cleanup"
+    ]
+  },
+  "fixtures": [
+    {
+      "file": "Nexus_A_Brief_History_of_Information_Networks_from_the_Stone_Age_to_AI_Yuval_Noah_Harari.epub",
+      "source": "/Users/user/Documents/github/globooks/qa-books/Nexus_A_Brief_History_of_Information_Networks_from_the_Stone_Age_to_AI_Yuval_Noah_Harari.epub",
+      "sha256": "0aad59737fd1709a553e6d09c34e921d523694ed78e0a43fa9c6f1d633c4758a",
+      "compressed_archive_bytes": 5673408,
+      "zip_declared_uncompressed_bytes": 10145047,
+      "entry_count": 58,
+      "html_count": 28,
+      "html_declared_uncompressed_bytes": 1988483,
+      "largest_html_declared_bytes": 505255
+    },
+    {
+      "file": "Ra_D._Imperskiyivor1._Imperskiyi_Vor_Tom_1.epub",
+      "source": "/Users/user/Documents/github/globooks/qa-books/Ra_D._Imperskiyivor1._Imperskiyi_Vor_Tom_1.epub",
+      "sha256": "9e305ad7544dad8214b43db088189448449c96cdf041089d7b9e81886dd6092f",
+      "compressed_archive_bytes": 1656927,
+      "zip_declared_uncompressed_bytes": 3002371,
+      "entry_count": 35,
+      "html_count": 24,
+      "html_declared_uncompressed_bytes": 803558,
+      "largest_html_declared_bytes": 56404
+    },
+    {
+      "file": "_OceanofPDF.com_The_Venture_Mindset_-_Ilya_Strebulaev.epub",
+      "source": "/Users/user/Documents/github/globooks/qa-books/_OceanofPDF.com_The_Venture_Mindset_-_Ilya_Strebulaev.epub",
+      "sha256": "db0b6de9879359ea6df93d068664ce473794ea86597b51c51b6f67ca4c521d72",
+      "compressed_archive_bytes": 6147496,
+      "zip_declared_uncompressed_bytes": 6139586,
+      "entry_count": 54,
+      "html_count": 24,
+      "html_declared_uncompressed_bytes": 1108989,
+      "largest_html_declared_bytes": 300451
+    },
+    {
+      "file": "epub30-spec.epub",
+      "source": "/Users/user/Documents/github/globooks/qa-books/epub30-spec.epub",
+      "sha256": "def6a7a1d2302689c77d7c04585f9eb2da825a7ef546888cfe2f5fbba92d51ce",
+      "compressed_archive_bytes": 227821,
+      "zip_declared_uncompressed_bytes": 1012760,
+      "entry_count": 17,
+      "html_count": 11,
+      "html_declared_uncompressed_bytes": 842548,
+      "largest_html_declared_bytes": 214636
+    }
+  ],
+  "limitation": "ZIP sizes are central-directory declarations inspected read-only, not new parser/capacity results. No numeric user-facing upload limit derived."
+}

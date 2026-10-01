@@ -1,0 +1,465 @@
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 /Users/user/Documents/github/globoox_frontend/.local/reader-recovery-20261001
+
+(node:54158) PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 12)
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54158) PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 14)
+ ❯ src/__tests__/bookJobPolling.test.ts (21 tests | 13 failed) 36ms
+   × queued EPUB polling belongs to the upload lifetime > reports progressive book snapshots but only completes after the job and ordering receipt 11ms
+     → expected "spy" to be called with arguments: [ { bookId: 'canonical-book', …(3) } ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+    Object {
+      "book": Object {
+        "author": null,
+        "available_languages": Array [
+          "en",
+        ],
+        "cover": null,
+        "created_at": "2026-09-01T12:00:00Z",
+        "id": "canonical-book",
+        "is_own": true,
+        "last_read_at": null,
+        "metadata_ready": true,
+        "metadata_version": "meta-canonical-book",
+        "original_language": "en",
+        "processing_status": "ready",
+        "reading": null,
+        "selected_language": null,
+        "status": "active",
+        "title": "canonical-book",
+      },
+      "bookId": "canonical-book",
+      "chapterCount": 7,
+-     "orderConfirmed": true,
+    },
+  ]
+
+
+Number of calls: 1
+
+   × queued EPUB polling belongs to the upload lifetime > preserves completed content and reports its unconfirmed order separately 3ms
+     → promise rejected "Error: Book order could not be confirmed.…" instead of resolving
+   × queued EPUB polling belongs to the upload lifetime > waits through queue states and returns the final canonical ID with worker progress 2ms
+     → expected { bookId: 'canonical-book', …(1) } to deeply equal { bookId: 'canonical-book', …(2) }
+   × queued EPUB polling belongs to the upload lifetime > does not share one attempt cancellation with another poll for the same job 1ms
+     → expected { bookId: 'canonical-book', …(1) } to deeply equal { bookId: 'canonical-book', …(2) }
+   × upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 500 without pretending the EPUB failed 1ms
+     → expected Error: Synthetic transport response to match object { kind: 'status_unknown', …(1) }
+   × upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 502 without pretending the EPUB failed 1ms
+     → expected Error: Synthetic transport response to match object { kind: 'status_unknown', …(1) }
+   × upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 404 without pretending the EPUB failed 1ms
+     → expected Error: Synthetic transport response to match object { kind: 'job_not_found', …(1) }
+   × upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 401 without pretending the EPUB failed 1ms
+     → expected Error: Synthetic transport response to match object { kind: 'auth_required', …(1) }
+   × upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 403 without pretending the EPUB failed 1ms
+     → expected Error: Synthetic transport response to match object { Object (kind, jobId) }
+   × upload outcomes separate unavailable status from confirmed processing failure > resumes a known job after a transient network failure without creating a new upload 1ms
+     → expected TypeError: Failed to fetch to match object { kind: 'status_unknown', …(1) }
+   × upload outcomes separate unavailable status from confirmed processing failure > preserves a ready canonical snapshot when ordering ultimately fails 0ms
+     → promise rejected "Error: Ordering unavailable" instead of resolving
+   × upload outcomes separate unavailable status from confirmed processing failure > only a terminal failed state confirms processing failure 4ms
+     → expected Error: EPUB parse rejected to match object { kind: 'processing_failed', …(2) }
+   × upload outcomes separate unavailable status from confirmed processing failure > keeps the latest parsed metadata on a timed-out status request 3ms
+     → expected Error: Book processing timed out. Please … to match object { kind: 'status_unknown', …(2) }
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > queued EPUB polling belongs to the upload lifetime > reports progressive book snapshots but only completes after the job and ordering receipt
+AssertionError: expected "spy" to be called with arguments: [ { bookId: 'canonical-book', …(3) } ]
+
+Received:
+
+  1st spy call:
+
+  Array [
+    Object {
+      "book": Object {
+        "author": null,
+        "available_languages": Array [
+          "en",
+        ],
+        "cover": null,
+        "created_at": "2026-09-01T12:00:00Z",
+        "id": "canonical-book",
+        "is_own": true,
+        "last_read_at": null,
+        "metadata_ready": true,
+        "metadata_version": "meta-canonical-book",
+        "original_language": "en",
+        "processing_status": "ready",
+        "reading": null,
+        "selected_language": null,
+        "status": "active",
+        "title": "canonical-book",
+      },
+      "bookId": "canonical-book",
+      "chapterCount": 7,
+-     "orderConfirmed": true,
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/__tests__/bookJobPolling.test.ts:25:16
+     23|   await vi.advanceTimersByTimeAsync(2000)
+     24|   await run
+     25|   expect(done).toHaveBeenCalledWith({ bookId: 'canonical-book', chapte…
+       |                ^
+     26|  })
+     27|  it('preserves completed content and reports its unconfirmed order sep…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > queued EPUB polling belongs to the upload lifetime > preserves completed content and reports its unconfirmed order separately
+AssertionError: promise rejected "Error: Book order could not be confirmed.…" instead of resolving
+ ❯ src/__tests__/bookJobPolling.test.ts:29:45
+     27|  it('preserves completed content and reports its unconfirmed order sep…
+     28|   fetcher.mockResolvedValueOnce(json({ ...completed, order_confirmed: …
+     29|   await expect(waitForBookJob('unconfirmed')).resolves.toMatchObject({…
+       |                                             ^
+     30|   expect(fetcher).toHaveBeenCalledTimes(1)
+     31|  })
+
+Caused by: Error: Book order could not be confirmed. Please refresh your library.
+ ❯ Module.waitForBookJob src/lib/api.ts:1503:53
+ ❯ src/__tests__/bookJobPolling.test.ts:29:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > queued EPUB polling belongs to the upload lifetime > waits through queue states and returns the final canonical ID with worker progress
+AssertionError: expected { bookId: 'canonical-book', …(1) } to deeply equal { bookId: 'canonical-book', …(2) }
+
+- Expected
++ Received
+
+  Object {
+    "bookId": "canonical-book",
+    "chapterCount": 7,
+-   "orderConfirmed": true,
+  }
+
+ ❯ src/__tests__/bookJobPolling.test.ts:49:21
+     47|   expect(fetcher).toHaveBeenCalledTimes(2)
+     48|   await vi.advanceTimersByTimeAsync(2000)
+     49|   expect(await run).toEqual({ bookId: 'canonical-book', chapterCount: …
+       |                     ^
+     50|   expect(progress.mock.calls.map(call => call[0])).toEqual([0, 45, 100…
+     51|   expect(vi.getTimerCount()).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > queued EPUB polling belongs to the upload lifetime > does not share one attempt cancellation with another poll for the same job
+AssertionError: expected { bookId: 'canonical-book', …(1) } to deeply equal { bookId: 'canonical-book', …(2) }
+
+- Expected
++ Received
+
+  Object {
+    "bookId": "canonical-book",
+    "chapterCount": 7,
+-   "orderConfirmed": true,
+  }
+
+ ❯ src/__tests__/bookJobPolling.test.ts:106:54
+    104|   a.abort(); await rejected
+    105|   expect(fetcher.mock.calls[1][1]?.signal?.aborted).toBe(false)
+    106|   releases[1](json(completed)); expect(await second).toEqual({ bookId:…
+       |                                                      ^
+    107|   releases[0](json(completed)); await tick()
+    108|   expect(vi.getTimerCount()).toBe(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 500 without pretending the EPUB failed
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 502 without pretending the EPUB failed
+AssertionError: expected Error: Synthetic transport response to match object { kind: 'status_unknown', …(1) }
+
+- Expected
++ Received
+
+- Object {
+-   "jobId": "same-job",
+-   "kind": "status_unknown",
+- }
++ [Error: Synthetic transport response]
+
+ ❯ src/__tests__/bookJobPolling.test.ts:117:3
+    115|   fetcher.mockResolvedValueOnce(Response.json({ message: 'Synthetic tr…
+    116|   const kind = status === 404 ? 'job_not_found' : status === 401 ? 'au…
+    117|   await expect(waitForBookJob('same-job')).rejects.toMatchObject({ kin…
+       |   ^
+    118|   expect(fetcher).toHaveBeenCalledTimes(1)
+    119|  })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 404 without pretending the EPUB failed
+AssertionError: expected Error: Synthetic transport response to match object { kind: 'job_not_found', …(1) }
+
+- Expected
++ Received
+
+- Object {
+-   "jobId": "same-job",
+-   "kind": "job_not_found",
+- }
++ [Error: Synthetic transport response]
+
+ ❯ src/__tests__/bookJobPolling.test.ts:117:3
+    115|   fetcher.mockResolvedValueOnce(Response.json({ message: 'Synthetic tr…
+    116|   const kind = status === 404 ? 'job_not_found' : status === 401 ? 'au…
+    117|   await expect(waitForBookJob('same-job')).rejects.toMatchObject({ kin…
+       |   ^
+    118|   expect(fetcher).toHaveBeenCalledTimes(1)
+    119|  })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 401 without pretending the EPUB failed
+AssertionError: expected Error: Synthetic transport response to match object { kind: 'auth_required', …(1) }
+
+- Expected
++ Received
+
+- Object {
+-   "jobId": "same-job",
+-   "kind": "auth_required",
+- }
++ [Error: Synthetic transport response]
+
+ ❯ src/__tests__/bookJobPolling.test.ts:117:3
+    115|   fetcher.mockResolvedValueOnce(Response.json({ message: 'Synthetic tr…
+    116|   const kind = status === 404 ? 'job_not_found' : status === 401 ? 'au…
+    117|   await expect(waitForBookJob('same-job')).rejects.toMatchObject({ kin…
+       |   ^
+    118|   expect(fetcher).toHaveBeenCalledTimes(1)
+    119|  })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > classifies HTTP 403 without pretending the EPUB failed
+AssertionError: expected Error: Synthetic transport response to match object { Object (kind, jobId) }
+
+- Expected
++ Received
+
+- Object {
+-   "jobId": "same-job",
+-   "kind": "forbidden",
+- }
++ [Error: Synthetic transport response]
+
+ ❯ src/__tests__/bookJobPolling.test.ts:117:3
+    115|   fetcher.mockResolvedValueOnce(Response.json({ message: 'Synthetic tr…
+    116|   const kind = status === 404 ? 'job_not_found' : status === 401 ? 'au…
+    117|   await expect(waitForBookJob('same-job')).rejects.toMatchObject({ kin…
+       |   ^
+    118|   expect(fetcher).toHaveBeenCalledTimes(1)
+    119|  })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > resumes a known job after a transient network failure without creating a new upload
+AssertionError: expected TypeError: Failed to fetch to match object { kind: 'status_unknown', …(1) }
+
+- Expected
++ Received
+
+- Object {
+-   "jobId": "resume-this-job",
+-   "kind": "status_unknown",
+- }
++ [TypeError: Failed to fetch]
+
+ ❯ src/__tests__/bookJobPolling.test.ts:122:3
+    120|  it('resumes a known job after a transient network failure without cre…
+    121|   fetcher.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+    122|   await expect(waitForBookJob('resume-this-job')).rejects.toMatchObjec…
+       |   ^
+    123|   fetcher.mockResolvedValueOnce(json({ state: 'active', progress: 70 }…
+    124|   const retry = waitForBookJob('resume-this-job')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > preserves a ready canonical snapshot when ordering ultimately fails
+AssertionError: promise rejected "Error: Ordering unavailable" instead of resolving
+ ❯ src/__tests__/bookJobPolling.test.ts:132:52
+    130|   const book = { ...item('canonical-book'), metadata_ready: true, proc…
+    131|   fetcher.mockResolvedValueOnce(json({ state: 'failed', failReason: 'O…
+    132|   await expect(waitForBookJob('ready-failed-order')).resolves.toMatchO…
+       |                                                    ^
+    133|  })
+    134|  it('only a terminal failed state confirms processing failure', async …
+
+Caused by: Error: Ordering unavailable
+ ❯ Module.waitForBookJob src/lib/api.ts:1506:44
+ ❯ src/__tests__/bookJobPolling.test.ts:132:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > only a terminal failed state confirms processing failure
+AssertionError: expected Error: EPUB parse rejected to match object { kind: 'processing_failed', …(2) }
+
+- Expected
++ Received
+
+- Object {
+-   "book": Object {
+-     "author": null,
+-     "available_languages": Array [
+-       "en",
+-     ],
+-     "cover": null,
+-     "created_at": "2026-09-01T12:00:00Z",
+-     "id": "pending",
+-     "is_own": true,
+-     "last_read_at": null,
+-     "metadata_ready": false,
+-     "metadata_version": "meta-pending",
+-     "original_language": "en",
+-     "processing_status": "error",
+-     "reading": null,
+-     "selected_language": null,
+-     "status": "active",
+-     "title": "pending",
+-   },
+-   "jobId": "failed-after-retry",
+-   "kind": "processing_failed",
+- }
++ [Error: EPUB parse rejected]
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  src/__tests__/bookJobPolling.test.ts > upload outcomes separate unavailable status from confirmed processing failure > keeps the latest parsed metadata on a timed-out status request
+AssertionError: expected Error: Book processing timed out. Please … to match object { kind: 'status_unknown', …(2) }
+
+- Expected
++ Received
+
+- Object {
+-   "book": Object {
+-     "author": null,
+-     "available_languages": Array [
+-       "en",
+-     ],
+-     "cover": null,
+-     "created_at": "2026-09-01T12:00:00Z",
+-     "id": "pending",
+-     "is_own": true,
+-     "last_read_at": null,
+-     "metadata_ready": true,
+-     "metadata_version": "meta-pending",
+-     "original_language": "en",
+-     "processing_status": "processing",
+-     "reading": null,
+-     "selected_language": null,
+-     "status": "active",
+-     "title": "pending",
+-   },
+-   "jobId": "timeout-with-metadata",
+-   "kind": "status_unknown",
+- }
++ [Error: Book processing timed out. Please try again.]
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 2 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+AssertionError: expected Error: EPUB parse rejected to match object { kind: 'processing_failed', …(2) }
+
+- Expected
++ Received
+
+- Object {
+-   "book": Object {
+-     "author": null,
+-     "available_languages": Array [
+-       "en",
+-     ],
+-     "cover": null,
+-     "created_at": "2026-09-01T12:00:00Z",
+-     "id": "pending",
+-     "is_own": true,
+-     "last_read_at": null,
+-     "metadata_ready": false,
+-     "metadata_version": "meta-pending",
+-     "original_language": "en",
+-     "processing_status": "error",
+-     "reading": null,
+-     "selected_language": null,
+-     "status": "active",
+-     "title": "pending",
+-   },
+-   "jobId": "failed-after-retry",
+-   "kind": "processing_failed",
+- }
++ [Error: EPUB parse rejected]
+
+ ❯ _Assertion.<anonymous> ../../node_modules/@vitest/expect/dist/index.js:1134:13
+ ❯ _Assertion.<anonymous> ../../node_modules/@vitest/expect/dist/index.js:972:17
+ ❯ _Assertion.methodWrapper ../../node_modules/chai/index.js:1686:25
+ ❯ ../../node_modules/@vitest/expect/dist/index.js:1849:31
+
+This error originated in "src/__tests__/bookJobPolling.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "only a terminal failed state confirms processing failure". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+AssertionError: expected Error: Book processing timed out. Please … to match object { kind: 'status_unknown', …(2) }
+
+- Expected
++ Received
+
+- Object {
+-   "book": Object {
+-     "author": null,
+-     "available_languages": Array [
+-       "en",
+-     ],
+-     "cover": null,
+-     "created_at": "2026-09-01T12:00:00Z",
+-     "id": "pending",
+-     "is_own": true,
+-     "last_read_at": null,
+-     "metadata_ready": true,
+-     "metadata_version": "meta-pending",
+-     "original_language": "en",
+-     "processing_status": "processing",
+-     "reading": null,
+-     "selected_language": null,
+-     "status": "active",
+-     "title": "pending",
+-   },
+-   "jobId": "timeout-with-metadata",
+-   "kind": "status_unknown",
+- }
++ [Error: Book processing timed out. Please try again.]
+
+ ❯ _Assertion.<anonymous> ../../node_modules/@vitest/expect/dist/index.js:1134:13
+ ❯ _Assertion.<anonymous> ../../node_modules/@vitest/expect/dist/index.js:972:17
+ ❯ _Assertion.methodWrapper ../../node_modules/chai/index.js:1686:25
+ ❯ ../../node_modules/@vitest/expect/dist/index.js:1849:31
+
+This error originated in "src/__tests__/bookJobPolling.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "keeps the latest parsed metadata on a timed-out status request". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ Test Files  1 failed (1)
+      Tests  13 failed | 8 passed (21)
+     Errors  2 errors
+   Start at  16:36:24
+   Duration  363ms (transform 70ms, setup 0ms, collect 75ms, tests 36ms, environment 0ms, prepare 40ms)

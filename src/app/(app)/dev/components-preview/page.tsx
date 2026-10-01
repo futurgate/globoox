@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Globe } from 'lucide-react';
 import { ReaderThemeProvider } from '@/components/Reader/ReaderThemeProvider';
 import ReaderSettings from '@/components/Reader/ReaderSettings';
@@ -29,6 +29,7 @@ import IOSBottomDrawer from '@/components/ui/ios-bottom-drawer';
 import IOSBottomDrawerHeader from '@/components/ui/ios-bottom-drawer-header';
 import IOSItemsStack from '@/components/ui/ios-items-stack';
 import { Button } from '@/components/ui/button';
+import { notify, setNotificationScope, setNotificationsSuppressed } from '@/lib/notifications';
 import {
   uiDrawerItemButton,
   uiDropdownItemButton,
@@ -194,6 +195,31 @@ export default function ComponentsPreviewPage() {
   const [alertDestructive] = useState(false);
   const sheetTitleId = useId();
   const sheetDescriptionId = useId();
+  const notificationSequence = useRef(0);
+  const [notificationAction, setNotificationAction] = useState('No action chosen yet.');
+
+  useEffect(() => {
+    setNotificationsSuppressed(activeOverlay !== null, 'components-preview');
+    return () => setNotificationsSuppressed(false, 'components-preview');
+  }, [activeOverlay]);
+
+  const previewNotification = (example: 'updated' | 'ready' | 'retry' | 'dedup') => {
+    const scope = setNotificationScope('dev:components-preview');
+    const operationId = example === 'dedup' ? 'preview-dedup' : `preview-${++notificationSequence.current}`;
+    notify({
+      scope,
+      operationId,
+      event: example,
+      kind: example === 'retry' ? 'error' : 'success',
+      title: example === 'retry' ? 'Could not archive the book' : example === 'ready' ? 'Book ready to read' : 'Library updated',
+      description: example === 'retry' ? 'The book is still in your library.' : undefined,
+      action: example === 'ready'
+        ? { label: 'Open', onClick: () => setNotificationAction('Open action selected (preview only).') }
+        : example === 'retry'
+          ? { label: 'Retry', onClick: () => setNotificationAction('Retry action selected (preview only).') }
+          : undefined,
+    });
+  };
 
   const openOverlay = (key: Exclude<OverlayKey, null>) => setActiveOverlay(key);
   const closeOverlay = () => {
@@ -455,9 +481,24 @@ export default function ComponentsPreviewPage() {
             Components Preview
           </h1>
           <p className="mt-3 text-[17px] leading-[24px] text-[var(--app-text-muted)]">
-            This page documents the modal stack by layer so it is obvious what can be inserted where.
+            App notifications, buttons, and modal patterns using the shared design tokens.
           </p>
         </header>
+
+        <Section
+          title="Notifications"
+          description="One shared Sonner host, App theme, one action, and at most three visible messages. Persistent problems stay on the affected screen."
+        >
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => previewNotification('updated')}>Library updated</Button>
+            <Button variant="outline" onClick={() => previewNotification('ready')}>Book ready · Open</Button>
+            <Button variant="outline" onClick={() => previewNotification('retry')}>Archive failed · Retry</Button>
+            <Button variant="outline" onClick={() => previewNotification('dedup')}>Repeat one event</Button>
+          </div>
+          <p className={`mt-4 text-sm ${previewMutedTextClassName}`}>
+            {notificationAction} Hover, keyboard focus, or a hidden tab pauses dismissal. Opening a dialog clears notifications; messages do not wait behind it.
+          </p>
+        </Section>
 
         <Section
           title="Rules"

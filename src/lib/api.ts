@@ -337,6 +337,14 @@ async function getBrowserAccessToken(): Promise<string | null> {
   return token
 }
 
+/** Retains HTTP status without changing existing Error/message consumers. */
+export class ApiRequestError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message)
+    this.name = 'ApiRequestError'
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit, capturedShare?: string | null): Promise<T> {
   const key = buildGetCacheKey(path, options)
   if (key) {
@@ -386,7 +394,7 @@ async function request<T>(path: string, options?: RequestInit, capturedShare?: s
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
-        throw new Error(body.message || `Request failed: ${res.status}`)
+        throw new ApiRequestError(body.message || `Request failed: ${res.status}`, res.status)
       }
 
       const data = await res.json()
@@ -1420,7 +1428,7 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
     statusCode = res.status
     if (!res.ok) {
       const errorText = await res.text()
-      throw new Error(`Storage upload failed: ${errorText}`)
+      throw new ApiRequestError(`Storage upload failed: ${errorText}`, res.status)
     }
     trackApiRequest('/storage/upload', 'PUT', performance.now() - startTime, true, statusCode, {
       file_size_kb: Math.round(file.size / 1024),
@@ -1467,19 +1475,40 @@ export function getJobStatus(jobId: string, signal?: AbortSignal): Promise<JobSt
   return request<JobStatus>(`/api/jobs/${encodeURIComponent(jobId)}`, { signal, cache: 'no-store' })
 }
 
-/** One deadline covers job requests, response bodies, and polling intervals. */
+export type UploadIssue = 'status_unknown' | 'job_not_found' | 'upload_unconfirmed' | 'auth_required' | 'forbidden' | 'order_unconfirmed' | 'upload_rejected'
+export type BookJobErrorKind = 'processing_failed' | 'status_unknown' | 'job_not_found' | 'auth_required' | 'forbidden'
+
+export class BookJobError extends Error {
+  constructor(readonly kind: BookJobErrorKind, message: string, readonly jobId: string, readonly book?: UploadBookSnapshot) {
+    super(message)
+    this.name = 'BookJobError'
+  }
+}
+
+export interface BookJobResult {
+  bookId: string
+  chapterCount: number
+  book?: UploadBookSnapshot
+  /** Content readiness and shelf ordering are independent acknowledgements. */
+  orderConfirmed: boolean
+}
+
+/** One deadline covers requests, response bodies and polling intervals. Manual retry uses the same job ID. */
 export async function waitForBookJob(
   jobId: string,
   signal?: AbortSignal,
   onProgress?: (pct: number) => void,
   onBook?: (book: UploadBookSnapshot) => void,
-): Promise<{ bookId: string; chapterCount: number; book?: UploadBookSnapshot }> {
+): Promise<BookJobResult> {
   const controller = new AbortController()
   const abort = () => controller.abort(signal?.reason)
   signal?.addEventListener('abort', abort, { once: true })
   if (signal?.aborted) abort()
-  const deadline = setTimeout(() => controller.abort(new Error('Book processing timed out. Please try again.')), 5 * 60 * 1000)
+  const deadline = setTimeout(() => controller.abort(new Error('Checking book readiness timed out. Check status to continue.')), 5 * 60 * 1000)
   let interval: ReturnType<typeof setTimeout> | undefined
+  let latestBook: UploadBookSnapshot | undefined
+  const readyResult = (): BookJobResult | undefined => latestBook?.processing_status === 'ready' && typeof latestBook.id === 'string' && latestBook.id.trim()
+    ? { bookId: latestBook.id, chapterCount: 0, book: latestBook, orderConfirmed: false } : undefined
   const interrupted = <T,>(operation: Promise<T>): Promise<T> => new Promise((resolve, reject) => {
     const stopped = () => { cleanup(); reject(controller.signal.reason) }
     const cleanup = () => controller.signal.removeEventListener('abort', stopped)
@@ -1492,20 +1521,39 @@ export async function waitForBookJob(
       controller.signal.throwIfAborted()
       const status = await interrupted(getJobStatus(jobId, controller.signal))
       controller.signal.throwIfAborted()
-      if (status.book) onBook?.(status.book)
+      if (status.book) { latestBook = status.book; onBook?.(status.book) }
       if (typeof status.progress === 'number' && Number.isFinite(status.progress)) {
         onProgress?.(Math.min(100, Math.max(0, Math.round(status.progress))))
       }
       if (status.state === 'completed') {
         if (!status.result || typeof status.result.bookId !== 'string' || !status.result.bookId.trim()) {
-          throw new Error('Book processing returned an invalid result')
+          const ready = readyResult()
+          if (ready) return { ...ready, orderConfirmed: status.order_confirmed === true }
+          throw new BookJobError('status_unknown', 'Book processing returned an invalid result. Refresh your library to check the upload.', jobId, latestBook)
         }
-        if (status.order_confirmed === false) throw new Error('Book order could not be confirmed. Please refresh your library.')
-        return { bookId: status.result.bookId, chapterCount: status.result.chapterCount ?? 0, ...(status.book ? { book: status.book } : {}) }
+        return { bookId: status.result.bookId, chapterCount: status.result.chapterCount ?? 0, orderConfirmed: status.order_confirmed !== false, ...(latestBook?.id === status.result.bookId ? { book: latestBook } : {}) }
       }
-      if (status.state === 'failed') throw new Error(status.failReason || 'Book processing failed')
+      if (status.state === 'failed') {
+        const ready = readyResult()
+        if (ready) return { ...ready, orderConfirmed: status.order_confirmed === true }
+        throw new BookJobError('processing_failed', status.failReason || 'Book processing failed', jobId, latestBook)
+      }
       await interrupted(new Promise<void>(resolve => { interval = setTimeout(resolve, 2000) }))
     }
+  } catch (error) {
+    // Navigation/account cancellation is not a user-visible failed upload.
+    if (signal?.aborted) throw signal.reason
+    if (error instanceof BookJobError) throw error
+    const status = error instanceof ApiRequestError ? error.status : undefined
+    const kind: BookJobErrorKind = status === 401 ? 'auth_required' : status === 403 ? 'forbidden' : status === 404 ? 'job_not_found' : 'status_unknown'
+    const ready = readyResult()
+    if (ready && kind === 'status_unknown') return ready
+    const message = kind === 'auth_required' ? 'Sign in to check this upload.'
+      : kind === 'forbidden' ? 'You do not have access to check this upload.'
+      : kind === 'job_not_found' ? 'This upload could not be confirmed. Refresh your library before uploading again.'
+      : controller.signal.aborted ? 'Checking book readiness timed out. Check status to continue.'
+      : 'Could not check whether the book is ready. Check status to continue.'
+    throw new BookJobError(kind, message, jobId, latestBook)
   } finally {
     clearTimeout(deadline)
     clearTimeout(interval)

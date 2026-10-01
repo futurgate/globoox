@@ -317,21 +317,37 @@ export class CatalogController {
     const oldIndex = this.view.books.findIndex(book => book.id === id)
     const old = this.view.books[oldIndex]
     const token = this.beginMutation(id)
+    const mutationScope = this.view.context!.scopeKey
+    const mayPublish = () => this.active && this.mutations.get(id) === token && this.view.context?.scopeKey === mutationScope
     this.publishItems(action === 'delete' ? this.view.books.filter(book => book.id !== id)
       : this.view.books.map(book => book.id === id ? { ...book, status: action } : book))
     let success = false
     try {
-      if (action === 'delete') await trackWrite(this.view.context!.scopeKey, this.dependencies.delete(id))
-      else await trackWrite(this.view.context!.scopeKey, this.dependencies.update(id, action))
+      if (action === 'delete') await trackWrite(mutationScope, this.dependencies.delete(id))
+      else await trackWrite(mutationScope, this.dependencies.update(id, action))
+      // Another in-flight mutation may already have revoked this view's access.
+      // Its late success cannot acknowledge/persist data or trigger a refresh.
+      if (!mayPublish()) return
       this.confirmItems(items => action === 'delete' ? items.filter(book => book.id !== id)
         : items.map(book => book.id === id ? { ...book, status: action } : book))
       success = true
     } catch (error) {
-      if (this.active && this.mutations.get(id) === token) {
+      if (mayPublish()) {
         const books = this.view.books.filter(book => book.id !== id)
         if (old) books.splice(Math.min(oldIndex, books.length), 0, old)
         this.publishItems(books)
-        this.publish({ error: new CatalogError('mutation', 'The book could not be changed') })
+        const status = error && typeof error === 'object' && 'status' in error ? error.status : undefined
+        if (status === 401 || status === 403) {
+          invalidateCatalogConfirmation(mutationScope)
+          this.hasData = false
+          this.manifest = null
+          this.refreshAfterMutation = false
+          this.publish({ books: [], context: null, revision: null, offline: false,
+            error: new CatalogError('auth', 'Library access could not be confirmed', status) })
+        } else {
+          this.publish({ error: new CatalogError('mutation', action === 'delete' ? 'The book could not be deleted'
+            : action === 'hidden' ? 'The book could not be archived' : 'The book could not be restored') })
+        }
       }
       throw error
     } finally { this.finishMutation(id, token, success) }

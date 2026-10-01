@@ -22,11 +22,11 @@ describe('queued EPUB polling belongs to the upload lifetime', () => {
   expect(onBook).toHaveBeenCalledWith(book)
   await vi.advanceTimersByTimeAsync(2000)
   await run
-  expect(done).toHaveBeenCalledWith({ bookId: 'canonical-book', chapterCount: 7, book })
+  expect(done).toHaveBeenCalledWith({ bookId: 'canonical-book', chapterCount: 7, book, orderConfirmed: true })
  })
- it('rejects an explicitly unconfirmed completion rather than reporting upload success', async () => {
+ it('preserves completed content and reports its unconfirmed order separately', async () => {
   fetcher.mockResolvedValueOnce(json({ ...completed, order_confirmed: false }))
-  await expect(waitForBookJob('unconfirmed')).rejects.toThrow('order could not be confirmed')
+  await expect(waitForBookJob('unconfirmed')).resolves.toMatchObject({ bookId: 'canonical-book', orderConfirmed: false })
   expect(fetcher).toHaveBeenCalledTimes(1)
  })
  it('passes a request signal and bypasses response/inflight caches for fresh job status', async () => {
@@ -46,7 +46,7 @@ describe('queued EPUB polling belongs to the upload lifetime', () => {
   await vi.advanceTimersByTimeAsync(2000)
   expect(fetcher).toHaveBeenCalledTimes(2)
   await vi.advanceTimersByTimeAsync(2000)
-  expect(await run).toEqual({ bookId: 'canonical-book', chapterCount: 7 })
+  expect(await run).toEqual({ bookId: 'canonical-book', chapterCount: 7, orderConfirmed: true })
   expect(progress.mock.calls.map(call => call[0])).toEqual([0, 45, 100])
   expect(vi.getTimerCount()).toBe(0)
  })
@@ -103,8 +103,65 @@ describe('queued EPUB polling belongs to the upload lifetime', () => {
   await tick(); expect(fetcher).toHaveBeenCalledTimes(2)
   a.abort(); await rejected
   expect(fetcher.mock.calls[1][1]?.signal?.aborted).toBe(false)
-  releases[1](json(completed)); expect(await second).toEqual({ bookId: 'canonical-book', chapterCount: 7 })
+  releases[1](json(completed)); expect(await second).toEqual({ bookId: 'canonical-book', chapterCount: 7, orderConfirmed: true })
   releases[0](json(completed)); await tick()
   expect(vi.getTimerCount()).toBe(0)
+ })
+})
+
+
+describe('upload outcomes separate unavailable status from confirmed processing failure', () => {
+ it.each([500, 502, 404, 401, 403])('classifies HTTP %s without pretending the EPUB failed', async status => {
+  fetcher.mockResolvedValueOnce(Response.json({ message: 'Synthetic transport response' }, { status }))
+  const kind = status === 404 ? 'job_not_found' : status === 401 ? 'auth_required' : status === 403 ? 'forbidden' : 'status_unknown'
+  await expect(waitForBookJob('same-job')).rejects.toMatchObject({ kind, jobId: 'same-job' })
+  expect(fetcher).toHaveBeenCalledTimes(1)
+ })
+ it('resumes a known job after a transient network failure without creating a new upload', async () => {
+  fetcher.mockRejectedValueOnce(new TypeError('Failed to fetch'))
+  await expect(waitForBookJob('resume-this-job')).rejects.toMatchObject({ kind: 'status_unknown', jobId: 'resume-this-job' })
+  fetcher.mockResolvedValueOnce(json({ state: 'active', progress: 70 })).mockResolvedValueOnce(json(completed))
+  const retry = waitForBookJob('resume-this-job')
+  await vi.advanceTimersByTimeAsync(2000)
+  await expect(retry).resolves.toMatchObject({ bookId: 'canonical-book', orderConfirmed: true })
+  expect(fetcher.mock.calls.map(call => String(call[0]))).toEqual(Array(3).fill('/api/jobs/resume-this-job'))
+ })
+ it('preserves a ready canonical snapshot when ordering ultimately fails', async () => {
+  const book = { ...item('canonical-book'), metadata_ready: true, processing_status: 'ready' }
+  fetcher.mockResolvedValueOnce(json({ state: 'failed', failReason: 'Ordering unavailable', book, order_confirmed: false }))
+  await expect(waitForBookJob('ready-failed-order')).resolves.toMatchObject({ bookId: 'canonical-book', book, orderConfirmed: false })
+ })
+ it('does not attach metadata from a replaced pending ID to a canonical completion', async () => {
+  const pending = { ...item('pending-id'), metadata_ready: true, processing_status: 'processing' }
+  fetcher.mockResolvedValueOnce(json({ state: 'active', book: pending, progress: 30 }))
+    .mockResolvedValueOnce(json(completed))
+  const run = waitForBookJob('canonical-remap')
+  await vi.advanceTimersByTimeAsync(2000)
+  await expect(run).resolves.toEqual({ bookId: 'canonical-book', chapterCount: 7, orderConfirmed: true })
+ })
+ it('does not downgrade ready content if the following ordering status request loses connection', async () => {
+  const book = { ...item('canonical-book'), metadata_ready: true, processing_status: 'ready' }
+  fetcher.mockResolvedValueOnce(json({ state: 'active', progress: 99, book }))
+    .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+  const run = waitForBookJob('ready-network')
+  await vi.advanceTimersByTimeAsync(2000)
+  await expect(run).resolves.toMatchObject({ bookId: 'canonical-book', book, orderConfirmed: false })
+ })
+ it('only a terminal failed state confirms processing failure', async () => {
+  const book = { ...item('pending'), metadata_ready: false, processing_status: 'error' }
+  fetcher.mockResolvedValueOnce(json({ state: 'delayed', progress: 15, book }))
+    .mockResolvedValueOnce(json({ state: 'failed', failReason: 'EPUB parse rejected', book }))
+  const run = waitForBookJob('failed-after-retry')
+  const rejection = expect(run).rejects.toMatchObject({ kind: 'processing_failed', book, jobId: 'failed-after-retry' })
+  await tick(); expect(fetcher).toHaveBeenCalledTimes(1)
+  await vi.advanceTimersByTimeAsync(2000); await rejection
+ })
+ it('keeps the latest parsed metadata on a timed-out status request', async () => {
+  const book = { ...item('pending'), metadata_ready: true, processing_status: 'processing' }
+  fetcher.mockResolvedValueOnce(json({ state: 'active', book, progress: 30 }))
+    .mockReturnValueOnce(new Promise(() => {}))
+  const run = waitForBookJob('timeout-with-metadata')
+  const rejection = expect(run).rejects.toMatchObject({ kind: 'status_unknown', book, jobId: 'timeout-with-metadata' })
+  await vi.advanceTimersByTimeAsync(300000); await rejection
  })
 })

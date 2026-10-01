@@ -10,9 +10,10 @@ export function uploadedCatalogItem(value: unknown, complete: boolean): CatalogI
   if (raw.title !== null && typeof raw.title !== 'string') return undefined
   const metadataReady = raw.metadata_ready === true
   const title = metadataReady ? String(raw.title ?? '').trim() : ''
-  const candidate = { ...raw, title: title || (complete ? 'Untitled book' : ''),
+  const ready = complete || raw.processing_status === 'ready'
+  const candidate = { ...raw, title: title || (ready ? 'Untitled book' : ''),
     author: metadataReady ? raw.author : null, cover: metadataReady ? raw.cover : null,
-    processing_status: complete ? 'ready' : raw.processing_status === 'error' ? 'error' : 'processing',
+    processing_status: ready ? 'ready' : 'processing',
   }
   return isCatalogItem(candidate) ? candidate : undefined
 }
@@ -22,5 +23,5 @@ export function applyUploadEvent(entries: BookshelfUpload[], event: UploadBookEv
   if (event.phase === 'uploading') return [event, ...entries.filter(entry => entry.attemptId !== event.attemptId)]
   if (!entries.some(entry => entry.attemptId === event.attemptId)) return entries
   return entries.filter(entry => !event.bookId || entry.attemptId === event.attemptId || entry.bookId !== event.bookId)
-    .map(entry => entry.attemptId === event.attemptId ? { ...entry, ...event } : entry)
+    .map(entry => entry.attemptId === event.attemptId ? { ...entry, ...event, error: event.error, issue: event.issue } : entry)
 }

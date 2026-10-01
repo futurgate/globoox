@@ -15,12 +15,12 @@ const item = (id, extra = {}) => ({ id, title: id, author: 'Fixture author', cre
 const original = [item('old-a', { title: 'A old book' }), item('old-z', { title: 'Z old book' }), item('archived', { status: 'hidden' })]
 const mocks = {
   auth: `import {useSyncExternalStore} from 'react'; export const useAuth=()=>useSyncExternalStore(window.authSubscribe,()=>window.auth);`,
-  supabase: `export const createClient=()=>({auth:{getSession:async()=>({data:{session:window.auth.user?{user:window.auth.user,access_token:'synthetic-only'}:null}})}});`,
+  supabase: `export const createClient=()=>({auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),getSession:async()=>({data:{session:window.auth.user?{user:window.auth.user,access_token:'synthetic-only'}:null}})}});`,
   store: `export const useAppStore=fn=>fn({progress:{}});`,
   analytics: `export const trackApiRequest=()=>{};export const trackTranslateStreamClient=()=>{};export const trackBookOpened=()=>{};export const trackBookUploadStarted=()=>{};export const trackBookUploaded=()=>{};export const trackBookUploadFailed=()=>{};`,
   sentry: `export const captureException=()=>{};export const addBreadcrumb=()=>{};`,
   activity: `export const flushReadingActivity=async()=> '0';export const getPendingReadingRecency=()=>({});`,
-  navigation: `export const useSearchParams=()=>new URLSearchParams(location.search);`,
+  navigation: `export const useSearchParams=()=>new URLSearchParams(location.search);export const usePathname=()=>location.pathname;`,
   link: `import React from 'react';export default function Link({children,...props}){return <a {...props}>{children}</a>}`,
   image: `import React from 'react';export default function Image({fill,unoptimized,priority,...props}){return <img {...props}/>} `,
   empty: `export default function Empty(){return null}`,
@@ -32,6 +32,7 @@ const mocks = {
 const source = `
 import React,{act} from 'react';import {createRoot} from 'react-dom/client';
 import MyBooks from './src/app/(app)/my-books/page';
+import AppToaster from './src/components/ui/app-toaster';
 import {catalogContextHint} from './src/lib/catalogApi';
 import {invalidateCatalogConfirmation} from './src/lib/catalogFreshness';
 window.IS_REACT_ACT_ENVIRONMENT=true;
@@ -56,7 +57,7 @@ window.fetch=(input,init={})=>{
   if(kind==='library'&&!holdIndex)call.resolve(manifest(server[user]||[],user));
  });
 };
-let root=createRoot(document.getElementById('root'));await act(async()=>root.render(<MyBooks/>));
+let root=createRoot(document.getElementById('root'));await act(async()=>root.render(<><MyBooks/><AppToaster/></>));
 window.check={
  async flush(){await act(async()=>{})},
  async resolve(kind,index,value){await act(async()=>window.calls[kind][index].resolve(value))},
@@ -65,13 +66,13 @@ window.check={
  server(books,user=window.auth.user?.id||'guest'){server[user]=books;persist()},
  async index(index,books){const call=window.calls.library[index];await act(async()=>call.resolve(manifest(books,call.user)))},
  async revalidate(){await act(async()=>document.dispatchEvent(new Event('visibilitychange')))},
- async remount(){await act(async()=>root.unmount());root=createRoot(document.getElementById('root'));await act(async()=>root.render(<MyBooks/>))},
+ async remount(){await act(async()=>root.unmount());root=createRoot(document.getElementById('root'));await act(async()=>root.render(<><MyBooks/><AppToaster/></>))},
  async switchAccount(id){await act(async()=>{window.auth=authFor(id);sessionStorage.setItem('fixture:account',id||'');listeners.forEach(fn=>fn())})},
  invalidate(){invalidateCatalogConfirmation(catalogContextHint(window.auth.user?.id||null).scopeKey)},
  state(){return {calls:Object.fromEntries(Object.entries(window.calls).map(([k,v])=>[k,v.map(c=>({url:c.url,user:c.user,aborted:c.aborted||c.signal?.aborted,settled:c.settled}))])),ids:[...document.querySelectorAll('[data-book-id]')].map(n=>n.dataset.bookId)}}
 };
 `
-const bundled = await build({ stdin: { contents: source, resolveDir: process.cwd(), sourcefile: 'uploadStoryHarness.tsx', loader: 'tsx' }, bundle: true, write: false, format: 'esm', platform: 'browser', jsx: 'automatic', define: { 'process.env.NODE_ENV': '"development"' }, plugins: [{ name: 'upload-story-fixtures', setup(builder) {
+const bundled = await build({ stdin: { contents: source, resolveDir: process.cwd(), sourcefile: 'uploadStoryHarness.tsx', loader: 'tsx' }, bundle: true, write: false, loader: { '.css': 'empty' }, format: 'esm', platform: 'browser', jsx: 'automatic', define: { 'process.env.NODE_ENV': '"development"' }, plugins: [{ name: 'upload-story-fixtures', setup(builder) {
   builder.onResolve({ filter: /.*/ }, args => {
     const p = args.path
     const key = p.endsWith('/hooks/useAuth') ? 'auth' : /(?:^\.\/|@\/lib\/)supabase\/client$/.test(p) ? 'supabase'
@@ -99,10 +100,12 @@ if (manual) {
 }
 const browser = await chromium.launch({ channel: process.env.CATALOG_BROWSER_CHANNEL ?? 'chrome', headless: true })
 const results = []
+const record = results.push.bind(results); results.push = value => { console.error('PASS', value); return record(value) }
 const run = (page, method, ...args) => page.evaluate(({ method, args }) => window.check[method](...args), { method, args })
 const state = page => run(page, 'state')
 async function fixture(books = original, holdIndex = false) {
   const page = await browser.newPage({ viewport: { width: 1000, height: 900 } })
+  page.setDefaultTimeout(7000)
   page.on('pageerror', error => console.error('fixture pageerror:', error.message))
   await page.clock.install()
   await page.route('**/*', route => route.request().url() === 'http://127.0.0.1:39999/my-books' ? route.fulfill({ contentType: 'text/html', body: `<div id="root"></div><script>window.initial=${JSON.stringify({ holdIndex, account: accountA, server: { [accountA]: books, [accountB]: [item('account-b-only')] } })}</script><script type="module">${bundled.outputFiles[0].text}</script>` }) : route.abort())
@@ -127,7 +130,9 @@ async function poll(page) { await page.clock.runFor(2000); await run(page, 'flus
 const cover = { url: '/api/v2/books/pending/cover?version=v1', version: 'v1', width: null, height: null }
 const image = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="18"><rect width="12" height="18" fill="green"/></svg>'
 try {
+  console.error('Starting page fixture')
   let page = await fixture()
+  console.error('Page fixture ready')
   await begin(page)
   const uploadCard = page.locator('[data-upload-attempt]').first()
   assert.equal(await uploadCard.getByLabel('Loading title', { exact: true }).count(), 1, 'Unparsed upload must render a title skeleton, never the filename')
@@ -239,7 +244,7 @@ try {
   await queued(page)
   await page.getByRole('button', { name: 'Close dialog' }).click()
   await run(page, 'resolve', 'job', 0, { state: 'failed', failReason: 'Synthetic parse failure' })
-  await page.getByText('Upload failed', { exact: true }).waitFor()
+  await page.locator('[data-upload-attempt]').getByText('Unable to process this book', { exact: true }).waitFor()
   const failedLocal = page.locator('[data-upload-attempt]')
   assert.equal(await failedLocal.getByLabel('Loading title', { exact: true }).count(), 0, 'Failed unparsed local upload must stop the title skeleton')
   assert.equal(await failedLocal.getByLabel('Loading author', { exact: true }).count(), 0)
@@ -249,7 +254,7 @@ try {
   await page.clock.runFor(10000)
   assert.equal((await state(page)).calls.process.length, 1)
   assert.equal((await state(page)).calls.job.length, 1)
-  await page.getByRole('button', { name: 'Upload again', exact: true }).click()
+  await failedLocal.getByRole('button', { name: 'Upload again', exact: true }).click()
   assert.equal(await page.getByRole('dialog').count(), 1)
   assert.equal((await state(page)).calls.process.length, 1)
   results.push('failed upload remains visible and opens an explicit new upload; no automatic process/poll retry')
@@ -277,11 +282,11 @@ try {
   assert.equal(await page.locator('[data-book-id="old-a"]').count(), 1)
   await run(page, 'reject', 'library', (await state(page)).calls.library.length - 1, 'Synthetic index unavailable')
   assert.equal(await page.locator('[data-book-id="old-a"] a').count(), 2)
-  assert.ok((await page.locator('[data-book-id="old-a"]').innerText()).includes('Upload failed'))
+  assert.ok((await page.locator('[data-book-id="old-a"]').innerText()).includes('Book ready. Unable to update the bookshelf.'))
   results.push('order confirmation failure remains visible but never downgrades an already ready canonical book, including an unavailable index')
   await run(page, 'hold', false)
   await page.getByRole('button', { name: 'Try again', exact: true }).click()
-  await page.waitForFunction(() => !document.body.innerText.includes('Upload failed'))
+  await page.waitForFunction(() => !document.body.innerText.includes('Book ready. Unable to update the bookshelf.'))
   assert.equal(await page.locator('[data-book-id="old-a"] a').count(), 2)
   results.push('successful authoritative index recovery clears an earlier upload warning without removing the ready book')
   await page.close()
@@ -335,7 +340,7 @@ try {
   assert.equal((await state(page)).calls.library.length, bounded)
   await run(page, 'server', [item('resumed', { processing_status: 'error' }), ...original])
   await page.getByRole('button', { name: 'Refresh status' }).click()
-  await page.locator('[data-book-id="resumed"]').getByText('Upload failed', { exact: true }).waitFor()
+  await page.locator('[data-book-id="resumed"]').getByText('Unable to process this book', { exact: true }).waitFor()
   assert.equal((await state(page)).calls.process.length, 0)
   results.push('pending reload polling ends after five minutes; explicit status retry can reveal terminal failure without resubmitting the upload')
   await page.close()

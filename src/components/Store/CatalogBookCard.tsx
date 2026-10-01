@@ -1,5 +1,6 @@
 'use client'
 
+import type { UploadIssue } from '@/lib/api'
 import BookCard from './BookCard'
 import { useCatalogCover } from '@/lib/useCatalogCover'
 import type { CatalogContext, CatalogItem } from '@/lib/catalogTypes'
@@ -14,6 +15,9 @@ export default function CatalogBookCard({ book, context, offline, ...props }: {
   hideLabel?: string
   onOpen?: () => void
   uploadError?: string
+  uploadIssue?: UploadIssue
+  onCheckStatus?: () => void
+  checkingStatus?: boolean
   onRetryUpload?: () => void
 }) {
   const cover = useCatalogCover(book, context, offline)

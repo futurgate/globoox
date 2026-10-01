@@ -47,7 +47,19 @@ for(const button of document.querySelectorAll('[data-fixture-action]'))button.ad
  const action=button.dataset.fixtureAction;button.disabled=true;
  try{
   if(action==='start')await start();
-  else if(action==='reset'){localStorage.clear();sessionStorage.clear();location.reload()}
+  else if(action==='unknown'){
+    await prepare(); const call=await nextCall('job');call.reject('Synthetic connection lost');
+    status.textContent='Server result unknown. Close the modal, then use Check status on the card; press Ready to deliver the result.';
+  }else if(action==='order-failure'){
+    await prepare();window.check.hold(true);
+    (await nextCall('job')).resolve({state:'completed',order_confirmed:false,book:original[0],result:{bookId:original[0].id,chapterCount:2}});
+    (await nextCall('library')).reject('Synthetic library unavailable');queued=false;
+    status.textContent='Ready book preserved; library order unavailable. Restore connection, then Refresh bookshelf.';
+  }else if(action==='restore'){
+    window.check.hold(false);status.textContent='Synthetic server restored. Use the app recovery button.';
+  }else if(action==='hide'){
+    document.querySelector('[aria-label="Synthetic fixture controls"]').style.display='none';
+  }else if(action==='reset'){localStorage.clear();sessionStorage.clear();location.reload()}
   else if(action==='reload'){window.check.server([{...parsed,title:'',author:null,metadata_ready:false,processing_status:'processing'},...original]);location.reload()}
   else await stage(action);
  }catch(error){status.textContent=error.message}finally{button.disabled=false}
@@ -64,9 +76,9 @@ for(const button of document.querySelectorAll('[data-fixture-action]'))button.ad
     if (request.url !== '/' && request.url !== '/my-books') { response.writeHead(404); response.end(); return }
     response.writeHead(200, { 'content-type': 'text/html' })
     response.end(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fixture.css"><title>Upload story — synthetic fixture</title></head><body><div id="root"></div>
-      <section style="position:fixed;bottom:8px;left:8px;right:8px;z-index:99999;background:#fff;color:#17261e;border:1px solid #84988d;border-radius:12px;padding:10px;box-shadow:0 5px 24px #0003;font:13px system-ui" aria-label="Synthetic fixture controls">
+      <section style="position:fixed;top:8px;left:8px;right:8px;z-index:99999;background:#fff;color:#17261e;border:1px solid #84988d;border-radius:12px;padding:10px;box-shadow:0 5px 24px #0003;font:13px system-ui" aria-label="Synthetic fixture controls">
       <strong>Local fixture only · no real upload, model or database</strong><div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0">
-      ${[['start', 'Start synthetic upload'], ['metadata', 'Metadata'], ['cover', 'Cover'], ['ready', 'Ready'], ['error', 'Error'], ['reload', 'Reload processing'], ['reset', 'Reset fixture']].map(([action, label]) => `<button data-fixture-action="${action}" style="padding:6px 10px;border:1px solid #84988d;border-radius:6px;background:#f5f7f6">${label}</button>`).join('')}
+      ${[['start', 'Start synthetic upload'], ['metadata', 'Metadata'], ['cover', 'Cover'], ['ready', 'Ready'], ['error', 'Error'], ['unknown', 'Lose status connection'], ['order-failure', 'Order confirmation failed'], ['restore', 'Restore connection'], ['hide', 'Hide controls'], ['reload', 'Reload processing'], ['reset', 'Reset fixture']].map(([action, label]) => `<button data-fixture-action="${action}" style="padding:6px 10px;border:1px solid #84988d;border-radius:6px;background:#f5f7f6">${label}</button>`).join('')}
       </div><p id="fixture-status">Start, then Metadata → Cover → Ready. Modal can be closed at any stage.</p></section>
       <script>window.initial=${JSON.stringify(initial)}</script><script type="module">await import('/fixture.js');${controls}</script></body></html>`)
   })

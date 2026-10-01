@@ -2,7 +2,7 @@
 type: index
 status: current
 owner: engineering
-last_verified: 2026-09-01
+last_verified: 2026-10-01
 ---
 
 # Documentation Archive
@@ -36,6 +36,13 @@ The Supabase signup investigation remains unresolved. Its confirmed and unknown 
 |---|---|---|
 | [Chapters batch change note](2026-04/api/chapters-batch-change-note.md) | Backend change already consumed by the frontend | [API and sync](../reference/architecture/api-and-sync.md) |
 | [Amplitude dashboard prototype](2026-04/analytics/amplitude-dashboard-prototype.md) | Provider prototype; original reason for not adopting it is undocumented | [ADR-0005](../decisions/ADR-0005-posthog-analytics.md), [PostHog reference](../reference/product/analytics-posthog.md) |
+
+## October 2026
+
+| Material | Historical disposition | Current replacement |
+|---|---|---|
+| [Bookshelf and Reader checkpoints](2026-10-01-reader-recovery/README.md) | Bookshelf v2 and Reader recovery released; old production landing restored; superseded loading plans and release evidence retained | [API and sync](../reference/architecture/api-and-sync.md), [current upload follow-up](../rfcs/active/bookshelf-upload-2026-10-01/README.md) |
+| [Bookshelf upload dev release](2026-10-01-bookshelf-upload/README.md) | Initial story accepted on dev; shared backend/DB released. Exact inputs, adverse results and rollback retained; this is not a production frontend release | [Feedback and recovery plan](../rfcs/active/bookshelf-upload-2026-10-01/README.md) |
 
 ## Archive rules
 

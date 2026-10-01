@@ -317,3 +317,54 @@ describe('optimistic mutation reconciliation', () => {
     expect(controller.snapshot.books.map(book => [book.id, book.status])).toEqual([['a', 'active']])
   })
 })
+
+
+describe('mutation access failures', () => {
+  it.each([
+    { authFirst: true, otherOutcome: 'success' },
+    { authFirst: true, otherOutcome: 'error' },
+    { authFirst: false, otherOutcome: 'success' },
+    { authFirst: false, otherOutcome: 'error' },
+  ])('keeps access denied with authFirst=$authFirst and another $otherOutcome', async ({ authFirst, otherOutcome }) => {
+    const denied = deferred<void>()
+    const other = deferred<void>()
+    const fetch = vi.fn(async () => manifest(['a', 'b']))
+    const { controller } = setup({ fetch, delete: id => id === 'a' ? denied.promise : other.promise })
+    await controller.refresh()
+    const authError = Object.assign(new Error('Session expired'), { status: 401 })
+    const otherError = Object.assign(new Error('Write response unavailable'), { status: 500 })
+    const a = controller.mutate('a', 'delete').catch(error => error)
+    const b = controller.mutate('b', 'delete').catch(error => error)
+    const denyAccess = async () => { denied.reject(authError); expect(await a).toBe(authError) }
+    const settleOther = async () => {
+      if (otherOutcome === 'error') { other.reject(otherError); expect(await b).toBe(otherError) }
+      else { other.resolve(); expect(await b).toBeUndefined() }
+    }
+    if (authFirst) { await denyAccess(); await settleOther() }
+    else { await settleOther(); await denyAccess() }
+    await microtasks()
+    expect(controller.snapshot.books).toEqual([])
+    expect(controller.snapshot.context).toBeNull()
+    expect(controller.snapshot.error).toMatchObject({ kind: 'auth', status: 401 })
+    // The other response must not start an automatic revalidation after access was denied.
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('preserves both typed rejections when concurrent auth failures clear the same shelf', async () => {
+    const first = deferred<void>()
+    const second = deferred<void>()
+    const { controller } = setup({ fetch: async () => manifest(['a', 'b']), delete: id => id === 'a' ? first.promise : second.promise })
+    await controller.refresh()
+    const errorA = Object.assign(new Error('Session expired'), { status: 401 })
+    const errorB = Object.assign(new Error('Forbidden'), { status: 403 })
+    const a = controller.mutate('a', 'delete').catch(error => error)
+    const b = controller.mutate('b', 'delete').catch(error => error)
+    first.reject(errorA)
+    expect(await a).toBe(errorA)
+    expect(controller.snapshot.context).toBeNull()
+    second.reject(errorB)
+    expect(await b).toBe(errorB)
+    expect(controller.snapshot.books).toEqual([])
+    expect(controller.snapshot.error).toMatchObject({ kind: 'auth', status: 401 })
+  })
+})
