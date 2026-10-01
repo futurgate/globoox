@@ -2,7 +2,7 @@
 type: reference
 status: current
 owner: design-engineering
-last_verified: 2026-09-14
+last_verified: 2026-10-01
 implementation:
   - src/app/[locale]/page.tsx
   - src/app/landing-editorial/page.tsx
@@ -16,6 +16,8 @@ implementation:
 evidence:
   - design-qa.md
 ---
+
+**Production landing rollback — 2026-10-01:** The user requested the former production landing. Main restores `src/app/[locale]/page.tsx` to `LocalizedLandingPage` and its existing scoped CSS; the components and locale dictionaries are byte-identical to former production `235ddff`. Current invalid-locale 404 and safe JSON-LD escaping remain. This main-only release preserves the deployed bookshelf/reader fixes. Dev deliberately keeps the editorial primary landing; do not re-promote it to production during a later branch sync without a new user instruction. Isolated editorial previews and all design assets remain. Release evidence: [current release record](../../rfcs/active/reader-recovery-2026-10-01/README.md#production-landing-rollback).
 
 **Current deployed dev landing — 2026-09-14:** User explicitly authorized Vercel publication. dev.globoox.co now serves editorial commit019c717 via READY Preview deployment dpl_DG3VN1LbyZUXKfJNCQDooVPHrLuM in lomovski/globoox. The domain is mapped to Git branch dev. Both production aliases remain on dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU. No automatic deployment settings changed. This supersedes older no-deploy/auth-blocked notices for this completed dev release. Canonical copy, accepted visuals/media and beta behavior are preserved; Terms/Privacy remain review drafts. Existing project visuals remain SECONDARY references; preserve all history and Tanya's local billing RFC edits. Release record: `docs/rfcs/active/globoox-editorial-2026/desktop-v2/dev-deployment-2026-09-14/README.md`.
 

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 vi.mock('@/lib/posthog', () => ({ trackApiRequest: vi.fn(), trackTranslateStreamClient: vi.fn() }))
 vi.mock('@/lib/contentCache', () => ({ setCachedBookMeta: vi.fn() }))
 import { getJobStatus, waitForBookJob } from '@/lib/api'
+import { item } from './catalogFixtures'
 
 const json = (value: unknown) => Response.json(value)
 const completed = { state: 'completed', progress: 100, result: { bookId: 'canonical-book', chapterCount: 7 } }
@@ -11,6 +12,23 @@ beforeEach(() => { vi.useFakeTimers(); fetcher = vi.fn<typeof fetch>(); vi.stubG
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals() })
 
 describe('queued EPUB polling belongs to the upload lifetime', () => {
+ it('reports progressive book snapshots but only completes after the job and ordering receipt', async () => {
+  const book = { ...item('canonical-book'), metadata_ready: true, processing_status: 'ready' }
+  fetcher.mockResolvedValueOnce(json({ state: 'active', book, progress: 90 })).mockResolvedValueOnce(json({ ...completed, book, order_confirmed: true }))
+  const onBook = vi.fn(), done = vi.fn()
+  const run = waitForBookJob('progressive', undefined, undefined, onBook).then(done)
+  await tick()
+  expect(done).not.toHaveBeenCalled()
+  expect(onBook).toHaveBeenCalledWith(book)
+  await vi.advanceTimersByTimeAsync(2000)
+  await run
+  expect(done).toHaveBeenCalledWith({ bookId: 'canonical-book', chapterCount: 7, book })
+ })
+ it('rejects an explicitly unconfirmed completion rather than reporting upload success', async () => {
+  fetcher.mockResolvedValueOnce(json({ ...completed, order_confirmed: false }))
+  await expect(waitForBookJob('unconfirmed')).rejects.toThrow('order could not be confirmed')
+  expect(fetcher).toHaveBeenCalledTimes(1)
+ })
  it('passes a request signal and bypasses response/inflight caches for fresh job status', async () => {
   fetcher.mockResolvedValueOnce(json({ state: 'waiting', progress: 0 })).mockResolvedValueOnce(json({ state: 'active', progress: 30 }))
   const controller = new AbortController()

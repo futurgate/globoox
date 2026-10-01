@@ -1,0 +1,285 @@
+{
+  "checked_at_utc": "2026-10-01T08:56:22.505352+00:00",
+  "routes": [
+    {
+      "url": "https://www.globoox.co/en",
+      "final_url": "https://www.globoox.co/en",
+      "status": 200,
+      "legacy_landing": true,
+      "canonical": [
+        "https://www.globoox.co/en"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/08d6247065aa0c50.js",
+        "/_next/static/chunks/f44c98077b2041f9.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://www.globoox.co/es",
+      "final_url": "https://www.globoox.co/es",
+      "status": 200,
+      "legacy_landing": true,
+      "canonical": [
+        "https://www.globoox.co/es"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/08d6247065aa0c50.js",
+        "/_next/static/chunks/f44c98077b2041f9.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://www.globoox.co/fr",
+      "final_url": "https://www.globoox.co/fr",
+      "status": 200,
+      "legacy_landing": true,
+      "canonical": [
+        "https://www.globoox.co/fr"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/08d6247065aa0c50.js",
+        "/_next/static/chunks/f44c98077b2041f9.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://www.globoox.co/ru",
+      "final_url": "https://www.globoox.co/ru",
+      "status": 200,
+      "legacy_landing": true,
+      "canonical": [
+        "https://www.globoox.co/ru"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/08d6247065aa0c50.js",
+        "/_next/static/chunks/f44c98077b2041f9.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://www.globoox.co/unknown",
+      "status": 404
+    },
+    {
+      "url": "https://www.globoox.co/my-books",
+      "final_url": "https://www.globoox.co/my-books",
+      "status": 200,
+      "legacy_landing": false,
+      "canonical": [
+        "https://www.globoox.co/my-books"
+      ],
+      "web_app_count": 0,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/aadc25fc394156f4.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/782ebf24ddd7045d.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://www.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "final_url": "https://www.globoox.co/reader/fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "status": 200,
+      "legacy_landing": false,
+      "canonical": [
+        "https://www.globoox.co"
+      ],
+      "web_app_count": 0,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/aadc25fc394156f4.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/bd3d06e248bd2c3e.js",
+        "/_next/static/chunks/3d8b146b5a6e7543.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://www.globoox.co/",
+      "final_url": "https://www.globoox.co/en",
+      "status": 200,
+      "legacy_landing": true,
+      "canonical": [
+        "https://www.globoox.co/en"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/08d6247065aa0c50.js",
+        "/_next/static/chunks/f44c98077b2041f9.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://globoox.co/",
+      "final_url": "https://www.globoox.co/en",
+      "status": 200,
+      "legacy_landing": true,
+      "canonical": [
+        "https://www.globoox.co/en"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/08d6247065aa0c50.js",
+        "/_next/static/chunks/f44c98077b2041f9.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    },
+    {
+      "url": "https://dev.globoox.co/en",
+      "final_url": "https://dev.globoox.co/en",
+      "status": 200,
+      "legacy_landing": false,
+      "canonical": [
+        "https://www.globoox.co/en"
+      ],
+      "web_app_count": 1,
+      "scripts": [
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/6579b1793d1f521b.js",
+        "/_next/static/chunks/9da42f32cab1e23b.js",
+        "/_next/static/chunks/7a129f056b20cb63.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/167ed37c994957fb.js"
+      ]
+    }
+  ],
+  "reader_recovery_chunks": [
+    {
+      "path": "/_next/static/chunks/3d8b146b5a6e7543.js",
+      "sha256": "d217ba6d3a03b571c9b23d5bef2be651635cc6603b560548e577f7c3a2ed4638",
+      "reload_chapter": true
+    }
+  ],
+  "release_sha": "88d3a4c8ef4bfd389b823a861d95064d9abf6cb6",
+  "github_deployment_id": 6780182216,
+  "vercel_deployment_id": "6SUKtqSJwPD8zHyio8MdtaZP11mZ",
+  "deployment_state": "success",
+  "ready_at": "2026-10-01T08:55:25Z",
+  "artifact_url": "https://globoox-fht8j7iee-lomovski.vercel.app",
+  "signed_in_browser": {
+    "en_redirect": "/my-books",
+    "books_visible": true
+  },
+  "dev_sha": "01e2fe2c31ae264d202638a0dac2e471fd785d77"
+}

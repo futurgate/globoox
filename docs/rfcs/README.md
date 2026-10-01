@@ -2,7 +2,7 @@
 type: index
 status: current
 owner: engineering
-last_verified: 2026-09-01
+last_verified: 2026-10-01
 ---
 
 # RFC Index
@@ -13,6 +13,7 @@ RFCs describe proposed behavior and never override current reference documentati
 
 | RFC | Implementation | Main unresolved decision |
 |---|---|---|
+| [Bookshelf upload](active/bookshelf-upload-2026-10-01/README.md) | In progress; dev-first implementation | Progressive metadata, durable upload recency, regression/manual acceptance |
 | [Billing, entitlements, and translation access](active/billing-entitlements-and-translation-access.md) | Proposed; backend billing/quota skeleton exists but the target contract is not aligned | Align demo-only access, stable quota identity, and observable checkout activation |
 | [Reader adaptive typography](active/reader-adaptive-typography.md) | Not started | Language profiles and whether font auto-fit may override user settings |
 | [Translation orchestration](active/translation-orchestration.md) | Not started | Adaptive chunks and staged commits vs previous no-adaptive constraint |
@@ -23,12 +24,13 @@ RFCs describe proposed behavior and never override current reference documentati
 
 - [Reader recovery](active/reader-recovery-2026-10-01/README.md): translation recovery and position guards shipped; exact release, tests, limits and rollback recorded.
 
-- [Bookshelf v2 release](active/catalog-speed-2026-09-25/README.md): dev and production shipped; remaining Reader work moved to the active recovery plan.
+- [Bookshelf v2 release](active/catalog-speed-2026-09-25/README.md): dev and production shipped; subsequent Reader fixes also shipped; upload story is the current implementation plan.
 
 ## Superseded
 
 | RFC | Replacement | Recorded reason |
 |---|---|---|
+| [Library loading stability](active/library-loading-stability-2026-09-16/README.md) | Released bookshelf v2 | September streaming implementation replaced; evidence retained |
 | [My Books server snapshot](active/my-books-server-snapshot.md) | Released bookshelf v2 | Earlier startup proposal replaced by manifest + scoped cache + separate covers |
 | [`translate-range` anchor stabilization](superseded/translation-anchor-stabilization.md) | Translation v2 snapshot/reconcile/push model | Not documented; author input required |
 

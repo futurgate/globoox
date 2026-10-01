@@ -1395,7 +1395,7 @@ export interface SignedUrlResponse {
  */
 export type ProcessBookResponse =
   | { jobId: string; bookId: string }
-  | { id: string; chapter_count?: number }
+  | { id: string; chapter_count?: number; book?: UploadBookSnapshot | null; order_confirmed?: boolean }
 
 /** Get a signed URL for direct upload to Supabase Storage */
 export function getSignedUploadUrl(bucket: string, path: string, signal?: AbortSignal): Promise<SignedUrlResponse> {
@@ -1452,11 +1452,15 @@ export function uploadBook(formData: FormData): Promise<UploadBookResponse> {
 
 export type JobState = 'waiting' | 'active' | 'completed' | 'failed' | 'delayed'
 
+export type UploadBookSnapshot = Omit<import('./catalogTypes').CatalogItem, 'title'> & { title: string | null }
+
 export interface JobStatus {
   state: JobState
   progress: number
   result?: { bookId: string; title: string; author: string | null; chapterCount: number }
   failReason?: string
+  book?: UploadBookSnapshot | null
+  order_confirmed?: boolean
 }
 
 export function getJobStatus(jobId: string, signal?: AbortSignal): Promise<JobStatus> {
@@ -1468,7 +1472,8 @@ export async function waitForBookJob(
   jobId: string,
   signal?: AbortSignal,
   onProgress?: (pct: number) => void,
-): Promise<{ bookId: string; chapterCount: number }> {
+  onBook?: (book: UploadBookSnapshot) => void,
+): Promise<{ bookId: string; chapterCount: number; book?: UploadBookSnapshot }> {
   const controller = new AbortController()
   const abort = () => controller.abort(signal?.reason)
   signal?.addEventListener('abort', abort, { once: true })
@@ -1487,6 +1492,7 @@ export async function waitForBookJob(
       controller.signal.throwIfAborted()
       const status = await interrupted(getJobStatus(jobId, controller.signal))
       controller.signal.throwIfAborted()
+      if (status.book) onBook?.(status.book)
       if (typeof status.progress === 'number' && Number.isFinite(status.progress)) {
         onProgress?.(Math.min(100, Math.max(0, Math.round(status.progress))))
       }
@@ -1494,7 +1500,8 @@ export async function waitForBookJob(
         if (!status.result || typeof status.result.bookId !== 'string' || !status.result.bookId.trim()) {
           throw new Error('Book processing returned an invalid result')
         }
-        return { bookId: status.result.bookId, chapterCount: status.result.chapterCount ?? 0 }
+        if (status.order_confirmed === false) throw new Error('Book order could not be confirmed. Please refresh your library.')
+        return { bookId: status.result.bookId, chapterCount: status.result.chapterCount ?? 0, ...(status.book ? { book: status.book } : {}) }
       }
       if (status.state === 'failed') throw new Error(status.failReason || 'Book processing failed')
       await interrupted(new Promise<void>(resolve => { interval = setTimeout(resolve, 2000) }))

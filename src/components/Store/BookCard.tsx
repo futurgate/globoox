@@ -8,6 +8,7 @@ import { StarIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2, CircleAlert } from 'lucide-react';
 import BookActionsMenu from './BookActionsMenu';
 import { useAuth } from '@/lib/hooks/useAuth';
 
@@ -370,6 +371,17 @@ interface BookCardProps {
   onDelete?: (id: string) => void;
   hideLabel?: string;
   onOpen?: () => void;
+  processingStatus?: 'pending' | 'processing' | 'ready' | 'error' | null;
+  metadataLoading?: boolean;
+  uploadError?: string;
+  onRetryUpload?: () => void;
+}
+
+function BookCardLink({ disabled, href, className, children, onOpen }: {
+  disabled: boolean; href: string; className: string; children: React.ReactNode; onOpen?: () => void;
+}) {
+  return disabled ? <div className={className} aria-disabled="true">{children}</div>
+    : <Link href={href} className={className} onClick={onOpen}>{children}</Link>;
 }
 
 export default function BookCard({
@@ -385,13 +397,19 @@ export default function BookCard({
   onDelete,
   hideLabel,
   onOpen,
+  processingStatus,
+  metadataLoading = false,
+  uploadError,
+  onRetryUpload,
 }: BookCardProps) {
+  const processing = processingStatus === 'pending' || processingStatus === 'processing';
+  const failed = processingStatus === 'error';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canHover, setCanHover] = useState<boolean | null>(null);
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isCardFocused, setIsCardFocused] = useState(false);
   const { isAuthenticated } = useAuth();
-  const hasActions = isAuthenticated && Boolean(onHide || onDelete);
+  const hasActions = isAuthenticated && !processing && Boolean(onHide || onDelete);
   const sourceCover = (cover ?? '').trim();
   const displayCover = sourceCover;
   const [failedCoverSrc, setFailedCoverSrc] = useState<string | null>(null);
@@ -429,6 +447,8 @@ export default function BookCard({
 
   return (
     <div
+      data-book-id={id}
+      data-processing-status={processingStatus ?? 'ready'}
       className="w-full relative"
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
@@ -455,7 +475,7 @@ export default function BookCard({
           >
             <div className="absolute top-1 right-1 pointer-events-auto">
               <BookActionsMenu
-                onHide={() => onHide?.(id)}
+                onHide={onHide ? () => onHide(id) : undefined}
                 onDelete={() => onDelete?.(id)}
                 hideLabel={hideLabel}
                 onOpenChange={setIsMenuOpen}
@@ -463,18 +483,11 @@ export default function BookCard({
             </div>
           </div>
         )}
-        <Link
+        <BookCardLink
           href={withShareContext(`/reader/${id}`, shareToken)}
           className={`block transition-transform ${isMenuOpen ? 'pointer-events-none' : 'active:scale-[0.98]'}`}
-          tabIndex={isMenuOpen ? -1 : 0}
-          aria-disabled={isMenuOpen}
-          onClick={(event) => {
-            if (isMenuOpen) {
-              event.preventDefault();
-            } else {
-              onOpen?.();
-            }
-          }}
+          disabled={isMenuOpen || processing || failed}
+          onOpen={onOpen}
         >
           <div className="aspect-[2/3] relative">
             <div className="absolute left-0 bottom-0" style={effectiveCoverFrameStyle}>
@@ -500,7 +513,7 @@ export default function BookCard({
                       unoptimized={displayCover.startsWith('blob:')}
                       onError={() => setFailedCoverSrc(displayCover)}
                     />
-                  ) : coverLoading ? (
+                  ) : coverLoading || processing ? (
                     <Skeleton className="h-full w-full" aria-label="Loading cover" />
                   ) : (
                     <FallbackCover id={id} title={title} author={author} />
@@ -518,24 +531,28 @@ export default function BookCard({
               </div>
             </div>
           </div>
-        </Link>
+        </BookCardLink>
       </div>
-      <Link
+      <BookCardLink
         href={withShareContext(`/reader/${id}`, shareToken)}
         className={`block ${isMenuOpen ? 'pointer-events-none' : ''}`}
-        tabIndex={isMenuOpen ? -1 : 0}
-        aria-disabled={isMenuOpen}
-        onClick={(event) => {
-          if (isMenuOpen) {
-            event.preventDefault();
-          } else {
-            onOpen?.();
-          }
-        }}
+        disabled={isMenuOpen || processing || failed}
+        onOpen={onOpen}
       >
-        <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{title}</p>
-        <p className="text-xs text-muted-foreground line-clamp-1">{author}</p>
-      </Link>
+        {metadataLoading ? <div className="space-y-1.5" aria-label="Loading book details">
+          <Skeleton className="h-4 w-4/5" aria-label="Loading title" />
+          <Skeleton className="h-3 w-3/5" aria-label="Loading author" />
+        </div> : <>
+          <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{title || 'Untitled book'}</p>
+          <p className="text-xs text-muted-foreground line-clamp-1">{author}</p>
+        </>}
+      </BookCardLink>
+      {(processing || failed || uploadError) && <p role="status" className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+        {failed || uploadError ? <CircleAlert className="size-3.5 text-destructive" aria-hidden="true" /> : <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />}
+        {failed || uploadError ? 'Upload failed' : processingStatus === 'pending' ? 'Uploading book…' : 'Processing book…'}
+      </p>}
+      {(failed || uploadError) && <><p className="mt-1 break-words text-xs text-destructive">{uploadError || 'Please upload the file again.'}</p>
+        {onRetryUpload && <button className="mt-2 text-xs underline" onClick={onRetryUpload}>Upload again</button>}</>}
     </div>
   );
 }

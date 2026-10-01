@@ -58,34 +58,79 @@ function ScopedBookshelf() {
 function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType<typeof useAuth> }) {
   const progress = useAppStore((state) => state.progress);
   const { isAuthenticated, loading: authLoading } = auth;
-  const { books, loading, error, offline, context, refreshing, hideBook, unhideBook, removeBook, refresh, beginExternalMutation } = useCatalog({
+  const { books, loading, error, offline, context, refreshing, confirmation, hideBook, unhideBook, removeBook, refresh, beginExternalMutation, acceptUploadedBook } = useCatalog({
     userId: authLoading && !isAuthenticated ? undefined : auth.user?.id ?? null,
     legacyScopeKey: scopeKey,
   });
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [uploads, setUploads] = useState<BookshelfUpload[]>([]);
   const uploadReleases = useRef(new Map<string, () => void>());
+  const uploadBookIds = useRef(new Map<string, string>());
+  const uploadAttempts = useRef(new Set<string>());
+  const latestConfirmation = useRef(confirmation);
+  latestConfirmation.current = confirmation;
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    const releases = uploadReleases.current;
+    return () => { mounted.current = false; for (const finish of releases.values()) finish(); releases.clear(); };
+  }, []);
   const handleUploadEvent = useCallback((event: UploadBookEvent) => {
-    if (event.phase === 'uploading') uploadReleases.current.set(event.attemptId, beginExternalMutation());
+    if (!mounted.current) return;
+    if (event.phase === 'uploading') {
+      uploadAttempts.current.add(event.attemptId);
+      uploadReleases.current.set(event.attemptId, beginExternalMutation());
+    } else if (!uploadAttempts.current.has(event.attemptId)) return;
+    // A callback belongs to this page/account lifetime, never the next account's shelf.
+    if (event.book) acceptUploadedBook(event.book, uploadBookIds.current.get(event.attemptId));
+    if (event.bookId) uploadBookIds.current.set(event.attemptId, event.bookId);
     if (event.phase === 'complete' || event.phase === 'error') {
       uploadReleases.current.get(event.attemptId)?.();
       uploadReleases.current.delete(event.attemptId);
+      uploadAttempts.current.delete(event.attemptId);
     }
-    setUploads(current => applyUploadEvent(current, event));
-    if (event.phase === 'complete') void refresh();
-  }, [beginExternalMutation, refresh]);
+    const errorConfirmation = latestConfirmation.current;
+    setUploads(current => applyUploadEvent(current, event).map(entry => entry.attemptId === event.attemptId && event.phase === 'error'
+      ? { ...entry, errorConfirmation } : entry));
+    if (event.phase === 'complete' || event.phase === 'error') void refresh();
+  }, [acceptUploadedBook, beginExternalMutation, refresh]);
   const dismissUpload = useCallback((attemptId: string) => {
+    uploadAttempts.current.delete(attemptId);
+    uploadReleases.current.get(attemptId)?.();
+    uploadReleases.current.delete(attemptId);
     setUploads(current => current.filter(entry => entry.attemptId !== attemptId));
   }, []);
-  const unpinBook = useCallback((id: string) => setUploads(current => current.filter(entry => entry.bookId !== id)), []);
+  const dismissBookUpload = useCallback((id: string) => {
+    for (const [attemptId, bookId] of uploadBookIds.current) if (bookId === id) dismissUpload(attemptId);
+  }, [dismissUpload]);
   useEffect(() => {
     setUploads(current => {
-      if (!current.some(entry => !entry.resolved && books.some(book => book.id === entry.bookId))) return current;
-      return current.map(entry => books.some(book => book.id === entry.bookId) ? { ...entry, resolved: true } : entry);
+      const recovered = current.filter(upload => !(upload.phase === 'error' && (upload.errorConfirmation ?? confirmation) < confirmation
+        && books.some(book => book.id === upload.bookId && (book.processing_status == null || book.processing_status === 'ready'))));
+      return recovered.length === current.length ? current : recovered;
     });
-  }, [books]);
-  const shownUploads = error?.kind === 'auth' ? [] : uploads.filter(entry => !entry.resolved || books.some(book => book.id === entry.bookId));
-  const pinnedIds = new Set(shownUploads.map(entry => entry.bookId).filter(Boolean));
+  }, [books, confirmation]);
+  const pendingPollStarted = useRef<number | null>(null);
+  const [pendingPollEpoch, setPendingPollEpoch] = useState(0);
+  const [pendingPollExpired, setPendingPollExpired] = useState(false);
+  const hasUntrackedProcessing = books.some(book => (book.processing_status === 'pending' || book.processing_status === 'processing')
+    && !uploads.some(upload => upload.bookId === book.id && (upload.phase === 'uploading' || upload.phase === 'processing')));
+  useEffect(() => {
+    if (!hasUntrackedProcessing) { pendingPollStarted.current = null; setPendingPollExpired(false); return; }
+    if (offline || error?.kind === 'auth') return;
+    // Reload has no local job ID. Refresh only the index, never resubmit processing.
+    pendingPollStarted.current ??= Date.now();
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      if (stopped) return;
+      if (Date.now() - pendingPollStarted.current! >= 5 * 60 * 1000) { setPendingPollExpired(true); return; }
+      await refresh();
+      if (!stopped) timer = setTimeout(poll, 2000);
+    };
+    timer = setTimeout(poll, 2000);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [hasUntrackedProcessing, offline, error?.kind, pendingPollEpoch, refresh]);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [isDeletingBook, setIsDeletingBook] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'visible' | 'hidden' | 'all'>('visible');
@@ -160,14 +205,14 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     const targetId = deleteTarget.id;
     try {
       setDeleteTarget(null);
-      unpinBook(targetId);
+      dismissBookUpload(targetId);
       await removeBook(targetId);
     } catch {
       // useCatalog already restores the removed book and exposes the error to the page
     } finally {
       setIsDeletingBook(false);
     }
-  }, [deleteTarget, removeBook, unpinBook]);
+  }, [deleteTarget, removeBook, dismissBookUpload]);
 
   // Recency is the server's array order. Position display has no authority to
   // reorder it, and does not make per-book network requests.
@@ -192,13 +237,25 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     });
   }, [books, statusFilter, sortOrder]);
 
-  const visibleBooks = useMemo(
-    () => filteredBooks.slice(0, Math.min(visibleCount, filteredBooks.length)),
-    [filteredBooks, visibleCount]
-  );
-  const uploadBooks = shownUploads.flatMap(entry => books.find(book => book.id === entry.bookId) ?? []);
-  useCatalogCoverQueue([...uploadBooks, ...filteredBooks.filter(book => !pinnedIds.has(book.id))], context, offline);
-  const hasMoreBooks = visibleCount < filteredBooks.length;
+  const shownUploads = error?.kind === 'auth' ? [] : uploads.filter(entry => {
+    const book = books.find(book => book.id === entry.bookId);
+    if (book && (entry.phase === 'complete' || (entry.phase === 'error' && (book.processing_status == null || book.processing_status === 'ready')))) return false;
+    return statusFilter === 'all' || (statusFilter === 'hidden' ? book?.status === 'hidden' : book?.status !== 'hidden');
+  });
+  const temporaryIds = new Set(shownUploads.map(entry => entry.bookId).filter(Boolean));
+  const isProcessing = (book: CatalogItem) => book.processing_status === 'pending' || book.processing_status === 'processing';
+  const orderedBooks = [...filteredBooks.filter(book => !temporaryIds.has(book.id) && isProcessing(book)),
+    ...filteredBooks.filter(book => !temporaryIds.has(book.id) && !isProcessing(book))];
+  const visibleBooks = orderedBooks.slice(0, visibleCount);
+  const cardEntries = [
+    ...shownUploads.map(upload => ({ key: upload.attemptId, upload, book: books.find(book => book.id === upload.bookId) ?? upload.book })),
+    ...visibleBooks.map(book => {
+      const upload = uploads.find(entry => entry.bookId === book.id);
+      return { key: upload?.attemptId ?? book.id, upload, book };
+    }),
+  ];
+  useCatalogCoverQueue([...shownUploads.flatMap(entry => books.find(book => book.id === entry.bookId) ?? entry.book ?? []), ...orderedBooks], context, offline);
+  const hasMoreBooks = visibleCount < orderedBooks.length;
   const loadingBatchCount = hasMoreBooks
     ? Math.min(BOOKS_BATCH_SIZE, Math.max(0, filteredBooks.length - visibleBooks.length))
     : 0;
@@ -239,6 +296,10 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
       />
 
       <div className="container max-w-2xl mx-auto px-4 sm:px-6 pt-[calc(2rem+env(safe-area-inset-top)+72px)] pb-4 space-y-6 overflow-x-clip">
+        {pendingPollExpired && <div role="status" className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
+          <p>Some books are still processing. Refresh to check again.</p>
+          <Button variant="outline" size="sm" onClick={() => { pendingPollStarted.current = null; setPendingPollExpired(false); setPendingPollEpoch(value => value + 1); void refresh(); }}>Refresh status</Button>
+        </div>}
         {(error || offline) && (
           <div role="status" aria-live="polite" className="flex items-center justify-between gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-bg)] p-3 text-sm">
             <p>
@@ -371,28 +432,22 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
         <section>
           {(shownUploads.length > 0 || loading || filteredBooks.length > 0) && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-              {shownUploads.map(upload => {
-                const book = books.find(entry => entry.id === upload.bookId);
-                return <div key={upload.attemptId} data-upload-attempt={upload.attemptId}>
+              {cardEntries.map(({ key, upload, book: source }) => {
+                const book = source && upload?.phase === 'error' && source.processing_status != null && source.processing_status !== 'ready'
+                  ? { ...source, processing_status: 'error' as const } : source;
+                return <div key={key} data-upload-attempt={upload?.attemptId}>
                   {book ? <CatalogBookCard book={book} context={context} offline={offline}
                     progress={getBookProgress(book)}
-                    onHide={offline ? undefined : id => { unpinBook(id); void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
+                    onHide={offline || book.processing_status === 'error' ? undefined : id => { dismissBookUpload(id); void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
                     onDelete={offline ? undefined : handleRequestDelete}
                     hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
+                    uploadError={upload?.error}
+                    onRetryUpload={offline ? undefined : () => setIsUploadOpen(true)}
                     onOpen={() => trackBookOpened({ book_id: book.id, title: book.title, source: 'library' })}
-                  /> : <UploadBookPlaceholder upload={upload} refreshing={refreshing} onDismiss={() => dismissUpload(upload.attemptId)} onRefresh={() => void refresh()} />}
+                  /> : upload && <UploadBookPlaceholder upload={upload} refreshing={refreshing} onDismiss={() => dismissUpload(upload.attemptId)} onRetry={() => setIsUploadOpen(true)} onRefresh={() => void refresh()} />}
                 </div>;
               })}
-              {loading ? [1, 2, 3, 4, 5, 6].map(i => <div key={`initial-${i}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />)
-                : visibleBooks.filter(book => !pinnedIds.has(book.id)).map(book => (
-                  <CatalogBookCard key={book.id} book={book} context={context} offline={offline}
-                    progress={getBookProgress(book)}
-                    onHide={offline ? undefined : id => { void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
-                    onDelete={offline ? undefined : handleRequestDelete}
-                    hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
-                    onOpen={() => trackBookOpened({ book_id: book.id, title: book.title, source: 'library' })}
-                  />
-                ))}
+              {loading && [1, 2, 3, 4, 5, 6].map(i => <div key={`initial-${i}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />)}
             </div>
           )}
           {!loading && !shownUploads.length && !filteredBooks.length && (

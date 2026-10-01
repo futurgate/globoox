@@ -2,7 +2,6 @@
 import { build } from 'esbuild'
 import { chromium } from 'playwright'
 import assert from 'node:assert/strict'
-import path from 'node:path'
 const fixture = `
 import React from 'react';
 export const getSignedUploadUrl=(bucket,path,signal)=>window.pending('signed',{path},signal);
@@ -15,6 +14,8 @@ export const captureException=()=>{};export const addBreadcrumb=()=>{};
 export const IOSAction=({children,onClick,disabled})=><button onClick={onClick} disabled={disabled}>{children}</button>;
 export const IOSActionStack=({children})=><div>{children}</div>;
 export const Skeleton=({children,...props})=><div {...props}>{children}</div>;
+export const Card=({children})=><div>{children}</div>;export const CardContent=Card;export const CardTitle=Card;export const CardDescription=Card;export const Badge=Card;
+export const useAuth=()=>({isAuthenticated:false});
 export default function Dialog({open,onOpenChange,title,children}){return open===undefined?<div>{children}</div>:open?<div role="dialog" aria-label={title}><button onClick={()=>onOpenChange(false)}>Close dialog</button>{children}</div>:null}
 `
 const source = `
@@ -30,9 +31,8 @@ const root=createRoot(document.getElementById('root'));await act(async()=>root.r
 window.check={async flush(){await act(async()=>{})},async resolve(kind,index,value){await act(async()=>window.calls[kind][index].resolve(value))},async reject(kind,index,error){await act(async()=>window.calls[kind][index].reject(error))},async unmount(){await act(async()=>root.unmount())},state(){return {events:window.events,calls:Object.fromEntries(Object.entries(window.calls).map(([k,v])=>[k,v.map(x=>({data:x.data,aborted:x.signal?.aborted}))]))}}};
 `
 const bundle=await build({stdin:{contents:source,resolveDir:process.cwd(),sourcefile:'uploadHarness.tsx',loader:'tsx'},bundle:true,write:false,format:'esm',platform:'browser',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'},plugins:[{name:'upload-fixture',setup(builder){
- builder.onResolve({filter:/^(@\/lib\/(api|posthog)|@sentry\/nextjs|@\/components\/ui\/)/},()=>({path:'fixture',namespace:'mock'}));
+ builder.onResolve({filter:/^(@\/lib\/(api|posthog|hooks\/useAuth)|@sentry\/nextjs|@\/components\/ui\/|next\/(image|link)|\.\/BookActionsMenu$)/},()=>({path:'fixture',namespace:'mock'}));
  builder.onResolve({filter:/^\.\/(posthog|contentCache)$/},args=>args.importer.endsWith('/src/lib/api.ts')?({path:'fixture',namespace:'mock'}):null);
- builder.onResolve({filter:/^@\//},args=>({path:path.resolve('src',args.path.slice(2)+'.ts')}));
  builder.onLoad({filter:/.*/,namespace:'mock'},()=>({contents:fixture,loader:'tsx',resolveDir:process.cwd()}));
 }}]});
 const browser=await chromium.launch({channel:process.env.CATALOG_BROWSER_CHANNEL??'chrome',headless:true});
@@ -43,13 +43,13 @@ const resolve=(page,kind,index,value)=>page.evaluate(({kind,index,value})=>windo
 const state=page=>page.evaluate(()=>window.check.state());
 try {
  let page=await create();await upload(page,'first.epub');
- await page.getByRole('article',{name:'Uploading first.epub'}).waitFor();
+ await page.getByRole('article',{name:'Book upload'}).waitFor();
  assert.equal((await state(page)).calls.storage.length,0);assert.equal((await state(page)).calls.signed.length,1);
  const attempt=await page.locator('#shelf > div').getAttribute('data-attempt');
  await resolve(page,'signed',0,{signedUrl:'http://synthetic/upload'});await resolve(page,'storage',0,null);
  await page.getByText('Processing book…',{exact:true}).first().waitFor();
  await page.getByRole('button',{name:'Close dialog'}).click();
- assert.equal(await page.getByRole('article',{name:'Uploading first.epub'}).count(),1);
+ assert.equal(await page.getByRole('article',{name:'Book upload'}).count(),1);
  await page.getByRole('button',{name:'Open upload'}).click();await upload(page,'second.epub');
  await resolve(page,'process',0,{id:'book-first',chapter_count:1});
  assert.equal(await page.getByRole('dialog').count(),1);assert.equal(await page.getByText('Ready book-first',{exact:true}).count(),1);

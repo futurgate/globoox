@@ -8,9 +8,12 @@ import IOSDialogFooter from '@/components/ui/ios-dialog-footer';
 import { getSignedUploadUrl, uploadToStorage, processBook, waitForBookJob } from '@/lib/api';
 import { trackBookUploadStarted, trackBookUploaded, trackBookUploadFailed } from '@/lib/posthog';
 import * as Sentry from '@sentry/nextjs';
+import type { CatalogItem } from '@/lib/catalogTypes';
+import { uploadedCatalogItem } from '@/lib/bookshelfUploads';
 
 export interface UploadBookEvent {
   attemptId: string; fileName: string; phase: 'uploading' | 'processing' | 'complete' | 'error'; bookId?: string; error?: string;
+  book?: CatalogItem;
 }
 
 interface UploadBookModalProps {
@@ -186,13 +189,21 @@ export default function UploadBookModal({ isOpen, onClose, onUploaded, onUploadE
       message('Processing book…');
       const response = await processBook(fileName, selected.name, selected.size, controller.signal);
       controller.signal.throwIfAborted();
+      if ('jobId' in response) notify('processing', { bookId: response.bookId });
       const completed = 'jobId' in response
-        ? await waitForBookJob(response.jobId, controller.signal, pct => message(`Processing book… ${pct}%`))
-        : { bookId: response.id, chapterCount: response.chapter_count ?? 0 };
+        ? await waitForBookJob(response.jobId, controller.signal, pct => message(`Processing book… ${pct}%`), snapshot => {
+          const book = uploadedCatalogItem(snapshot, false);
+          if (book) notify('processing', { bookId: book.id, book });
+        })
+        : { bookId: response.id, chapterCount: response.chapter_count ?? 0, book: response.book };
       controller.signal.throwIfAborted();
+      if (!('jobId' in response) && response.order_confirmed === false) {
+        throw new Error('Book order could not be confirmed. Please refresh your library.');
+      }
       trackBookUploaded({ title: selected.name, author: 'Unknown', language: 'unknown', chapter_count: completed.chapterCount, file_size_kb: fileSizeKb });
       Sentry.addBreadcrumb({ category: 'upload', message: 'upload.success', data: { bookId: completed.bookId }, level: 'info' });
-      notify('complete', { bookId: completed.bookId });
+      const book = 'book' in completed ? uploadedCatalogItem(completed.book, true) : undefined;
+      notify('complete', { bookId: completed.bookId, ...(book ? { book } : {}) });
       onUploaded?.(completed.bookId);
       if (currentDialog()) handleClose();
     } catch (err: unknown) {

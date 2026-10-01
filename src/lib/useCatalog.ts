@@ -95,9 +95,10 @@ export function useCatalog(options: UseCatalogOptions) {
   const view = rendered.controller === controller ? rendered.view : controller.snapshot
   const refresh = useCallback(() => controller.refresh(true), [controller])
   const beginExternalMutation = useCallback(() => controller.beginExternalMutation(), [controller])
+  const acceptUploadedBook = useCallback((book: CatalogItem, previousBookId?: string) => controller.acceptUploadedBook(book, previousBookId), [controller])
   const hideBook = useCallback((id: string) => controller.mutate(id, 'hidden'), [controller])
   const unhideBook = useCallback((id: string) => controller.mutate(id, 'active'), [controller])
   const removeBook = useCallback((id: string) => controller.mutate(id, 'delete'), [controller])
   const addBook = useCallback((data: Parameters<CatalogController['addBook']>[0]) => controller.addBook(data), [controller])
-  return { ...view, scopeKey: view.context?.scopeKey ?? null, refresh, beginExternalMutation, hideBook, unhideBook, removeBook, addBook }
+  return { ...view, scopeKey: view.context?.scopeKey ?? null, refresh, beginExternalMutation, acceptUploadedBook, hideBook, unhideBook, removeBook, addBook }
 }

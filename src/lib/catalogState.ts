@@ -1,5 +1,5 @@
 import { abortable } from './catalogApi'
-import { CatalogError, validateCatalogManifest, type CatalogContext, type CatalogItem, type CatalogManifest } from './catalogTypes'
+import { CatalogError, isCatalogItem, validateCatalogManifest, type CatalogContext, type CatalogItem, type CatalogManifest } from './catalogTypes'
 import type { CatalogCacheEntry } from './catalogCache'
 import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, hasFreshCatalogReceipt, invalidateCatalogConfirmation } from './catalogFreshness'
 
@@ -14,6 +14,7 @@ export interface CatalogView {
   error: CatalogError | null
   context: CatalogContext | null
   revision: string | null
+  confirmation: number
 }
 
 export interface CatalogDependencies {
@@ -32,6 +33,10 @@ export interface CatalogDependencies {
 
 function sameItems(a: CatalogItem[], b: CatalogItem[]) {
   return a === b || (a.length === b.length && a.every((item, i) => JSON.stringify(item) === JSON.stringify(b[i])))
+}
+function serverRecency(a: CatalogItem, b: CatalogItem) {
+  const recent = (Date.parse(b.last_read_at ?? '') || -Infinity) - (Date.parse(a.last_read_at ?? '') || -Infinity)
+  return (Number.isNaN(recent) ? 0 : recent) || Date.parse(b.created_at) - Date.parse(a.created_at) || a.id.localeCompare(b.id)
 }
 const pendingWrites = new Map<string, Set<Promise<unknown>>>()
 function trackWrite<T>(scope: string, promise: Promise<T>): Promise<T> {
@@ -54,7 +59,7 @@ async function settlePriorWrites(scope: string, signal: AbortSignal) {
 
 /** Owns one identity lifetime. Async work never publishes after its generation expires. */
 export class CatalogController {
-  private view: CatalogView = { books: [], loading: true, refreshing: false, offline: false, error: null, context: null, revision: null }
+  private view: CatalogView = { books: [], loading: true, refreshing: false, offline: false, error: null, context: null, revision: null, confirmation: 0 }
   private listeners = new Set<(view: CatalogView) => void>()
   private active = true
   private generation = 0
@@ -67,6 +72,7 @@ export class CatalogController {
   private mutations = new Map<string, symbol>()
   private pendingMutations = 0
   private refreshAfterMutation = false
+  private uploadsBeforeIndex: Array<{ book: CatalogItem; previousBookId?: string }> = []
 
   constructor(private dependencies: CatalogDependencies, private timeoutMs = CATALOG_REFRESH_TIMEOUT_MS) {}
   get snapshot() { return this.view }
@@ -184,8 +190,11 @@ export class CatalogController {
       this.hasData = true
       this.fallback = { manifest, savedAt: Date.now(), origin: 'server' }
       this.fallbackScope = context.scopeKey
-      this.publish({ books: manifest.items, context, revision: manifest.revision, loading: false, refreshing: false, offline: false, error: null })
+      this.publish({ books: manifest.items, context, revision: manifest.revision, loading: false, refreshing: false, offline: false, error: null,
+        confirmation: this.view.confirmation + 1 })
       void this.dependencies.persist(manifest).catch(() => {})
+      const uploads = this.uploadsBeforeIndex.splice(0)
+      for (const upload of uploads) this.acceptUploadedBook(upload.book, upload.previousBookId)
     } catch (error) {
       if (!current()) return
       context ??= this.dependencies.hint()
@@ -252,11 +261,32 @@ export class CatalogController {
     this.publish({ loading: false, refreshing: false, error: null })
     return token
   }
-  /** Upload remains page-local; its in-flight write still invalidates other shelf lifetimes. */
+  /** Accept only server-owned metadata. It cannot renew the complete-index cooldown. */
+  acceptUploadedBook(book: CatalogItem, previousBookId?: string) {
+    if (!this.active || !isCatalogItem(book) || this.mutations.has(book.id) || (previousBookId && this.mutations.has(previousBookId))) return
+    if (!this.manifest) {
+      if (this.dependencies.hint()?.userId) this.uploadsBeforeIndex.push({ book, previousBookId })
+      return
+    }
+    if (!this.view.context?.userId) return
+    const existing = this.view.books.find(item => item.id === book.id)
+    // Deduplicating another upload may return a book that was already readable.
+    // Its provisional job snapshot must never downgrade the existing saved book.
+    const accepted = existing && (existing.processing_status == null || existing.processing_status === 'ready')
+      && book.processing_status !== 'ready' ? existing : book
+    invalidateCatalogConfirmation(this.view.context.scopeKey)
+    const merge = (items: CatalogItem[]) => [...items.filter(item => item.id !== book.id
+      && !(item.id === previousBookId && item.processing_status != null && item.processing_status !== 'ready')), accepted].sort(serverRecency)
+    this.publishItems(merge(this.view.books))
+    this.confirmItems(merge)
+  }
+  /** In-flight upload invalidates other shelf lifetimes and supersedes an older index request. */
   beginExternalMutation(): () => void {
     const context = this.view.context ?? this.dependencies.hint()
     if (!context) throw new CatalogError('auth', 'Wait for your session before uploading')
     invalidateCatalogConfirmation(context.scopeKey)
+    if (this.hasData) this.cancel()
+    this.publish({ loading: !this.hasData, refreshing: false })
     this.pendingMutations += 1
     let finish!: () => void
     const pending = new Promise<void>(resolve => { finish = resolve })
