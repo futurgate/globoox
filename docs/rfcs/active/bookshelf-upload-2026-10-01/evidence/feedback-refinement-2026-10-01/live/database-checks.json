@@ -1,0 +1,16 @@
+[
+  {
+    "stage": "after_retry_and_reload",
+    "rows": [
+      {
+        "id": "37796568-c4e9-4835-9032-8616b3b45130",
+        "title": "QA Upload Retry 2026-10-01",
+        "processing_status": "ready"
+      }
+    ]
+  },
+  {
+    "stage": "after_ui_cleanup",
+    "rows": []
+  }
+]

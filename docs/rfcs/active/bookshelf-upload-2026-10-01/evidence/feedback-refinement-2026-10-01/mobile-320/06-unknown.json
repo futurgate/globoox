@@ -1,0 +1,25 @@
+{
+  "viewport": 320,
+  "bodyWidth": 320,
+  "cards": [
+    {
+      "width": 130.25,
+      "height": 195.375,
+      "ratio": 0.6666666666666666,
+      "problem": "Status unavailableThe book may still be processing.Check status",
+      "overflow": 0
+    },
+    {
+      "width": 130.25,
+      "height": 195.375,
+      "ratio": 0.6666666666666666,
+      "overflow": 0
+    },
+    {
+      "width": 130.25,
+      "height": 195.375,
+      "ratio": 0.6666666666666666,
+      "overflow": 0
+    }
+  ]
+}

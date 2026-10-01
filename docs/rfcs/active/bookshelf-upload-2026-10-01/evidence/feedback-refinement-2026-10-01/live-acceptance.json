@@ -1,0 +1,77 @@
+{
+  "status": "PASS",
+  "verified_at": "2026-10-01T21:41:34.940098+00:00",
+  "surface": "Signed-in Chrome, real dev frontend, production API and Supabase",
+  "frontend_application_commit": "93ec25ba6e356b9dbdc2d35d815d686cb77f0ba4",
+  "backend_commit": "74e977bea14d809ca5da85f2edc2550df61bcafb",
+  "old_failed_book_id": "b9ee213d-2b8c-485f-b486-ac44f673e389",
+  "new_ready_book_id": "37796568-c4e9-4835-9032-8616b3b45130",
+  "fixtures": [
+    {
+      "path": "broken-upload.epub",
+      "size_bytes": 81,
+      "sha256": "b5c38ddd4105c1e3bdc156bf15ec01a5d74cc72d6abd6e4910cc60fad626084f"
+    },
+    {
+      "path": "repaired-upload.epub",
+      "size_bytes": 1904,
+      "sha256": "a782b06393c5a8c901fe926eb8ed877c1e1364f4108dec3bdc949a0e18a1d627"
+    }
+  ],
+  "checks": [
+    {
+      "case": "upgrade from earlier dev",
+      "observed": "Existing own failed upload displays compact Unable to process this book / Try uploading it again. / Upload again card."
+    },
+    {
+      "case": "cancel Upload again",
+      "observed": "Closed chooser modal, waited until hidden; exactly one Upload again action remained. Failed row retained."
+    },
+    {
+      "case": "explicit retry",
+      "observed": "Selected repaired EPUB via native file picker; Uploading book… appeared inside cover, name/author skeletons, old failed card replaced. Upload modal closed automatically on completion."
+    },
+    {
+      "case": "ready/reload",
+      "observed": "Parsed title QA Upload Retry 2026-10-01, author Globoox QA, exactly one new ready ID first. Reload retained it; no error or offline banner."
+    },
+    {
+      "case": "reader",
+      "observed": "Original EN text opened. Heading Recovery check and all three original paragraphs visible. No translation requested."
+    },
+    {
+      "case": "duplicate ready upload",
+      "observed": "Same repaired file uploaded through ordinary Upload book flow. Exactly the existing ready ID remained; no error. Transient toast was not captured before it expired; exact toast text covered by deterministic UI case04."
+    },
+    {
+      "case": "cleanup",
+      "observed": "Deleted own ready QA book via scoped card menu and confirmation; reload restored six original IDs. SQL check found neither old failed nor new ready row."
+    }
+  ],
+  "final_dom": {
+    "failed": false,
+    "ids": [
+      "fd1c5886-908b-4fca-8e6d-a749ec775de5",
+      "93ed2d75-d82a-4120-83fb-d1df912f6520",
+      "6851ec14-318d-4c9b-8a5a-ddd3b76457a1",
+      "c544447f-8cb5-4c74-acce-a30186780303",
+      "9ada5be4-a653-4abf-b388-3bd8b3d6a202",
+      "308f7700-54c8-4e7c-b056-957c1794c208"
+    ],
+    "offline": false,
+    "qaPresent": false
+  },
+  "limitations": [
+    "Tiny own EPUB only; no large-EPUB memory/load claim.",
+    "Simulated network,403,archive failure etc are local actual-component fixtures, not intentionally induced production failures.",
+    "A browser filechooser listener timed out during rapid close/reopen before selecting a file; new QA tab with explicit modal wait completed all steps.",
+    "Screenshots in live/ are real dev; screenshots/ are deterministic local UI states.",
+    "Two old QA tabs could not be closed because extension debugger was detached; successful QA tab was closed."
+  ],
+  "cleanup": {
+    "book_rows": "confirmed_absent",
+    "user_library": "six_original_ids_restored",
+    "own_temporary_picker_files": "removed_after_byte_comparison",
+    "viewport": "reset"
+  }
+}
