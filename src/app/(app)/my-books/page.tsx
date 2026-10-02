@@ -20,18 +20,20 @@ import {
 } from '@/components/ui/button-styles';
 import CatalogBookCard from '@/components/Store/CatalogBookCard';
 import DeleteBookConfirmDialog from '@/components/Store/DeleteBookConfirmDialog';
-import UploadBookModal, { type UploadBookEvent } from '@/components/UploadBookModal';
+import UploadBookModal, { type UploadBookEvent, type UploadRetryTarget } from '@/components/UploadBookModal';
 import UploadBookPlaceholder from '@/components/Store/UploadBookPlaceholder';
-import { applyUploadEvent, type BookshelfUpload } from '@/lib/bookshelfUploads';
+import { applyUploadEvent, uploadedCatalogItem, type BookshelfUpload } from '@/lib/bookshelfUploads';
 import { useCatalogCoverQueue } from '@/lib/useCatalogCoverQueue';
 import { useAppStore } from '@/lib/store';
 import { useCatalog } from '@/lib/useCatalog';
+import { catalogContextHint } from '@/lib/catalogApi';
 import type { CatalogItem } from '@/lib/catalogTypes';
 import { useAuth } from '@/lib/hooks/useAuth';
 import GoogleOneTap from '@/components/GoogleOneTap';
 import PageHeader from '@/components/ui/PageHeader';
 import { trackBookOpened } from '@/lib/posthog';
-import { getGuestScopeKey, getShareToken } from '@/lib/api';
+import { BookJobError, getGuestScopeKey, getShareToken, waitForBookJob } from '@/lib/api';
+import { dismissNotification, notify, setNotificationScope, setNotificationsSuppressed, type NotificationScope } from '@/lib/notifications';
 import { shareTokenFromSearch, withShareContext } from '@/lib/shareNavigation';
 
 const BOOKS_BATCH_SIZE = 6;
@@ -58,34 +60,226 @@ function ScopedBookshelf() {
 function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType<typeof useAuth> }) {
   const progress = useAppStore((state) => state.progress);
   const { isAuthenticated, loading: authLoading } = auth;
-  const { books, loading, error, offline, context, refreshing, hideBook, unhideBook, removeBook, refresh, beginExternalMutation } = useCatalog({
+  const { books, loading, error, offline, context, refreshing, confirmation, hideBook, unhideBook, removeBook, refresh, beginExternalMutation, acceptUploadedBook } = useCatalog({
     userId: authLoading && !isAuthenticated ? undefined : auth.user?.id ?? null,
     legacyScopeKey: scopeKey,
   });
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [uploads, setUploads] = useState<BookshelfUpload[]>([]);
+  const [resumeUpload, setResumeUpload] = useState<UploadBookEvent | null>(null);
+  const [retryUpload, setRetryUpload] = useState<UploadRetryTarget | null>(null);
+  const [checkingUploads, setCheckingUploads] = useState<string[]>([]);
+  const notifications = useRef<NotificationScope | null>(null);
+  const notificationScopes = useRef(new Map<string, NotificationScope | null>());
+  const priorMembership = useRef(new Map<string, Set<string> | null>());
+  const statusChecks = useRef(new Map<string, AbortController>());
+  const recoverUploadRef = useRef<(upload: UploadBookEvent) => void>(() => {});
+  const uploadDialogOpen = useRef(isUploadOpen);
+  uploadDialogOpen.current = isUploadOpen;
+  const currentBooks = useRef(books);
+  currentBooks.current = books;
+  const notificationScopeKey = authLoading && !isAuthenticated ? null : catalogContextHint(auth.user?.id ?? null).scopeKey;
+  useEffect(() => {
+    notifications.current = setNotificationScope(notificationScopeKey);
+    return () => { setNotificationScope(null); notifications.current = null; };
+  }, [notificationScopeKey]);
+  useEffect(() => {
+    setNotificationsSuppressed(isUploadOpen, 'book-upload');
+    return () => setNotificationsSuppressed(false, 'book-upload');
+  }, [isUploadOpen]);
+  const signIn = useCallback(() => {
+    window.location.href = `/auth?next=${encodeURIComponent(withShareContext('/my-books', getShareToken()))}`;
+  }, []);
+  const refreshLibrary = useCallback(async () => {
+    const before = latestConfirmation.current;
+    const scope = notifications.current;
+    const view = await refresh();
+    if (!mounted.current) return view;
+    if (view && view.confirmation > before && scope === notifications.current && !view.error && !view.offline && !view.refreshing) {
+      notify({ scope: notifications.current, operationId: 'library-refresh', event: `confirmed-${view.confirmation}`,
+        title: 'Bookshelf updated', kind: 'success' });
+    }
+    return view;
+  }, [refresh]);
   const uploadReleases = useRef(new Map<string, () => void>());
+  const uploadBookIds = useRef(new Map<string, string>());
+  const uploadAttempts = useRef(new Set<string>());
+  const latestConfirmation = useRef(confirmation);
+  latestConfirmation.current = confirmation;
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    const releases = uploadReleases.current;
+    const checks = statusChecks.current;
+    return () => { mounted.current = false; for (const finish of releases.values()) finish(); releases.clear(); for (const check of checks.values()) check.abort(); checks.clear(); };
+  }, []);
   const handleUploadEvent = useCallback((event: UploadBookEvent) => {
-    if (event.phase === 'uploading') uploadReleases.current.set(event.attemptId, beginExternalMutation());
-    if (event.phase === 'complete' || event.phase === 'error') {
+    if (!mounted.current) return;
+    if (event.retryBookId && event.bookId && event.bookId !== event.retryBookId && !event.book) {
+      // The server atomically replaces a failed row with a new ID, isolating
+      // the new import from any late writes by its old worker. Retire the old
+      // cached row only after that replacement has been acknowledged.
+      const previous = currentBooks.current.find(book => book.id === event.retryBookId);
+      if (previous) event = { ...event, book: uploadedCatalogItem({ ...previous, id: event.bookId,
+        title: '', author: null, cover: null, reading: null, metadata_ready: false,
+        metadata_version: `retry-${event.attemptId}`, processing_status: 'processing' }, event.phase === 'complete') };
+    }
+    if (event.phase === 'complete' && !event.book && event.bookId) {
+      // A durable completion outranks the previous failed manifest row even if
+      // its metadata preview is missing and the following index request fails.
+      const saved = currentBooks.current.find(book => book.id === event.bookId);
+      const ready = uploadedCatalogItem(saved, true);
+      if (ready) event = { ...event, book: ready };
+    }
+    if (event.phase === 'uploading') {
+      // Retire the previous local attempt only when a replacement actually starts.
+      // Opening/cancelling the picker must leave the failure untouched.
+      for (const [attempt, bookId] of uploadBookIds.current) {
+        if (attempt !== event.attemptId && (attempt === event.replacesAttemptId || bookId === event.retryBookId)) {
+          uploadAttempts.current.delete(attempt);
+          statusChecks.current.get(attempt)?.abort();
+          statusChecks.current.delete(attempt);
+          uploadReleases.current.get(attempt)?.();
+          uploadReleases.current.delete(attempt);
+          dismissNotification(notificationScopes.current.get(attempt) ?? null, attempt);
+        }
+      }
+      if (event.replacesAttemptId) {
+        uploadAttempts.current.delete(event.replacesAttemptId);
+        dismissNotification(notificationScopes.current.get(event.replacesAttemptId) ?? null, event.replacesAttemptId);
+      }
+      uploadAttempts.current.add(event.attemptId);
+      notificationScopes.current.set(event.attemptId, notifications.current);
+      priorMembership.current.set(event.attemptId, latestConfirmation.current > 0
+        ? new Set(currentBooks.current.filter(book => book.processing_status == null || book.processing_status === 'ready').map(book => book.id)) : null);
+      uploadReleases.current.set(event.attemptId, beginExternalMutation());
+    } else if (!uploadAttempts.current.has(event.attemptId)) return;
+    if (event.book) acceptUploadedBook(event.book, uploadBookIds.current.get(event.attemptId));
+    if (event.bookId) uploadBookIds.current.set(event.attemptId, event.bookId);
+    const terminal = event.phase === 'complete' || event.phase === 'error' || event.phase === 'status_unknown';
+    if (terminal) {
       uploadReleases.current.get(event.attemptId)?.();
       uploadReleases.current.delete(event.attemptId);
+      // Unknown attempts remain eligible for an explicit check of the same job.
+      if (event.phase !== 'status_unknown') uploadAttempts.current.delete(event.attemptId);
     }
-    setUploads(current => applyUploadEvent(current, event));
-    if (event.phase === 'complete') void refresh();
-  }, [beginExternalMutation, refresh]);
+    const errorConfirmation = latestConfirmation.current;
+    setUploads(current => applyUploadEvent(current, event).map(entry => entry.attemptId === event.attemptId && terminal
+      ? { ...entry, errorConfirmation } : entry));
+    if (terminal) {
+      const scope = notificationScopes.current.get(event.attemptId) ?? null;
+      const recover = () => recoverUploadRef.current(event);
+      if (!uploadDialogOpen.current) {
+        if (event.phase === 'complete') {
+          const membership = priorMembership.current.get(event.attemptId);
+          const duplicate = Boolean(event.bookId && membership?.has(event.bookId));
+          if (event.orderConfirmed === false) dismissNotification(scope, event.attemptId);
+          if (event.orderConfirmed !== false) notify({ scope, operationId: event.attemptId, event: 'ready', kind: 'success',
+            title: duplicate ? 'Book already in your library' : membership == null ? 'Book available' : 'Book ready',
+            description: duplicate ? 'Reading progress is safe' : undefined,
+            action: event.bookId ? { label: 'Open', onClick: () => { window.location.href = withShareContext(`/reader/${event.bookId}`, getShareToken()); } } : { label: 'Refresh', onClick: () => { void refreshLibrary(); } },
+          });
+        } else {
+          notify({ scope, operationId: event.attemptId, event: `${event.issue ?? 'processing_failed'}:${event.checkNumber ?? 0}`,
+            kind: event.phase === 'error' ? 'error' : 'warning',
+            title: event.phase === 'error' ? event.issue === 'upload_rejected' ? 'Upload was rejected' : 'Unable to process this book'
+              : event.issue === 'auth_required' ? 'Sign in to check your upload' : event.issue === 'forbidden' ? 'You do not have access to this book' : 'Unable to confirm book readiness',
+            action: { label: event.phase === 'error' ? 'Upload again' : event.issue === 'auth_required' ? 'Sign in' : event.issue === 'forbidden' ? 'Refresh' : event.jobId && event.issue !== 'job_not_found' ? 'Check status' : 'Review upload', onClick: recover },
+          });
+        }
+      }
+      // Do not silently erase an unknown status. A later accepted index may resolve it.
+      void refresh();
+    }
+  }, [acceptUploadedBook, beginExternalMutation, refresh, refreshLibrary]);
+  const openRetryUpload = useCallback((target: UploadRetryTarget) => {
+    setResumeUpload(null);
+    setRetryUpload(target);
+    setIsUploadOpen(true);
+  }, []);
+  const recoverUpload = useCallback(async (upload: UploadBookEvent) => {
+    if (upload.issue === 'auth_required') { signIn(); return; }
+    if (upload.phase === 'error') { openRetryUpload({ bookId: upload.bookId, attemptId: upload.attemptId }); return; }
+    if (upload.phase === 'complete' || upload.issue === 'forbidden') { await refreshLibrary(); return; }
+    if (!upload.jobId || upload.issue === 'job_not_found') {
+      setRetryUpload(null);
+      setResumeUpload(upload);
+      setIsUploadOpen(true);
+      return;
+    }
+    if (statusChecks.current.has(upload.attemptId)) return;
+    const jobId = upload.jobId;
+    upload = { ...upload, checkNumber: (upload.checkNumber ?? 0) + 1 };
+    const controller = new AbortController();
+    statusChecks.current.set(upload.attemptId, controller);
+    setCheckingUploads(current => [...current, upload.attemptId]);
+    handleUploadEvent({ ...upload, phase: 'processing', issue: undefined, error: undefined });
+    try {
+      const result = await waitForBookJob(jobId, controller.signal, undefined, snapshot => {
+        const book = uploadedCatalogItem(snapshot, false);
+        if (book) handleUploadEvent({ ...upload, phase: 'processing', bookId: book.id, book, issue: undefined, error: undefined });
+      });
+      const book = uploadedCatalogItem(result.book ?? (upload.book?.id === result.bookId ? upload.book : undefined), true);
+      handleUploadEvent({ ...upload, phase: 'complete', bookId: result.bookId, book,
+        orderConfirmed: result.orderConfirmed, issue: result.orderConfirmed ? undefined : 'order_unconfirmed', error: undefined });
+    } catch (caught) {
+      if (controller.signal.aborted) return;
+      const error = caught instanceof BookJobError ? caught : null;
+      const book = uploadedCatalogItem(error?.book, false);
+      handleUploadEvent({ ...upload, ...(book ? { book, bookId: book.id } : {}), phase: error?.kind === 'processing_failed' ? 'error' : 'status_unknown',
+        issue: error?.kind === 'processing_failed' ? undefined : error?.kind ?? 'status_unknown',
+        error: caught instanceof Error ? caught.message : 'Unable to check readiness.' });
+    } finally {
+      statusChecks.current.delete(upload.attemptId);
+      if (mounted.current) setCheckingUploads(current => current.filter(id => id !== upload.attemptId));
+    }
+  }, [handleUploadEvent, openRetryUpload, refreshLibrary, signIn]);
+  recoverUploadRef.current = upload => { void recoverUpload(upload); };
   const dismissUpload = useCallback((attemptId: string) => {
+    uploadAttempts.current.delete(attemptId);
+    statusChecks.current.get(attemptId)?.abort();
+    statusChecks.current.delete(attemptId);
+    dismissNotification(notificationScopes.current.get(attemptId) ?? null, attemptId);
+    uploadReleases.current.get(attemptId)?.();
+    uploadReleases.current.delete(attemptId);
     setUploads(current => current.filter(entry => entry.attemptId !== attemptId));
   }, []);
-  const unpinBook = useCallback((id: string) => setUploads(current => current.filter(entry => entry.bookId !== id)), []);
+  const dismissBookUpload = useCallback((id: string) => {
+    for (const [attemptId, bookId] of uploadBookIds.current) if (bookId === id) dismissUpload(attemptId);
+  }, [dismissUpload]);
   useEffect(() => {
-    setUploads(current => {
-      if (!current.some(entry => !entry.resolved && books.some(book => book.id === entry.bookId))) return current;
-      return current.map(entry => books.some(book => book.id === entry.bookId) ? { ...entry, resolved: true } : entry);
-    });
-  }, [books]);
-  const shownUploads = error?.kind === 'auth' ? [] : uploads.filter(entry => !entry.resolved || books.some(book => book.id === entry.bookId));
-  const pinnedIds = new Set(shownUploads.map(entry => entry.bookId).filter(Boolean));
+    const recovered = uploads.filter(upload => (upload.phase === 'error' || upload.phase === 'status_unknown' || upload.issue === 'order_unconfirmed') && (upload.errorConfirmation ?? confirmation) < confirmation
+      && books.some(book => book.id === upload.bookId && (book.processing_status == null || book.processing_status === 'ready')));
+    if (!recovered.length) return;
+    const ids = new Set(recovered.map(upload => upload.attemptId));
+    for (const upload of recovered) {
+      dismissNotification(notificationScopes.current.get(upload.attemptId) ?? null, upload.attemptId);
+      uploadAttempts.current.delete(upload.attemptId);
+      statusChecks.current.get(upload.attemptId)?.abort();
+    }
+    setUploads(current => current.filter(upload => !ids.has(upload.attemptId)));
+  }, [books, confirmation, uploads]);
+  const pendingPollStarted = useRef<number | null>(null);
+  const [pendingPollEpoch, setPendingPollEpoch] = useState(0);
+  const [pendingPollExpired, setPendingPollExpired] = useState(false);
+  const hasUntrackedProcessing = books.some(book => (book.processing_status === 'pending' || book.processing_status === 'processing')
+    && !uploads.some(upload => upload.bookId === book.id && (upload.phase === 'uploading' || upload.phase === 'processing')));
+  useEffect(() => {
+    if (!hasUntrackedProcessing) { pendingPollStarted.current = null; setPendingPollExpired(false); return; }
+    if (offline || error?.kind === 'auth' || pendingPollExpired) return;
+    // Reload has no local job ID. Refresh only the index, never resubmit processing.
+    pendingPollStarted.current ??= Date.now();
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      if (stopped) return;
+      if (Date.now() - pendingPollStarted.current! >= 5 * 60 * 1000) { setPendingPollExpired(true); return; }
+      await refresh();
+      if (!stopped) timer = setTimeout(poll, 2000);
+    };
+    timer = setTimeout(poll, 2000);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [hasUntrackedProcessing, offline, error?.kind, pendingPollEpoch, pendingPollExpired, refresh]);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [isDeletingBook, setIsDeletingBook] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'visible' | 'hidden' | 'all'>('visible');
@@ -100,6 +294,14 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [sortDrawerOpen, setSortDrawerOpen] = useState(false);
+  useEffect(() => {
+    setNotificationsSuppressed(deleteTarget !== null, 'book-delete', 'defer');
+    return () => setNotificationsSuppressed(false, 'book-delete', 'defer');
+  }, [deleteTarget]);
+  useEffect(() => {
+    setNotificationsSuppressed(sortDrawerOpen, 'book-sort', 'defer');
+    return () => setNotificationsSuppressed(false, 'book-sort', 'defer');
+  }, [sortDrawerOpen]);
   const [visibleCount, setVisibleCount] = useState(BOOKS_BATCH_SIZE);
   const loadMoreSentinelRef = useRef<HTMLDivElement | null>(null);
   const sortTriggerRef = useRef<HTMLButtonElement>(null);
@@ -136,6 +338,8 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
   const handleUploadClick = () => {
     if (offline) return;
     if (isAuthenticated) {
+      setResumeUpload(null);
+      setRetryUpload(null);
       setIsUploadOpen(true);
     } else {
       window.location.href = `/auth?next=${encodeURIComponent(withShareContext('/my-books', getShareToken()))}`;
@@ -145,7 +349,7 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
   const handleRequestDelete = useCallback((bookId: string) => {
     const book = books.find((entry) => entry.id === bookId);
     if (!book) return;
-    setDeleteTarget({ id: book.id, title: book.title });
+    setDeleteTarget({ id: book.id, title: book.metadata_ready === false ? 'Untitled book' : book.title.trim() || 'Untitled book' });
   }, [books]);
 
   const handleCancelDelete = useCallback(() => {
@@ -153,21 +357,62 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     setDeleteTarget(null);
   }, [isDeletingBook]);
 
+  type ShelfAction = 'delete' | 'hidden' | 'active';
+  type MutationFailure = { id: string; action: ShelfAction; title: string; status?: number; operationId?: string };
+  const [mutationFailures, setMutationFailures] = useState<MutationFailure[]>([]);
+  const [retryingMutation, setRetryingMutation] = useState<string | null>(null);
+  const retryMutationRef = useRef<(failure: MutationFailure) => void>(() => {});
+  const changeBook = useCallback(async (target: MutationFailure) => {
+    const scope = notifications.current;
+    const operationId = `book-change:${crypto.randomUUID()}`;
+    if (target.operationId) dismissNotification(scope, target.operationId);
+    dismissBookUpload(target.id);
+    try {
+      await (target.action === 'delete' ? removeBook(target.id) : target.action === 'hidden' ? hideBook(target.id) : unhideBook(target.id));
+      if (mounted.current) setMutationFailures(current => current.filter(failure => failure.id !== target.id));
+      dismissNotification(scope, operationId);
+    } catch (caught) {
+      if (!mounted.current) return;
+      const status = caught && typeof caught === 'object' && 'status' in caught && typeof caught.status === 'number' ? caught.status : undefined;
+      const failure = { ...target, status, operationId };
+      setMutationFailures(current => [...current.filter(entry => entry.id !== target.id), failure]);
+      const verb = target.action === 'delete' ? 'delete' : target.action === 'hidden' ? 'archive' : 'restore';
+      notify({ scope, operationId, event: `failed-${target.action}`, kind: 'error',
+        title: status === 401 ? 'Sign in to change your bookshelf' : status === 403 ? 'You do not have access to change this book' : `Unable to ${verb} this book`,
+        action: { label: status === 401 ? 'Sign in' : 'Retry', onClick: () => retryMutationRef.current(failure) } });
+    }
+  }, [dismissBookUpload, removeBook, hideBook, unhideBook]);
+  const retryMutation = useCallback(async (failure: MutationFailure) => {
+    if (failure.status === 401) { signIn(); return; }
+    if (retryingMutation) return;
+    setRetryingMutation(failure.id);
+    try {
+      // A lost write response may already have changed the server. Reconcile first.
+      const view = await refresh();
+      if (!mounted.current || !view || view.error || view.offline || view.refreshing) return;
+      const book = view.books.find(entry => entry.id === failure.id);
+      const alreadyApplied = failure.action === 'delete' ? !book : book?.status === failure.action;
+      if (alreadyApplied || !book) {
+        setMutationFailures(current => current.filter(entry => entry.id !== failure.id));
+        if (failure.operationId) dismissNotification(notifications.current, failure.operationId);
+        return;
+      }
+      await changeBook(failure);
+    } finally { if (mounted.current) setRetryingMutation(null); }
+  }, [changeBook, refresh, retryingMutation, signIn]);
+  retryMutationRef.current = failure => { void retryMutation(failure); };
+  const requestBookChange = useCallback((target: MutationFailure) => {
+    const previous = mutationFailures.find(failure => failure.id === target.id && failure.action === target.action);
+    return previous ? retryMutation(previous) : changeBook(target);
+  }, [changeBook, mutationFailures, retryMutation]);
   const handleConfirmDelete = useCallback(async () => {
     if (!deleteTarget) return;
-
     setIsDeletingBook(true);
-    const targetId = deleteTarget.id;
-    try {
-      setDeleteTarget(null);
-      unpinBook(targetId);
-      await removeBook(targetId);
-    } catch {
-      // useCatalog already restores the removed book and exposes the error to the page
-    } finally {
-      setIsDeletingBook(false);
-    }
-  }, [deleteTarget, removeBook, unpinBook]);
+    const target = deleteTarget;
+    setDeleteTarget(null);
+    try { await requestBookChange({ ...target, action: 'delete' }); }
+    finally { if (mounted.current) setIsDeletingBook(false); }
+  }, [deleteTarget, requestBookChange]);
 
   // Recency is the server's array order. Position display has no authority to
   // reorder it, and does not make per-book network requests.
@@ -192,13 +437,27 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
     });
   }, [books, statusFilter, sortOrder]);
 
-  const visibleBooks = useMemo(
-    () => filteredBooks.slice(0, Math.min(visibleCount, filteredBooks.length)),
-    [filteredBooks, visibleCount]
-  );
-  const uploadBooks = shownUploads.flatMap(entry => books.find(book => book.id === entry.bookId) ?? []);
-  useCatalogCoverQueue([...uploadBooks, ...filteredBooks.filter(book => !pinnedIds.has(book.id))], context, offline);
-  const hasMoreBooks = visibleCount < filteredBooks.length;
+  const shownUploads = error?.kind === 'auth' ? [] : uploads.filter(entry => {
+    const book = books.find(book => book.id === entry.bookId);
+    if (book && (entry.phase === 'complete' || ((entry.phase === 'error' || entry.phase === 'status_unknown') && (book.processing_status == null || book.processing_status === 'ready')))) return false;
+    return statusFilter === 'all' || (statusFilter === 'hidden' ? book?.status === 'hidden' : book?.status !== 'hidden');
+  });
+  const temporaryIds = new Set(shownUploads.map(entry => entry.bookId).filter(Boolean));
+  const isProcessing = (book: CatalogItem) => book.processing_status === 'pending' || book.processing_status === 'processing';
+  const orderedBooks = [...filteredBooks.filter(book => !temporaryIds.has(book.id) && isProcessing(book)),
+    ...filteredBooks.filter(book => !temporaryIds.has(book.id) && !isProcessing(book))];
+  const visibleBooks = orderedBooks.slice(0, visibleCount);
+  const cardEntries = [
+    ...shownUploads.map(upload => ({ key: upload.attemptId, upload, book: books.find(book => book.id === upload.bookId) ?? upload.book })),
+    ...visibleBooks.map(book => {
+      const upload = uploads.find(entry => entry.bookId === book.id);
+      return { key: upload?.attemptId ?? book.id, upload, book };
+    }),
+  ];
+  useCatalogCoverQueue([...shownUploads.flatMap(entry => books.find(book => book.id === entry.bookId) ?? entry.book ?? []), ...orderedBooks], context, offline);
+  const hasMoreBooks = visibleCount < orderedBooks.length;
+  const uploadNeedsRefresh = uploads.some(upload => upload.issue === 'order_unconfirmed' ||
+    (upload.phase === 'complete' && !books.some(book => book.id === upload.bookId)));
   const loadingBatchCount = hasMoreBooks
     ? Math.min(BOOKS_BATCH_SIZE, Math.max(0, filteredBooks.length - visibleBooks.length))
     : 0;
@@ -239,7 +498,11 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
       />
 
       <div className="container max-w-2xl mx-auto px-4 sm:px-6 pt-[calc(2rem+env(safe-area-inset-top)+72px)] pb-4 space-y-6 overflow-x-clip">
-        {(error || offline) && (
+        {pendingPollExpired && <div role="status" className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
+          <p>Some books are still processing. Refresh to check again.</p>
+          <Button variant="outline" size="sm" onClick={() => { pendingPollStarted.current = null; setPendingPollExpired(false); setPendingPollEpoch(value => value + 1); void refreshLibrary(); }}>Refresh status</Button>
+        </div>}
+        {((error && error.kind !== 'mutation') || offline) && (
           <div role="status" aria-live="polite" className="flex items-center justify-between gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-bg)] p-3 text-sm">
             <p>
               {refreshing ? (
@@ -251,11 +514,16 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
                 </>
               )}
             </p>
-            <Button size="sm" variant="outline" onClick={() => void refresh()} disabled={refreshing}>
-              {refreshing ? 'Retrying…' : 'Try again'}
+            <Button size="sm" variant="outline" onClick={() => error?.kind === 'auth' && error.status !== 403 ? signIn() : void refreshLibrary()} disabled={refreshing}>
+              {refreshing ? 'Retrying…' : error?.kind === 'auth' && error.status !== 403 ? 'Sign in' : 'Try again'}
             </Button>
           </div>
         )}
+
+        {uploadNeedsRefresh && !offline && (!error || error.kind === 'mutation') && <div role="status" className="flex items-center justify-between gap-3 rounded-xl border border-[var(--app-border)] bg-[var(--app-surface-bg)] p-3 text-sm">
+          <p>Unable to update the bookshelf.</p>
+          <Button size="sm" variant="outline" disabled={refreshing} onClick={() => void refreshLibrary()}>{refreshing ? 'Checking…' : 'Try again'}</Button>
+        </div>}
 
         {(authLoading || isAuthenticated) && (
         <div className="flex items-center gap-2 relative">
@@ -371,28 +639,29 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
         <section>
           {(shownUploads.length > 0 || loading || filteredBooks.length > 0) && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-              {shownUploads.map(upload => {
-                const book = books.find(entry => entry.id === upload.bookId);
-                return <div key={upload.attemptId} data-upload-attempt={upload.attemptId}>
+              {cardEntries.map(({ key, upload, book: source }) => {
+                const canOverlay = source && source.processing_status != null && source.processing_status !== 'ready';
+                const book = canOverlay && upload?.phase === 'error' ? { ...source, processing_status: 'error' as const }
+                  : canOverlay && upload?.retryBookId && (upload.phase === 'uploading' || upload.phase === 'processing') && !upload.book
+                    ? { ...source, title: '', author: null, cover: null, metadata_ready: false,
+                      processing_status: upload.phase === 'uploading' ? 'pending' as const : 'processing' as const }
+                    : source;
+                return <div key={key} data-upload-attempt={upload?.attemptId}>
                   {book ? <CatalogBookCard book={book} context={context} offline={offline}
                     progress={getBookProgress(book)}
-                    onHide={offline ? undefined : id => { unpinBook(id); void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
+                    onHide={offline || book.processing_status === 'error' ? undefined : id => { void requestBookChange({ id, title: book.title || 'Untitled book', action: book.status === 'hidden' ? 'active' : 'hidden' }); }}
                     onDelete={offline ? undefined : handleRequestDelete}
                     hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
+                    uploadError={upload?.error}
+                    uploadIssue={upload?.issue ?? (pendingPollExpired && isProcessing(book) ? 'status_unknown' : undefined)}
+                    checkingStatus={checkingUploads.includes(upload?.attemptId ?? '') || refreshing}
+                    onCheckStatus={upload ? () => void recoverUpload(upload) : () => { pendingPollStarted.current = null; setPendingPollExpired(false); setPendingPollEpoch(value => value + 1); void refreshLibrary(); }}
+                    onRetryUpload={offline ? undefined : () => openRetryUpload({ bookId: book.id, attemptId: upload?.attemptId })}
                     onOpen={() => trackBookOpened({ book_id: book.id, title: book.title, source: 'library' })}
-                  /> : <UploadBookPlaceholder upload={upload} refreshing={refreshing} onDismiss={() => dismissUpload(upload.attemptId)} onRefresh={() => void refresh()} />}
+                  /> : upload && <UploadBookPlaceholder upload={upload} refreshing={refreshing || checkingUploads.includes(upload.attemptId)} onDismiss={() => dismissUpload(upload.attemptId)} onRetry={offline ? undefined : () => openRetryUpload({ bookId: upload.bookId, attemptId: upload.attemptId })} onCheckStatus={() => void recoverUpload(upload)} onRefresh={() => void refreshLibrary()} />}
                 </div>;
               })}
-              {loading ? [1, 2, 3, 4, 5, 6].map(i => <div key={`initial-${i}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />)
-                : visibleBooks.filter(book => !pinnedIds.has(book.id)).map(book => (
-                  <CatalogBookCard key={book.id} book={book} context={context} offline={offline}
-                    progress={getBookProgress(book)}
-                    onHide={offline ? undefined : id => { void (book.status === 'hidden' ? unhideBook(id) : hideBook(id)).catch(() => {}); }}
-                    onDelete={offline ? undefined : handleRequestDelete}
-                    hideLabel={book.status === 'hidden' ? 'Restore' : 'Archive'}
-                    onOpen={() => trackBookOpened({ book_id: book.id, title: book.title, source: 'library' })}
-                  />
-                ))}
+              {loading && [1, 2, 3, 4, 5, 6].map(i => <div key={`initial-${i}`} className="aspect-[2/3] rounded-md bg-muted animate-pulse" />)}
             </div>
           )}
           {!loading && !shownUploads.length && !filteredBooks.length && (
@@ -484,6 +753,11 @@ function LibraryContent({ scopeKey, auth }: { scopeKey: string; auth: ReturnType
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
         onUploadEvent={handleUploadEvent}
+        disabled={offline || error?.kind === 'auth'}
+        resumeUpload={resumeUpload}
+        retryUpload={retryUpload}
+        onRefreshLibrary={refreshLibrary}
+        onSignIn={signIn}
       />
 
       <DeleteBookConfirmDialog

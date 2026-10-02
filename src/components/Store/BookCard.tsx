@@ -1,5 +1,7 @@
 'use client';
 
+import type { UploadIssue } from '@/lib/api';
+
 import { useState, useEffect, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
 import { withShareContext } from '@/lib/shareNavigation';
@@ -8,6 +10,7 @@ import { StarIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2 } from 'lucide-react';
 import BookActionsMenu from './BookActionsMenu';
 import { useAuth } from '@/lib/hooks/useAuth';
 
@@ -370,6 +373,21 @@ interface BookCardProps {
   onDelete?: (id: string) => void;
   hideLabel?: string;
   onOpen?: () => void;
+  processingStatus?: 'pending' | 'processing' | 'ready' | 'error' | null;
+  processingLabel?: string;
+  metadataLoading?: boolean;
+  uploadError?: string;
+  uploadIssue?: UploadIssue;
+  onRetryUpload?: () => void;
+  onCheckStatus?: () => void;
+  checkingStatus?: boolean;
+}
+
+function BookCardLink({ disabled, href, className, children, onOpen }: {
+  disabled: boolean; href: string; className: string; children: React.ReactNode; onOpen?: () => void;
+}) {
+  return disabled ? <div className={className} aria-disabled="true">{children}</div>
+    : <Link href={href} className={className} onClick={onOpen}>{children}</Link>;
 }
 
 export default function BookCard({
@@ -385,17 +403,48 @@ export default function BookCard({
   onDelete,
   hideLabel,
   onOpen,
+  processingStatus,
+  processingLabel,
+  metadataLoading = false,
+  uploadIssue,
+  onRetryUpload,
+  onCheckStatus,
+  checkingStatus = false,
 }: BookCardProps) {
+  const processing = processingStatus === 'pending' || processingStatus === 'processing';
+  const failed = processingStatus === 'error';
+  const ready = processingStatus == null || processingStatus === 'ready';
+  const unresolved = Boolean(uploadIssue && uploadIssue !== 'order_unconfirmed' && uploadIssue !== 'upload_rejected');
+  const problemCover = !ready && (failed || unresolved);
+  const problemTitle = uploadIssue === 'auth_required' ? 'Sign in required'
+    : uploadIssue === 'forbidden' ? 'Access unavailable'
+    : uploadIssue === 'upload_unconfirmed' || uploadIssue === 'job_not_found' ? 'Upload unconfirmed'
+    : unresolved ? 'Status unavailable'
+    : uploadIssue === 'upload_rejected' ? 'Upload rejected' : 'Unable to process this book';
+  // Recovery copy is deliberately bounded. Raw transport/parser messages remain
+  // available to the upload flow, but must not stretch or fill a book cover.
+  const problemDescription = uploadIssue === 'auth_required' ? 'Sign in to check this book.'
+    : uploadIssue === 'forbidden' ? 'Refresh your library to check access.'
+    : uploadIssue === 'upload_unconfirmed' || uploadIssue === 'job_not_found' ? 'Check your library before trying again.'
+    : unresolved ? 'The book may still be processing.'
+    : uploadIssue === 'upload_rejected' ? 'The file was not accepted.' : 'Try uploading it again.';
+  const checkLabel = uploadIssue === 'auth_required' ? 'Sign in'
+    : uploadIssue === 'job_not_found' || uploadIssue === 'upload_unconfirmed' ? 'Review upload'
+    : uploadIssue === 'forbidden' ? 'Refresh bookshelf' : 'Check status';
+  const displayTitle = failed ? title || 'Untitled book' : title;
+  const displayAuthor = failed ? author || 'Unknown author' : author;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canHover, setCanHover] = useState<boolean | null>(null);
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isCardFocused, setIsCardFocused] = useState(false);
   const { isAuthenticated } = useAuth();
-  const hasActions = isAuthenticated && Boolean(onHide || onDelete);
+  const hasActions = isAuthenticated && !processing && Boolean(onHide || onDelete);
   const sourceCover = (cover ?? '').trim();
   const displayCover = sourceCover;
   const [failedCoverSrc, setFailedCoverSrc] = useState<string | null>(null);
   const hasValidCover = Boolean(displayCover) && failedCoverSrc !== displayCover;
+  const showCoverSkeleton = !hasValidCover && (coverLoading || processing);
+  const showCoverEffects = !problemCover && !showCoverSkeleton;
   const { aspect: coverAspect, isReady: isAspectReady } = useImageAspect(hasValidCover ? displayCover : '', coverVersionKey);
   const coverAccent = useMemo(() => {
     const hash = hashString(`${id}-${title}`);
@@ -429,6 +478,8 @@ export default function BookCard({
 
   return (
     <div
+      data-book-id={id}
+      data-processing-status={processingStatus ?? 'ready'}
       className="w-full relative"
       onMouseEnter={() => setIsCardHovered(true)}
       onMouseLeave={() => setIsCardHovered(false)}
@@ -440,14 +491,14 @@ export default function BookCard({
       }}
     >
       <div className="relative mb-2">
-        <div
+        {showCoverEffects && <div
           aria-hidden="true"
           className="pointer-events-none absolute left-[4%] right-[4%] bottom-[-14px] h-[34px] rounded-full blur-[8px]"
           style={{
             opacity: 'var(--book-reflex-opacity)',
             background: `radial-gradient(ellipse at center, rgba(${coverAccent} / 0.72) 0%, rgba(${coverAccent} / 0.52) 42%, rgba(${coverAccent} / 0.20) 70%, rgba(${coverAccent} / 0) 90%)`,
           }}
-        />
+        />}
         {hasActions && (
           <div
             className={`absolute z-20 pointer-events-none transition-opacity ${showMenuButton ? 'opacity-100' : 'opacity-0'}`}
@@ -455,7 +506,7 @@ export default function BookCard({
           >
             <div className="absolute top-1 right-1 pointer-events-auto">
               <BookActionsMenu
-                onHide={() => onHide?.(id)}
+                onHide={onHide ? () => onHide(id) : undefined}
                 onDelete={() => onDelete?.(id)}
                 hideLabel={hideLabel}
                 onOpenChange={setIsMenuOpen}
@@ -463,23 +514,29 @@ export default function BookCard({
             </div>
           </div>
         )}
-        <Link
+        {problemCover ? (
+          <div data-book-cover-slot data-upload-problem={uploadIssue ?? 'processing_failed'} className="relative aspect-[2/3] w-full rounded-[3px] border border-dashed border-[var(--app-text-subtle)] bg-transparent text-center">
+            <div data-upload-problem-content className="absolute inset-0 overflow-y-auto rounded-[3px] px-2 py-3">
+              <div className="flex min-h-full flex-col items-center justify-center gap-2">
+                <div className="shrink-0 space-y-1">
+                  <p className="text-sm font-medium leading-snug text-[var(--app-text)]">{problemTitle}</p>
+                  <p className="text-xs leading-snug text-[var(--app-text-muted)]">{problemDescription}</p>
+                </div>
+                {unresolved && onCheckStatus ? <button type="button" className="min-h-11 shrink-0 px-1 text-xs font-medium text-[var(--app-accent)] underline underline-offset-4 disabled:opacity-50" disabled={checkingStatus} onClick={onCheckStatus}>{checkingStatus ? 'Checking…' : checkLabel}</button>
+                  : !unresolved && onRetryUpload ? <button type="button" className="min-h-11 shrink-0 px-1 text-xs font-medium text-[var(--app-accent)] underline underline-offset-4" onClick={onRetryUpload}>Upload again</button> : null}
+              </div>
+            </div>
+          </div>
+        ) : <BookCardLink
           href={withShareContext(`/reader/${id}`, shareToken)}
           className={`block transition-transform ${isMenuOpen ? 'pointer-events-none' : 'active:scale-[0.98]'}`}
-          tabIndex={isMenuOpen ? -1 : 0}
-          aria-disabled={isMenuOpen}
-          onClick={(event) => {
-            if (isMenuOpen) {
-              event.preventDefault();
-            } else {
-              onOpen?.();
-            }
-          }}
+          disabled={isMenuOpen || processing || failed}
+          onOpen={onOpen}
         >
-          <div className="aspect-[2/3] relative">
+          <div data-book-cover-slot className="aspect-[2/3] relative">
             <div className="absolute left-0 bottom-0" style={effectiveCoverFrameStyle}>
               <div className="relative h-full w-full">
-                <div
+                {showCoverEffects && <><div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 -z-10 rounded-[3px]"
                   style={{ boxShadow: hasValidCover ? 'var(--book-card-shadow)' : fallbackShadow }}
@@ -488,7 +545,7 @@ export default function BookCard({
                   aria-hidden="true"
                   className="pointer-events-none absolute left-[7%] right-[7%] -bottom-[8px] h-[14px] -z-10 rounded-full blur-[8px]"
                   style={{ background: ambientShadowColor }}
-                />
+                /></>}
                 <div className="relative h-full w-full overflow-hidden rounded-[3px]">
                   {hasValidCover ? (
                     <Image
@@ -500,11 +557,16 @@ export default function BookCard({
                       unoptimized={displayCover.startsWith('blob:')}
                       onError={() => setFailedCoverSrc(displayCover)}
                     />
-                  ) : coverLoading ? (
-                    <Skeleton className="h-full w-full" aria-label="Loading cover" />
+                  ) : showCoverSkeleton ? (
+                    <Skeleton className="h-full w-full motion-reduce:animate-none" aria-label="Loading cover" />
                   ) : (
-                    <FallbackCover id={id} title={title} author={author} />
+                    <FallbackCover id={id} title={displayTitle} author={displayAuthor} />
                   )}
+
+                  {processing && <div data-upload-progress role="status" className={`absolute inset-0 flex flex-col items-center justify-center gap-3 px-2 text-center ${hasValidCover ? 'bg-black/55 text-white' : 'text-[var(--app-text-muted)]'}`}>
+                    <Loader2 className="size-8 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                    <span className="text-xs leading-snug">{processingLabel || (processingStatus === 'pending' ? 'Uploading book…' : 'Processing book…')}</span>
+                  </div>}
 
                   {progress > 0 && (
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
@@ -518,24 +580,22 @@ export default function BookCard({
               </div>
             </div>
           </div>
-        </Link>
+        </BookCardLink>}
       </div>
-      <Link
+      <BookCardLink
         href={withShareContext(`/reader/${id}`, shareToken)}
         className={`block ${isMenuOpen ? 'pointer-events-none' : ''}`}
-        tabIndex={isMenuOpen ? -1 : 0}
-        aria-disabled={isMenuOpen}
-        onClick={(event) => {
-          if (isMenuOpen) {
-            event.preventDefault();
-          } else {
-            onOpen?.();
-          }
-        }}
+        disabled={isMenuOpen || processing || failed}
+        onOpen={onOpen}
       >
-        <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{title}</p>
-        <p className="text-xs text-muted-foreground line-clamp-1">{author}</p>
-      </Link>
+        {metadataLoading && !failed && !problemCover ? <div className="space-y-1.5" aria-label="Loading book details">
+          <Skeleton className="h-4 w-4/5 motion-reduce:animate-none" aria-label="Loading title" />
+          <Skeleton className="h-3 w-3/5 motion-reduce:animate-none" aria-label="Loading author" />
+        </div> : <>
+          <p className="text-sm font-medium mb-0.5 line-clamp-2 leading-snug">{displayTitle || 'Untitled book'}</p>
+          <p className="text-xs text-muted-foreground line-clamp-1">{displayAuthor}</p>
+        </>}
+      </BookCardLink>
     </div>
   );
 }

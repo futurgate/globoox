@@ -1,0 +1,60 @@
+/* App notifications inherit App roles from the layout, outside Reader theme surfaces. */
+[data-sonner-toaster].app-toaster[data-sonner-theme] {
+  --normal-bg: var(--app-surface-bg);
+  --normal-text: var(--app-text);
+  --normal-border: var(--app-border);
+  --border-radius: 20px;
+  z-index: 55;
+  font-family: inherit;
+}
+
+.app-toaster [data-sonner-toast][data-styled='true'] {
+  gap: 12px;
+  padding: 16px;
+  font-size: var(--app-type-caption-size, 15px);
+  line-height: var(--app-type-caption-line, 1.4);
+}
+
+.app-toaster [data-sonner-toast][data-styled='true'] [data-description] {
+  color: var(--app-text-muted);
+  font-size: var(--app-type-meta-size, 13px);
+}
+
+.app-toaster [data-sonner-toast][data-styled='true'] [data-icon] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  color: var(--app-accent);
+}
+
+.app-toaster [data-sonner-toast][data-type='error'] [data-icon] {
+  color: var(--danger-fg);
+}
+
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button] {
+  min-height: 44px;
+  height: auto;
+  max-width: 40%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--app-accent);
+  font: inherit;
+  font-weight: 500;
+  white-space: normal;
+}
+
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:hover {
+  background: var(--fill-tertiary);
+}
+
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:active {
+  background: var(--fill-secondary);
+}
+
+.app-toaster [data-sonner-toast]:focus-visible,
+.app-toaster [data-sonner-toast][data-styled='true'] [data-button]:focus-visible {
+  outline: 2px solid var(--app-accent);
+  outline-offset: 2px;
+  box-shadow: none;
+}

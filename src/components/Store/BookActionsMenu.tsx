@@ -7,7 +7,7 @@ import { uiIconCircleButton, uiMenuItemButton } from '@/components/ui/button-sty
 import IOSItemsStack from '@/components/ui/ios-items-stack';
 
 interface BookActionsMenuProps {
-  onHide: () => void;
+  onHide?: () => void;
   onDelete: () => void;
   hideLabel?: string;
   onOpenChange?: (open: boolean) => void;
@@ -41,7 +41,7 @@ export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Archive
 
   const handleHide = () => {
     setMenuOpen(false);
-    onHide();
+    onHide?.();
   };
 
   const handleDelete = () => {
@@ -62,6 +62,7 @@ export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Archive
       <button
         ref={triggerRef}
         type="button"
+        aria-label="Book actions"
         className={`${uiIconCircleButton} h-8 w-8 bg-background dark:bg-background/80 backdrop-blur`}
         style={{ color: 'var(--app-accent)' }}
         onPointerDown={(e) => {
@@ -87,7 +88,7 @@ export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Archive
           }}
         >
         <IOSItemsStack className="py-1 bg-[var(--app-surface-bg)] shadow-lg border border-[var(--app-border)]">
-          <button
+          {onHide && <><button
             type="button"
             onPointerDown={(e) => {
               e.stopPropagation();
@@ -106,7 +107,7 @@ export default function BookActionsMenu({ onHide, onDelete, hideLabel = 'Archive
             <span className="text-[15px]">{hideLabel}</span>
           </button>
 
-          <div className="ml-[44px] mr-4 h-[0.5px] bg-[var(--app-border)]" />
+          <div className="ml-[44px] mr-4 h-[0.5px] bg-[var(--app-border)]" /></>}
 
           <button
             type="button"

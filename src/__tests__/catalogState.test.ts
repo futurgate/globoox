@@ -20,6 +20,68 @@ beforeEach(() => vi.useFakeTimers())
 afterEach(() => vi.useRealTimers())
 
 describe('server-first catalog ownership and deadlines', () => {
+  it('keeps the initial index running during upload and merges already parsed metadata after its receipt', async () => {
+    const response = deferred<CatalogManifest>()
+    const { controller } = setup({ fetch: () => response.promise })
+    const initial = controller.refresh()
+    await microtasks()
+    const finish = controller.beginExternalMutation()
+    controller.acceptUploadedBook({ ...item('upload'), processing_status: 'processing', metadata_ready: true })
+    response.resolve(manifest(['existing']))
+    await initial
+    expect(controller.snapshot.loading).toBe(false)
+    expect(controller.snapshot.books.map(book => book.id).sort()).toEqual(['existing', 'upload'])
+    expect(controller.snapshot.context?.scopeKey).toBe(context.scopeKey)
+    finish()
+  })
+  it('preserves a ready canonical duplicate and retires an error placeholder while ordering is pending', async () => {
+    const initial = manifest(['existing', 'pending'])
+    initial.items[1].processing_status = 'error'
+    const { controller } = setup({ fetch: async () => initial })
+    await controller.refresh()
+    controller.acceptUploadedBook({ ...item('existing'), processing_status: 'processing' }, 'pending')
+    expect(controller.snapshot.books).toEqual([item('existing')])
+  })
+  it('cannot overwrite an in-flight archive/delete with a job snapshot', async () => {
+    const deleted = deferred<void>()
+    const { controller } = setup({ delete: () => deleted.promise })
+    await controller.refresh()
+    const removal = controller.mutate('a', 'delete')
+    controller.acceptUploadedBook(item('a'))
+    expect(controller.snapshot.books.some(book => book.id === 'a')).toBe(false)
+    controller.dispose()
+    deleted.resolve()
+    await removal
+  })
+  it('accepts complete upload metadata without waiting for a new index and preserves server recency', async () => {
+    const initial = manifest(['newer', 'older'])
+    initial.items[0].last_read_at = '2026-10-01T12:00:00Z'
+    initial.items[1].last_read_at = '2026-09-01T12:00:00Z'
+    const { controller, deps } = setup({ fetch: async () => initial })
+    await controller.refresh()
+    const finish = controller.beginExternalMutation()
+    const uploaded = { ...item('uploaded'), last_read_at: '2026-09-30T12:00:00Z', processing_status: 'ready' as const, metadata_ready: true }
+    controller.acceptUploadedBook(uploaded)
+    expect(controller.snapshot.books.map(book => book.id)).toEqual(['newer', 'uploaded', 'older'])
+    expect(controller.snapshot.books[1]).toEqual(uploaded)
+    expect(deps.persist).toHaveBeenLastCalledWith(expect.objectContaining({ items: controller.snapshot.books }))
+    finish()
+  })
+
+  it('deduplicates a canonical upload and retires only its pending placeholder', async () => {
+    const initial = manifest(['existing', 'pending', 'other'])
+    initial.items[1].processing_status = 'processing'
+    const { controller } = setup({ fetch: async () => initial })
+    await controller.refresh()
+    const finish = controller.beginExternalMutation()
+    controller.acceptUploadedBook({ ...item('existing'), title: 'Parsed title', processing_status: 'ready' }, 'pending')
+    expect(controller.snapshot.books.map(book => book.id).sort()).toEqual(['existing', 'other'])
+    expect(controller.snapshot.books.find(book => book.id === 'existing')?.title).toBe('Parsed title')
+    finish()
+    controller.dispose()
+    controller.acceptUploadedBook(item('late'))
+    expect(controller.snapshot.books.some(book => book.id === 'late')).toBe(false)
+  })
   it('keeps even a ready disk cache hidden until the server confirms, including true empty', async () => {
     const response = deferred<CatalogManifest>()
     const { controller } = setup({ fetch: () => response.promise })
@@ -253,5 +315,56 @@ describe('optimistic mutation reconciliation', () => {
     await hide
     await microtasks()
     expect(controller.snapshot.books.map(book => [book.id, book.status])).toEqual([['a', 'active']])
+  })
+})
+
+
+describe('mutation access failures', () => {
+  it.each([
+    { authFirst: true, otherOutcome: 'success' },
+    { authFirst: true, otherOutcome: 'error' },
+    { authFirst: false, otherOutcome: 'success' },
+    { authFirst: false, otherOutcome: 'error' },
+  ])('keeps access denied with authFirst=$authFirst and another $otherOutcome', async ({ authFirst, otherOutcome }) => {
+    const denied = deferred<void>()
+    const other = deferred<void>()
+    const fetch = vi.fn(async () => manifest(['a', 'b']))
+    const { controller } = setup({ fetch, delete: id => id === 'a' ? denied.promise : other.promise })
+    await controller.refresh()
+    const authError = Object.assign(new Error('Session expired'), { status: 401 })
+    const otherError = Object.assign(new Error('Write response unavailable'), { status: 500 })
+    const a = controller.mutate('a', 'delete').catch(error => error)
+    const b = controller.mutate('b', 'delete').catch(error => error)
+    const denyAccess = async () => { denied.reject(authError); expect(await a).toBe(authError) }
+    const settleOther = async () => {
+      if (otherOutcome === 'error') { other.reject(otherError); expect(await b).toBe(otherError) }
+      else { other.resolve(); expect(await b).toBeUndefined() }
+    }
+    if (authFirst) { await denyAccess(); await settleOther() }
+    else { await settleOther(); await denyAccess() }
+    await microtasks()
+    expect(controller.snapshot.books).toEqual([])
+    expect(controller.snapshot.context).toBeNull()
+    expect(controller.snapshot.error).toMatchObject({ kind: 'auth', status: 401 })
+    // The other response must not start an automatic revalidation after access was denied.
+    expect(fetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('preserves both typed rejections when concurrent auth failures clear the same shelf', async () => {
+    const first = deferred<void>()
+    const second = deferred<void>()
+    const { controller } = setup({ fetch: async () => manifest(['a', 'b']), delete: id => id === 'a' ? first.promise : second.promise })
+    await controller.refresh()
+    const errorA = Object.assign(new Error('Session expired'), { status: 401 })
+    const errorB = Object.assign(new Error('Forbidden'), { status: 403 })
+    const a = controller.mutate('a', 'delete').catch(error => error)
+    const b = controller.mutate('b', 'delete').catch(error => error)
+    first.reject(errorA)
+    expect(await a).toBe(errorA)
+    expect(controller.snapshot.context).toBeNull()
+    second.reject(errorB)
+    expect(await b).toBe(errorB)
+    expect(controller.snapshot.books).toEqual([])
+    expect(controller.snapshot.error).toMatchObject({ kind: 'auth', status: 401 })
   })
 })

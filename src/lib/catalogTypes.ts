@@ -19,6 +19,8 @@ export interface CatalogItem {
   available_languages: string[]
   selected_language: string | null
   last_read_at: string | null
+  processing_status?: 'pending' | 'processing' | 'ready' | 'error' | null
+  metadata_ready?: boolean
   metadata_version: string
   reading: { block_position: number | null; total_blocks: number | null; updated_at: string | null } | null
   cover: { url: string; version: string; width: number | null; height: number | null } | null
@@ -77,6 +79,9 @@ export function isCatalogItem(value: unknown): value is CatalogItem {
     || !Array.isArray(v.available_languages) || !v.available_languages.every(string)
     || !nullableString(v.selected_language) || !nullableTimestamp(v.last_read_at) || !nonempty(v.metadata_version)
     || 'cover_url' in v) return false
+  if (v.processing_status !== undefined && v.processing_status !== null
+    && !['pending', 'processing', 'ready', 'error'].includes(v.processing_status as string)) return false
+  if (v.metadata_ready !== undefined && typeof v.metadata_ready !== 'boolean') return false
   if (v.reading !== null && (!record(v.reading) || !integer(v.reading.block_position)
     || !integer(v.reading.total_blocks) || !nullableTimestamp(v.reading.updated_at))) return false
   if (v.cover !== null && (!record(v.cover) || !nonempty(v.cover.url)

@@ -4,6 +4,7 @@ import Header from '@/components/ui/Header';
 import PostHogProvider from '@/components/PostHogProvider';
 import SyncCheckClient from '@/components/SyncCheckClient';
 import PaletteSync from '@/components/PaletteSync';
+import AppToaster from '@/components/ui/app-toaster';
 import { sharedWidgetDescription, siteTitle } from '@/lib/shareMetadata';
 import { getThemeBootstrapScript } from '@/lib/themes';
 
@@ -98,6 +99,7 @@ export default function RootLayout({
           </main>
           </div>
         <Header />
+        <AppToaster />
       </div>
     </>
   );
