@@ -1346,6 +1346,55 @@ function InlineDiff({ before, after }: { before: string; after: string }) {
   );
 }
 
+/** Small one-click copy-to-clipboard button with a transient "Copied" state. */
+function CopyButton({
+  text,
+  label = 'Copy',
+  title,
+}: {
+  text: string;
+  label?: string;
+  title?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable (insecure context / denied) — no-op */
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      title={title ?? label}
+      className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {copied ? 'Copied' : label}
+    </button>
+  );
+}
+
+/**
+ * Render a revision's changed blocks as a plain-text change log (draft → final),
+ * so the whole diff can be copied in one click and pasted into a doc or ticket.
+ */
+function buildChangeLog(model: string, blocks: FictionFlowRevisionBlock[]): string {
+  const changed = blocks
+    .map((b, i) => ({ ...b, n: i + 1 }))
+    .filter((b) => b.changed);
+  const header = `Change log — ${model} — ${changed.length}/${blocks.length} blocks changed`;
+  if (changed.length === 0) return `${header}\n(no changes)`;
+  const body = changed
+    .map((b) => `Block ${b.n}\n--- draft\n${b.draft}\n+++ final\n${b.final}`)
+    .join('\n\n');
+  return `${header}\n\n${body}`;
+}
+
 /** The Revision stage's per-block changes, changed blocks first (toggle for the rest). */
 function FlowRevisionDiff({ blocks }: { blocks: FictionFlowRevisionBlock[] }) {
   const [showUnchanged, setShowUnchanged] = useState(false);
@@ -1515,6 +1564,13 @@ function FlowResultCard({
               >
                 <GitCompare className="h-3 w-3" /> {showDiff ? 'Hide changes' : 'Show changes'}
               </button>
+            )}
+            {revBlocks.length > 0 && (
+              <CopyButton
+                text={buildChangeLog(r.model, revBlocks)}
+                label="Copy change log"
+                title="Copy the per-block draft → final change log"
+              />
             )}
           </div>
         )}
