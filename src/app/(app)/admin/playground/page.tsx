@@ -150,6 +150,9 @@ export default function TranslationPlaygroundPage() {
   const [glossary, setGlossary] = useState(''); // revision mode: flattened glossary block (optional)
   const [precedingContext, setPrecedingContext] = useState('');
   const [followingContext, setFollowingContext] = useState('');
+  // Blocks per Pass-2 call. Shared by revision stage + flow modes (both feed the
+  // revision stage). Blank → backend default (12). Prod is fixed at 12.
+  const [revisionBatchSize, setRevisionBatchSize] = useState('12');
 
   // Full-flow (end-to-end) inputs — one editable prompt per pipeline stage.
   const [flowUseGlossary, setFlowUseGlossary] = useState(true);
@@ -312,6 +315,7 @@ export default function TranslationPlaygroundPage() {
               glossary: glossary.trim() || undefined,
               precedingContext: precedingContext.trim() || undefined,
               followingContext: followingContext.trim() || undefined,
+              batchSize: parseBatchSize(revisionBatchSize),
             }
           : {}),
       });
@@ -354,6 +358,14 @@ export default function TranslationPlaygroundPage() {
     return Number.isFinite(n) && n >= 0 && n <= 2 ? n : undefined;
   };
 
+  // Blank/invalid/out-of-range → undefined (backend then uses the default, 12).
+  const parseBatchSize = (s: string): number | undefined => {
+    const t = s.trim();
+    if (!t) return undefined;
+    const n = Number(t);
+    return Number.isInteger(n) && n >= 1 && n <= 100 ? n : undefined;
+  };
+
   const handleRunFlow = async () => {
     if (!canRunFlow) return;
     setFlowRunning(true);
@@ -387,6 +399,7 @@ export default function TranslationPlaygroundPage() {
             translate: parseTemp(flowTemperatures.translate),
             revision: parseTemp(flowTemperatures.revision),
           },
+          revisionBatchSize: parseBatchSize(revisionBatchSize),
         },
         (ev) => {
           if (ev.type === 'start') {
@@ -591,6 +604,23 @@ export default function TranslationPlaygroundPage() {
                 />
               </div>
             </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                Batch size (blocks per Pass-2 call)
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={revisionBatchSize}
+                onChange={(e) => setRevisionBatchSize(e.target.value)}
+                placeholder="12"
+                className={inputCls + ' w-28'}
+              />
+              <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+                Segments are split into contiguous batches of this size (default 12, as in production). Blank → 12.
+              </p>
+            </div>
           </div>
         )}
 
@@ -733,6 +763,24 @@ export default function TranslationPlaygroundPage() {
                 />
               </div>
             )}
+
+            <div>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                Revision batch size (blocks per Pass-2 call)
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={revisionBatchSize}
+                onChange={(e) => setRevisionBatchSize(e.target.value)}
+                placeholder="12"
+                className={inputCls + ' w-28'}
+              />
+              <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+                Pass 2 splits the chapter into contiguous batches of this size (default 12, as in production). Blank → 12.
+              </p>
+            </div>
 
             <p className="text-xs text-[var(--app-text-muted)]">
               Each model runs the full chain (glossary → translate → revision) on the chapter above.
@@ -1298,6 +1346,55 @@ function InlineDiff({ before, after }: { before: string; after: string }) {
   );
 }
 
+/** Small one-click copy-to-clipboard button with a transient "Copied" state. */
+function CopyButton({
+  text,
+  label = 'Copy',
+  title,
+}: {
+  text: string;
+  label?: string;
+  title?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable (insecure context / denied) — no-op */
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      title={title ?? label}
+      className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {copied ? 'Copied' : label}
+    </button>
+  );
+}
+
+/**
+ * Render a revision's changed blocks as a plain-text change log (draft → final),
+ * so the whole diff can be copied in one click and pasted into a doc or ticket.
+ */
+function buildChangeLog(model: string, blocks: FictionFlowRevisionBlock[]): string {
+  const changed = blocks
+    .map((b, i) => ({ ...b, n: i + 1 }))
+    .filter((b) => b.changed);
+  const header = `Change log — ${model} — ${changed.length}/${blocks.length} blocks changed`;
+  if (changed.length === 0) return `${header}\n(no changes)`;
+  const body = changed
+    .map((b) => `Block ${b.n}\n--- draft\n${b.draft}\n+++ final\n${b.final}`)
+    .join('\n\n');
+  return `${header}\n\n${body}`;
+}
+
 /** The Revision stage's per-block changes, changed blocks first (toggle for the rest). */
 function FlowRevisionDiff({ blocks }: { blocks: FictionFlowRevisionBlock[] }) {
   const [showUnchanged, setShowUnchanged] = useState(false);
@@ -1467,6 +1564,13 @@ function FlowResultCard({
               >
                 <GitCompare className="h-3 w-3" /> {showDiff ? 'Hide changes' : 'Show changes'}
               </button>
+            )}
+            {revBlocks.length > 0 && (
+              <CopyButton
+                text={buildChangeLog(r.model, revBlocks)}
+                label="Copy change log"
+                title="Copy the per-block draft → final change log"
+              />
             )}
           </div>
         )}

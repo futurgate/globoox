@@ -1724,6 +1724,8 @@ export interface PlaygroundRequest {
   glossary?: string
   precedingContext?: string
   followingContext?: string
+  /** Blocks per Pass-2 call (1..100); omit → production default (12). */
+  batchSize?: number
 }
 
 export function runTranslationPlayground(payload: PlaygroundRequest): Promise<PlaygroundResponse> {
@@ -1817,6 +1819,8 @@ export interface FictionFlowRevisionStage {
   finalText: string
   rawText: string
   parsedCount: number
+  /** Number of Pass-2 batches the chapter was split into. */
+  batchCount?: number
   /** Aligned per-block draft/final pairs (index i ↔ source block i). */
   blocks: FictionFlowRevisionBlock[]
   /** How many blocks the revision changed. */
@@ -1851,6 +1855,8 @@ export interface FictionFlowResponse {
   sourceLanguage: string
   useGlossary: boolean
   temperatures?: FictionFlowTemperatures
+  /** Blocks per Pass-2 call used for this run (default 12). */
+  revisionBatchSize?: number
   blockCount: number
   results: FictionFlowResult[]
 }
@@ -1864,6 +1870,8 @@ export interface FictionFlowRequest {
   existingGlossary?: string
   prompts?: { glossary?: string; translate?: string; revision?: string }
   temperatures?: FictionFlowTemperatures
+  /** Blocks per Pass-2 call (1..100); omit → production default (12). */
+  revisionBatchSize?: number
 }
 
 export type FictionFlowStage = 'glossary' | 'translate' | 'revision'
@@ -1879,6 +1887,7 @@ export type FictionFlowEvent =
       targetLanguage: string
       sourceLanguage: string
       useGlossary: boolean
+      revisionBatchSize?: number
     }
   | { type: 'stage'; model: string; stage: FictionFlowStage }
   | { type: 'model'; result: FictionFlowResult }
