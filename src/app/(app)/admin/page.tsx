@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, FlaskConical, Gauge, BookOpen, ChevronRight } from 'lucide-react';
+import { Loader2, ShieldAlert, FlaskConical, Gauge, BookOpen, ClipboardCheck, ChevronRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
@@ -36,6 +36,13 @@ const ADMIN_LINKS: AdminLink[] = [
     description:
       'Run the full-book fiction pipeline on a whole book, watch per-chapter progress, and download the translated EPUB (markup and images preserved).',
     Icon: BookOpen,
+  },
+  {
+    href: '/admin/quality',
+    title: 'Translation Quality',
+    description:
+      'Block-level QA of a finished translation: find the exact paragraphs to fix (leaked markup, dropped names, untranslated lines) with source and translation side by side.',
+    Icon: ClipboardCheck,
   },
 ];
 
