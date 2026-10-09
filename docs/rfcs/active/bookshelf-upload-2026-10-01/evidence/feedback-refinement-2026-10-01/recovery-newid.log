@@ -1,0 +1,137 @@
+PASS polling network unknown → dashed card → same-job Check status → ready without POST
+PASS ready/orderfalse preserves actual cover, Reader links and separate library warning
+PASS unknown process receipt offers honest refresh before explicit reupload; no pretend status endpoint
+PASS lost archive response → Retry reconciles server state and does not repeat the applied mutation
+PASS failed archive response → Retry checks then repeats the original archive action
+PASS account switch clears shown notification and captured stale action cannot request previous job
+PASS closed-modal completion toasts once; existing membership is distinguished from global canonical dedup
+PASS manual refresh while another upload is pending does not claim the bookshelf was updated
+PASS direct card Check status promotes prior parsed metadata when completion has only ID and manifest is unavailable
+PASS same-ID retry compatibility: picker cancellation is inert; one card from start through reload
+PASS registered replacement gets new ID in one slot and ready replacement survives reload
+PASS registered replacement gets new ID in one slot and canonical dedup survives reload
+PASS 409 retry refusal retains original ID and requires a fresh successful reconciliation before another explicit retry
+PASS same manual status failure reappears after the previous toast expired without another upload
+PASS 403 offers access-specific toast and Refresh action, not a same-job polling loop
+PASS lost receipt action says Review upload and opens reconciliation before any reupload
+PASS background upload failure waits for delete dialog and is shown after closing
+PASS background upload failure waits for sort dialog and is shown after closing
+PASS completion before the initial manifest uses neutral Book available without guessing duplicate membership
+PASS lost retry receipt reconciles error target before allowing another file
+PASS lost retry receipt reconciles ready target before allowing another file
+PASS lost retry receipt reconciles processing target before allowing another file
+PASS lost retry receipt reconciles missing target before allowing another file
+PASS accepted ready index retires a status warning deferred behind Sort before it can be announced
+PASS failed receipt reconciliation never enables explicit reupload from stale cached books
+PASS retry ready receipt without DTO remains readable if the following manifest fails
+{
+  "fixtureOnly": true,
+  "actualPage": true,
+  "actualSonner": true,
+  "results": [
+    {
+      "name": "polling network unknown → dashed card → same-job Check status → ready without POST",
+      "status": "PASS"
+    },
+    {
+      "name": "ready/orderfalse preserves actual cover, Reader links and separate library warning",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown process receipt offers honest refresh before explicit reupload; no pretend status endpoint",
+      "status": "PASS"
+    },
+    {
+      "name": "lost archive response → Retry reconciles server state and does not repeat the applied mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "failed archive response → Retry checks then repeats the original archive action",
+      "status": "PASS"
+    },
+    {
+      "name": "account switch clears shown notification and captured stale action cannot request previous job",
+      "status": "PASS"
+    },
+    {
+      "name": "closed-modal completion toasts once; existing membership is distinguished from global canonical dedup",
+      "status": "PASS"
+    },
+    {
+      "name": "manual refresh while another upload is pending does not claim the bookshelf was updated",
+      "status": "PASS"
+    },
+    {
+      "name": "direct card Check status promotes prior parsed metadata when completion has only ID and manifest is unavailable",
+      "status": "PASS"
+    },
+    {
+      "name": "same-ID retry compatibility: picker cancellation is inert; one card from start through reload",
+      "status": "PASS"
+    },
+    {
+      "name": "registered replacement gets new ID in one slot and ready replacement survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "registered replacement gets new ID in one slot and canonical dedup survives reload",
+      "status": "PASS"
+    },
+    {
+      "name": "409 retry refusal retains original ID and requires a fresh successful reconciliation before another explicit retry",
+      "status": "PASS"
+    },
+    {
+      "name": "same manual status failure reappears after the previous toast expired without another upload",
+      "status": "PASS"
+    },
+    {
+      "name": "403 offers access-specific toast and Refresh action, not a same-job polling loop",
+      "status": "PASS"
+    },
+    {
+      "name": "lost receipt action says Review upload and opens reconciliation before any reupload",
+      "status": "PASS"
+    },
+    {
+      "name": "background upload failure waits for delete dialog and is shown after closing",
+      "status": "PASS"
+    },
+    {
+      "name": "background upload failure waits for sort dialog and is shown after closing",
+      "status": "PASS"
+    },
+    {
+      "name": "completion before the initial manifest uses neutral Book available without guessing duplicate membership",
+      "status": "PASS"
+    },
+    {
+      "name": "lost retry receipt reconciles error target before allowing another file",
+      "status": "PASS"
+    },
+    {
+      "name": "lost retry receipt reconciles ready target before allowing another file",
+      "status": "PASS"
+    },
+    {
+      "name": "lost retry receipt reconciles processing target before allowing another file",
+      "status": "PASS"
+    },
+    {
+      "name": "lost retry receipt reconciles missing target before allowing another file",
+      "status": "PASS"
+    },
+    {
+      "name": "accepted ready index retires a status warning deferred behind Sort before it can be announced",
+      "status": "PASS"
+    },
+    {
+      "name": "failed receipt reconciliation never enables explicit reupload from stale cached books",
+      "status": "PASS"
+    },
+    {
+      "name": "retry ready receipt without DTO remains readable if the following manifest fails",
+      "status": "PASS"
+    }
+  ]
+}

@@ -2,8 +2,10 @@
 type: rfc
 status: implemented
 owner: design-engineering
-last_verified: 2026-09-14
+last_verified: 2026-10-09
 ---
+
+> Git-маршруты на 2026-10-09: согласованный код main/dev использует обычный лендинг на `/en`, `/es`, `/fr`, `/ru`; editorial сохранён на `/landing-editorial` и `/landing-editorial/{en,es,fr,ru}`. [Текущая reference](../../../../reference/product/landing-editorial.md). Датированные записи ниже — история дизайна и прежних live-выпусков; синхронизация Git не подтверждает новый deployment.
 
 **Current deployed dev landing — 2026-09-14:** User explicitly authorized Vercel publication. dev.globoox.co now serves editorial commit019c717 via READY Preview deployment dpl_DG3VN1LbyZUXKfJNCQDooVPHrLuM in lomovski/globoox. The domain is mapped to Git branch dev. Both production aliases remain on dpl_9CBYCvJw17PXcwiaBgZjxAgaXUKU. No automatic deployment settings changed. This supersedes older no-deploy/auth-blocked notices for this completed dev release. Canonical copy, accepted visuals/media and beta behavior are preserved; Terms/Privacy remain review drafts. Existing project visuals remain SECONDARY references; preserve all history and Tanya's local billing RFC edits. Release record: `docs/rfcs/active/globoox-editorial-2026/desktop-v2/dev-deployment-2026-09-14/README.md`.
 

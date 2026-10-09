@@ -1,0 +1,91 @@
+{
+  "started_at_utc": "2026-10-01T10:38:50.835Z",
+  "finished_at_utc": "2026-10-01T10:38:54.516Z",
+  "scope": "User-authorized own synthetic QA upload comparison; only three named QA IDs excluded from prior actual-owner baseline. No DB mutations.",
+  "baseline_other_account_invalid": true,
+  "checks": {
+    "canonical_id_unchanged": true,
+    "canonical_own_title_count": 1,
+    "original_file_hash_unchanged": true,
+    "original_storage_path_unchanged": true,
+    "chapter_ids_unchanged": true,
+    "chapter_records_and_content_hashes_unchanged": true,
+    "block_ids_unchanged": true,
+    "block_records_and_content_hashes_unchanged": true,
+    "progress_all_fields_unchanged": true,
+    "current_progress": [
+      {
+        "block_position": 15,
+        "selected_language": "EN"
+      }
+    ],
+    "recency_row_count": 1,
+    "recency_advanced": true,
+    "recency_previous": [
+      "2026-10-01T10:32:43.012652+00:00"
+    ],
+    "recency_current": [
+      "2026-10-01T10:37:17.606638+00:00"
+    ],
+    "recency_limit": "Two snapshots prove timestamp advance, not the count of intermediate activity-version increments.",
+    "oldRows": {
+      "books": {
+        "baseline_rows": 13,
+        "unchanged": 13,
+        "missing": 0,
+        "changed": 0,
+        "added": 1
+      },
+      "progress": {
+        "baseline_rows": 18,
+        "unchanged": 18,
+        "missing": 0,
+        "changed": 0,
+        "added": 0
+      },
+      "recency": {
+        "baseline_rows": 19,
+        "unchanged": 19,
+        "missing": 0,
+        "changed": 0,
+        "added": 1
+      }
+    },
+    "malformed_candidates": [
+      {
+        "id": "2d3f9747-8c38-4257-ad13-6ee0895c9c70",
+        "title": "malformed upload",
+        "processing_status": "error",
+        "created_at": "2026-10-01T10:36:15.490056+00:00"
+      }
+    ]
+  },
+  "requests": [
+    {
+      "table": "catalog_v2_recency",
+      "status": 200,
+      "rows": 23
+    },
+    {
+      "table": "chapters",
+      "status": 200,
+      "rows": 1
+    },
+    {
+      "table": "reading_progress",
+      "status": 200,
+      "rows": 19
+    },
+    {
+      "table": "books",
+      "status": 200,
+      "rows": 17
+    },
+    {
+      "table": "content_blocks",
+      "status": 200,
+      "rows": 25
+    }
+  ],
+  "private_evidence": "qa-after-dedup-private.json (0600)"
+}

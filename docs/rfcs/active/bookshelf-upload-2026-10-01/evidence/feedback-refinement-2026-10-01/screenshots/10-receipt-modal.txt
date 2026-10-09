@@ -1,0 +1,43 @@
+My Books
+Upload book
+Visible
+Recently Read
+
+Upload unconfirmed
+
+Check your library before trying again.
+
+Review upload
+
+Untitled book
+
+The Green Notebook
+
+Fixture author
+
+The Green Notebook
+
+Fixture author
+
+Small Journeys
+
+Fixture author
+
+Small Journeys
+
+Fixture author
+
+Need help? support@globoox.co
+soon
+Store
+My Books
+Settings
+Upload Book
+Add an EPUB from your device and we'll prepare it for reading and translation.
+
+This upload could not be confirmed. Refresh your library before uploading again.
+
+The earlier upload may still appear in your library. Check there before choosing to upload the file again.
+
+Refresh library
+Upload again

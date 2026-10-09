@@ -1,0 +1,35 @@
+{
+  "verified_at": "2026-10-01T15:20:33.008122+00:00",
+  "application_sha": "865354a582b355838fbb933f0b369241fe964bab",
+  "site": "https://dev.globoox.co/my-books",
+  "method": "Manual browser UI plus native file picker; authenticated existing QA owner; no artificial faults in shared server",
+  "inputs": "live-inputs.json",
+  "qa_book_id": "0feff41d-1461-4800-aecd-9f649021366d",
+  "qa_failed_book_id": "3fec18f4-8c7b-4b56-9d9b-074d81b2feb9",
+  "observations": {
+    "instant_placeholder_before_close": "- main:\n  - heading \"My Books\" [level=1]\n  - button \"Upload book\"\n  - button \"Visible\"\n  - button \"Archived\"\n  - button \"All\"\n  - button \"Sort\":\n    - generic: Recently Read\n  - article \"Book upload\":\n    - generic \"Loading cover\"\n    - generic \"Loading book details\":\n      - generic \"Loading title\"\n      - generic \"Loading author\"\n    - paragraph:\n      - text: Uploading book…",
+    "filename_not_in_shelf_placeholder": true,
+    "ready_card": "  - link \"QA Feedback Recovery 2026-10-01\":\n    - /url: /reader/0feff41d-1461-4800-aecd-9f649021366d\n    - img \"QA Feedback Recovery 2026-10-01\"\n  - link \"QA Feedback Recovery 2026-10-01 Globoox QA\":\n    - /url: /reader/0feff41d-1461-4800-aecd-9f649021366d\n    - paragraph: QA Feedback Recovery 2026-10-01\n    - paragraph: Globoox QA\n",
+    "ready_toast": "- region \"Notifications alt+T\":\n  - list:\n    - button \"Dismiss notification\":\n    - generic: Book ready\n    - button \"Open\"",
+    "repeat_card": "  - link \"QA Feedback Recovery 2026-10-01\":\n    - /url: /reader/0feff41d-1461-4800-aecd-9f649021366d\n    - img \"QA Feedback Recovery 2026-10-01\"\n  - link \"QA Feedback Recovery 2026-10-01 Globoox QA\":\n    - /url: /reader/0feff41d-1461-4800-aecd-9f649021366d\n    - paragraph: QA Feedback Recovery 2026-10-01\n    - paragraph: Globoox QA\n",
+    "repeat_toast": "- region \"Notifications alt+T\":\n  - list:\n    - button \"Dismiss notification\":\n    - generic: Book already in your library\n    - generic: Your reading progress is preserved.\n    - button \"Open\"",
+    "one_canonical_card_on_repeat": true,
+    "reader_original_EN": "- main:\n  - link:\n    - /url: /my-books\n  - heading \"QA Feedback Recovery 2026-10-01\" [level=1]\n  - paragraph: Globoox QA\n  - button \"EN\":\n    - generic: EN\n  - button:\n  - heading \"Recovery check\" [level=1]\n  - paragraph: This is an original, disposable QA book for testing the upload feedback release. It contains no user material.\n  - paragraph: A connection failure is not proof that processing failed. Once the book is ready, its content remains available.\n  - paragraph: The page should keep one card, show the parsed title, and offer the correct recovery action.\n  - generic: Recovery check\n  - generic: 0%\n- region \"Notifications alt+T\"\n- alert: Globoox",
+    "confirmed_failure": "\n  - paragraph: Unable to process this book\n  - paragraph: Book processing did not finish. Try again.\n  - button \"Upload again\"\n  - paragraph: Untitled book\n  - paragraph: Unknown author",
+    "failure_toast": "- region \"Notifications alt+T\"",
+    "failure_retry_opens_existing_upload_dialog": true,
+    "archive_restore_own_ready_book_checked": true,
+    "reload_ready_card": "  - link \"QA Feedback Recovery 2026-10-01\":\n    - /url: /reader/0feff41d-1461-4800-aecd-9f649021366d\n    - img \"QA Feedback Recovery 2026-10-01\"\n  - link \"QA Feedback Recovery 2026-10-01 Globoox QA\":\n    - /url: /reader/0feff41d-1461-4800-aecd-9f649021366d\n    - paragraph: QA Feedback Recovery 2026-10-01\n    - paragraph: Globoox QA\n",
+    "cleanup_QA_cards_absent_after_reload": true,
+    "cleanup_visible_reader_ids_match_before": true,
+    "cleanup_existing_visible_reader_count": 6,
+    "cleanup_upload_available_no_offline_banner": true
+  },
+  "scope_limits": [
+    "Transient processing metadata timing was tested with controlled transport; tiny real import completed between manual observations.",
+    "Live repeated book had 0% reading progress; this does not prove preservation of an arbitrary nonzero anchor. Existing unit/previous release evidence covers the relevant guards.",
+    "Unknown job/network/order failures were manually injected only on local actual page, not shared server.",
+    "Cleanup confirmed removal of two own QA memberships through app and fresh visible shelf; not a database/storage/job purge audit.",
+    "No deliberate logout or global identity change on the user browser; account switch/auth concurrency covered in isolated fixtures."
+  ]
+}

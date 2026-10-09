@@ -1,0 +1,25 @@
+{
+  "fixtures": [
+    {
+      "file": "malformed-upload.epub",
+      "bytes": 61,
+      "sha256": "e0d2cc9fbcb876761aecf2fd352d5ae56268804c1bd6a75d2b9cd11e410602fa"
+    },
+    {
+      "file": "transport-name-no-cover.epub",
+      "bytes": 1533,
+      "sha256": "2ea89831e654abe30a9cdbf09273900560c537760ada52cd79e764b5a8de3249"
+    },
+    {
+      "file": "transport-name-no-title.epub",
+      "bytes": 1488,
+      "sha256": "a28225d1d30676a0e315db001535c3514bfa3c57eca3a4fd02c03f1162375f02"
+    },
+    {
+      "file": "transport-name-not-title.epub",
+      "bytes": 1812,
+      "sha256": "3ae8c5f8c254de06a5f0a406b40f6b8adf9cb79fa1fb85d88c3a4ea6b70d6972"
+    }
+  ],
+  "note": "No-title chapter made unique after initial valid dedup collided with no-cover content; PNG version for positive cover test."
+}

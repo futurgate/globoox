@@ -1,0 +1,17 @@
+{
+  "frontend_application_commit": "edea9ed",
+  "checks": {
+    "unit": "344/344 PASS after BookCard correction; final delete-dialog fallback covered by page integration and TS/build",
+    "page": "17/17 PASS including terminal local/server error and delete confirmation",
+    "typescript": "PASS",
+    "scoped_lint": "0 errors;2 pre-existing helper warnings",
+    "production_build": "PASS on final 3-file correction",
+    "baseline": "Before fix fails title-skeleton assertion 1 != 0"
+  },
+  "manual_dev": "PASS on edea9ed: no skeleton/animation/Reader link; neutral delete title; own failed card deleted",
+  "sources": [
+    "src/components/Store/BookCard.tsx",
+    "src/app/(app)/my-books/page.tsx",
+    "e2e/bookshelf-upload-story.mjs"
+  ]
+}

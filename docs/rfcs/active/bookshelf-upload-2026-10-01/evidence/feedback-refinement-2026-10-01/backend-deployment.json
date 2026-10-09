@@ -1,0 +1,14 @@
+{
+  "verified_at": "2026-10-01T21:30:20.005440+00:00",
+  "commit": "74e977b",
+  "origin": "https://globooks-eu.onrender.com",
+  "health": {
+    "status": 200,
+    "body": {
+      "status": "ok"
+    }
+  },
+  "retry_contract_live": true,
+  "verification": "Live OpenAPI exposes retry_book_id; dev UI replaced exact own failed ID with new ready ID and opened original text. SQL independently confirmed old row absent and new row ready, then both absent after UI cleanup.",
+  "live_verified_at": "2026-10-01T21:41:34.940098+00:00"
+}

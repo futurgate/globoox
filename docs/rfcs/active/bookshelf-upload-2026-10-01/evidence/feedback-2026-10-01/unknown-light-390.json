@@ -1,0 +1,36 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "scrollWidth": 390,
+  "theme": "light",
+  "toast": {
+    "x": 16,
+    "y": 689,
+    "width": 358,
+    "height": 79,
+    "right": 374,
+    "bottom": 768
+  },
+  "navigation": {
+    "x": 0,
+    "y": 779.25,
+    "width": 390,
+    "height": 64.75,
+    "right": 390,
+    "bottom": 844
+  },
+  "problem": {
+    "x": 17,
+    "y": 175.5,
+    "width": 165.25,
+    "height": 274.53125,
+    "right": 182.25,
+    "bottom": 450.03125
+  },
+  "problemStyle": {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "dashed"
+  }
+}

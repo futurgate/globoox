@@ -1,0 +1,98 @@
+{
+  "date": "2026-10-01",
+  "frontend_app_commit": "80819d90fd7daa7b83cfe94eb53740ae01a06979",
+  "backend_commit": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+  "mode": "Manual actions in authenticated Chrome at dev.globoox.co, own synthetic EPUBs, original EN only",
+  "observed": [
+    {
+      "case": "instant_placeholder",
+      "result": "PASS",
+      "excerpt": "article Book upload → Loading cover; Loading title; Loading author; Uploading book…",
+      "details": "First slot under open modal. File name only in file selector, absent card."
+    },
+    {
+      "case": "close_modal",
+      "result": "PASS",
+      "excerpt": "Processing book…",
+      "details": "Closed modal during first upload; operation continued; parsed title and PNG cover appeared in same first slot."
+    },
+    {
+      "case": "reload_before_first_read",
+      "result": "PASS",
+      "excerpt": "Upload QA — Parsed Title 20261001 / Globoox QA",
+      "details": "After page navigation/reload, new ready card still first before opening Reader."
+    },
+    {
+      "case": "original_reader",
+      "result": "PASS",
+      "excerpt": "A small original chapter; Test paragraph 1…14; EN; 0% → Test paragraph 15…24; 60%",
+      "details": "Original text displayed; clicked next-page arrow; no translation selected."
+    },
+    {
+      "case": "no_cover",
+      "result": "PASS",
+      "excerpt": "Upload QA — No Cover 20261001 / Globoox QA",
+      "details": "Ready link and finite text cover fallback, no Loading cover."
+    },
+    {
+      "case": "archive_restore",
+      "result": "PASS",
+      "details": "Own no-cover book archived via card menu, visible under Archived; Restore returned it under Visible."
+    },
+    {
+      "case": "no_title_author",
+      "result": "PASS",
+      "excerpt": "Untitled book / Unknown",
+      "details": "Distinct EPUB with missing metadata became ready; filename absent, no continuing metadata skeleton."
+    },
+    {
+      "case": "malformed",
+      "result": "PASS_AFTER_CORRECTION",
+      "excerpt": "Upload failed; Please upload the file again.; Upload again. Modal: Book processing did not finish. Try again.",
+      "details": "No Reader link. Modal reached terminal error after queue retries. Card retained title/author skeleton after error; focused frontend correction required. Corrected and manually rechecked on edea9ed: zero skeleton labels/animate-pulse, zero Reader links; finite Untitled book/Unknown author; same neutral title in Delete Book confirmation."
+    },
+    {
+      "case": "dedup",
+      "result": "PASS_UI_AND_DB",
+      "details": "Reuploaded first EPUB after reading to60%. Exactly one canonical card remained, same reader URL; DB/progress proof performed separately. DB proves same original source, chapter/block IDs/content and progress; manually reopened at Test paragraph15, 60%."
+    },
+    {
+      "case": "pagination",
+      "result": "PASS",
+      "details": "Scrolled below first6; previous sixth card appeared in next batch. No book removed from index."
+    },
+    {
+      "case": "sort",
+      "result": "PASS",
+      "details": "Title A→Z changed ready-card order correctly; restored Recently Read."
+    }
+  ],
+  "controlled_local_manual": {
+    "result": "PASS",
+    "environment": "real MyBooks + cards + modal, synthetic transport at localhost:3137",
+    "observed": [
+      "skeleton before metadata",
+      "parsed title before cover, Reader disabled",
+      "cover while processing, Reader disabled",
+      "ready then reload stable order",
+      "reload pending recovered by bounded index polling",
+      "error then Upload again and delete own synthetic card"
+    ]
+  },
+  "limits": [
+    "Live tiny EPUB completes too quickly to independently observe every metadata/cover intermediate poll; staged evidence comes from controlled manual and native service integration.",
+    "No live outage/large EPUB load injection; 512MB capacity not established.",
+    "First read-only baseline selected a different account; rejected as invalid. Correct actual-owner baseline captured for remaining dedup/error comparisons."
+  ],
+  "qa_setup_adverse": [
+    "Native iCloud picker cached wrong type for rewritten fixture. Copied own files to Downloads; normal picker accepted them. Product unchanged.",
+    "Initial no-title EPUB shared equivalent content with no-cover fixture and deduped to it; changed synthetic chapter text and reran distinct-title-absence scenario. Not a missing-title product failure."
+  ],
+  "final_application_commit": "edea9ed1fc5c83eee4ec7a0e43953cb4b38cb887",
+  "cleanup": {
+    "result": "PASS",
+    "cloud": "All4QAbooks and related rows absent; old13books/18progress/19recency unchanged. Storage object deletion not independently proved.",
+    "local": "Owned manual server3137/PostgreSQL55591 stopped; verified duplicate Downloads copies removed; retained exact inputs/evidence."
+  },
+  "final_shelf": "After reload no QA titles, no Upload failed or Offline mode banner; original first cards restored."
+}

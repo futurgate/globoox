@@ -1,0 +1,239 @@
+{
+  "checked_at_utc": "2026-10-01T10:30:01.413767+00:00",
+  "scope": "Anonymous public HTML shell and linked static JS only; no browser, auth/session, book API or mutations",
+  "dev": {
+    "sha": "80819d90fd7daa7b83cfe94eb53740ae01a06979",
+    "deployment_id": 6781876401,
+    "status": {
+      "state": "success",
+      "environment": "Preview",
+      "environment_url": "https://globoox-cyx9a52xo-lomovski.vercel.app",
+      "created_at": "2026-10-01T10:22:18Z",
+      "updated_at": "2026-10-01T10:22:18Z"
+    },
+    "alias_script_paths_equal_artifact": true,
+    "changed_application_chunk_probe": {
+      "paths_checked": 4,
+      "matches": [
+        {
+          "path": "/_next/static/chunks/bdb4705ee66d4c82.js",
+          "markers": [
+            "Some books are still processing. Refresh to check again.",
+            "Loading book details"
+          ],
+          "alias": {
+            "status": 200,
+            "bytes": 36645,
+            "sha256": "93a3b3e8051d73243feb5ef0a0d54585addf916f678930189d59f9456024667e"
+          },
+          "artifact": {
+            "status": 200,
+            "bytes": 36645,
+            "sha256": "93a3b3e8051d73243feb5ef0a0d54585addf916f678930189d59f9456024667e"
+          },
+          "bytes_equal": true
+        }
+      ]
+    }
+  },
+  "production": {
+    "sha": "88d3a4c8ef4bfd389b823a861d95064d9abf6cb6",
+    "deployment_id": 6780182216,
+    "status": {
+      "state": "success",
+      "environment": "Production",
+      "environment_url": "https://globoox-fht8j7iee-lomovski.vercel.app",
+      "created_at": "2026-10-01T08:55:25Z",
+      "updated_at": "2026-10-01T08:55:25Z"
+    },
+    "latest_deployment": {
+      "id": 6780182216,
+      "sha": "88d3a4c8ef4bfd389b823a861d95064d9abf6cb6",
+      "environment": "Production",
+      "created_at": "2026-10-01T08:55:24Z"
+    },
+    "alias_script_paths_equal_artifact": true,
+    "apex_scripts_equal_www": true
+  },
+  "pages": {
+    "dev_alias": {
+      "status": 200,
+      "final_url": "https://dev.globoox.co/my-books",
+      "bytes": 27521,
+      "sha256": "8d117cc735e52e379b1fc99fb818a6f35df41d7ee72bbeba076cdea8921582a7",
+      "scripts": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/850370da60567cce.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/bdb4705ee66d4c82.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/e9dd7fdc17483614.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    },
+    "dev_artifact": {
+      "status": 200,
+      "final_url": "https://globoox-cyx9a52xo-lomovski.vercel.app/my-books",
+      "bytes": 27521,
+      "sha256": "8d117cc735e52e379b1fc99fb818a6f35df41d7ee72bbeba076cdea8921582a7",
+      "scripts": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/24bccb14049557b2.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/850370da60567cce.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/bdb4705ee66d4c82.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/e9dd7fdc17483614.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    },
+    "prod_alias": {
+      "status": 200,
+      "final_url": "https://www.globoox.co/my-books",
+      "bytes": 27486,
+      "sha256": "43dd84a6a9ddff71cce8aa7b64af393df7dcc813a2a1502bb24433a642beb986",
+      "scripts": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/782ebf24ddd7045d.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/aadc25fc394156f4.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    },
+    "prod_artifact": {
+      "status": 200,
+      "final_url": "https://globoox-fht8j7iee-lomovski.vercel.app/my-books",
+      "bytes": 27486,
+      "sha256": "43dd84a6a9ddff71cce8aa7b64af393df7dcc813a2a1502bb24433a642beb986",
+      "scripts": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/782ebf24ddd7045d.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/aadc25fc394156f4.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    },
+    "prod_apex": {
+      "status": 200,
+      "final_url": "https://www.globoox.co/my-books",
+      "bytes": 27486,
+      "sha256": "43dd84a6a9ddff71cce8aa7b64af393df7dcc813a2a1502bb24433a642beb986",
+      "scripts": [
+        "/_next/static/chunks/07fd69e0df5a97cd.js",
+        "/_next/static/chunks/1368ab990027332b.js",
+        "/_next/static/chunks/167ed37c994957fb.js",
+        "/_next/static/chunks/59a8265053f4dc04.js",
+        "/_next/static/chunks/624f2ec5ad9eedd1.js",
+        "/_next/static/chunks/6d459ba0cd186f6c.js",
+        "/_next/static/chunks/737372a34e9d7cdc.js",
+        "/_next/static/chunks/737edb47a2b38749.js",
+        "/_next/static/chunks/782ebf24ddd7045d.js",
+        "/_next/static/chunks/81a4fbe2cce006fb.js",
+        "/_next/static/chunks/8727c1c9a916a453.js",
+        "/_next/static/chunks/a6dad97d9634a72d.js",
+        "/_next/static/chunks/aadc25fc394156f4.js",
+        "/_next/static/chunks/c49788d3535b2d9d.js",
+        "/_next/static/chunks/cedead4da7a5c84c.js",
+        "/_next/static/chunks/dd4dd01088920e08.js",
+        "/_next/static/chunks/e1a3093c8f3a4116.js",
+        "/_next/static/chunks/f4763fbb650469ca.js",
+        "/_next/static/chunks/turbopack-e166d86e33ca2e52.js"
+      ]
+    }
+  },
+  "chunk_checks": [
+    {
+      "environment": "dev",
+      "path": "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+      "alias": {
+        "status": 200,
+        "final_url": "https://dev.globoox.co/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "bytes": 11027,
+        "sha256": "010156fe21ccab7ff9ceb75b3f4435b49cede102f69e7e94d1659595073559b7"
+      },
+      "artifact": {
+        "status": 200,
+        "final_url": "https://globoox-cyx9a52xo-lomovski.vercel.app/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "bytes": 11027,
+        "sha256": "010156fe21ccab7ff9ceb75b3f4435b49cede102f69e7e94d1659595073559b7"
+      },
+      "bytes_equal": true
+    },
+    {
+      "environment": "prod",
+      "path": "/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+      "alias": {
+        "status": 200,
+        "final_url": "https://www.globoox.co/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "bytes": 11178,
+        "sha256": "316cde068969b38a047c3c7cf7ce0255831322a7e49853ecc585dd1f45e3c635"
+      },
+      "artifact": {
+        "status": 200,
+        "final_url": "https://globoox-fht8j7iee-lomovski.vercel.app/_next/static/chunks/turbopack-e166d86e33ca2e52.js",
+        "bytes": 11178,
+        "sha256": "316cde068969b38a047c3c7cf7ce0255831322a7e49853ecc585dd1f45e3c635"
+      },
+      "bytes_equal": true
+    }
+  ],
+  "backend": {
+    "fresh_fetch_performed_before_probe": true,
+    "expected_release": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+    "origin_main": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+    "commits_after_release": []
+  },
+  "passed": true,
+  "completed_at_utc": "2026-10-01T10:30:05.134828+00:00"
+}

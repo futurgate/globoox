@@ -1,0 +1,20 @@
+{
+  "fixtureOnly": true,
+  "passed": [
+    "placeholder before first network response; processing under modal; closed modal preserves card; old completion does not close new dialog; stable entry without delay",
+    "duplicate completion produces one book and closes only its own dialog",
+    "lost process response remains unconfirmed, leaves reopened dialog intact, never retries process automatically, and can be dismissed",
+    "page unmount cancels its operation before further upload/process calls",
+    "queued completion keeps its attempt, uses final canonical ID, does not close a newer upload dialog, and deduplicates a later sync completion",
+    "queued failure stays on its placeholder, leaves a reopened dialog intact, and never repeats process or polling",
+    "unmount aborts an in-flight job status request and clears later polling",
+    "hung job status reaches one five-minute deadline, aborts, and offers a typed Check status recovery without claiming processing failed",
+    "network error → explicit Check status polls the same job/attempt without another storage or process request",
+    "404 has an honest missing-job recovery; refresh before explicit reupload; reopening recovery never starts a request",
+    "lost process response without job ID has no fake status retry or format guidance",
+    "sync ready orderfalse preserves completion and offers library refresh, never file-format guidance/reimport",
+    "offline disables new upload and file input; 401 offers Sign in without a status/upload retry loop",
+    "failed job after ready canonical snapshot keeps readable completion and separate ordering warning",
+    "reopened status retry preserves previously parsed metadata when the final receipt only contains the same book ID"
+  ]
+}

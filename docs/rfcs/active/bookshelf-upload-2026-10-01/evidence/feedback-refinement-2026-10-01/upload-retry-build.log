@@ -1,0 +1,511 @@
+
+> build
+> nuxt build
+
+┌  Building Nuxt for production...
+│
+●  Nuxt 3.21.1 (with Nitro 2.13.1, Vite 6.4.1 and Vue 3.5.28)
+[nuxt] modules:before: 0.053ms
+[nuxt] kit:compatibility: 0.047ms
+
+[@nuxt/supabase]  WARN  Missing supabase url, set it either in nuxt.config.ts or via env variable
+
+
+[@nuxt/supabase]  WARN  Missing supabase anon key, set it either in nuxt.config.ts or via env variable
+
+[nuxt] kit:compatibility: 0.325ms
+ℹ Module @nuxtjs/supabase took 2.62ms to setup.
+[nuxt] kit:compatibility: 0.012ms
+[nuxt] kit:compatibility: 0.124ms
+[nuxt] kit:compatibility: 0.115ms
+ℹ Module pinia took 1.03ms to setup.
+[nuxt] kit:compatibility: 0.01ms
+ℹ Module @sentry/nuxt/module took 1.78ms to setup.
+[nuxt] pages:routerOptions: 0.008ms
+ℹ Module nuxt:pages took 6.36ms to setup.
+ℹ Module nuxt:meta took 1.28ms to setup.
+[nuxt] kit:compatibility: 0.304ms
+ℹ Module nuxt:components took 3.24ms to setup.
+ℹ Module nuxt:imports took 0.71ms to setup.
+ℹ Module nuxt:nuxt-config-schema took 0.3ms to setup.
+ℹ Module @nuxt/telemetry took 0.05ms to setup.
+[nuxt] imports:dirs: 0.032ms
+[nuxt] imports:sources: 0.047ms
+[nuxt] imports:context: 0.029ms
+[nuxt] imports:extend: 0.025ms
+[nuxt] builder:generateApp: 0.008ms
+[nuxt] schema:extend: 0.011ms
+[nuxt] schema:resolved: 0.005ms
+[nuxt] modules:done: 31.306ms
+[nuxt] nitro:config: 64.215ms
+[nuxt] nitro:init: 0.211ms
+[nuxt] ready: 0.006ms
+│
+●  Nitro preset: node-server
+
+ WARN  Duplicated imports "FictionStage", the one from "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/fiction-playground.ts" has been ignored and "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/fiction-stage-costs.ts" is used
+
+
+ WARN  Duplicated imports "SUPPORTED_TARGET_LANGS", the one from "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/translation-cost.ts" has been ignored and "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/translation-eval.ts" is used
+
+[nitro] types:extend: 0.013ms
+[nuxt] prepare:types: 39.797ms
+[nuxt] components:dirs: 0.007ms
+[nuxt] app:resolve: 0.702ms
+[nuxt] pages:extend: 0.1ms
+[nuxt] pages:resolved: 0.11ms
+[nuxt] components:extend: 0.104ms
+[nuxt] app:templates: 26.298ms
+[nuxt] ℹ Compiled app-component.mjs in 4.51ms
+[nuxt] ℹ Compiled types/app.config.d.ts in 4.53ms
+[nuxt] ℹ Compiled app.config.mjs in 4.57ms
+[nuxt] ℹ Compiled types/app-defaults.d.ts in 4.62ms
+[nuxt] ℹ Compiled types/build.d.ts in 4.67ms
+[nuxt] ℹ Compiled nitro.client.mjs in 4.48ms
+[nuxt] ℹ Compiled css.mjs in 4.52ms
+[nuxt] ℹ Compiled fetch.mjs in 4.55ms
+[nuxt] ℹ Compiled error-component.mjs in 4.59ms
+[nuxt] ℹ Compiled global-polyfills.mjs in 4.73ms
+[nuxt] ℹ Compiled layouts.mjs in 4.8ms
+[nuxt] ℹ Compiled middleware.mjs in 4.61ms
+[nuxt] ℹ Compiled nuxt.config.mjs in 4.52ms
+[nuxt] ℹ Compiled paths.mjs in 4.33ms
+[nuxt] ℹ Compiled root-component.mjs in 4.36ms
+[nuxt] ℹ Compiled test-component-wrapper.mjs in 4.18ms
+[nuxt] ℹ Compiled types/vue-shim.d.ts in 4.23ms
+[nuxt] ℹ Compiled types/nitro-layouts.d.ts in 4.29ms
+[nuxt] ℹ Compiled types/builder-env.d.ts in 4.33ms
+[nuxt] ℹ Compiled types/supabase.d.ts in 4.39ms
+[nuxt] ℹ Compiled sentry-client-config.mjs in 4.35ms
+[nuxt] ℹ Compiled sentry--nuxt-pages-data.mjs in 4.4ms
+[nuxt] ℹ Compiled routes.mjs in 4.43ms
+[nuxt] ℹ Compiled pages.mjs in 3.66ms
+[nuxt] ℹ Compiled types/middleware.d.ts in 3.79ms
+[nuxt] ℹ Compiled types/nitro-middleware.d.ts in 3.92ms
+[nuxt] ℹ Compiled types/layouts.d.ts in 4.16ms
+[nuxt] ℹ Compiled unhead-options.mjs in 4.19ms
+[nuxt] ℹ Compiled unhead.config.mjs in 4.24ms
+[nuxt] ℹ Compiled components.d.ts in 4.28ms
+[nuxt] ℹ Compiled types/components.d.ts in 3.89ms
+[nuxt] ℹ Compiled components.plugin.mjs in 3.64ms
+[nuxt] ℹ Compiled component-names.mjs in 3.66ms
+[nuxt] ℹ Compiled components.islands.mjs in 3.68ms
+[nuxt] ℹ Compiled component-chunk.mjs in 3.63ms
+[nuxt] ℹ Compiled route-rules.mjs in 5.28ms
+[nuxt] nitro:prepare:types: 5.378ms
+[nuxt] ℹ Compiled imports.mjs in 5.54ms
+[nuxt] ℹ Compiled imports.d.ts in 5.57ms
+[nuxt] ℹ Compiled types/nitro-nuxt.d.ts in 5.65ms
+[nuxt] ℹ Compiled types/schema.d.ts in 8.93ms
+[nuxt] ℹ Compiled types/imports.d.ts in 7.45ms
+[nuxt] pages:routerOptions: 0.012ms
+[nuxt] ℹ Compiled router.options.mjs in 11.48ms
+[nuxt] ℹ Compiled types/supabase-database.d.ts in 14.8ms
+[nuxt] ℹ Compiled plugins.server.mjs in 7.9ms
+[nuxt] ℹ Compiled plugins.client.mjs in 8.98ms
+[nuxt] ℹ Compiled types/plugins.d.ts in 12.14ms
+[nuxt] imports:extend: 0.012ms
+[nuxt] builder:generateApp: 0.004ms
+[nuxt] app:templatesGenerated: 8.686ms
+[nuxt] build:before: 0.426ms
+
+ WARN  Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+[nuxt] vite:extend: 2.579ms
+[nuxt] vite:extendConfig: 11.959ms
+[nuxt] vite:configResolved: 0.015ms
+ℹ Building client...
+ℹ vite v7.3.1 building client environment for production...
+[sentry-vite-plugin] Info: Sending telemetry data on issues and performance to Sentry. To disable telemetry, set `options.telemetry` to `false`.
+ℹ transforming...
+ℹ ✓ 695 modules transformed.
+ℹ rendering chunks...
+[sentry-vite-plugin] Warning: No auth token provided. Will not create release. Please set the `authToken` option. You can find information on how to generate a Sentry auth token here: https://docs.sentry.io/api/auth/
+ℹ computing gzip size...
+[sentry-vite-plugin] Warning: No auth token provided. Will not upload source maps. Please set the `authToken` option. You can find information on how to generate a Sentry auth token here: https://docs.sentry.io/api/auth/
+ℹ .nuxt/dist/client/manifest.json                             7.28 kB │ gzip:   1.15 kB
+ℹ .nuxt/dist/client/_nuxt/reader.Dp7VinqS.css                 0.14 kB │ gzip:   0.13 kB
+ℹ .nuxt/dist/client/_nuxt/store.C_LqBHfs.css                  0.74 kB │ gzip:   0.31 kB
+ℹ .nuxt/dist/client/_nuxt/confirm.yQrEfzNM.css                0.94 kB │ gzip:   0.40 kB
+ℹ .nuxt/dist/client/_nuxt/default.xqrY6d_3.css                0.99 kB │ gzip:   0.43 kB
+ℹ .nuxt/dist/client/_nuxt/help.DhI4pkE3.css                   1.34 kB │ gzip:   0.46 kB
+ℹ .nuxt/dist/client/_nuxt/settings.CAwJ60G2.css               1.35 kB │ gzip:   0.46 kB
+ℹ .nuxt/dist/client/_nuxt/error-500.BzzS6KCw.css              1.88 kB │ gzip:   0.72 kB
+ℹ .nuxt/dist/client/_nuxt/sentry-example-page.C6IehN6k.css    1.95 kB │ gzip:   0.72 kB
+ℹ .nuxt/dist/client/_nuxt/profile.BjOaHp2j.css                2.71 kB │ gzip:   0.76 kB
+ℹ .nuxt/dist/client/_nuxt/error-404.Ct-UmUkz.css              3.53 kB │ gzip:   1.09 kB
+ℹ .nuxt/dist/client/_nuxt/login.Bt3rhSSO.css                  5.82 kB │ gzip:   1.18 kB
+ℹ .nuxt/dist/client/_nuxt/index.DRnPe1yW.css                 11.94 kB │ gzip:   2.16 kB
+ℹ .nuxt/dist/client/_nuxt/_id_.DUcgWmGi.css                  15.83 kB │ gzip:   2.96 kB
+ℹ .nuxt/dist/client/_nuxt/D0Qfd9Cw.js                         0.50 kB │ gzip:   0.34 kB │ map:     0.41 kB
+ℹ .nuxt/dist/client/_nuxt/zEjZeMQw.js                         0.66 kB │ gzip:   0.43 kB │ map:     2.21 kB
+ℹ .nuxt/dist/client/_nuxt/Bx2hsJvc.js                         0.75 kB │ gzip:   0.50 kB │ map:     0.85 kB
+ℹ .nuxt/dist/client/_nuxt/DOilsKEn.js                         1.12 kB │ gzip:   0.65 kB │ map:     2.11 kB
+ℹ .nuxt/dist/client/_nuxt/qtyoW1Ej.js                         1.17 kB │ gzip:   0.60 kB │ map:     2.45 kB
+ℹ .nuxt/dist/client/_nuxt/B6Ce-0PY.js                         1.32 kB │ gzip:   0.72 kB │ map:     3.32 kB
+ℹ .nuxt/dist/client/_nuxt/CQwHzYgx.js                         1.33 kB │ gzip:   0.74 kB │ map:     3.33 kB
+ℹ .nuxt/dist/client/_nuxt/D1kSVyc2.js                         1.52 kB │ gzip:   0.89 kB │ map:     3.84 kB
+ℹ .nuxt/dist/client/_nuxt/agUgUJz9.js                         1.76 kB │ gzip:   0.94 kB │ map:     3.91 kB
+ℹ .nuxt/dist/client/_nuxt/Cegpidxg.js                         2.05 kB │ gzip:   0.86 kB │ map:     3.60 kB
+ℹ .nuxt/dist/client/_nuxt/BAVOunzd.js                         2.58 kB │ gzip:   1.15 kB │ map:     7.33 kB
+ℹ .nuxt/dist/client/_nuxt/2x4N46aw.js                         2.96 kB │ gzip:   1.39 kB │ map:     9.11 kB
+ℹ .nuxt/dist/client/_nuxt/BFDamiaG.js                         3.72 kB │ gzip:   2.03 kB │ map:     9.67 kB
+ℹ .nuxt/dist/client/_nuxt/D6N1BwAE.js                         3.82 kB │ gzip:   1.77 kB │ map:     5.59 kB
+ℹ .nuxt/dist/client/_nuxt/C2EqbKPi.js                         4.12 kB │ gzip:   1.68 kB │ map:    13.32 kB
+ℹ .nuxt/dist/client/_nuxt/B4p_lGAA.js                         4.19 kB │ gzip:   1.95 kB │ map:     7.44 kB
+ℹ .nuxt/dist/client/_nuxt/CvdU1I_L.js                         4.74 kB │ gzip:   1.97 kB │ map:    17.71 kB
+ℹ .nuxt/dist/client/_nuxt/CKtWp8R3.js                         5.71 kB │ gzip:   2.32 kB │ map:    23.23 kB
+ℹ .nuxt/dist/client/_nuxt/b2SWYR6L.js                        18.90 kB │ gzip:   7.44 kB │ map:    85.96 kB
+ℹ .nuxt/dist/client/_nuxt/DR_IJNfX.js                        22.63 kB │ gzip:   8.01 kB │ map:    94.69 kB
+ℹ .nuxt/dist/client/_nuxt/CWYgC8bf.js                        28.98 kB │ gzip:  11.65 kB │ map:   123.16 kB
+ℹ .nuxt/dist/client/_nuxt/BrVumvaV.js                        38.56 kB │ gzip:  14.48 kB │ map:   249.16 kB
+ℹ .nuxt/dist/client/_nuxt/RD-sDGD7.js                       178.43 kB │ gzip:  58.56 kB │ map:   398.15 kB
+ℹ .nuxt/dist/client/_nuxt/Bzwmavbb.js                       351.69 kB │ gzip: 108.45 kB │ map: 1,531.50 kB
+ℹ .nuxt/dist/client/_nuxt/DWN2bOUC.js                       485.47 kB │ gzip: 160.36 kB │ map: 2,777.01 kB
+ℹ ✓ built in 4.18s
+[nuxt] vite:compiled: 0.014ms
+✔ Client built in 4194ms
+[nuxt] vite:extendConfig: 10.423ms
+[nuxt] vite:configResolved: 0.006ms
+ℹ Building server...
+ℹ vite v7.3.1 building ssr environment for production...
+[sentry-vite-plugin] Info: Sending telemetry data on issues and performance to Sentry. To disable telemetry, set `options.telemetry` to `false`.
+ℹ transforming...
+ℹ ✓ 206 modules transformed.
+ℹ rendering chunks...
+[sentry-vite-plugin] Warning: No auth token provided. Will not create release. Please set the `authToken` option. You can find information on how to generate a Sentry auth token here: https://docs.sentry.io/api/auth/
+ℹ .nuxt/dist/server/_nuxt/help-styles.Bjcrp6Vp.mjs                                                                                                       0.08 kB
+ℹ .nuxt/dist/server/_nuxt/_id_-styles.CDxBcvcw.mjs                                                                                                       0.08 kB
+ℹ .nuxt/dist/server/_nuxt/entry-styles.D2JyaZnv.mjs                                                                                                      0.08 kB
+ℹ .nuxt/dist/server/_nuxt/store-styles.Cjw02Xox.mjs                                                                                                      0.08 kB
+ℹ .nuxt/dist/server/_nuxt/index-styles.DaOqwK1u.mjs                                                                                                      0.08 kB
+ℹ .nuxt/dist/server/_nuxt/login-styles.sFibCJ4D.mjs                                                                                                      0.08 kB
+ℹ .nuxt/dist/server/_nuxt/reader-styles.DltTu6Sc.mjs                                                                                                     0.09 kB
+ℹ .nuxt/dist/server/_nuxt/TabBar-styles.C4ZK_zhb.mjs                                                                                                     0.09 kB
+ℹ .nuxt/dist/server/_nuxt/profile-styles.CpKdwOkh.mjs                                                                                                    0.09 kB
+ℹ .nuxt/dist/server/_nuxt/confirm-styles.fjHipSjU.mjs                                                                                                    0.09 kB
+ℹ .nuxt/dist/server/_nuxt/default-styles.D8Y-xO9F.mjs                                                                                                    0.09 kB
+ℹ .nuxt/dist/server/_nuxt/settings-styles.B5a4dbqs.mjs                                                                                                   0.09 kB
+ℹ .nuxt/dist/server/_nuxt/BookCard-styles.C-FOsh18.mjs                                                                                                   0.09 kB
+ℹ .nuxt/dist/server/_nuxt/error-500-styles.Dnd4uzyt.mjs                                                                                                  0.09 kB
+ℹ .nuxt/dist/server/_nuxt/error-404-styles.CXd30XYw.mjs                                                                                                  0.09 kB
+ℹ .nuxt/dist/server/_nuxt/ContentsDrawer-styles.C3Aoh5mf.mjs                                                                                             0.09 kB
+ℹ .nuxt/dist/server/_nuxt/UploadBookModal-styles.CMJGGS2F.mjs                                                                                            0.09 kB
+ℹ .nuxt/dist/server/_nuxt/LanguageDropdown-styles.u92T1i_C.mjs                                                                                           0.10 kB
+ℹ .nuxt/dist/server/_nuxt/sentry-example-page-styles.DNyJ44_y.mjs                                                                                        0.10 kB
+ℹ .nuxt/dist/server/_nuxt/ReadingSettingsModal-styles.B2ARreVR.mjs                                                                                       0.10 kB
+ℹ .nuxt/dist/server/styles.mjs                                                                                                                           5.26 kB
+ℹ .nuxt/dist/server/_nuxt/useSupabaseClient-BQbzxTsM.js                                                                                                  0.76 kB │ map:   0.43 kB
+ℹ .nuxt/dist/server/_nuxt/reader-styles-1.mjs-kac6fvo2.js                                                                                                0.89 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/default-styles-1.mjs-DmBNzclr.js                                                                                               0.97 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/virtual_nuxt__Users_user_Documents_github_globooks_.local_reader-recovery-20261001_.nuxt_sentry--nuxt-pages-data-BonHjjaN.js   1.12 kB │ map:   0.91 kB
+ℹ .nuxt/dist/server/_nuxt/settings-CcFXrH9k.js                                                                                                           1.16 kB │ map:   2.11 kB
+ℹ .nuxt/dist/server/_nuxt/v3-C7j-8tDA.js                                                                                                                 1.21 kB │ map:   2.12 kB
+ℹ .nuxt/dist/server/_nuxt/store-styles-1.mjs-D9B4Z8Vn.js                                                                                                 1.47 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/TabBar-styles-1.mjs-D6wBCi7y.js                                                                                                1.51 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/posthog-BhJjXRfM.js                                                                                                            1.61 kB │ map:   7.10 kB
+ℹ .nuxt/dist/server/_nuxt/confirm-styles-1.mjs-n1qpmgs_.js                                                                                               1.68 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/amplitude-test-KXsOVhyX.js                                                                                                     1.97 kB │ map:   2.58 kB
+ℹ .nuxt/dist/server/_nuxt/help-styles-1.mjs-BTcX0k9_.js                                                                                                  2.07 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/settings-styles-1.mjs-DMAT64dV.js                                                                                              2.10 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/BookCard-styles-1.mjs-BD1uNIJP.js                                                                                              2.42 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/reader-CQ0xMJQw.js                                                                                                             2.56 kB │ map:   0.74 kB
+ℹ .nuxt/dist/server/_nuxt/error-500-styles-1.mjs-DWI4bq8K.js                                                                                             2.64 kB │ map:   0.13 kB
+ℹ .nuxt/dist/server/_nuxt/sentry-example-page-styles-1.mjs-B2WeGI-T.js                                                                                   2.73 kB │ map:   0.14 kB
+ℹ .nuxt/dist/server/_nuxt/store-5bHBZvIn.js                                                                                                              2.96 kB │ map:   1.81 kB
+ℹ .nuxt/dist/server/_nuxt/LanguageDropdown-styles-1.mjs-C8a_dmmZ.js                                                                                      3.02 kB │ map:   0.13 kB
+ℹ .nuxt/dist/server/_nuxt/settings-BDiIXMi7.js                                                                                                           3.24 kB │ map:   2.78 kB
+ℹ .nuxt/dist/server/_nuxt/help-BVU2I3Zs.js                                                                                                               3.25 kB │ map:   2.77 kB
+ℹ .nuxt/dist/server/_nuxt/entry-styles-1.mjs-Clm4fQx1.js                                                                                                 3.37 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/profile-styles-1.mjs-Byt2PDr4.js                                                                                               3.45 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/confirm-C5EDRM36.js                                                                                                            3.70 kB │ map:   3.02 kB
+ℹ .nuxt/dist/server/_nuxt/ReadingSettingsModal-styles-1.mjs-BOoA4AU4.js                                                                                  4.01 kB │ map:   0.14 kB
+ℹ .nuxt/dist/server/_nuxt/ContentsDrawer-styles-1.mjs-C7-7Llwo.js                                                                                        4.22 kB │ map:   0.13 kB
+ℹ .nuxt/dist/server/_nuxt/useAuth-Dl7HZG0c.js                                                                                                            4.23 kB │ map:   7.20 kB
+ℹ .nuxt/dist/server/_nuxt/error-404-styles-1.mjs-CrQucJXu.js                                                                                             4.29 kB │ map:   0.13 kB
+ℹ .nuxt/dist/server/_nuxt/sentry-example-page-cnHIBQ8J.js                                                                                                4.76 kB │ map:   6.87 kB
+ℹ .nuxt/dist/server/_nuxt/default-iOT3Z9_-.js                                                                                                            5.37 kB │ map:   3.82 kB
+ℹ .nuxt/dist/server/_nuxt/UploadBookModal-styles-1.mjs-Bc-Y8VgT.js                                                                                       5.76 kB │ map:   0.13 kB
+ℹ .nuxt/dist/server/_nuxt/error-500-Cnk4VG9j.js                                                                                                          5.95 kB │ map:   5.47 kB
+ℹ .nuxt/dist/server/_nuxt/index-styles-1.mjs-9g4WB0kf.js                                                                                                 6.02 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/profile-DLZHFBIL.js                                                                                                            6.03 kB │ map:   7.66 kB
+ℹ .nuxt/dist/server/_nuxt/login-styles-1.mjs-Z040SQK-.js                                                                                                 6.56 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/error-404-BKIL2w0U.js                                                                                                          6.84 kB │ map:   7.33 kB
+ℹ .nuxt/dist/server/_nuxt/useReadingProgress-DjkZcgwZ.js                                                                                                 7.49 kB │ map:  13.18 kB
+ℹ .nuxt/dist/server/_nuxt/login-Bo5vk3z-.js                                                                                                              7.60 kB │ map:  14.75 kB
+ℹ .nuxt/dist/server/_nuxt/_id_-styles-1.mjs-fBlJXurd.js                                                                                                  7.64 kB │ map:   0.12 kB
+ℹ .nuxt/dist/server/_nuxt/nuxt-link-CnlBYExR.js                                                                                                         10.13 kB │ map:  21.06 kB
+ℹ .nuxt/dist/server/_nuxt/_id_-u4DuiqBw.js                                                                                                              38.42 kB │ map:  87.56 kB
+ℹ .nuxt/dist/server/_nuxt/index-DAVQrx07.js                                                                                                             52.27 kB │ map: 102.59 kB
+ℹ .nuxt/dist/server/server.mjs                                                                                                                          71.66 kB │ map: 241.57 kB
+[sentry-vite-plugin] Warning: No auth token provided. Will not upload source maps. Please set the `authToken` option. You can find information on how to generate a Sentry auth token here: https://docs.sentry.io/api/auth/
+ℹ ✓ built in 937ms
+[nuxt] build:manifest: 0.439ms
+[nuxt] vite:compiled: 0.009ms
+✔ Server built in 944ms
+[nuxt] schema:beforeWrite: 0.004ms
+[nuxt] schema:written: 0.006ms
+[nuxt] nitro:build:before: 0.559ms
+[nuxt] prerender:routes: 0.007ms
+[nitro] prerender:routes: 0.167ms
+[nitro] build:before: 0.06ms
+[nitro] ✔ Generated public .output/public
+[nuxt] nitro:build:public-assets: 0.011ms
+[nitro] rollup:before: 28.028ms
+Duplicated imports "FictionStage", the one from "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/fiction-playground.ts" has been ignored and "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/fiction-stage-costs.ts" is used
+Duplicated imports "SUPPORTED_TARGET_LANGS", the one from "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/translation-cost.ts" has been ignored and "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/translation-eval.ts" is used
+[nitro] types:extend: 0.011ms
+[nitro] ℹ Building Nuxt Nitro server (preset: node-server, compatibility date: 2024-04-03)
+[sentry-rollup-plugin] Info: Sending telemetry data on issues and performance to Sentry. To disable telemetry, set `options.telemetry` to `false`.
+Duplicated imports "FictionStage", the one from "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/fiction-playground.ts" has been ignored and "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/fiction-stage-costs.ts" is used
+Duplicated imports "SUPPORTED_TARGET_LANGS", the one from "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/translation-cost.ts" has been ignored and "/Users/user/Documents/github/globooks/.local/reader-recovery-20261001/server/utils/translation-eval.ts" is used
+Generated an empty chunk: "convert.post".
+[sentry-rollup-plugin] Warning: No auth token provided. Will not create release. Please set the `authToken` option. You can find information on how to generate a Sentry auth token here: https://docs.sentry.io/api/auth/
+[sentry-rollup-plugin] Warning: No auth token provided. Will not upload source maps. Please set the `authToken` option. You can find information on how to generate a Sentry auth token here: https://docs.sentry.io/api/auth/
+[nitro] ✔ Nuxt Nitro server built
+  ├─ .output/server/chunks/_/error-500.mjs (5.47 kB) (2.33 kB gzip)
+  ├─ .output/server/chunks/_/error-500.mjs.map (5.21 kB) (2.15 kB gzip)
+  ├─ .output/server/chunks/build/_id_-styles.CDxBcvcw.mjs (8.06 kB) (2.19 kB gzip)
+  ├─ .output/server/chunks/build/_id_-styles.CDxBcvcw.mjs.map (42.3 kB) (2.97 kB gzip)
+  ├─ .output/server/chunks/build/_id_-u4DuiqBw.mjs (39.3 kB) (8.99 kB gzip)
+  ├─ .output/server/chunks/build/_id_-u4DuiqBw.mjs.map (193 kB) (17.4 kB gzip)
+  ├─ .output/server/chunks/build/amplitude-test-KXsOVhyX.mjs (2.29 kB) (1.01 kB gzip)
+  ├─ .output/server/chunks/build/amplitude-test-KXsOVhyX.mjs.map (9.15 kB) (1.49 kB gzip)
+  ├─ .output/server/chunks/build/BookCard-styles.C-FOsh18.mjs (2.85 kB) (1.06 kB gzip)
+  ├─ .output/server/chunks/build/BookCard-styles.C-FOsh18.mjs.map (14.4 kB) (1.45 kB gzip)
+  ├─ .output/server/chunks/build/client.precomputed.mjs (16.3 kB) (2.2 kB gzip)
+  ├─ .output/server/chunks/build/client.precomputed.mjs.map (70.7 kB) (3.91 kB gzip)
+  ├─ .output/server/chunks/build/confirm-C5EDRM36.mjs (3.68 kB) (1.45 kB gzip)
+  ├─ .output/server/chunks/build/confirm-C5EDRM36.mjs.map (12.7 kB) (2.18 kB gzip)
+  ├─ .output/server/chunks/build/confirm-styles.fjHipSjU.mjs (2.11 kB) (899 B gzip)
+  ├─ .output/server/chunks/build/confirm-styles.fjHipSjU.mjs.map (10.3 kB) (1.25 kB gzip)
+  ├─ .output/server/chunks/build/ContentsDrawer-styles.C3Aoh5mf.mjs (4.67 kB) (1.37 kB gzip)
+  ├─ .output/server/chunks/build/ContentsDrawer-styles.C3Aoh5mf.mjs.map (24 kB) (1.91 kB gzip)
+  ├─ .output/server/chunks/build/default-iOT3Z9_-.mjs (5.34 kB) (1.78 kB gzip)
+  ├─ .output/server/chunks/build/default-iOT3Z9_-.mjs.map (21.8 kB) (2.93 kB gzip)
+  ├─ .output/server/chunks/build/default-styles.D8Y-xO9F.mjs (1.39 kB) (679 B gzip)
+  ├─ .output/server/chunks/build/default-styles.D8Y-xO9F.mjs.map (6.43 kB) (943 B gzip)
+  ├─ .output/server/chunks/build/entry-styles.D2JyaZnv.mjs (3.79 kB) (1.5 kB gzip)
+  ├─ .output/server/chunks/build/entry-styles.D2JyaZnv.mjs.map (20.9 kB) (1.85 kB gzip)
+  ├─ .output/server/chunks/build/error-404-BKIL2w0U.mjs (6.89 kB) (2.73 kB gzip)
+  ├─ .output/server/chunks/build/error-404-BKIL2w0U.mjs.map (28.9 kB) (3.82 kB gzip)
+  ├─ .output/server/chunks/build/error-404-styles.CXd30XYw.mjs (4.72 kB) (1.6 kB gzip)
+  ├─ .output/server/chunks/build/error-404-styles.CXd30XYw.mjs.map (24.1 kB) (2.18 kB gzip)
+  ├─ .output/server/chunks/build/error-500-Cnk4VG9j.mjs (5.99 kB) (2.42 kB gzip)
+  ├─ .output/server/chunks/build/error-500-Cnk4VG9j.mjs.map (24.8 kB) (3.28 kB gzip)
+  ├─ .output/server/chunks/build/error-500-styles.Dnd4uzyt.mjs (3.07 kB) (1.23 kB gzip)
+  ├─ .output/server/chunks/build/error-500-styles.Dnd4uzyt.mjs.map (14.9 kB) (1.69 kB gzip)
+  ├─ .output/server/chunks/build/help-BVU2I3Zs.mjs (3.21 kB) (1.29 kB gzip)
+  ├─ .output/server/chunks/build/help-BVU2I3Zs.mjs.map (11.7 kB) (1.83 kB gzip)
+  ├─ .output/server/chunks/build/help-styles.Bjcrp6Vp.mjs (2.49 kB) (965 B gzip)
+  ├─ .output/server/chunks/build/help-styles.Bjcrp6Vp.mjs.map (13.2 kB) (1.27 kB gzip)
+  ├─ .output/server/chunks/build/index-DAVQrx07.mjs (56.5 kB) (13.8 kB gzip)
+  ├─ .output/server/chunks/build/index-DAVQrx07.mjs.map (58.2 kB) (13.8 kB gzip)
+  ├─ .output/server/chunks/build/index-styles.DaOqwK1u.mjs (6.44 kB) (1.65 kB gzip)
+  ├─ .output/server/chunks/build/index-styles.DaOqwK1u.mjs.map (36.7 kB) (2.07 kB gzip)
+  ├─ .output/server/chunks/build/LanguageDropdown-styles.u92T1i_C.mjs (3.48 kB) (1.23 kB gzip)
+  ├─ .output/server/chunks/build/LanguageDropdown-styles.u92T1i_C.mjs.map (17.6 kB) (1.65 kB gzip)
+  ├─ .output/server/chunks/build/login-Bo5vk3z-.mjs (7.57 kB) (2.2 kB gzip)
+  ├─ .output/server/chunks/build/login-Bo5vk3z-.mjs.map (33.7 kB) (3.57 kB gzip)
+  ├─ .output/server/chunks/build/login-styles.sFibCJ4D.mjs (6.98 kB) (1.69 kB gzip)
+  ├─ .output/server/chunks/build/login-styles.sFibCJ4D.mjs.map (38.9 kB) (2.21 kB gzip)
+  ├─ .output/server/chunks/build/nuxt-link-CnlBYExR.mjs (10.8 kB) (2.98 kB gzip)
+  ├─ .output/server/chunks/build/nuxt-link-CnlBYExR.mjs.map (53.5 kB) (5.49 kB gzip)
+  ├─ .output/server/chunks/build/profile-DLZHFBIL.mjs (6.3 kB) (1.94 kB gzip)
+  ├─ .output/server/chunks/build/profile-DLZHFBIL.mjs.map (26.6 kB) (3.1 kB gzip)
+  ├─ .output/server/chunks/build/profile-styles.CpKdwOkh.mjs (3.88 kB) (1.26 kB gzip)
+  ├─ .output/server/chunks/build/profile-styles.CpKdwOkh.mjs.map (21.3 kB) (1.61 kB gzip)
+  ├─ .output/server/chunks/build/reader-CQ0xMJQw.mjs (2.53 kB) (1.08 kB gzip)
+  ├─ .output/server/chunks/build/reader-CQ0xMJQw.mjs.map (7.82 kB) (1.55 kB gzip)
+  ├─ .output/server/chunks/build/reader-styles.DltTu6Sc.mjs (1.31 kB) (634 B gzip)
+  ├─ .output/server/chunks/build/reader-styles.DltTu6Sc.mjs.map (6.34 kB) (888 B gzip)
+  ├─ .output/server/chunks/build/ReadingSettingsModal-styles.B2ARreVR.mjs (4.49 kB) (1.39 kB gzip)
+  ├─ .output/server/chunks/build/ReadingSettingsModal-styles.B2ARreVR.mjs.map (23.6 kB) (1.87 kB gzip)
+  ├─ .output/server/chunks/build/sentry-example-page-cnHIBQ8J.mjs (4.75 kB) (2.1 kB gzip)
+  ├─ .output/server/chunks/build/sentry-example-page-cnHIBQ8J.mjs.map (20.7 kB) (2.8 kB gzip)
+  ├─ .output/server/chunks/build/sentry-example-page-styles.DNyJ44_y.mjs (3.2 kB) (1.23 kB gzip)
+  ├─ .output/server/chunks/build/sentry-example-page-styles.DNyJ44_y.mjs.map (15.9 kB) (1.66 kB gzip)
+  ├─ .output/server/chunks/build/server.mjs (66.9 kB) (18.2 kB gzip)
+  ├─ .output/server/chunks/build/server.mjs.map (77.6 kB) (20 kB gzip)
+  ├─ .output/server/chunks/build/settings-BDiIXMi7.mjs (3.21 kB) (1.27 kB gzip)
+  ├─ .output/server/chunks/build/settings-BDiIXMi7.mjs.map (11.7 kB) (1.82 kB gzip)
+  ├─ .output/server/chunks/build/settings-CcFXrH9k.mjs (1.52 kB) (697 B gzip)
+  ├─ .output/server/chunks/build/settings-CcFXrH9k.mjs.map (5.48 kB) (1.05 kB gzip)
+  ├─ .output/server/chunks/build/settings-styles.B5a4dbqs.mjs (2.53 kB) (968 B gzip)
+  ├─ .output/server/chunks/build/settings-styles.B5a4dbqs.mjs.map (13.4 kB) (1.28 kB gzip)
+  ├─ .output/server/chunks/build/store-5bHBZvIn.mjs (2.93 kB) (1.21 kB gzip)
+  ├─ .output/server/chunks/build/store-5bHBZvIn.mjs.map (10.1 kB) (1.73 kB gzip)
+  ├─ .output/server/chunks/build/store-styles.Cjw02Xox.mjs (1.89 kB) (805 B gzip)
+  ├─ .output/server/chunks/build/store-styles.Cjw02Xox.mjs.map (9.49 kB) (1.12 kB gzip)
+  ├─ .output/server/chunks/build/styles.mjs (5.66 kB) (1.22 kB gzip)
+  ├─ .output/server/chunks/build/styles.mjs.map (29.6 kB) (1.62 kB gzip)
+  ├─ .output/server/chunks/build/TabBar-styles.C4ZK_zhb.mjs (1.93 kB) (860 B gzip)
+  ├─ .output/server/chunks/build/TabBar-styles.C4ZK_zhb.mjs.map (9.67 kB) (1.17 kB gzip)
+  ├─ .output/server/chunks/build/UploadBookModal-styles.CMJGGS2F.mjs (6.21 kB) (1.66 kB gzip)
+  ├─ .output/server/chunks/build/UploadBookModal-styles.CMJGGS2F.mjs.map (34.6 kB) (2.13 kB gzip)
+  ├─ .output/server/chunks/build/useAuth-Dl7HZG0c.mjs (4.68 kB) (1.52 kB gzip)
+  ├─ .output/server/chunks/build/useAuth-Dl7HZG0c.mjs.map (20.9 kB) (2.66 kB gzip)
+  ├─ .output/server/chunks/build/useReadingProgress-DjkZcgwZ.mjs (9.51 kB) (2.67 kB gzip)
+  ├─ .output/server/chunks/build/useReadingProgress-DjkZcgwZ.mjs.map (44.2 kB) (5.07 kB gzip)
+  ├─ .output/server/chunks/build/useSupabaseClient-BQbzxTsM.mjs (1.13 kB) (556 B gzip)
+  ├─ .output/server/chunks/build/useSupabaseClient-BQbzxTsM.mjs.map (3.34 kB) (753 B gzip)
+  ├─ .output/server/chunks/build/v3-C7j-8tDA.mjs (1.59 kB) (747 B gzip)
+  ├─ .output/server/chunks/build/v3-C7j-8tDA.mjs.map (5.33 kB) (1.1 kB gzip)
+  ├─ .output/server/chunks/build/virtual_nuxt__Users_user_Documents_github_globooks_.local_reader-recovery-20261001_.nuxt_sentry--nuxt-pages-data-BonHjjaN.mjs (1.69 kB) (683 B gzip)
+  ├─ .output/server/chunks/build/virtual_nuxt__Users_user_Documents_github_globooks_.local_reader-recovery-20261001_.nuxt_sentry--nuxt-pages-data-BonHjjaN.mjs.map (6.81 kB) (921 B gzip)
+  ├─ .output/server/chunks/nitro/nitro.mjs (401 kB) (102 kB gzip)
+  ├─ .output/server/chunks/nitro/nitro.mjs.map (551 kB) (145 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/blocklist.delete.mjs (2.66 kB) (1.08 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/blocklist.delete.mjs.map (6.89 kB) (959 B gzip)
+  ├─ .output/server/chunks/routes/api/admin/blocklist.get.mjs (1.96 kB) (871 B gzip)
+  ├─ .output/server/chunks/routes/api/admin/blocklist.get.mjs.map (3.81 kB) (636 B gzip)
+  ├─ .output/server/chunks/routes/api/admin/blocklist.post.mjs (2.51 kB) (1.03 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/blocklist.post.mjs.map (6.23 kB) (893 B gzip)
+  ├─ .output/server/chunks/routes/api/admin/cost-runs/status/_jobId_.get.mjs (3.06 kB) (1.24 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/cost-runs/status/_jobId_.get.mjs.map (9.34 kB) (1.44 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/fiction-flow-playground.post.mjs (9.18 kB) (2.86 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/fiction-flow-playground.post.mjs.map (41.6 kB) (4.88 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/fiction-flow-prompts.get.mjs (2.45 kB) (1.04 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/fiction-flow-prompts.get.mjs.map (6.19 kB) (1.01 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/index.get.mjs (2.67 kB) (1.16 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/index.get.mjs.map (7.86 kB) (1.25 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/index.post.mjs (3.04 kB) (1.21 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/index.post.mjs.map (9.33 kB) (1.4 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/models.get.mjs (2.98 kB) (1.25 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/models.get.mjs.map (9.58 kB) (1.6 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/translation-playground.post.mjs (8.66 kB) (2.55 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/translation-playground.post.mjs.map (38.5 kB) (4.16 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/translation-prompt.get.mjs (2.44 kB) (1.04 kB gzip)
+  ├─ .output/server/chunks/routes/api/admin/translation-prompt.get.mjs.map (6.62 kB) (1.18 kB gzip)
+  ├─ .output/server/chunks/routes/api/alpha/join.post.mjs (2.19 kB) (938 B gzip)
+  ├─ .output/server/chunks/routes/api/alpha/join.post.mjs.map (4.82 kB) (675 B gzip)
+  ├─ .output/server/chunks/routes/api/billing/checkout.post.mjs (3.17 kB) (1.22 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/checkout.post.mjs.map (10 kB) (1.2 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/portal.get.mjs (2.75 kB) (1.08 kB gzip)
+  ├─ .output/server/chunks/routes/api/billing/portal.get.mjs.map (7.94 kB) (958 B gzip)
+  ├─ .output/server/chunks/routes/api/books.get.mjs (13.8 kB) (3.58 kB gzip)
+  ├─ .output/server/chunks/routes/api/books.get.mjs.map (67.2 kB) (6.23 kB gzip)
+  ├─ .output/server/chunks/routes/api/books.post.mjs (2.74 kB) (1.15 kB gzip)
+  ├─ .output/server/chunks/routes/api/books.post.mjs.map (7.27 kB) (1.14 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/chapters.get.mjs (2.93 kB) (1.2 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/chapters.get.mjs.map (8.09 kB) (1.21 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/chapters/translate-titles.post.mjs (5.27 kB) (2.05 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/chapters/translate-titles.post.mjs.map (20.3 kB) (2.46 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/download-translated.get.mjs (13.5 kB) (4.34 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/download-translated.get.mjs.map (65.1 kB) (7.21 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/download.get.mjs (2.31 kB) (973 B gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/download.get.mjs.map (5.12 kB) (781 B gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/fiction-costs.get.mjs (7.42 kB) (2.42 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/fiction-costs.get.mjs.map (32.3 kB) (3.54 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/generate-glossary.get.mjs (3.03 kB) (1.25 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/generate-glossary.get.mjs.map (9.04 kB) (1.27 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/generate-glossary.post.mjs (8.6 kB) (2.85 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/generate-glossary.post.mjs.map (38.9 kB) (4.53 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/language.patch.mjs (2.4 kB) (1 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/language.patch.mjs.map (6.07 kB) (854 B gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/reader-metadata/translate.post.mjs (7.72 kB) (2.63 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/reader-metadata/translate.post.mjs.map (31.3 kB) (3.01 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/reading-position.get.mjs (4.48 kB) (1.23 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/reading-position.get.mjs.map (16.9 kB) (1.45 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/reading-position.put.mjs (6.39 kB) (1.98 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/reading-position.put.mjs.map (24.9 kB) (2.52 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/revise-full-book.get.mjs (4.71 kB) (1.79 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/revise-full-book.get.mjs.map (17 kB) (2.16 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/revise-full-book.post.mjs (4.15 kB) (1.65 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/revise-full-book.post.mjs.map (14.8 kB) (2.09 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/revision-diff.get.mjs (4.5 kB) (1.73 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/revision-diff.get.mjs.map (17 kB) (2.13 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translate-full-book.get.mjs (3.1 kB) (1.28 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translate-full-book.get.mjs.map (9.37 kB) (1.34 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translate-full-book.post.mjs (10.7 kB) (3.36 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translate-full-book.post.mjs.map (50.5 kB) (5.89 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translate-meta.post.mjs (4.73 kB) (1.89 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translate-meta.post.mjs.map (16.6 kB) (1.9 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translation-estimate.get.mjs (6 kB) (2.13 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/_id/translation-estimate.get.mjs.map (25.2 kB) (3 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/fiction-translations.get.mjs (3.93 kB) (1.56 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/fiction-translations.get.mjs.map (14.1 kB) (1.83 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/index.delete.mjs (4.55 kB) (1.46 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/index.delete.mjs.map (16.8 kB) (1.67 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/index.patch.mjs (3.77 kB) (1.4 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/index.patch.mjs.map (12.7 kB) (1.53 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/process.post.mjs (4.93 kB) (1.9 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/process.post.mjs.map (18.8 kB) (2.62 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/upload.post.mjs (5.74 kB) (2.14 kB gzip)
+  ├─ .output/server/chunks/routes/api/books/upload.post.mjs.map (22.3 kB) (2.73 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/asset.get.mjs (5.83 kB) (2.18 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/asset.get.mjs.map (23.4 kB) (2.71 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/blocks/text.post.mjs (2.36 kB) (991 B gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/blocks/text.post.mjs.map (5.27 kB) (764 B gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/content-version.get.mjs (2.93 kB) (1.22 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/content-version.get.mjs.map (8.45 kB) (1.42 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/content.get.mjs (10.9 kB) (3.2 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/content.get.mjs.map (53.2 kB) (5.97 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/translate-range.post.mjs (17 kB) (4.85 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/translate-range.post.mjs.map (82.1 kB) (7.4 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/translate-status.post.mjs (3 kB) (1.19 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/translate-status.post.mjs.map (8.55 kB) (1.1 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/translate.post.mjs (25 kB) (6.57 kB gzip)
+  ├─ .output/server/chunks/routes/api/chapters/_id/translate.post.mjs.map (127 kB) (11.4 kB gzip)
+  ├─ .output/server/chunks/routes/api/convert.post.mjs (182 B) (130 B gzip)
+  ├─ .output/server/chunks/routes/api/convert.post.mjs.map (97 B) (98 B gzip)
+  ├─ .output/server/chunks/routes/api/cron/revise-tail.post.mjs (3.65 kB) (1.52 kB gzip)
+  ├─ .output/server/chunks/routes/api/cron/revise-tail.post.mjs.map (12.9 kB) (2.09 kB gzip)
+  ├─ .output/server/chunks/routes/api/detect-language.post.mjs (1.93 kB) (851 B gzip)
+  ├─ .output/server/chunks/routes/api/detect-language.post.mjs.map (3.39 kB) (610 B gzip)
+  ├─ .output/server/chunks/routes/api/docs/openapi.json.get.mjs (126 kB) (23.4 kB gzip)
+  ├─ .output/server/chunks/routes/api/docs/openapi.json.get.mjs.map (5.93 kB) (287 B gzip)
+  ├─ .output/server/chunks/routes/api/health.get.mjs (1.3 kB) (607 B gzip)
+  ├─ .output/server/chunks/routes/api/health.get.mjs.map (993 B) (455 B gzip)
+  ├─ .output/server/chunks/routes/api/health/deep.get.mjs (3.59 kB) (1.56 kB gzip)
+  ├─ .output/server/chunks/routes/api/health/deep.get.mjs.map (13.6 kB) (2.39 kB gzip)
+  ├─ .output/server/chunks/routes/api/index.get.mjs (5.11 kB) (1.75 kB gzip)
+  ├─ .output/server/chunks/routes/api/index.get.mjs.map (20.2 kB) (2.15 kB gzip)
+  ├─ .output/server/chunks/routes/api/index.get2.mjs (2.1 kB) (993 B gzip)
+  ├─ .output/server/chunks/routes/api/index.get2.mjs.map (4.88 kB) (763 B gzip)
+  ├─ .output/server/chunks/routes/api/jobs/_id_.get.mjs (3.88 kB) (1.32 kB gzip)
+  ├─ .output/server/chunks/routes/api/jobs/_id_.get.mjs.map (13 kB) (1.54 kB gzip)
+  ├─ .output/server/chunks/routes/api/sentry-example-api.mjs (1.37 kB) (627 B gzip)
+  ├─ .output/server/chunks/routes/api/sentry-example-api.mjs.map (797 B) (313 B gzip)
+  ├─ .output/server/chunks/routes/api/storage/public-url.post.mjs (1.78 kB) (808 B gzip)
+  ├─ .output/server/chunks/routes/api/storage/public-url.post.mjs.map (2.62 kB) (514 B gzip)
+  ├─ .output/server/chunks/routes/api/storage/signed-url.post.mjs (2.55 kB) (1.06 kB gzip)
+  ├─ .output/server/chunks/routes/api/storage/signed-url.post.mjs.map (6.17 kB) (940 B gzip)
+  ├─ .output/server/chunks/routes/api/storage/upload.post.mjs (2.61 kB) (1.03 kB gzip)
+  ├─ .output/server/chunks/routes/api/storage/upload.post.mjs.map (7.08 kB) (910 B gzip)
+  ├─ .output/server/chunks/routes/api/subscription.get.mjs (2.89 kB) (1.15 kB gzip)
+  ├─ .output/server/chunks/routes/api/subscription.get.mjs.map (9.24 kB) (1.29 kB gzip)
+  ├─ .output/server/chunks/routes/api/sync/status.get.mjs (2.5 kB) (976 B gzip)
+  ├─ .output/server/chunks/routes/api/sync/status.get.mjs.map (6.79 kB) (823 B gzip)
+  ├─ .output/server/chunks/routes/api/translate.post.mjs (5.59 kB) (1.97 kB gzip)
+  ├─ .output/server/chunks/routes/api/translate.post.mjs.map (22.2 kB) (2.32 kB gzip)
+  ├─ .output/server/chunks/routes/api/translation-limit.get.mjs (2.46 kB) (1.04 kB gzip)
+  ├─ .output/server/chunks/routes/api/translation-limit.get.mjs.map (6.59 kB) (1.15 kB gzip)
+  ├─ .output/server/chunks/routes/api/v2/books/_id/cover.get.mjs (3.01 kB) (1.29 kB gzip)
+  ├─ .output/server/chunks/routes/api/v2/books/_id/cover.get.mjs.map (8.03 kB) (1.51 kB gzip)
+  ├─ .output/server/chunks/routes/api/v2/library.get.mjs (1.95 kB) (879 B gzip)
+  ├─ .output/server/chunks/routes/api/v2/library.get.mjs.map (3.31 kB) (763 B gzip)
+  ├─ .output/server/chunks/routes/api/v2/reading-activity.post.mjs (2.81 kB) (1.18 kB gzip)
+  ├─ .output/server/chunks/routes/api/v2/reading-activity.post.mjs.map (7.82 kB) (1.1 kB gzip)
+  ├─ .output/server/chunks/routes/api/waitlist.post.mjs (2.09 kB) (918 B gzip)
+  ├─ .output/server/chunks/routes/api/waitlist.post.mjs.map (4.3 kB) (659 B gzip)
+  ├─ .output/server/chunks/routes/api/webhooks/lemonsqueezy.post.mjs (3.8 kB) (1.4 kB gzip)
+  ├─ .output/server/chunks/routes/api/webhooks/lemonsqueezy.post.mjs.map (12.8 kB) (1.71 kB gzip)
+  ├─ .output/server/chunks/routes/renderer.mjs (16.5 kB) (5.43 kB gzip)
+  ├─ .output/server/chunks/routes/renderer.mjs.map (27.3 kB) (7.2 kB gzip)
+  ├─ .output/server/chunks/virtual/_virtual_spa-template.mjs (697 B) (397 B gzip)
+  ├─ .output/server/chunks/virtual/_virtual_spa-template.mjs.map (108 B) (106 B gzip)
+  ├─ .output/server/index.mjs (1.25 kB) (585 B gzip)
+  ├─ .output/server/package.json (6.87 kB) (2.09 kB gzip)
+  ├─ .output/server/sentry.server.config.mjs (1.91 kB) (918 B gzip)
+  └─ .output/server/timing.js (398 B) (230 B gzip)
+Σ Total size: 51.7 MB (17.3 MB gzip)
+[nitro] compiled: 0.021ms
+[nitro] ✔ You can preview this build using node .output/server/index.mjs
+[nuxt] build:done: 12.250s
+[nitro] close: 0.08ms
+[nuxt] close: 0.179ms
+│
+└  ✨ Build complete!

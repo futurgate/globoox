@@ -9,7 +9,7 @@ implementation_status: proposed
 
 # RFC: Unified Translation State Machine
 
-> Текущая работа по ошибкам и повтору перевода ведётся в [Reader recovery](reader-recovery-2026-10-01/README.md). Полная перестройка оркестрации из этого RFC остаётся отдельным предложением.
+> Исправления ошибок и повторов перевода выпущены: [Reader recovery checkpoint](reader-recovery-2026-10-01/README.md). Полная перестройка оркестрации из этого RFC остаётся отдельным предложением.
 
 Этот документ фиксирует целевую архитектуру state machine для Reader/Translation на будущее.
 

@@ -1,0 +1,115 @@
+{
+  "passed": [
+    "forward is repeatable and does not rewrite books tuples",
+    "metadata column nullable/no default; all legacy values remain NULL",
+    "all existing books fields unchanged by migration",
+    "migration preserves all old reading_progress rows",
+    "migration preserves all old user_book_preferences rows",
+    "migration preserves all old catalog_v2_actors rows",
+    "migration preserves all old catalog_v2_recency rows",
+    "migration preserves all old catalog_v2_book_versions rows",
+    "limited metadata trigger definition unchanged",
+    "legacy membership/order/old item fields preserved: ('11111111-1111-1111-1111-111111111111', None)",
+    "legacy ready metadata explicit for scope: ('11111111-1111-1111-1111-111111111111', None)",
+    "legacy membership/order/old item fields preserved: ('11111111-1111-1111-1111-111111111111', 'synthetic-share')",
+    "legacy ready metadata explicit for scope: ('11111111-1111-1111-1111-111111111111', 'synthetic-share')",
+    "legacy membership/order/old item fields preserved: ('11111111-1111-1111-1111-111111111111', 'unknown')",
+    "legacy ready metadata explicit for scope: ('11111111-1111-1111-1111-111111111111', 'unknown')",
+    "legacy membership/order/old item fields preserved: ('22222222-2222-2222-2222-222222222222', None)",
+    "legacy ready metadata explicit for scope: ('22222222-2222-2222-2222-222222222222', None)",
+    "legacy membership/order/old item fields preserved: (None, None)",
+    "legacy ready metadata explicit for scope: (None, None)",
+    "legacy membership/order/old item fields preserved: (None, 'synthetic-share')",
+    "legacy ready metadata explicit for scope: (None, 'synthetic-share')",
+    "legacy membership/order/old item fields preserved: (None, 'unknown')",
+    "legacy ready metadata explicit for scope: (None, 'unknown')",
+    "RPC ACL: anon catalog_v2_manifest(text,uuid,text)",
+    "RPC ACL: authenticated catalog_v2_manifest(text,uuid,text)",
+    "RPC ACL: service_role catalog_v2_manifest(text,uuid,text)",
+    "RPC ACL: anon catalog_v2_mark_uploaded(uuid,uuid,timestamptz)",
+    "RPC ACL: authenticated catalog_v2_mark_uploaded(uuid,uuid,timestamptz)",
+    "RPC ACL: service_role catalog_v2_mark_uploaded(uuid,uuid,timestamptz)",
+    "RPC ACL: anon catalog_v2_upload_book(uuid,uuid)",
+    "RPC ACL: authenticated catalog_v2_upload_book(uuid,uuid)",
+    "RPC ACL: service_role catalog_v2_upload_book(uuid,uuid)",
+    "target preview equals manifest own/adopted/hidden item: 00000000-0000-0000-0000-000000000002",
+    "target preview equals manifest own/adopted/hidden item: 00000000-0000-0000-0000-000000000004",
+    "target preview equals manifest own/adopted/hidden item: 00000000-0000-0000-0000-000000000006",
+    "target preview rejects public-only/private/deleted/missing/guest: ('00000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111111')",
+    "target preview rejects public-only/private/deleted/missing/guest: ('00000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111111')",
+    "target preview rejects public-only/private/deleted/missing/guest: ('00000000-0000-0000-0000-000000000005', '11111111-1111-1111-1111-111111111111')",
+    "target preview rejects public-only/private/deleted/missing/guest: ('00000000-0000-0000-0000-000000000099', '11111111-1111-1111-1111-111111111111')",
+    "target preview rejects public-only/private/deleted/missing/guest: ('00000000-0000-0000-0000-000000000002', None)",
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000001",
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000003",
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000005",
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000099",
+    "upload rejects invalid actor/book/time: (None, '00000000-0000-0000-0000-000000000002', datetime.datetime(2026, 10, 1, 9, 54, 5, 707270, tzinfo=datetime.timezone.utc))",
+    "upload rejects invalid actor/book/time: ('11111111-1111-1111-1111-111111111111', None, datetime.datetime(2026, 10, 1, 9, 54, 5, 707270, tzinfo=datetime.timezone.utc))",
+    "upload rejects invalid actor/book/time: ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000002', None)",
+    "upload rejects invalid actor/book/time: ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000002', 'infinity')",
+    "new pending exposes neutral title and no author/cover",
+    "new pending target projection equals manifest",
+    "processing transition changes revision without invoking limited metadata trigger",
+    "early extracted metadata visible while still processing",
+    "manifest excludes original cover payload",
+    "failure after metadata keeps real title and cover",
+    "NULL legacy in-flight metadata stays neutral",
+    "NULL legacy failed metadata stays neutral",
+    "NULL legacy ready metadata becomes visible",
+    "explicit false gate overrides processing ready",
+    "real untitled/no-cover final item is representable",
+    "first upload advances only owner activity once and sorts first",
+    "repeat/older upload keeps exact timestamp and version",
+    "dedup canonical uses attempt time, not old canonical creation time",
+    "upload leaves reading progress and other actor manifest unchanged",
+    "eight simultaneous identical uploads have one mutation/version increment",
+    "concurrent old/new uploads converge to greatest timestamp with exact mutation count",
+    "same actor different books serialize without lost version increments",
+    "older completion cannot undo later acknowledged reading event",
+    "concurrent reading and older upload share actor lock and retain read with exact version",
+    "all upload races preserve exact reading progress rows",
+    "rollback restores exact old manifest function",
+    "rollback removes upload RPCs only",
+    "rollback retains nullable flag, acknowledged recency, books and progress",
+    "rollback leaves limited trigger unchanged",
+    "forward can be reinstalled after rollback with accepted metadata preserved"
+  ],
+  "checks": {
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000001": {
+      "sqlstate": "42501"
+    },
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000003": {
+      "sqlstate": "42501"
+    },
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000005": {
+      "sqlstate": "42501"
+    },
+    "upload rejects outside owned/adopted scope: 00000000-0000-0000-0000-000000000099": {
+      "sqlstate": "42501"
+    },
+    "upload rejects invalid actor/book/time: (None, '00000000-0000-0000-0000-000000000002', datetime.datetime(2026, 10, 1, 9, 54, 5, 707270, tzinfo=datetime.timezone.utc))": {
+      "sqlstate": "22023"
+    },
+    "upload rejects invalid actor/book/time: ('11111111-1111-1111-1111-111111111111', None, datetime.datetime(2026, 10, 1, 9, 54, 5, 707270, tzinfo=datetime.timezone.utc))": {
+      "sqlstate": "22023"
+    },
+    "upload rejects invalid actor/book/time: ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000002', None)": {
+      "sqlstate": "22023"
+    },
+    "upload rejects invalid actor/book/time: ('11111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000002', 'infinity')": {
+      "sqlstate": "22023"
+    }
+  },
+  "source_sha256": {
+    "server/utils/__tests__/fixtures/catalog-v2-schema.sql": "51333b54a771756320fa005315a169349cf31184b9e64ba670b71fc9527d1efd",
+    "supabase/migrations/add_catalog_v2.sql": "ec53b6a405ddd23b944e57efa7d2f261a69b216ad28a9693680ec540b8e424c3",
+    "supabase/migrations/limit_catalog_v2_book_version_trigger.sql": "3baf06eca72560747bf4d3975fb0405ac9fc404d6b828bfe44a48b733255fdd0",
+    "supabase/migrations/add_catalog_v2_upload_story.sql": "0f260e4c26a93bc7b3c53ded3fc96cc9f3d2a79f9f8f2d35e4e68da5204d8d54",
+    "supabase/rollback/catalog_v2_upload_story.sql": "96f61fb0572589354d51d7d4bf93002488a55eed4c50935c5e1189acb5b3daee"
+  },
+  "scope": "Synthetic native SQL correctness; no production calls, HTTP worker integration or production performance claim.",
+  "postgres": "PostgreSQL 15.18 (Homebrew) on aarch64-apple-darwin24.6.0, compiled by Apple clang version 17.0.0 (clang-1700.6.4.2), 64-bit",
+  "result": "PASS",
+  "fixture_database_dropped": true
+}

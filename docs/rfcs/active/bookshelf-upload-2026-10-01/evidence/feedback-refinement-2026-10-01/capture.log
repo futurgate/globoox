@@ -1,0 +1,69 @@
+PASS 01 uploading, no toast
+PASS 02 parsed title while processing, no toast
+PASS 03 ready with toast
+PASS 04 duplicate with toast
+PASS 05 confirmed failure with toast
+PASS 06 unknown status with toast
+PASS 07 ready but library unavailable, recovery toast
+PASS 09 upload receipt unknown with toast and actual recovery modal
+PASS 11 archive failure with toast
+PASS 12 access403 current UI
+PASS 13 sign in to check upload
+PASS 14 upload rejected
+{
+  "fixtureOnly": true,
+  "productRef": "working-tree-refinement",
+  "actualPage": true,
+  "actualModal": true,
+  "actualSonner": true,
+  "results": [
+    {
+      "name": "01 uploading, no toast",
+      "status": "PASS"
+    },
+    {
+      "name": "02 parsed title while processing, no toast",
+      "status": "PASS"
+    },
+    {
+      "name": "03 ready with toast",
+      "status": "PASS"
+    },
+    {
+      "name": "04 duplicate with toast",
+      "status": "PASS"
+    },
+    {
+      "name": "05 confirmed failure with toast",
+      "status": "PASS"
+    },
+    {
+      "name": "06 unknown status with toast",
+      "status": "PASS"
+    },
+    {
+      "name": "07 ready but library unavailable, recovery toast",
+      "status": "PASS"
+    },
+    {
+      "name": "09 upload receipt unknown with toast and actual recovery modal",
+      "status": "PASS"
+    },
+    {
+      "name": "11 archive failure with toast",
+      "status": "PASS"
+    },
+    {
+      "name": "12 access403 current UI",
+      "status": "PASS"
+    },
+    {
+      "name": "13 sign in to check upload",
+      "status": "PASS"
+    },
+    {
+      "name": "14 upload rejected",
+      "status": "PASS"
+    }
+  ]
+}

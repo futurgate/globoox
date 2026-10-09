@@ -1,0 +1,15 @@
+UTC started: 2026-10-01T14:59:35.548052+00:00
+Command: node e2e/notifications.mjs
+Exit code: 0
+
+{
+  "passed": 5,
+  "fixtureOnly": true,
+  "results": [
+    "native one polite region, no focus stealing; Tab pause retains exact title/description/action/kind, then expires; App colors and bottom-nav offset",
+    "Sonner native hover pause and dismissal after leaving",
+    "fourth operation preserves focused visible action, evicts nonfocused message, and keeps three active",
+    "all four App palettes override library defaults independently of Reader; keyboard viewport moves host above occlusion",
+    "same-event dedup, modal clears without backlog, auth reset rejects late results, current action works"
+  ]
+}

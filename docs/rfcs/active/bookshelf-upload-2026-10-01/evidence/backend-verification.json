@@ -1,0 +1,145 @@
+{
+  "recorded_at_utc": "2026-10-01T10:15:32.961833+00:00",
+  "base_commit": "b993ec37a634ab307bae9d284ad036da900c34d6",
+  "state": "Local committed candidate 60ef5ec plus narrow uncommitted PromiseLike error-write fix; no production calls or deploy by this agent",
+  "commands": {
+    "test": "node .local/run-isolated.mjs test > .local/upload-story-full-suite.log 2>&1",
+    "build": "node .local/run-isolated.mjs build > .local/upload-story-build.log 2>&1",
+    "test_with_available_fixtures": "ln -s <backend-main>/qa-books qa-books; node .local/run-isolated.mjs test > .local/upload-story-full-suite-with-fixtures.log 2>&1",
+    "build_after_promiselike_fix": "node .local/run-isolated.mjs build > .local/upload-story-build-promiselike.log 2>&1"
+  },
+  "isolation": {
+    "runner": ".local/run-isolated.mjs",
+    "guard": ".local/network-guard.cjs",
+    "dotenv": ".local/empty.env",
+    "credentials": "Synthetic Supabase URL/keys only; no production environment loaded",
+    "network": "Build denied all outbound; suite permits only own fixture loopback listeners",
+    "model_calls": 0
+  },
+  "upload_focused": {
+    "total_passed": 46,
+    "suites": {
+      "epub-processor": 17,
+      "upload-entrypoints": 11,
+      "upload-job-preview": 9,
+      "upload-enqueue": 6,
+      "epub-metadata-preview": 3
+    },
+    "revision": "60ef5ec plus PromiseLike fix"
+  },
+  "build": {
+    "exit_code": 0,
+    "result": "PASS",
+    "artifact_mb": 51.2,
+    "gzip_mb": 17.2,
+    "guard_https_attempts": 9,
+    "guard_exec_sync_attempts": 3
+  },
+  "native_SQL": "74 PASS separately reported by handoff_evidence; see that agent native fixture evidence",
+  "logs": [
+    "<backend-worktree>/.local/upload-story-full-suite.log",
+    "<backend-worktree>/.local/upload-story-build.log",
+    "<backend-worktree>/.local/upload-story-focused.log",
+    "<backend-worktree>/.local/upload-story-full-suite-with-fixtures.log",
+    "<backend-worktree>/.local/upload-story-promiselike-before.log",
+    "<backend-worktree>/.local/upload-story-promiselike-after.log",
+    "<backend-worktree>/.local/upload-story-build-promiselike.log"
+  ],
+  "scope_limits": [
+    "Build is not a full typecheck or end-to-end HTTP/Storage/Redis proof.",
+    "Partial content is retained; automatic retry never deletes/rebuilds chapters. User uploads again; only own non-ready hash is released.",
+    "Ready receipt retries do not reparse or invalidate durable content.",
+    "Overlapping stalled workers are not fully fenced; no staging/atomic import introduced.",
+    "Dedup cover cleanup is deferred to avoid deleting a URL used by canonical book.",
+    "Simultaneous Redis/DB unavailability can prevent recording enqueue failure; no new durable upload queue."
+  ],
+  "suite_without_fixtures": {
+    "passed": 359,
+    "failed": 38,
+    "total": 397,
+    "files_passed": 27,
+    "files_failed": 1,
+    "failed_suite": "server/utils/__tests__/epub-parser.test.ts",
+    "failure_reason": "Missing qa-books EPUB fixtures with cascading assertions; extraction logic untouched except additive callbacks",
+    "guard_blocks": 0
+  },
+  "suite": {
+    "passed": 386,
+    "failed": 11,
+    "total": 397,
+    "files_passed": 27,
+    "files_failed": 1,
+    "failed_suite": "server/utils/__tests__/epub-parser.test.ts",
+    "failure_reason": "Four unavailable original QA EPUBs with dependent assertions; all 27 checks enabled by the four available originals pass. Earlier missing-all-fixtures outcome retained separately.",
+    "guard_blocks": 0,
+    "available_fixture_files": [
+      "Nexus_A_Brief_History_of_Information_Networks_from_the_Stone_Age_to_AI_Yuval_Noah_Harari.epub",
+      "epub30-spec.epub",
+      "Ra_D._Imperskiyivor1._Imperskiyi_Vor_Tom_1.epub",
+      "_OceanofPDF.com_The_Venture_Mindset_-_Ilya_Strebulaev.epub"
+    ],
+    "unavailable_fixture_files": [
+      "dokumen_pub_the_anxious_persons_guide_to_non_monogamy_1839972130.epub",
+      "_OceanofPDF.com_The_Sociopath_Next_Door_-_Martha_Stout.epub",
+      "maeterlinck_la_vie_des_abeilles.epub",
+      "\u041c\u043e\u044f\u0416\u0438\u0437\u043d\u044c2.epub"
+    ],
+    "fixture_access": "Ignored worktree qa-books symlink to existing original directory; no copies, content edits or Git additions",
+    "revision": "60ef5ec before PromiseLike fix; full suite not repeated after narrow fix"
+  },
+  "dto_review": {
+    "result": "No runtime contract blocker found between current frontend and backend",
+    "checked": [
+      "CatalogItem projection / validator",
+      "title:null until parsed / metadata_ready normalization",
+      "original_language from stored source_language",
+      "canonical dedup result and preview IDs",
+      "active ready remains processing until completed order receipt",
+      "server ordering last_read_at DESC NULLS LAST, created_at DESC, id",
+      "sync fallback shape and null-preview runtime guard"
+    ],
+    "minor_typing_note": "Frontend process response did not explicitly include book:null; frontend agent notified, runtime guard handles null."
+  },
+  "promiselike_fix": {
+    "reproduction": {
+      "failed": 3,
+      "skipped": 14,
+      "log": ".local/upload-story-promiselike-before.log",
+      "result": "faithful thenable without catch reproduces original failure before product fix"
+    },
+    "verification": {
+      "passed": 46,
+      "log": ".local/upload-story-promiselike-after.log",
+      "cases": "failure write succeeds, returns DB error, or rejects; all await UPDATE and preserve original processing error"
+    },
+    "other_new_builder_catch_patterns": 0,
+    "remaining_storage_catch": "Installed @supabase/storage-js StorageFileApi.ts:956 async remove returns Promise; valid catch",
+    "product_files": [
+      "server/jobs/epub-processor.ts"
+    ],
+    "test_files": [
+      "server/jobs/__tests__/epub-processor.test.ts"
+    ]
+  },
+  "fixture_search": {
+    "root": "/Users/user/Documents/github",
+    "command": "rg --files --hidden --no-ignore -g '*.epub' -g '!node_modules/**' -g '!.git/**' | rg missing-filename-patterns",
+    "missing_four_found": false,
+    "external_search_or_download": false
+  },
+  "build_after_promiselike_fix": {
+    "exit_code": 0,
+    "result": "PASS",
+    "artifact_mb": 51.2,
+    "gzip_mb": 17.2,
+    "log": ".local/upload-story-build-promiselike.log"
+  },
+  "final_full_suite": {
+    "command": "node .local/run-isolated.mjs test > .local/upload-story-final-suite.log 2>&1",
+    "passed": 389,
+    "failed": 11,
+    "total": 400,
+    "cause": "The same four absent original EPUB files; no application code changed after SDK fix.",
+    "log": ".local/upload-story-final-suite.log"
+  }
+}

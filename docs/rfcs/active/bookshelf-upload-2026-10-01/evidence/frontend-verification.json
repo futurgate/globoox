@@ -1,0 +1,92 @@
+{
+  "scope": "Frontend upload story; synthetic transport only; no production/database/model calls",
+  "baseline_ref": "01e2fe2c31ae264d202638a0dac2e471fd785d77",
+  "source_state": "Uncommitted candidate owned by root; product and harness frozen",
+  "checks": [
+    {
+      "command": "UPLOAD_BASELINE_REF=HEAD node e2e/bookshelf-upload-story.mjs",
+      "result": "Expected FAIL: original upload card has no title skeleton (0 != 1) and uses filename",
+      "raw": ".local/verification/upload-story-baseline.txt"
+    },
+    {
+      "command": "node e2e/bookshelf-upload-story.mjs",
+      "result": "PASS 17 actual MyBooks page scenarios",
+      "raw": ".local/verification/upload-story-current.txt"
+    },
+    {
+      "command": "node e2e/bookshelf-upload-races.mjs",
+      "result": "PASS 8 modal ownership/polling/deadline scenarios",
+      "raw": ".local/verification/upload-modal-races.txt"
+    },
+    {
+      "command": "npm test",
+      "result": "PASS 344 tests / 30 files",
+      "raw": ".local/verification/upload-unit-full.txt"
+    },
+    {
+      "command": "npx tsc --noEmit --incremental false",
+      "result": "PASS",
+      "raw": ".local/verification/upload-typescript.txt"
+    },
+    {
+      "command": "npx eslint 'src/app/(app)/my-books/page.tsx' src/components/Store/BookActionsMenu.tsx src/components/Store/BookCard.tsx src/components/Store/CatalogBookCard.tsx src/components/Store/UploadBookPlaceholder.tsx src/components/UploadBookModal.tsx src/lib/api.ts src/lib/bookshelfUploads.ts src/lib/catalogState.ts src/lib/catalogTypes.ts src/lib/useCatalog.ts src/__tests__/bookshelfUploads.test.ts src/__tests__/bookJobPolling.test.ts src/__tests__/catalogState.test.ts",
+      "result": "0 errors; 2 pre-existing unused BookCard helper warnings",
+      "raw": ".local/verification/upload-lint.txt"
+    },
+    {
+      "command": "node node_modules/next/dist/bin/next build --webpack",
+      "env": {
+        "inherit": [
+          "PATH",
+          "TMPDIR"
+        ],
+        "NEXT_TELEMETRY_DISABLED": "1",
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "API_URL": "http://127.0.0.1:3006",
+        "NEXT_PUBLIC_SUPABASE_URL": "http://127.0.0.1:54321",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "synthetic-local-only",
+        "NEXT_PUBLIC_POSTHOG_HOST": "http://127.0.0.1:54322",
+        "NEXT_PUBLIC_POSTHOG_KEY": "synthetic-local-only"
+      },
+      "result": "PASS after final archive-binding fix",
+      "raw": ".local/verification/upload-build.txt"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "node e2e/bookshelf-upload-story.mjs --manual; DOM smoke from fresh headless Chrome",
+      "result": "PASS first click after new tab and Reset; real modal + generated CSS; metadata/cover/ready progression",
+      "raw": ".local/verification/upload-manual-smoke.txt"
+    }
+  ],
+  "review_fixes": [
+    "Controller ack uses canonical server recency and never renews full-index cooldown",
+    "Attempt authority retired before Delete/Archive/Restore so late polling cannot undo user intent",
+    "Initial manifest continues during upload; already parsed snapshots merge after receipt",
+    "Canonical ready book never downgraded by provisional duplicate upload",
+    "Full-index confirmation clears stale warning after successful recovery",
+    "Pending/error aliases retire on canonical handoff",
+    "Reload resumes index checks only, bounded to five minutes; explicit status retry after expiry"
+  ],
+  "limits": [
+    "Synthetic browser tests do not prove production latency or real parser job cadence",
+    "Manual fixture auth/network are synthetic, even though page/cards/modal and CSS are real",
+    "Closing page may abort the local operation; this task does not add durable upload resume",
+    "Backend/database rollout and actual dev smoke are root-owned"
+  ],
+  "manual_fixture": {
+    "url": "http://127.0.0.1:3137/my-books",
+    "session": 63385,
+    "reset": "Reset fixture button",
+    "controls": [
+      "Start synthetic upload",
+      "Metadata",
+      "Cover",
+      "Ready",
+      "Error",
+      "Reload processing"
+    ]
+  }
+}

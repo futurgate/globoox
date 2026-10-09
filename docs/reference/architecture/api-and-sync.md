@@ -2,7 +2,7 @@
 type: reference
 status: current
 owner: engineering
-last_verified: 2026-09-27
+last_verified: 2026-10-09
 implementation:
   - src/lib/api.ts
   - src/lib/useBooks.ts
@@ -93,11 +93,17 @@ A complete server manifest, including an empty library, may be reused for 10 sec
 
 When no eligible receipt exists, disk reads cannot postpone the index GET. Cache preparation runs alongside the server path. Identical local reads are coalesced, and each catalog storage/legacy wait is bounded to 300 ms; underlying shared legacy reads can still finish later. A late local result cannot replace accepted server state. The storage format and Reader cache remain unchanged.
 
-Network failure, an activity failure or the existing 2.5-second attempt deadline can show only the same scope's offline cache, with an explanation and Retry. Authentication/permission errors clear visible private data and invalidate that scope's confirmation receipt, so reopening within 10 seconds must contact the server again. They never become guest/offline success. A network timeout neither renews nor revokes a prior receipt; its original expiry still applies. Retry keeps existing cards while refreshing. The deadline is a failure boundary, not a latency target.
+Reading-activity delivery is best effort: its flush has a 2.5-second budget within the 5-second catalog refresh. A failed or timed-out flush falls back to activity floor `0` and allows the manifest fetch to proceed; a refresh-wide abort still propagates. Reloaded reading events older than the 30-day delivery window are discarded. These source behaviors were checked against `catalogState.ts` and `readingActivity.ts` on 2026-10-09.
 
-Covers fill the accepted slots from cache, then a FIFO queue downloads all missing covers with at most four concurrent requests, independently of scrolling. Upload immediately adds a local placeholder at the top and fills the same card when ready. Closing the page can interrupt upload; no durable server upload job is implied.
+Network failure or the 5-second refresh deadline can show only the same scope's offline cache, with an explanation and Retry. Authentication/permission errors clear visible private data and invalidate that scope's confirmation receipt, so reopening within 10 seconds must contact the server again. They never become guest/offline success. A network timeout neither renews nor revokes a prior receipt; its original expiry still applies. Retry keeps existing cards while refreshing. The deadline is a failure boundary, not a latency target.
 
-The legacy books API remains available for other consumers and existing write operations; bookshelf loading does not fall back to its heavyweight list. See the [active implementation and verification record](../../rfcs/active/catalog-speed-2026-09-25/README.md) for deployed versus locally verified versions.
+Covers fill the accepted slots from cache, then a FIFO queue downloads all missing covers with at most four concurrent requests, independently of scrolling. Upload immediately adds a local placeholder at the top. Closing the page can interrupt upload; no durable server upload registration before file transfer is implied.
+
+Upload fills title/author/cover independently as parser metadata arrives through the existing job polling. Unknown metadata uses skeletons rather than the filename; missing fields resolve to finite fallbacks. Processing books are represented in the manifest and cannot open Reader until ready. Upload records stable per-user recency without faking reading progress; polling/reload does not renew it. Typed `BookJobError` and HTTP status distinguish uncertain polling/access/receipt from confirmed processing failure. Check status reuses the same job. Ready survives job/order failures; refreshing the shelf accepts the current server manifest, without promising to repair recency. Missing IDs/404 require reconciliation before an explicit re-upload. A scoped Sonner host adds transient feedback; recovery remains on the card/banner.
+
+Historical live acceptance on 2026-10-01 covered the initial upload story (`edea9ed`, unchanged application code in `426b9ba`) and the feedback follow-up (`865354a`, later refined in `93ec25b`); production frontend had not received those changes at that checkpoint. [Initial release evidence and limits](../../archive/2026-10-01-bookshelf-upload/README.md), [feedback/retry acceptance and remaining work](../../rfcs/active/bookshelf-upload-2026-10-01/README.md). Main subsequently imported the completed bookshelf implementation in `f908945`. The synchronized main/dev source includes it; the Git integration does not itself verify a new live deployment.
+
+The legacy books API remains available for other consumers and existing write operations; bookshelf loading does not fall back to its heavyweight list. See the [completed bookshelf checkpoint](../../rfcs/active/catalog-speed-2026-09-25/README.md) for deployed versus locally verified versions.
 
 ## Chapters and block batches
 

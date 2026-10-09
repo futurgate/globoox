@@ -2,7 +2,7 @@
 type: index
 status: current
 owner: engineering
-last_verified: 2026-09-01
+last_verified: 2026-10-09
 ---
 
 # RFC Index
@@ -21,14 +21,21 @@ RFCs describe proposed behavior and never override current reference documentati
 
 ## Completed checkpoint
 
+The synchronized main/dev source includes the completed upload/feedback implementation imported into main in `f908945`. The entries below describe dated release acceptance; Git integration does not verify a new live deployment.
+
+- [Upload feedback and shared notifications](../archive/2026-10-01-bookshelf-feedback/README.md): dev `865354a`, automated and manual acceptance complete; production frontend was unchanged at the October 1 checkpoint. [Remaining work](active/bookshelf-upload-2026-10-01/README.md), including unproven EPUB memory capacity.
+
+- [Bookshelf upload dev release](../archive/2026-10-01-bookshelf-upload/README.md): initial upload story accepted on dev; shared backend/DB released, production frontend unchanged at that checkpoint. Completed feedback/retry acceptance and remaining work are tracked separately above.
+
 - [Reader recovery](active/reader-recovery-2026-10-01/README.md): translation recovery and position guards shipped; exact release, tests, limits and rollback recorded.
 
-- [Bookshelf v2 release](active/catalog-speed-2026-09-25/README.md): dev and production shipped; remaining Reader work moved to the active recovery plan.
+- [Bookshelf v2 release](active/catalog-speed-2026-09-25/README.md): dev and production shipped; subsequent Reader fixes also shipped; upload and feedback/retry have completed dev checkpoints and a [remaining-work record](active/bookshelf-upload-2026-10-01/README.md).
 
 ## Superseded
 
 | RFC | Replacement | Recorded reason |
 |---|---|---|
+| [Library loading stability](active/library-loading-stability-2026-09-16/README.md) | Released bookshelf v2 | September streaming implementation replaced; evidence retained |
 | [My Books server snapshot](active/my-books-server-snapshot.md) | Released bookshelf v2 | Earlier startup proposal replaced by manifest + scoped cache + separate covers |
 | [`translate-range` anchor stabilization](superseded/translation-anchor-stabilization.md) | Translation v2 snapshot/reconcile/push model | Not documented; author input required |
 

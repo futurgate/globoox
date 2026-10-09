@@ -1,0 +1,132 @@
+{
+  "started_at": "2026-10-01T10:15:02.036Z",
+  "scope": "Actual current parser/processor and process/job/original-content H3 handlers; native PostgreSQL+PostgREST and BullMQ+Redis; thin in-memory HTTP Storage; synthetic identity adapter, no cloud/LLM",
+  "limitations": [
+    "Not the full Nitro build/bootstrap or real Supabase Auth/Storage/RLS service validation.",
+    "Tiny synthetic EPUBs establish contracts, not production memory or latency.",
+    "No atomic-import candidate and no production data."
+  ],
+  "sources": {
+    "server/jobs/epub-processor.ts": "751a0b21ad0e808e534136ace8dfab96bff1f030dc517a5057dbc184db2aa090",
+    "server/jobs/queues.ts": "3addbb96fa59d56105eb3e54724a60359f01819133eedc7db6aa07d4c6c94eb2",
+    "server/utils/epub-parser.ts": "a61989c1d7ecb1560d3978d9a42c438b490d52b3553b8d6fbd1985e99f6dc73c",
+    "server/utils/upload-story.ts": "63d077081ce0bcf50a5f8c94be1054d217ce01cfac6791f06614e8d179333791",
+    "server/api/books/process.post.ts": "6768b7a78244e3bb91b963132af57f877cb03bad804d318789ece3e285896393",
+    "server/api/jobs/[id].get.ts": "f4e51ea184db030c38da6ef138a4702b17daf4ac65ad24b04cfdd5972e3e1358",
+    "server/api/chapters/[id]/content.get.ts": "d61277b6582e7ceb06c8abd5b93f10f030e418a18d602b6e88df783454402d8f",
+    "supabase/migrations/add_catalog_v2_upload_story.sql": "0f260e4c26a93bc7b3c53ded3fc96cc9f3d2a79f9f8f2d35e4e68da5204d8d54"
+  },
+  "checks": [
+    {
+      "name": "queued upload: neutral slot, real title before cover, versioned cover before chapters, ready/order receipt",
+      "passed": true,
+      "pending": {
+        "title": null,
+        "status": "pending"
+      },
+      "metadata": {
+        "title": "Parsed Fixture Title",
+        "status": "processing",
+        "cover": null
+      },
+      "cover": {
+        "has_version": true,
+        "original_payload": false
+      },
+      "ready": {
+        "state": "completed",
+        "order_confirmed": true
+      }
+    },
+    {
+      "name": "original Reader handler returns native persisted text and exact inline marks without translation",
+      "passed": true,
+      "chapters": 1,
+      "blocks": 2,
+      "marks": [
+        "em",
+        "strong"
+      ]
+    },
+    {
+      "name": "canonical dedup/polling: upload ordering, strict job owner, canonical tree/progress/source preserved",
+      "passed": true,
+      "denied_owner_http": 404,
+      "pending_removed": true,
+      "canonical_identity_saved": true,
+      "progress_unchanged": true
+    },
+    {
+      "name": "guest upload rejected before registration; guest job metadata denied",
+      "passed": true,
+      "upload_http": 401,
+      "job_http": 404
+    },
+    {
+      "name": "lost ready response: conditional failure never downgrades committed ready; automatic retry preserves exact tree",
+      "passed": true,
+      "attempts": 2,
+      "status": "ready"
+    },
+    {
+      "name": "native SQL block fault: no false-ready, hash freed, partial tree retained; explicit new upload succeeds",
+      "passed": true,
+      "failed_state": "failed",
+      "failed_book_status": "error",
+      "file_hash": null,
+      "partial_chapters": 1,
+      "fresh_state": "completed"
+    },
+    {
+      "name": "no-Redis signed-process retains id/chapter_count + full book DTO; malformed EPUB remains422",
+      "passed": true,
+      "sync_keys": [
+        "book",
+        "chapter_count",
+        "id",
+        "order_confirmed"
+      ],
+      "malformed_http": 422
+    }
+  ],
+  "observations": [
+    {
+      "injection": "ready commit succeeded, HTTP reply replaced with503"
+    }
+  ],
+  "cleanup": {
+    "node_servers_and_queue_closed": true
+  },
+  "external_network_attempts": 0,
+  "result": "PASS",
+  "http_counts": {
+    "POST /rest/v1/books": 7,
+    "POST /rest/v1/rpc/catalog_v2_mark_uploaded": 10,
+    "POST /rest/v1/rpc/catalog_v2_upload_book": 391,
+    "POST /rest/v1/rpc/catalog_v2_manifest": 2,
+    "GET /rest/v1/books": 22,
+    "PATCH /rest/v1/books": 33,
+    "HEAD /rest/v1/chapters": 9,
+    "GET /rest/v1/chapters": 9,
+    "POST /rest/v1/chapters": 5,
+    "POST /rest/v1/content_blocks": 5,
+    "GET /rest/v1/content_blocks": 7,
+    "POST /rest/v1/reading_progress": 1,
+    "GET /rest/v1/reading_progress": 2,
+    "POST /rest/v1/user_book_preferences": 1,
+    "DELETE /rest/v1/books": 1,
+    "PATCH /rest/v1/fixture_controls": 1
+  },
+  "finished_at": "2026-10-01T10:15:23.601Z",
+  "candidate_commit": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+  "commit_source_match": [
+    "server/jobs/epub-processor.ts",
+    "server/jobs/queues.ts",
+    "server/utils/epub-parser.ts",
+    "server/utils/upload-story.ts",
+    "server/api/books/process.post.ts",
+    "server/api/jobs/[id].get.ts",
+    "server/api/chapters/[id]/content.get.ts",
+    "supabase/migrations/add_catalog_v2_upload_story.sql"
+  ]
+}

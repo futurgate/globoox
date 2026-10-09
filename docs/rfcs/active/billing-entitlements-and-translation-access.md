@@ -173,19 +173,29 @@ deleted with a user-visible `book_id`.
 
 ### 1. Usage-window lifecycle
 
-```text
-NO_ACTIVE_WINDOW
-  | actual translated open of a counting book
-  v
-ACTIVE_WINDOW(count=1, startsAt=t0, endsAt=t0+30d)
-  | reopen counted identity       -> count unchanged
-  | open new identity with slot   -> count + 1 atomically
-  | open new identity at cap      -> limit_reached, count unchanged
-  | original or demo open         -> count unchanged
-  | clock passes endsAt           -> expired data remains historical
-  v
-NEXT ACTUAL COUNTING OPEN
-  -> creates a fresh window and records count=1 atomically
+```mermaid
+stateDiagram-v2
+    state "No active period" as Dormant
+    state "Active 30-day period" as Active
+    state "Elapsed; awaiting an explicit open" as Elapsed
+
+    [*] --> Dormant
+    Dormant --> Dormant: preflight, original, demo, or background discovery
+    Dormant --> Active: explicit translated non-demo open; record count = 1
+
+    Active --> Active: reopen counted identity; count unchanged
+    Active --> Active: open new identity with a slot; count + 1 atomically
+    Active --> Active: open new identity at cap; deny and keep count
+    Active --> Active: plan or renewal change; cap only
+    Active --> Elapsed: serverNow >= periodEndsAt
+
+    Elapsed --> Elapsed: preflight, original, demo, or background discovery
+    Elapsed --> Active: next explicit counting open; create window and count = 1
+
+    note right of Active
+      Existing counted books remain readable.
+      Original and explicit demo reads never consume a slot.
+    end note
 ```
 
 `GET /translation-limit` is read-only. Before the first recorded open,
@@ -205,6 +215,43 @@ Lemon Squeezy status is provider input. The backend maps it to a normalized effe
 entitlement. The frontend MUST use that normalized entitlement rather than infer access from raw
 provider status.
 
+```mermaid
+stateDiagram-v2
+    state "Free; cap 2" as Free
+    state "Premium active; cap 6" as Premium
+    state "Cancelled grace; cap 6 until accessEndsAt" as CancelledGrace
+    state "Past-due grace; cap 6" as PastDueGrace
+    state "Billing hold; cap 2" as BillingHold
+    state "Editorial active; unlimited" as Editorial
+    state "Alpha override; unlimited" as Alpha
+
+    [*] --> Free
+    Free --> Premium: verified Premium activation
+    Free --> Premium: unexpected on_trial; alert operations
+    Premium --> Premium: renewal or partial refund
+    Premium --> CancelledGrace: cancellation scheduled
+    CancelledGrace --> Premium: resumed before accessEndsAt
+    CancelledGrace --> Free: accessEndsAt reached
+    Premium --> PastDueGrace: payment failed; retry grace starts
+    PastDueGrace --> Premium: payment recovered
+    PastDueGrace --> Free: grace exhausted, unpaid, or expired
+    Premium --> Free: current entitlement fully refunded
+    Premium --> BillingHold: chargeback or fraud dispute
+    BillingHold --> Premium: dispute resolved with valid entitlement
+    BillingHold --> Free: entitlement remains invalid
+    Free --> Editorial: manual Editorial entitlement granted
+    Editorial --> Premium: manual entitlement ended; valid Premium remains
+    Editorial --> Free: manual entitlement ended; no other grant remains
+    Free --> Alpha: internal override granted
+    Alpha --> Editorial: override removed; valid Editorial remains
+    Alpha --> Premium: override removed; valid Premium remains
+    Alpha --> Free: override removed; no other grant remains
+
+    note right of Premium
+      Billing transitions never reset or move the usage period.
+    end note
+```
+
 | Situation | Product state | Effective cap | User action |
 |---|---|---:|---|
 | No paid/manual entitlement | Free active | 2 | Upgrade |
@@ -218,7 +265,7 @@ provider status.
 | Partial refund | Unchanged | Unchanged | None unless support instructs |
 | Chargeback or fraud dispute | Billing hold | 2 | Contact support |
 | Editorial manual entitlement active | Active | Unlimited | Contact account owner |
-| Editorial entitlement ended | Inactive | 2 | Contact sales |
+| Editorial entitlement ended | Re-resolved | 6 if valid Premium remains; otherwise 2 | Manage Premium or contact sales |
 | Alpha override | Active internal override | Unlimited | None |
 
 Pause MUST be disabled in the launch Lemon Squeezy portal. If a legacy or unexpected paused
@@ -234,24 +281,61 @@ Alpha may remain a separate fully exempt internal override.
 A refund of an old invoice MUST NOT disable a newer valid subscription. Entitlement resolution
 must identify whether the refunded transaction currently grants access.
 
+The resolver recomputes the highest valid access source whenever one source changes; it does not
+hardcode every removal to Free. Proposed precedence is internal Alpha/admin override, manual
+Editorial, valid Premium active/grace, then Free. This precedence must be accepted with the
+backend contract.
+
 ### 3. Checkout-attempt lifecycle
 
-```text
-idle
-  -> auth_required
-  -> creating_checkout
-  -> checkout_open
-       -> not_completed
-       -> payment_received
-            -> activating
-                 -> active
-                 -> activation_delayed
-                 -> billing_hold
+```mermaid
+sequenceDiagram
+    actor User
+    participant Surface as Reader / Settings / My Books / Landing
+    participant Frontend as Checkout coordinator
+    participant Backend as Globoox backend
+    participant Lemon as Lemon Squeezy
 
-Side states:
-  checkout_create_failed
-  already_subscribed
-  expired_attempt
+    User->>Surface: Select Get Started
+    Surface->>Frontend: Start with source and return context
+
+    alt Authentication required
+        Frontend-->>User: Sign in or register
+        User->>Frontend: Return with preserved intent
+    end
+
+    Frontend->>Backend: Create idempotent Premium attempt
+    Backend->>Lemon: Create checkout with trusted custom data
+    Lemon-->>Backend: Hosted checkout URL
+    Backend-->>Frontend: attemptId and URL
+    Frontend->>Lemon: Open overlay or hosted fallback
+    Note over User,Lemon: Card, validation, tax, and 3DS states remain inside Lemon
+
+    alt User closes or abandons checkout
+        Lemon-->>Frontend: Closed without success
+        Frontend-->>Surface: not_completed; entitlement unchanged
+    else Provider reports payment success
+        par Browser result
+            Lemon-->>Frontend: Checkout.Success or hosted return
+            Frontend->>Backend: Read attempt status
+        and Signed provider event
+            Lemon-->>Backend: Webhook; delivery order is arbitrary
+            Backend->>Backend: Verify, deduplicate, and resolve entitlement
+        end
+
+        loop Until active or activation SLA expires
+            Frontend->>Backend: Poll user-scoped attempt
+            Backend-->>Frontend: payment_received, activating, or active
+        end
+
+        alt Entitlement active
+            Frontend-->>Surface: Restore source context and retry intended action
+        else Activation delayed
+            Frontend-->>User: Do not pay again; Check again or contact support
+        else Billing hold
+            Frontend-->>User: Preserve purchase context and contact support
+        end
+    end
 ```
 
 Definitions:
@@ -265,6 +349,50 @@ Definitions:
 - Refreshing the result page MUST recover the user-scoped attempt and continue polling.
 
 ## Architecture and responsibility boundaries
+
+### TO-BE translated-access path
+
+Only the affected access boundary is shown; translation workers, pagination, upload, and
+original-language rendering remain outside this change.
+
+```mermaid
+flowchart LR
+    User["Explicit translated-book open"] --> Intent["Frontend access coordinator"]
+    Intent -.->|"optional read-only preflight"| Check["GET translation-limit"]
+    Intent --> Paths["Content / batch / blocks-text / translate / metadata plus access intent"]
+
+    subgraph Frontend["Frontend boundary"]
+        Cache[("User-scoped target cache")]
+        RenderGate{"Fresh server decision allows target text?"}
+        Original["Render original text"]
+        Target["Render authorized target text"]
+    end
+
+    subgraph Backend["Server-authoritative boundary"]
+        Check --> Resolver["Entitlement resolver"]
+        Paths --> Gate["Atomic translated-open gate"]
+        Gate --> Resolver
+        Gate --> Demo["Explicit demo designation"]
+        Gate --> Identity["Stable content identity"]
+        Gate --> Ledger[("Reader usage ledger")]
+        Gate --> Decision{"Structured access decision"}
+    end
+
+    Decision -->|"original / proposed auth required / explicit open required / limit reached"| RenderGate
+    Decision -->|"demo / counted / slot consumed / unlimited"| RenderGate
+    Cache -->|"held until decision"| RenderGate
+    RenderGate -->|"denied or source requested"| Original
+    RenderGate -->|"allowed"| Target
+
+    classDef authority fill:#dcfce7,stroke:#15803d,color:#14532d;
+    classDef guarded fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a;
+    class Gate,Resolver,Decision authority;
+    class RenderGate,Cache guarded;
+```
+
+The preflight is advisory and never grants access. If it is unavailable, the frontend may proceed
+to the authoritative request, but it still cannot reveal target text without a fresh allowed
+decision. The `auth_required` branch remains proposed until the guest policy is accepted.
 
 ### Backend
 
@@ -284,10 +412,11 @@ Every path that creates, returns, reconciles, or streams target-language content
 same access operation before returning translated text:
 
 ```text
-authorizeAndRecordTranslatedOpen(
+authorizeTranslatedAccess(
   readerUserId,
   canonicalContentIdentity,
-  requestedLanguage
+  requestedLanguage,
+  accessIntent
 )
 ```
 
@@ -299,9 +428,21 @@ auth_required
 quota_exempt_demo
 already_counted
 slot_consumed
+explicit_open_required
 limit_reached
 unlimited
 ```
+
+`accessIntent` is one of `explicit_open`, `continuation`, or `prefetch`:
+
+- only `explicit_open` may atomically attribute a previously uncounted identity and start a
+  period;
+- `continuation` and `prefetch` may serve target text only when the identity is already counted,
+  explicitly demo-exempt, or covered by an unlimited entitlement;
+- otherwise they return `explicit_open_required` with no target text and no usage mutation.
+
+This prevents background work from starting a period without letting a caller label an ordinary
+read as prefetch to bypass attribution.
 
 ### Frontend
 
@@ -350,6 +491,45 @@ The backend handoff received on 2026-09-01 documents a useful skeleton:
 - `POST /api/billing/checkout` returning a hosted checkout URL;
 - `GET /api/billing/portal`;
 - asynchronous subscription activation through webhooks.
+
+### AS-IS affected path
+
+This diagram records the current integration risks, not the desired implementation.
+
+```mermaid
+flowchart LR
+    User["Reader / Settings / Landing"] --> Reader["Current frontend surface"]
+
+    subgraph Client["Current client behavior"]
+        Reader --> Preflight["GET translation-limit"]
+        Preflight --> Proxy
+        Preflight -.->|"request error can currently fail open"| Reader
+        Reader --> Cache[("Memory / IndexedDB target text")]
+        Cache -->|"can be rendered before fresh authorization"| Reader
+        Reader --> Api["src/lib/api.ts"]
+        Api --> Proxy["Next API proxy"]
+    end
+
+    subgraph CurrentBackend["Current backend skeleton"]
+        Proxy --> Content["GET chapter content"]
+        Proxy --> Translate["POST translate / range"]
+        Proxy --> Other["Batch / blocks-text / metadata"]
+        Content -->|"200 original plus limit header"| Proxy
+        Translate -->|"typed nested 403"| Proxy
+        Other -->|"gate parity not confirmed"| Proxy
+    end
+
+    Proxy -->|"JSON branch drops translation and cache headers"| Api
+    Api -->|"content metadata and error code can be lost"| Reader
+
+    Reader --> Checkout["POST billing checkout"]
+    Checkout -->|"URL only; no attempt identity"| Lemon["Hosted Lemon checkout"]
+    Lemon -->|"redirect query is not entitlement proof"| Settings["Settings polls subscription"]
+    Settings -->|"GET subscription"| Proxy
+
+    classDef risk fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d;
+    class Preflight,Cache,Api,Proxy,Other,Checkout risk;
+```
 
 ### Current endpoint snapshot
 
@@ -516,6 +696,11 @@ The same gate applies to at least:
 - reader metadata and chapter-title translation;
 - any cache, reconcile, backfill, export, or future endpoint that can expose target text.
 
+Each target-content request carries or derives the access intent. Reader entry uses
+`explicit_open`; subsequent requests for that active book use `continuation`; speculative work
+uses `prefetch`. A non-activating request for an uncounted identity receives
+`explicit_open_required` and no target payload.
+
 Responses MUST NOT expose an unrestricted raw `translations` map after a denied decision.
 
 ### Checkout creation and status
@@ -634,6 +819,76 @@ Required behavior:
 8. A denied translated read falls back to original text without leaking target text through raw
    block properties, metadata, prefetched chapters, or recovery endpoints.
 
+## UX surface/state matrix
+
+This matrix is the target projection for only the surfaces changed by this feature. It is the
+input to low-fidelity wireflows; it does not prescribe high-fidelity layout.
+
+| Surface | Preconditions and trigger | Visible state | Primary action | Result or return |
+|---|---|---|---|---|
+| Reader | Original language selected | Existing Reader; no billing interruption | Read | Reader remains in original |
+| Reader | Demo translation requested | Translation opens without usage copy | Read | Demo remains quota-exempt |
+| Reader | Target text exists locally; fresh access decision pending | Original structure plus checking/loading treatment; cached target hidden | Wait or switch to original | Apply server decision when received |
+| Reader | Book is already counted in active period | Translation opens; no limit dialog | Read | Count and period unchanged |
+| Reader | Free has an available slot; explicit new translated open | Normal Reader loading | Read | Backend records one identity atomically |
+| Reader | Guest requests counting translation | Proposed auth-required continuation; final guest policy remains open | Sign in / Register | Return to the same book and retry access |
+| Reader | Free at `2/2` requests a new book | Limit dialog with usage and reset date | Get Started | Create Premium checkout attempt |
+| Reader | Premium at `6/6` requests a new book | Limit dialog with Editorial value | Contact Us | Open Editorial lead flow |
+| Reader | Downgraded user reopens an identity recorded this period | Translation opens even when current count exceeds cap | Read | No clawback and no new usage |
+| Reader | Downgraded user over cap requests a new identity | Limit dialog based on normalized current plan and achievable next cap | Upgrade or Contact Us | Premium when it creates headroom; otherwise Editorial |
+| Reader | Backend access check fails or network is unavailable | Original remains readable; no fail-open target text | Retry | Recheck access; offline entitlement is unsupported |
+| Reader | Checkout closes or is abandoned | Same book, chapter, anchor, and original text | Try again or continue original | No entitlement change |
+| Reader | Entitlement becomes active | Brief success state | Continue reading | Restore language, chapter, logical anchor; retry translated read |
+| Settings / Billing | Free; no usage period | Free, `0/2`, no reset date | Upgrade | Shared checkout coordinator |
+| Settings / Billing | Free; active usage period | Free, used/2, usage reset date | Upgrade | Shared checkout coordinator |
+| Settings / Billing | Premium active | Premium, used/6, renewal date | Manage subscription | Lemon Customer Portal |
+| Settings / Billing | Premium cancelled in grace | Premium until access end; cancellation banner | Manage or Resume | Portal; refresh normalized subscription afterward |
+| Settings / Billing | Premium `past_due` within grace | Payment-problem banner; Premium cap retained during policy grace | Update payment method | Portal; recover through backend state |
+| Settings / Billing | `unpaid`, `expired`, or current full refund | Free cap and ended-access copy | Resubscribe | New Premium checkout attempt |
+| Settings / Billing | Chargeback or fraud hold | Billing-hold banner; Free cap | Contact support | Support/reconciliation path |
+| Settings / Billing | Editorial active | Editorial, unlimited, no Lemon management CTA | Contact account owner | Manual account path |
+| Settings / Billing | Alpha override | Internal unlimited-access presentation; no public Alpha plan card | None | No commercial transition |
+| Checkout coordinator | Checkout creation in progress | Progress state; duplicate CTA disabled | Wait | Preserve source context |
+| Checkout coordinator | Checkout creation fails | Inline non-payment error | Try again | Retry from the same source |
+| Checkout coordinator | Backend reports an active subscription | No second checkout or payment | Continue / Manage | Refresh subscription and return safely |
+| Billing result | Attempt created; payment not confirmed | Verifying or incomplete state without success claim | Return or retry safely | Source context remains stored |
+| Billing result | Payment received; webhook/entitlement pending | “Payment received, activating…” | Wait | Poll same attempt |
+| Billing result | Activation exceeds SLA | “Do not pay again” delayed state | Check again / Contact support | Continue same attempt |
+| Billing result | Entitlement active from Reader | Success confirmation followed by automatic resume | Continue reading | Restore book, language, chapter, logical anchor; retry translated read |
+| Billing result | Entitlement active from Settings, My Books, Landing, or account menu | Success banner | Continue | Billing, My Books, product Billing, or the originating app route |
+| Billing result | Attempt expired or checkout not completed | Neutral incomplete state | Try again / Return | No payment-failure accusation |
+| Billing result | Attempt enters billing hold | Purchase recorded but access needs review | Contact support | Preserve attempt and source context |
+| Billing result | Session expired while checking attempt | Authentication-required state; no access inference | Sign in | Resume the same user-scoped attempt |
+| Billing result | Attempt ID is invalid or unrecoverable | Safe recovery without an activation promise | Go to Billing / Contact support | Settings / Billing |
+| Landing pricing | Anonymous visitor selects Premium | Auth continuation with pricing intent preserved | Sign in / Register | Automatically resume Premium checkout |
+| Landing pricing | Signed-in Free user selects Premium | Checkout creation state | Get Started | Shared checkout coordinator |
+| Landing pricing | Premium or Editorial user views cards | Contextual current/manage state; no duplicate checkout | Manage or Continue | Portal or product |
+| Landing pricing | Visitor selects Editorial | Editorial lead entry | Contact Us | Contact form, never Lemon checkout |
+| Landing Free card | Anonymous visitor | CTA copy remains an explicit open product decision | TBD | No implementation assumption |
+| Editorial contact | Form idle | Name, work email, organization/role, volume, message | Submit | Server-owned lead receipt |
+| Editorial contact | Submitting | Disabled duplicate submit with accessible progress | Wait | Success or recoverable error |
+| Editorial contact | Submitted | Confirmation and expected response path | Return | Landing or originating surface |
+| Editorial contact | Validation, delivery, network, or rate-limit error | Field-level or retry-later error; entered values retained | Correct / Retry | Same form |
+| My Books | Below cap | Compact used/cap/reset indicator; upload remains enabled | Optional Upgrade for Free | Reader remains authoritative |
+| My Books | Free at `2/2` or Premium at `6/6` | Compact limit state; upload remains enabled | Upgrade or Contact Us | Checkout or Editorial form |
+| My Books | Any quota state; user uploads EPUB | Upload remains enabled | Upload | Quota is evaluated only on translated open |
+| Account menu | Free | Compact Upgrade action | Upgrade | Shared checkout coordinator |
+| Account menu | Premium | Manage subscription action | Manage | Portal |
+| Account menu | Editorial | Account/contact action | Contact | Manual account path |
+
+The matrix intentionally excludes Lemon card forms, 3DS, Customer Portal internals, unchanged
+Reader controls, unchanged authentication screens, upload internals, and translation-worker UI.
+
+All checkout entry points pass through a product-owned `/billing/result` activation state before
+the source-specific return in the matrix. Reader return context is stored server-side with the
+attempt; the browser carries only an opaque attempt ID and validated internal destination.
+
+If the session expires, the user authenticates again before the attempt is read. If the book was
+deleted, the language is no longer supported, or the saved anchor is stale, activation still
+succeeds and the user falls back to the nearest safe product surface without losing entitlement.
+Checkout completed on another device uses the same backend state; only local navigation context
+may be absent. Card decline, address validation, and 3DS remain provider-owned states.
+
 ## UX entry points
 
 ### Reader quota gate
@@ -681,48 +936,6 @@ Selecting a book still relies on the Reader's authoritative gate.
 
 Free users MAY see a compact Upgrade action. Premium users see Manage subscription. Editorial
 users see their account/contact action. This is a convenience entry point, not a separate flow.
-
-## Return behavior
-
-All checkout entry points pass through a product-owned result state. `/billing/result` is an
-intermediate activation surface, not the final destination.
-
-| Source | Active result | Not completed or create failure | Activation delayed |
-|---|---|---|---|
-| Reader | Restore book, language, chapter, logical anchor; retry translated read | Remain on the same Reader context in original; offer retry | Preserve context; show “Do not pay again”; allow check again/support |
-| Settings | Return to Billing with active plan banner | Return to Billing with state unchanged | Stay on result or Billing status panel |
-| My Books | Return to My Books with success banner | Return to My Books | Preserve source and show pending activation |
-| Landing | Continue into product Settings/Billing after activation | Return to pricing/auth continuation safely | Show activation state, then continue into product |
-| Account menu | Return to originating app route | Return to originating route | Preserve originating route |
-
-Only internal, validated return locations are accepted. Reader return context is stored server-
-side with the attempt; the browser query string carries only an opaque attempt ID.
-
-If the session expires, the user authenticates again before the attempt is read. If the book was
-deleted, the language is no longer supported, or the saved anchor is stale, activation still
-succeeds and the user falls back to the nearest safe product surface without losing entitlement.
-Checkout completed on another device is reflected through the same backend subscription and
-attempt state; only locally available navigation context may be absent.
-
-## User-visible states and copy intent
-
-| State | Meaning | Required UX |
-|---|---|---|
-| `limit_reached` | New translated book exceeds cap | Explain used/cap/reset; Premium or Editorial CTA |
-| `auth_required` | Anonymous translated access needs identity | Sign in/register and preserve intent |
-| `creating_checkout` | Checkout URL is being created | Disable duplicate CTA; progress state |
-| `checkout_create_failed` | Globoox/provider could not create checkout | Inline retry; preserve source context |
-| `not_completed` | Checkout was closed or abandoned | No failure accusation; leave entitlement unchanged |
-| `payment_received` / `activating` | Provider reported success; webhook is pending | “Payment received, activating…” |
-| `active` | Backend entitlement is active | Success message and automatic resume |
-| `activation_delayed` | Activation exceeds the normal polling SLA | “Do not pay again”; Check again and support |
-| `past_due` | Payment retry grace | Keep defined access; update-payment action |
-| `cancelled_grace` | Cancellation scheduled | Show access end date and manage/resume action |
-| `unpaid` / `expired` | Paid entitlement ended | Free cap, resubscribe action |
-| `billing_hold` | Chargeback, fraud, or unresolved provider state | Free cap, contact support |
-
-Card declines, address validation, and 3DS errors are provider-owned checkout states and should
-not be reimplemented as Globoox forms.
 
 ## Webhook and reconciliation requirements
 
@@ -813,6 +1026,8 @@ operational telemetry rather than guessed client events.
 21. Background prefetch for an unopened book cannot create its first usage record.
 22. Switching target languages or chapters within one counted book does not increment usage.
 23. Unknown or malformed original-language metadata cannot expose target text.
+24. `continuation` or `prefetch` for an uncounted non-demo identity returns
+    `explicit_open_required`, no target payload, and no usage mutation.
 
 ### Billing and checkout
 
@@ -831,6 +1046,7 @@ operational telemetry rather than guessed client events.
 13. A partial refund and an old-invoice refund do not incorrectly remove a valid entitlement.
 14. Duplicate or older webhooks cannot overwrite newer provider state.
 15. Editorial contact never opens a Lemon checkout.
+16. Ending Editorial or Alpha falls back to a still-valid lower entitlement before Free.
 
 ### Frontend
 
@@ -951,6 +1167,8 @@ Rollback:
    entitlement resolver.
 7. **Quota-identity retention:** define how long a fingerprint-only usage tombstone is retained
    after deletion so dedup semantics and privacy/account-deletion policy agree.
+8. **Entitlement-source precedence:** accept or revise the proposed Alpha/admin → Editorial →
+   Premium → Free order when multiple grants coexist.
 
 ## Ownership
 
@@ -992,6 +1210,7 @@ When behavior ships:
 | 2026-09-01 | Confirmed | Only explicitly designated demo books are exempt; other public/store books count |
 | 2026-09-01 | Confirmed target, backend conflict | Exact-byte re-upload retains quota identity and does not free or consume another slot |
 | 2026-09-01 | Proposed | Backend-normalized entitlement, checkout attempts, and resumable result flow |
+| 2026-09-01 | Proposed | Non-activating prefetch intent and deterministic entitlement-source precedence |
 
 ## Resolution
 

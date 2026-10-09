@@ -1,0 +1,40 @@
+My Books
+Upload book
+Visible
+Recently Read
+
+Upload rejected
+
+The file was not accepted.
+
+Upload again
+
+Untitled book
+
+Unknown author
+
+Dismiss
+
+The Green Notebook
+
+Fixture author
+
+The Green Notebook
+
+Fixture author
+
+Small Journeys
+
+Fixture author
+
+Small Journeys
+
+Fixture author
+
+Need help? support@globoox.co
+soon
+Store
+My Books
+Settings
+Upload was rejected
+Upload again

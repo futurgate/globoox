@@ -1,0 +1,61 @@
+{
+  "checked_at_utc": "2026-10-01T14:38:32.412424+00:00",
+  "backend_ref": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+  "origin_main_after_fetch": "ed7b30d15d0c3ef2dfe50658c0127e15d713748b",
+  "backend_or_database_change_required_for_frontend_truthful_states": false,
+  "facts": [
+    {
+      "source": "server/api/jobs/[id].get.ts:23",
+      "fact": "Missing authentication, missing job and job owner mismatch intentionally return404; a missing/out-of-scope preview also returns404. GET404 cannot prove parse failure or identify an auth failure by itself."
+    },
+    {
+      "source": "server/api/jobs/[id].get.ts:55",
+      "fact": "order_confirmed is true only for state completed with result.order_confirmed===true. A preview may already be durable ready before the job is complete."
+    },
+    {
+      "source": "server/api/jobs/[id].get.ts:61",
+      "fact": "Failed job response retains authorized book preview. Failure text is generic, not a parse-error reason code."
+    },
+    {
+      "source": "server/jobs/epub-processor.ts:45",
+      "fact": "Ready/canonical content survives later recency confirmation, chapter-count or cleanup failure; terminal failed plus ready preview is a real possible DTO."
+    },
+    {
+      "source": "server/jobs/epub-processor.ts:313",
+      "fact": "Non-ready own record can be marked error after each failed attempt while BullMQ will retry. Active/delayed/waiting status must not be overridden to terminal parse failure solely by preview.error."
+    },
+    {
+      "source": "server/jobs/queues.ts:62",
+      "fact": "Three attempts with exponential5000ms backoff; completed results retained24h, failed results72h. A later unavailable job remains an uncertain lookup result."
+    },
+    {
+      "source": "server/api/books/process.post.ts:63",
+      "fact": "Pending row, queued job or complete synchronous result can be committed before the client loses the POST response. Automatic POST retransmission is not a safe status check."
+    },
+    {
+      "source": "server/utils/upload-story.ts:34",
+      "fact": "Server queue registration uses stable bookId jobId plus one lookup after an ambiguous add response; this does not guarantee a browser has received either ID."
+    },
+    {
+      "source": "server/api/jobs/[id].get.ts:41",
+      "fact": "Canonical identity comes from returnvalue, persisted job canonicalBookId, or original bookId. Bounded re-read handles terminal/dedup snapshot races. Client should use authorized preview canonical ID, not infer prior membership."
+    },
+    {
+      "source": "server/utils/upload-story.ts:23",
+      "fact": "Job preview RPC is read-only, scoped to uploader membership; database preview error503 is unconfirmed status, not failed content. Checking a job does not advance recency."
+    }
+  ],
+  "frontend_recommended_precedence": [
+    "Honor account scope and classify transport/auth errors separately.",
+    "Valid authoritative ready preview stays ready even when job failed/order unconfirmed; expose a separate library-confirmation action.",
+    "Nonterminal job states continue same job; metadata may remain or have an error from a retryable attempt.",
+    "Terminal failed plus non-ready preview can show processing failure, without claiming a specific DRM/format cause.",
+    "Without usable job ID or with persistent404, offer library reconciliation; do not endlessly poll or automatically POST the file again."
+  ],
+  "remaining_limits": [
+    "No API lookup of a lost submission by a client idempotency key; unknown receipt remains unknown until library reconciliation.",
+    "A manifest-only error without job receipt does not encode whether BullMQ has another scheduled attempt. Frontend can reconcile status but cannot claim a detailed server terminal reason.",
+    "No global upload request idempotency or new durable registration transaction introduced."
+  ],
+  "correctness_tests_not_repeated": "Existing final389pass/11missing-fixture suite and native upload evidence correspond to current backend source; no source changes since ed7b30d. Four original EPUB parser checks are already covered; this review did not rerun imports or tests."
+}

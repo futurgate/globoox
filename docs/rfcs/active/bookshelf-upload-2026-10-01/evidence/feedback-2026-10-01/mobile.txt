@@ -1,0 +1,72 @@
+PASS polling network unknown → dashed card → same-job Check status → ready without POST
+PASS ready/orderfalse preserves actual cover, Reader links and separate library warning
+PASS unknown process receipt offers honest refresh before explicit reupload; no pretend status endpoint
+PASS lost archive response → Retry reconciles server state and does not repeat the applied mutation
+PASS failed archive response → Retry checks then repeats the original archive action
+PASS account switch clears shown notification and captured stale action cannot request previous job
+PASS closed-modal completion toasts once; existing membership is distinguished from global canonical dedup
+PASS manual refresh while another upload is pending does not claim the bookshelf was updated
+PASS direct card Check status promotes prior parsed metadata when completion has only ID and manifest is unavailable
+PASS mobile screenshot unknown light 390x844
+PASS mobile screenshot ready-order light 390x844
+PASS mobile screenshot unknown dark 390x844
+PASS mobile screenshot ready-order dark 390x844
+{
+  "fixtureOnly": true,
+  "actualPage": true,
+  "actualSonner": true,
+  "results": [
+    {
+      "name": "polling network unknown → dashed card → same-job Check status → ready without POST",
+      "status": "PASS"
+    },
+    {
+      "name": "ready/orderfalse preserves actual cover, Reader links and separate library warning",
+      "status": "PASS"
+    },
+    {
+      "name": "unknown process receipt offers honest refresh before explicit reupload; no pretend status endpoint",
+      "status": "PASS"
+    },
+    {
+      "name": "lost archive response → Retry reconciles server state and does not repeat the applied mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "failed archive response → Retry checks then repeats the original archive action",
+      "status": "PASS"
+    },
+    {
+      "name": "account switch clears shown notification and captured stale action cannot request previous job",
+      "status": "PASS"
+    },
+    {
+      "name": "closed-modal completion toasts once; existing membership is distinguished from global canonical dedup",
+      "status": "PASS"
+    },
+    {
+      "name": "manual refresh while another upload is pending does not claim the bookshelf was updated",
+      "status": "PASS"
+    },
+    {
+      "name": "direct card Check status promotes prior parsed metadata when completion has only ID and manifest is unavailable",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile screenshot unknown light 390x844",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile screenshot ready-order light 390x844",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile screenshot unknown dark 390x844",
+      "status": "PASS"
+    },
+    {
+      "name": "mobile screenshot ready-order dark 390x844",
+      "status": "PASS"
+    }
+  ]
+}

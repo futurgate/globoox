@@ -3,7 +3,7 @@ type: rfc
 status: implemented
 owner: library
 last_verified: 2026-09-30
-superseded_by: docs/rfcs/active/reader-recovery-2026-10-01/README.md
+superseded_by: docs/rfcs/active/bookshelf-upload-2026-10-01/README.md
 ---
 
 # Bookshelf: промежуточный выпуск завершён
@@ -12,4 +12,4 @@ superseded_by: docs/rfcs/active/reader-recovery-2026-10-01/README.md
 
 Предыдущий изменяемый план сохранён целиком в [историческом архиве](../../../archive/2026-10-01-reader-recovery/catalog-speed-plan-through-release.md). Evidence остаётся на прежних местах для проверки решений и отката; это не текущие задания.
 
-Оставшиеся ошибки перевода и конфликт позиции перенесены в [новый активный план](../reader-recovery-2026-10-01/README.md). Серверные оптимизации скорости из датированного handoff разработчице (`developer-handoff-2026-09-30.md`, сохранён в основном checkout) сохраняются как отдельный согласованный backlog; они не считаются выполненными этим выпуском.
+Исправления повторного перевода и защиты позиции выпущены в [завершённом Reader checkpoint](../reader-recovery-2026-10-01/README.md). Первичная загрузка прошла [dev-приёмку](../../../archive/2026-10-01-bookshelf-upload/README.md); текущая работа — [статусы загрузки и общие уведомления](../bookshelf-upload-2026-10-01/README.md). Серверные оптимизации скорости из датированного handoff разработчице (`developer-handoff-2026-09-30.md`, сохранён в основном checkout) сохраняются как отдельный согласованный backlog; они не считаются выполненными этим выпуском.

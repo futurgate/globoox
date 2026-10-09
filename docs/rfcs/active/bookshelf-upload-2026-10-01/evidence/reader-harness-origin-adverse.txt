@@ -1,0 +1,22 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.
+    at Object.react_stack_bottom_frame (<anonymous>:19825:22)
+    at runWithFiberInDEV (<anonymous>:2255:74)
+    at commitHookEffectListMount (<anonymous>:10669:165)
+    at commitHookPassiveMountEffects (<anonymous>:10723:62)
+    at commitPassiveMountOnFiber (<anonymous>:12298:31)
+    at recursivelyTraversePassiveMountEffects (<anonymous>:12268:15)
+    at commitPassiveMountOnFiber (<anonymous>:12291:15)
+    at recursivelyTraversePassiveMountEffects (<anonymous>:12268:15)
+    at commitPassiveMountOnFiber (<anonymous>:12324:15)
+    at flushPassiveEffects (<anonymous>:14408:13)
+    at run (<frontend-worktree>/e2e/reader-position-races.mjs:44:41)
+    at runReaderPositionCases (<frontend-worktree>/e2e/reader-position-races.mjs:50:11)
+    at async file://<frontend-worktree>/[eval1]:5:55 {
+  observations: []
+}
+
+Node.js v22.23.2

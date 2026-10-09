@@ -1,0 +1,26 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "scrollWidth": 390,
+  "theme": "dark",
+  "toast": {
+    "x": 16,
+    "y": 689,
+    "width": 358,
+    "height": 79,
+    "right": 374,
+    "bottom": 768
+  },
+  "navigation": {
+    "x": 0,
+    "y": 779.25,
+    "width": 390,
+    "height": 64.75,
+    "right": 390,
+    "bottom": 844
+  },
+  "problem": null,
+  "problemStyle": null
+}
