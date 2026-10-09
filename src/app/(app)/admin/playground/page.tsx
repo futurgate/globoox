@@ -350,9 +350,9 @@ export default function TranslationPlaygroundPage() {
         promptVariants,
         // translate: source lang is a judge hint; glossary: it's {SOURCE_LANG}.
         ...(mode !== 'revision' ? { sourceLanguage } : {}),
-        // translate-only
-        ...(mode === 'translate'
-          ? { judge, judgeModel, reference: reference.trim() || undefined }
+        // judge: translate (non-fiction prompt) or revision (fiction prompt by blocks)
+        ...(mode === 'translate' || mode === 'revision'
+          ? { judge, judgeModel, ...(mode === 'translate' ? { reference: reference.trim() || undefined } : {}) }
           : {}),
         // glossary-only
         ...(mode === 'glossary' ? { existingGlossary: existingGlossary.trim() || '{}' } : {}),
@@ -533,6 +533,8 @@ export default function TranslationPlaygroundPage() {
             revision: parseTemp(flowTemperatures.revision),
           },
           revisionBatchSize: parseBatchSize(revisionBatchSize),
+          judge,
+          judgeModel,
         },
         (ev) => {
           if (ev.type === 'start') {
@@ -1222,12 +1224,12 @@ export default function TranslationPlaygroundPage() {
         )}
 
         {/* Judge options (translate mode only) */}
-        {mode === 'translate' && (
+        {(mode === 'translate' || mode === 'revision' || mode === 'flow') && (
           <>
             <div className="flex flex-wrap items-center gap-4 border-t border-[var(--separator-opaque)] pt-4">
               <label className="flex cursor-pointer items-center gap-2 text-sm">
                 <input type="checkbox" checked={judge} onChange={(e) => setJudge(e.target.checked)} />
-                Score quality (MQM judge)
+                Score quality (MQM judge{mode === 'translate' ? '' : ' · fiction'})
               </label>
               {judge && (
                 <div className="flex items-center gap-2 text-sm">
@@ -1247,7 +1249,7 @@ export default function TranslationPlaygroundPage() {
               )}
             </div>
 
-            {judge && (
+            {judge && mode === 'translate' && (
               <div>
                 <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
                   Reference translation (optional — anchors the judge)
@@ -1509,11 +1511,13 @@ function ResultCard({
 
           {r.verdict && (
             <div className="mt-3 border-t border-[var(--separator-opaque)] pt-3">
-              <div className="flex gap-4 text-xs">
+              <div className="flex flex-wrap gap-4 text-xs">
                 <span>A {r.verdict.adequacy}/5</span>
                 <span>F {r.verdict.fluency}/5</span>
                 <span>S {r.verdict.style}/5</span>
+                {r.verdict.dialogue != null && <span>D {r.verdict.dialogue}/5</span>}
                 {r.mqmPenalty != null && <span>MQM −{r.mqmPenalty}</span>}
+                {r.mqmPer1k != null && <span className="text-[var(--app-text-muted)]">({r.mqmPer1k}/1k)</span>}
               </div>
               {r.verdict.summary && (
                 <p className="mt-2 text-xs text-[var(--app-text-muted)]">{r.verdict.summary}</p>
@@ -1534,6 +1538,7 @@ function ResultCard({
                       >
                         [{err.severity}] {err.category}
                       </span>
+                      {err.block != null && <span className="text-[var(--app-text-muted)]"> [{err.block}]</span>}
                       {err.span && <span className="text-[var(--app-text-muted)]"> · “{err.span}”</span>}
                       {err.explanation && <span> — {err.explanation}</span>}
                     </li>
@@ -1772,6 +1777,43 @@ function FlowResultCard({
           <p className="max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">
             {rev.finalText}
           </p>
+        </div>
+      )}
+
+      {/* LLM-judge of the final revised text (optional). */}
+      {r.judge && (
+        <div className="mb-3 border-t border-[var(--separator-opaque)] pt-3">
+          {r.judge.error ? (
+            <p className="text-xs text-amber-600 dark:text-amber-400">judge: {r.judge.error}</p>
+          ) : r.judge.verdict ? (
+            <>
+              <div className="flex flex-wrap gap-4 text-xs">
+                <span className={'font-bold ' + scoreColor(r.judge.verdict.overall)}>{r.judge.verdict.overall}/100</span>
+                <span>A {r.judge.verdict.adequacy}/5</span>
+                <span>F {r.judge.verdict.fluency}/5</span>
+                <span>S {r.judge.verdict.style}/5</span>
+                {r.judge.verdict.dialogue != null && <span>D {r.judge.verdict.dialogue}/5</span>}
+                {r.judge.mqmPenalty != null && <span>MQM −{r.judge.mqmPenalty}</span>}
+                {r.judge.mqmPer1k != null && <span className="text-[var(--app-text-muted)]">({r.judge.mqmPer1k}/1k)</span>}
+              </div>
+              {r.judge.verdict.summary && (
+                <p className="mt-1 text-xs text-[var(--app-text-muted)]">{r.judge.verdict.summary}</p>
+              )}
+              {r.judge.verdict.errors.length > 0 && (
+                <ul className="mt-1 space-y-0.5">
+                  {r.judge.verdict.errors.slice(0, 20).map((err, i) => (
+                    <li key={i} className="text-xs">
+                      <span className={err.severity === 'critical' ? 'text-red-600 dark:text-red-400' : err.severity === 'major' ? 'text-amber-600 dark:text-amber-400' : 'text-[var(--app-text-muted)]'}>
+                        [{err.severity}] {err.category}
+                      </span>
+                      {err.block != null && <span className="text-[var(--app-text-muted)]"> [{err.block}]</span>}
+                      {err.explanation && <span> — {err.explanation}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : null}
         </div>
       )}
 

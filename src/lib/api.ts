@@ -1644,6 +1644,7 @@ export interface PlaygroundJudgeVerdict {
   adequacy: number
   fluency: number
   style: number
+  dialogue?: number
   overall: number
   summary: string
   errors: Array<{
@@ -1652,6 +1653,7 @@ export interface PlaygroundJudgeVerdict {
     span?: string
     explanation?: string
     suggestion?: string
+    block?: number
   }>
 }
 
@@ -1669,6 +1671,7 @@ export interface PlaygroundResult {
   tokensOut?: number
   verdict?: PlaygroundJudgeVerdict | null
   mqmPenalty?: number | null
+  mqmPer1k?: number | null
   judgeCostUsd?: number | null
   judgeError?: string | null
   error?: string
@@ -1836,6 +1839,53 @@ export function listQualityRuns(bookId: string, targetLang: QaTargetLang, limit 
   return request<{ runs: QaRunSummaryRow[] }>(`/api/admin/translation-quality/runs?${params}`)
 }
 
+// ── LLM-judge of one fiction chapter (admin) ──────────────────────────────────
+// Mirrors POST /api/admin/translation-quality/judge. See fiction-translation-judge.md.
+
+export interface ChapterJudgeIssue {
+  blockId: string | null
+  position: number
+  source: string
+  target: string
+  category: string
+  severity: string
+  span: string | null
+  explanation: string | null
+  suggestion: string | null
+}
+
+export interface ChapterJudgeResult {
+  engine: 'llm-judge-fiction-v1'
+  verdict: {
+    adequacy: number
+    fluency: number
+    style: number
+    dialogue?: number
+    overall: number
+    summary: string
+    errors: Array<{ block?: number; category: string; severity: string; span?: string; explanation?: string; suggestion?: string }>
+  }
+  scores: { adequacy: number; fluency: number; style: number; dialogue: number | null; overall: number }
+  mqmPenalty: number
+  mqmPer1k: number
+  costUsd: number
+  model: string
+  chapter: { id: string; index: number; title: string | null }
+  issues: ChapterJudgeIssue[]
+}
+
+export function judgeChapterQuality(payload: {
+  bookId: string
+  targetLang: QaTargetLang
+  chapterId: string
+  judgeModel?: string
+}): Promise<ChapterJudgeResult> {
+  return request<ChapterJudgeResult>('/api/admin/translation-quality/judge', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export interface PlaygroundPromptTemplate {
   lang: string
   stage?: string
@@ -1932,6 +1982,15 @@ export interface FictionFlowRevisionStage {
   tokensOut: number
 }
 
+export interface FictionFlowJudgeStage {
+  model?: string
+  verdict?: PlaygroundJudgeVerdict
+  mqmPenalty?: number
+  mqmPer1k?: number
+  costUsd?: number
+  error?: string
+}
+
 export interface FictionFlowResult {
   model: string
   actualModel?: string
@@ -1939,6 +1998,7 @@ export interface FictionFlowResult {
   glossary?: FictionFlowGlossaryStage | null
   translate?: FictionFlowTranslateStage
   revision?: FictionFlowRevisionStage
+  judge?: FictionFlowJudgeStage | null
   totalCostUsd?: number
   totalLatencyMs?: number
   error?: string
@@ -1973,9 +2033,12 @@ export interface FictionFlowRequest {
   temperatures?: FictionFlowTemperatures
   /** Blocks per Pass-2 call (1..100); omit → production default (12). */
   revisionBatchSize?: number
+  /** LLM-judge the final revised text per model. */
+  judge?: boolean
+  judgeModel?: string
 }
 
-export type FictionFlowStage = 'glossary' | 'translate' | 'revision'
+export type FictionFlowStage = 'glossary' | 'translate' | 'revision' | 'judge'
 
 /** NDJSON progress events streamed by the fiction-flow-playground endpoint. */
 export type FictionFlowEvent =
