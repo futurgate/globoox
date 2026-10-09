@@ -467,19 +467,12 @@ function IssueCard({ issue, onDismiss }: { issue: QaIssue; onDismiss: (items: Qa
         </div>
       </div>
       <p className="mt-2 text-sm text-[var(--app-text-muted)]">{issue.message}</p>
-      <div className="mt-2 flex items-center gap-2">
-        {issue.dismissal ? (
-          <>
-            <span className="text-xs text-[var(--app-text-muted)]">{issue.dismissal.status === 'accepted' ? 'Принято как есть' : 'Ложная тревога'}</span>
-            <button className="text-xs text-[var(--app-accent)]" onClick={() => onDismiss([issue], null)}>Вернуть</button>
-          </>
-        ) : (
-          <>
-            <Button variant="outline" size="sm" onClick={() => onDismiss([issue], 'accepted')}>Принять как есть</Button>
-            <Button variant="ghost" size="sm" onClick={() => onDismiss([issue], 'false_positive')}>Ложная тревога</Button>
-          </>
-        )}
-      </div>
+      {issue.dismissal && (
+        <div className="mt-2 flex items-center gap-2">
+          <span className="text-xs text-[var(--app-text-muted)]">{issue.dismissal.status === 'accepted' ? 'Принято как есть' : 'Ложная тревога'}</span>
+          <button className="text-xs text-[var(--app-accent)]" onClick={() => onDismiss([issue], null)}>Вернуть</button>
+        </div>
+      )}
     </div>
   );
 }
@@ -639,6 +632,7 @@ function ChapterJudge({ bookId, targetLang }: { bookId: string; targetLang: QaTa
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ChapterJudgeResult | null>(null);
   const [runs, setRuns] = useState<QaRunSummaryRow[] | null>(null);
+  const [scoresOpen, setScoresOpen] = useState(false);
 
   useEffect(() => {
     setResult(null); setError(null); setRuns(null); setChapterId('');
@@ -694,7 +688,6 @@ function ChapterJudge({ bookId, targetLang }: { bookId: string; targetLang: QaTa
               {running ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Play className="mr-1.5 h-4 w-4" />}
               {running ? 'Оцениваю…' : 'Оценить'}
             </Button>
-            <span className="text-xs text-[var(--app-text-muted)]">один вызов LLM на главу — стоит денег</span>
           </div>
 
           {error && <div className="rounded-[var(--radius)] border border-red-500/40 bg-red-500/5 p-2 text-sm">{error}</div>}
@@ -733,6 +726,30 @@ function ChapterJudge({ bookId, targetLang }: { bookId: string; targetLang: QaTa
                   </div>
                 ))}
               </div>
+
+              {/* ── свёрнутая сводка оценки в цифрах ── */}
+              <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+                <button className="flex w-full items-center gap-2 p-3 text-sm font-medium" onClick={() => setScoresOpen((o) => !o)}>
+                  {scoresOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  Оценка в цифрах
+                </button>
+                {scoresOpen && (
+                  <dl className="grid grid-cols-2 gap-x-6 gap-y-1 border-t border-[var(--separator-opaque)] p-3 text-sm sm:grid-cols-3">
+                    <ScoreCell label="Overall" value={`${result.scores.overall}/100`} />
+                    <ScoreCell label="Adequacy" value={`${result.scores.adequacy}/5`} />
+                    <ScoreCell label="Fluency" value={`${result.scores.fluency}/5`} />
+                    <ScoreCell label="Style" value={`${result.scores.style}/5`} />
+                    <ScoreCell label="Dialogue" value={result.scores.dialogue != null ? `${result.scores.dialogue}/5` : '—'} />
+                    <ScoreCell label="MQM penalty" value={`−${result.mqmPenalty}`} />
+                    <ScoreCell label="MQM / 1k слов" value={String(result.mqmPer1k)} />
+                    <ScoreCell label="Critical" value={String(result.issues.filter((i) => i.severity === 'critical').length)} />
+                    <ScoreCell label="Major" value={String(result.issues.filter((i) => i.severity === 'major').length)} />
+                    <ScoreCell label="Minor" value={String(result.issues.filter((i) => i.severity === 'minor').length)} />
+                    <ScoreCell label="Всего ошибок" value={String(result.issues.length)} />
+                    <ScoreCell label="Cost, $" value={result.costUsd.toFixed(4)} />
+                  </dl>
+                )}
+              </div>
             </div>
           )}
 
@@ -756,6 +773,15 @@ function ChapterJudge({ bookId, targetLang }: { bookId: string; targetLang: QaTa
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ScoreCell({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-2">
+      <dt className="text-[var(--app-text-muted)]">{label}</dt>
+      <dd className="font-medium tabular-nums">{value}</dd>
     </div>
   );
 }
