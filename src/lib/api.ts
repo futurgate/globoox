@@ -2136,6 +2136,32 @@ export function fetchFictionFlowPrompts(lang: string, useGlossary = true): Promi
   return request<FictionFlowPrompts>(`/api/admin/fiction-flow-prompts?${q.toString()}`)
 }
 
+export interface GeneratedFictionPrompt {
+  stage: 'glossary' | 'translate' | 'revision'
+  targetLanguage: string
+  referenceLang: string
+  model: string
+  prompt: string
+}
+
+/**
+ * Auto-draft a fiction prompt for a target language that has no built-in prompt
+ * (e.g. RU), by LLM-adapting an existing-language prompt. Powers the flow
+ * playground's per-stage "Generate" button.
+ */
+export function generateFictionFlowPrompt(payload: {
+  stage: 'glossary' | 'translate' | 'revision'
+  targetLanguage: string
+  useGlossary?: boolean
+  referenceLang?: string
+  model?: string
+}): Promise<GeneratedFictionPrompt> {
+  return request<GeneratedFictionPrompt>('/api/admin/generate-fiction-prompt', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 // ── Admin: translation cost lab ──────────────────────────────────────────────
 
 export const COST_LAB_LANGS = ['EN', 'FR', 'ES', 'RU'] as const
