@@ -45,8 +45,12 @@ import {
 } from '@/lib/api';
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
-// Fiction pipeline coverage in v1: Russian source → EN/FR only.
-const FICTION_LANGS = ['EN', 'FR'] as const;
+// Fiction targets the playground offers. EN/FR ship built-in translate prompts
+// (Russian source). RU is available in the full-flow tester too — there is no
+// built-in fiction translate prompt into Russian yet, so the translate-stage
+// editor seeds blank and the admin types their own; glossary/revision prompts are
+// language-parameterised and work as-is.
+const FICTION_LANGS = ['EN', 'FR', 'RU'] as const;
 
 // The playground's stage selector. 'flow' is a page-local tab (a separate
 // endpoint that chains all fiction stages), not a translation-playground mode.
@@ -230,10 +234,14 @@ export default function TranslationPlaygroundPage() {
     setFlowResponse(null);
     setError(null);
     if (m !== 'translate') {
+      let nextTarget = targetLanguage;
       if (!FICTION_LANGS.includes(targetLanguage as (typeof FICTION_LANGS)[number])) {
+        nextTarget = 'EN';
         setTargetLanguage('EN');
       }
-      setSourceLanguage('RU');
+      // Fiction source is Russian by default; when translating INTO Russian the
+      // source can't also be RU, so fall back to EN.
+      setSourceLanguage(nextTarget === 'RU' ? 'EN' : 'RU');
     }
   };
 
@@ -918,7 +926,15 @@ export default function TranslationPlaygroundPage() {
             </label>
             <select
               value={targetLanguage}
-              onChange={(e) => setTargetLanguage(e.target.value)}
+              onChange={(e) => {
+                const next = e.target.value;
+                setTargetLanguage(next);
+                // Keep source ≠ target in fiction modes (the From select is hidden
+                // for revision, so only guard when it's shown).
+                if (mode !== 'translate' && mode !== 'revision' && next === sourceLanguage) {
+                  setSourceLanguage(next === 'RU' ? 'EN' : 'RU');
+                }
+              }}
               className={inputCls}
             >
               {(mode === 'translate' ? LANGS : FICTION_LANGS).map((l) => (
