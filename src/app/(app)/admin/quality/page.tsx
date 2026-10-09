@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
-  fetchBooks, runTranslationQuality, dismissQualityIssues, listQualityRuns, ApiRequestError,
-  type ApiBook, type QaTargetLang, type QaReportV2, type QaIssue, type QaCheckId, type QaGroup, type QaRunSummaryRow,
+  fetchBooks, fetchChapters, runTranslationQuality, dismissQualityIssues, listQualityRuns,
+  judgeChapterQuality, ApiRequestError,
+  type ApiBook, type ApiChapter, type QaTargetLang, type QaReportV2, type QaIssue, type QaCheckId, type QaGroup,
+  type QaRunSummaryRow, type ChapterJudgeResult,
 } from '@/lib/api';
 
 const LANGS: QaTargetLang[] = ['EN', 'FR', 'ES', 'RU'];
@@ -305,6 +307,8 @@ export default function QualityPage() {
         <div className="mt-4 rounded-[var(--radius)] border border-red-500/40 bg-red-500/5 p-3 text-sm">{error}</div>
       )}
 
+      {bookId && <ChapterJudge bookId={bookId} targetLang={targetLang} />}
+
       {report && (
         <div className="mt-5 space-y-4">
           {/* ── verdict + chips ── */}
@@ -472,6 +476,140 @@ function IssueGroup({ items, onDismiss }: { items: QaIssue[]; onDismiss: (items:
       {open && (
         <div className="space-y-3 border-t border-[var(--separator-opaque)] p-3">
           {items.map((it) => <IssueCard key={`${it.blockId}|${it.key}`} issue={it} onDismiss={onDismiss} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── LLM-оценка одной главы (вариант A) ────────────────────────────────────────
+
+const SEV_RANK: Record<string, number> = { critical: 3, major: 2, minor: 1 };
+
+function ChapterJudge({ bookId, targetLang }: { bookId: string; targetLang: QaTargetLang }) {
+  const [open, setOpen] = useState(false);
+  const [chapters, setChapters] = useState<ApiChapter[]>([]);
+  const [chapterId, setChapterId] = useState('');
+  const [judgeModel, setJudgeModel] = useState('gemini-2.5-flash');
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<ChapterJudgeResult | null>(null);
+  const [runs, setRuns] = useState<QaRunSummaryRow[] | null>(null);
+
+  useEffect(() => {
+    setResult(null); setError(null); setRuns(null); setChapterId('');
+    if (!open || !bookId) return;
+    fetchChapters(bookId).then((cs) => { setChapters(cs); setChapterId((p) => p || cs[0]?.id || ''); }).catch(() => setChapters([]));
+  }, [open, bookId]);
+
+  const judge = useCallback(async () => {
+    if (!chapterId) return;
+    setRunning(true); setError(null); setResult(null);
+    try {
+      const res = await judgeChapterQuality({ bookId, targetLang, chapterId, judgeModel });
+      setResult(res);
+    } catch (e) {
+      setError(e instanceof ApiRequestError ? e.message : e instanceof Error ? e.message : 'Judge failed');
+    } finally {
+      setRunning(false);
+    }
+  }, [bookId, targetLang, chapterId, judgeModel]);
+
+  const loadRuns = useCallback(async () => {
+    try {
+      const { runs } = await listQualityRuns(bookId, targetLang, 50);
+      setRuns(runs.filter((r) => r.engine === 'llm-judge-fiction-v1'));
+    } catch { setRuns([]); }
+  }, [bookId, targetLang]);
+
+  const sortedIssues = result
+    ? [...result.issues].sort((a, b) => (SEV_RANK[b.severity] ?? 0) - (SEV_RANK[a.severity] ?? 0) || a.category.localeCompare(b.category))
+    : [];
+
+  return (
+    <div className="mt-5 rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+      <button className="flex w-full items-center gap-2 p-3 text-sm font-medium" onClick={() => setOpen((o) => !o)}>
+        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        LLM-оценка главы (экспериментально)
+      </button>
+      {open && (
+        <div className="space-y-3 border-t border-[var(--separator-opaque)] p-3">
+          <div className="flex flex-wrap items-end gap-2">
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="text-[var(--app-text-muted)]">Глава</span>
+              <select className={`${inputCls} min-w-[14rem]`} value={chapterId} onChange={(e) => setChapterId(e.target.value)} disabled={running}>
+                {chapters.length === 0 && <option value="">Нет глав</option>}
+                {chapters.map((c) => <option key={c.id} value={c.id}>{c.index}. {c.title || '(без названия)'}</option>)}
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="text-[var(--app-text-muted)]">Модель судьи</span>
+              <input className={inputCls} value={judgeModel} onChange={(e) => setJudgeModel(e.target.value)} disabled={running} />
+            </label>
+            <Button onClick={judge} disabled={running || !chapterId} size="sm">
+              {running ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Play className="mr-1.5 h-4 w-4" />}
+              {running ? 'Оцениваю…' : 'Оценить'}
+            </Button>
+            <span className="text-xs text-[var(--app-text-muted)]">один вызов LLM на главу — стоит денег</span>
+          </div>
+
+          {error && <div className="rounded-[var(--radius)] border border-red-500/40 bg-red-500/5 p-2 text-sm">{error}</div>}
+
+          {result && (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                <span className="text-lg font-bold">{result.verdict.overall}/100</span>
+                <span>A {result.scores.adequacy}/5</span>
+                <span>F {result.scores.fluency}/5</span>
+                <span>S {result.scores.style}/5</span>
+                {result.scores.dialogue != null && <span>D {result.scores.dialogue}/5</span>}
+                <span>MQM −{result.mqmPenalty} <span className="text-[var(--app-text-muted)]">({result.mqmPer1k}/1k слов)</span></span>
+                <span className="ml-auto text-xs text-[var(--app-text-muted)]">{result.model} · ${result.costUsd.toFixed(4)}</span>
+              </div>
+              {result.verdict.summary && <p className="text-sm text-[var(--app-text-muted)]">{result.verdict.summary}</p>}
+
+              {sortedIssues.length === 0 && <p className="text-sm text-[var(--app-text-muted)]">Судья не нашёл ошибок.</p>}
+              <div className="space-y-2">
+                {sortedIssues.map((it, i) => (
+                  <div key={i} className={`rounded-[var(--radius)] border p-2 ${it.severity === 'critical' ? 'border-red-500/40' : it.severity === 'major' ? 'border-amber-400/40' : 'border-[var(--separator-opaque)]'}`}>
+                    <div className="mb-1 text-xs font-medium">
+                      <span className={it.severity === 'critical' ? 'text-red-600 dark:text-red-400' : it.severity === 'major' ? 'text-amber-600 dark:text-amber-400' : 'text-[var(--app-text-muted)]'}>
+                        [{it.severity}] {it.category}
+                      </span>
+                      {it.position >= 0 && <span className="text-[var(--app-text-muted)]"> · ¶{it.position}</span>}
+                    </div>
+                    {(it.source || it.target) && (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <div className="whitespace-pre-wrap break-words rounded bg-[var(--app-surface-bg)] p-2 text-sm">{it.source}</div>
+                        <div className="whitespace-pre-wrap break-words rounded bg-[var(--app-surface-bg)] p-2 text-sm">{it.target}</div>
+                      </div>
+                    )}
+                    {it.explanation && <p className="mt-1 text-sm text-[var(--app-text-muted)]">{it.explanation}</p>}
+                    {it.suggestion && <p className="mt-1 text-sm">→ {it.suggestion}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div>
+            <button className="text-sm text-[var(--app-accent)]" onClick={() => (runs ? setRuns(null) : loadRuns())}>
+              {runs ? 'Скрыть историю' : 'История LLM-оценок'}
+            </button>
+            {runs && (
+              <ul className="mt-2 space-y-1 text-sm">
+                {runs.length === 0 && <li className="text-[var(--app-text-muted)]">Оценок пока нет.</li>}
+                {runs.map((r) => {
+                  const s = r.summary as Record<string, unknown>;
+                  return (
+                    <li key={r.runId} className="text-[var(--app-text-muted)]">
+                      {fmtDateTime(r.generatedAt)} — гл. {String(s.chapterTitle ?? s.chapterId ?? '')} · overall {String((s.scores as Record<string, unknown>)?.overall ?? '—')} · MQM/1k {String(s.mqmPer1k ?? '—')}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </div>
