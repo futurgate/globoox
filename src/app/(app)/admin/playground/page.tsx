@@ -15,10 +15,13 @@ import {
   Copy,
   Check,
   GitCompare,
+  BookOpen,
+  Upload as UploadIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import IOSDialog from '@/components/ui/ios-dialog';
+import UploadBookModal from '@/components/UploadBookModal';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   runTranslationPlayground,
@@ -26,6 +29,9 @@ import {
   fetchTranslationPrompt,
   runFictionFlowPlaygroundStream,
   fetchFictionFlowPrompts,
+  fetchBooks,
+  fetchChapters,
+  fetchContent,
   type PlaygroundResult,
   type PlaygroundResponse,
   type PlaygroundPromptVariant,
@@ -33,6 +39,9 @@ import {
   type FictionFlowResponse,
   type FictionFlowResult,
   type FictionFlowRevisionBlock,
+  type ApiBook,
+  type ApiChapter,
+  type ContentBlock,
 } from '@/lib/api';
 
 const LANGS = ['EN', 'FR', 'ES', 'RU'] as const;
@@ -130,6 +139,33 @@ function scoreColor(overall: number): string {
   return 'text-red-600 dark:text-red-400';
 }
 
+/** A content block's plain source text, or null for non-text blocks (image/hr). */
+function blockToSourceText(b: ContentBlock): string | null {
+  switch (b.type) {
+    case 'paragraph':
+    case 'heading':
+    case 'quote':
+      return b.text;
+    case 'list':
+      return b.items.join('\n');
+    default:
+      return null; // image, hr — no source text
+  }
+}
+
+/**
+ * Assemble a chapter's source text from its content blocks the way the playground
+ * expects: ordered by position, one block per paragraph, blocks separated by a
+ * blank line. (fetchContent without a lang returns the original/source text.)
+ */
+function assembleChapterSource(blocks: ContentBlock[]): string {
+  return [...blocks]
+    .sort((a, b) => a.position - b.position)
+    .map(blockToSourceText)
+    .filter((t): t is string => t != null && t.trim().length > 0)
+    .join('\n\n');
+}
+
 export default function TranslationPlaygroundPage() {
   const router = useRouter();
   const { isAdmin, loading: authLoading, isAuthenticated } = useAuth();
@@ -150,6 +186,21 @@ export default function TranslationPlaygroundPage() {
   const [glossary, setGlossary] = useState(''); // revision mode: flattened glossary block (optional)
   const [precedingContext, setPrecedingContext] = useState('');
   const [followingContext, setFollowingContext] = useState('');
+  // Blocks per Pass-2 call. Shared by revision stage + flow modes (both feed the
+  // revision stage). Blank → backend default (12). Prod is fixed at 12.
+  const [revisionBatchSize, setRevisionBatchSize] = useState('12');
+
+  // ── "Load from book" picker: upload / pick a book + chapters → source text ──
+  const [bookLoaderOpen, setBookLoaderOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [pickerBooks, setPickerBooks] = useState<ApiBook[]>([]);
+  const [pickerBooksLoading, setPickerBooksLoading] = useState(false);
+  const [pickBookId, setPickBookId] = useState('');
+  const [pickerChapters, setPickerChapters] = useState<ApiChapter[]>([]);
+  const [pickerChaptersLoading, setPickerChaptersLoading] = useState(false);
+  const [selectedChapterIds, setSelectedChapterIds] = useState<string[]>([]);
+  const [chapterLoadError, setChapterLoadError] = useState<string | null>(null);
+  const [loadingSource, setLoadingSource] = useState(false);
 
   // Full-flow (end-to-end) inputs — one editable prompt per pipeline stage.
   const [flowUseGlossary, setFlowUseGlossary] = useState(true);
@@ -312,6 +363,7 @@ export default function TranslationPlaygroundPage() {
               glossary: glossary.trim() || undefined,
               precedingContext: precedingContext.trim() || undefined,
               followingContext: followingContext.trim() || undefined,
+              batchSize: parseBatchSize(revisionBatchSize),
             }
           : {}),
       });
@@ -354,6 +406,99 @@ export default function TranslationPlaygroundPage() {
     return Number.isFinite(n) && n >= 0 && n <= 2 ? n : undefined;
   };
 
+  // Blank/invalid/out-of-range → undefined (backend then uses the default, 12).
+  const parseBatchSize = (s: string): number | undefined => {
+    const t = s.trim();
+    if (!t) return undefined;
+    const n = Number(t);
+    return Number.isInteger(n) && n >= 1 && n <= 100 ? n : undefined;
+  };
+
+  // ── "Load from book" picker ────────────────────────────────────────────────
+  const loadPickerBooks = async () => {
+    setPickerBooksLoading(true);
+    setChapterLoadError(null);
+    try {
+      setPickerBooks(await fetchBooks());
+    } catch (e: unknown) {
+      setChapterLoadError(e instanceof Error ? e.message : 'Failed to load books');
+    } finally {
+      setPickerBooksLoading(false);
+    }
+  };
+
+  const toggleBookLoader = () => {
+    setBookLoaderOpen((open) => {
+      const next = !open;
+      if (next && pickerBooks.length === 0 && !pickerBooksLoading) void loadPickerBooks();
+      return next;
+    });
+  };
+
+  // When the chosen book changes, load its chapters (ordered) and reset selection.
+  useEffect(() => {
+    if (!pickBookId) {
+      setPickerChapters([]);
+      setSelectedChapterIds([]);
+      return;
+    }
+    let cancelled = false;
+    setPickerChaptersLoading(true);
+    setChapterLoadError(null);
+    setSelectedChapterIds([]);
+    fetchChapters(pickBookId)
+      .then((chs) => {
+        if (!cancelled) setPickerChapters([...chs].sort((a, b) => a.index - b.index));
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setChapterLoadError(e instanceof Error ? e.message : 'Failed to load chapters');
+      })
+      .finally(() => {
+        if (!cancelled) setPickerChaptersLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pickBookId]);
+
+  const toggleChapter = (id: string) => {
+    setSelectedChapterIds((ids) =>
+      ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id],
+    );
+  };
+
+  const allChaptersSelected =
+    pickerChapters.length > 0 && selectedChapterIds.length === pickerChapters.length;
+  const toggleAllChapters = () => {
+    setSelectedChapterIds(allChaptersSelected ? [] : pickerChapters.map((c) => c.id));
+  };
+
+  // Fetch the selected chapters' SOURCE blocks (no lang → original), assemble each
+  // into blank-line-separated paragraphs, join chapters in reading order, and drop
+  // the result into the source textarea.
+  const loadSelectedIntoSource = async () => {
+    const ordered = pickerChapters.filter((c) => selectedChapterIds.includes(c.id));
+    if (ordered.length === 0) return;
+    setLoadingSource(true);
+    setChapterLoadError(null);
+    try {
+      const parts = await Promise.all(
+        ordered.map((c) => fetchContent(c.id).then(assembleChapterSource)),
+      );
+      setSourceText(parts.filter((t) => t.trim().length > 0).join('\n\n'));
+      setBookLoaderOpen(false);
+    } catch (e: unknown) {
+      setChapterLoadError(e instanceof Error ? e.message : 'Failed to load chapter content');
+    } finally {
+      setLoadingSource(false);
+    }
+  };
+
+  const handleBookUploaded = (bookId: string) => {
+    setUploadOpen(false);
+    void loadPickerBooks().then(() => setPickBookId(bookId));
+  };
+
   const handleRunFlow = async () => {
     if (!canRunFlow) return;
     setFlowRunning(true);
@@ -387,6 +532,7 @@ export default function TranslationPlaygroundPage() {
             translate: parseTemp(flowTemperatures.translate),
             revision: parseTemp(flowTemperatures.revision),
           },
+          revisionBatchSize: parseBatchSize(revisionBatchSize),
         },
         (ev) => {
           if (ev.type === 'start') {
@@ -477,15 +623,28 @@ export default function TranslationPlaygroundPage() {
                     ? 'Chapter source text (blocks separated by blank lines)'
                     : 'Source text'}
             </label>
-            <button
-              type="button"
-              onClick={() => openViewer('Source text', sourceText)}
-              disabled={!sourceText.trim()}
-              title="View full source text"
-              className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-40"
-            >
-              <Maximize2 className="h-3.5 w-3.5" /> View
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleBookLoader}
+                title="Load source text from an uploaded book's chapters"
+                className={
+                  'inline-flex items-center gap-1 text-xs hover:text-[var(--app-accent)] ' +
+                  (bookLoaderOpen ? 'text-[var(--app-accent)]' : 'text-[var(--app-text-muted)]')
+                }
+              >
+                <BookOpen className="h-3.5 w-3.5" /> From book
+              </button>
+              <button
+                type="button"
+                onClick={() => openViewer('Source text', sourceText)}
+                disabled={!sourceText.trim()}
+                title="View full source text"
+                className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-40"
+              >
+                <Maximize2 className="h-3.5 w-3.5" /> View
+              </button>
+            </div>
           </div>
           <textarea
             value={sourceText}
@@ -502,6 +661,127 @@ export default function TranslationPlaygroundPage() {
             }
             className={inputCls + ' resize-y font-[inherit]'}
           />
+
+          {/* Load source text from an uploaded book's chapters. */}
+          {bookLoaderOpen && (
+            <div className="mt-2 space-y-3 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3">
+              <div className="flex items-end gap-2">
+                <div className="flex-1">
+                  <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                    Book
+                  </label>
+                  <select
+                    value={pickBookId}
+                    onChange={(e) => setPickBookId(e.target.value)}
+                    disabled={pickerBooksLoading}
+                    className={inputCls}
+                  >
+                    <option value="">
+                      {pickerBooksLoading
+                        ? 'Loading books…'
+                        : pickerBooks.length === 0
+                          ? 'No books — upload one'
+                          : 'Select a book…'}
+                    </option>
+                    {pickerBooks.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.title}
+                        {b.author ? ` — ${b.author}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setUploadOpen(true)}
+                  title="Upload a new book"
+                >
+                  <UploadIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void loadPickerBooks()}
+                  disabled={pickerBooksLoading}
+                  title="Refresh book list"
+                >
+                  <RefreshCw className={'h-4 w-4' + (pickerBooksLoading ? ' animate-spin' : '')} />
+                </Button>
+              </div>
+
+              {pickBookId && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between gap-2">
+                    <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                      Chapters
+                      {selectedChapterIds.length > 0 && ` (${selectedChapterIds.length} selected)`}
+                    </label>
+                    {pickerChapters.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={toggleAllChapters}
+                        className="text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
+                      >
+                        {allChaptersSelected ? 'Clear all' : 'Select all'}
+                      </button>
+                    )}
+                  </div>
+                  {pickerChaptersLoading ? (
+                    <p className="flex items-center gap-2 text-xs text-[var(--app-text-muted)]">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading chapters…
+                    </p>
+                  ) : pickerChapters.length === 0 ? (
+                    <p className="text-xs text-[var(--app-text-muted)]">No chapters in this book.</p>
+                  ) : (
+                    <ul className="max-h-48 space-y-0.5 overflow-y-auto rounded-[var(--radius)] border border-[var(--separator-opaque)] p-1">
+                      {pickerChapters.map((c) => (
+                        <li key={c.id}>
+                          <label
+                            className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-sm hover:bg-black/5 dark:hover:bg-white/5"
+                            style={{ paddingLeft: `${8 + (c.depth ?? 0) * 14}px` }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedChapterIds.includes(c.id)}
+                              onChange={() => toggleChapter(c.id)}
+                            />
+                            <span className="truncate">{c.title || `Chapter ${c.index + 1}`}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+              {chapterLoadError && (
+                <p className="text-xs text-red-600 dark:text-red-400">{chapterLoadError}</p>
+              )}
+
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs text-[var(--app-text-muted)]">
+                  Replaces the source text with the selected chapters&apos; original text.
+                </p>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => void loadSelectedIntoSource()}
+                  disabled={selectedChapterIds.length === 0 || loadingSource}
+                >
+                  {loadingSource ? (
+                    <>
+                      <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Loading…
+                    </>
+                  ) : (
+                    'Copy to source text'
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Revision: the machine-translated draft to polish */}
@@ -590,6 +870,23 @@ export default function TranslationPlaygroundPage() {
                   className={inputCls + ' resize-y'}
                 />
               </div>
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                Batch size (blocks per Pass-2 call)
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={revisionBatchSize}
+                onChange={(e) => setRevisionBatchSize(e.target.value)}
+                placeholder="12"
+                className={inputCls + ' w-28'}
+              />
+              <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+                Segments are split into contiguous batches of this size (default 12, as in production). Blank → 12.
+              </p>
             </div>
           </div>
         )}
@@ -733,6 +1030,24 @@ export default function TranslationPlaygroundPage() {
                 />
               </div>
             )}
+
+            <div>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                Revision batch size (blocks per Pass-2 call)
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={revisionBatchSize}
+                onChange={(e) => setRevisionBatchSize(e.target.value)}
+                placeholder="12"
+                className={inputCls + ' w-28'}
+              />
+              <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+                Pass 2 splits the chapter into contiguous batches of this size (default 12, as in production). Blank → 12.
+              </p>
+            </div>
 
             <p className="text-xs text-[var(--app-text-muted)]">
               Each model runs the full chain (glossary → translate → revision) on the chapter above.
@@ -1060,6 +1375,12 @@ export default function TranslationPlaygroundPage() {
       })()}
 
       <TextViewerModal viewer={viewer} onClose={() => setViewer(null)} />
+
+      <UploadBookModal
+        isOpen={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        onUploaded={handleBookUploaded}
+      />
     </div>
   );
 }
@@ -1298,6 +1619,55 @@ function InlineDiff({ before, after }: { before: string; after: string }) {
   );
 }
 
+/** Small one-click copy-to-clipboard button with a transient "Copied" state. */
+function CopyButton({
+  text,
+  label = 'Copy',
+  title,
+}: {
+  text: string;
+  label?: string;
+  title?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* clipboard unavailable (insecure context / denied) — no-op */
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={onCopy}
+      title={title ?? label}
+      className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+    >
+      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+      {copied ? 'Copied' : label}
+    </button>
+  );
+}
+
+/**
+ * Render a revision's changed blocks as a plain-text change log (draft → final),
+ * so the whole diff can be copied in one click and pasted into a doc or ticket.
+ */
+function buildChangeLog(model: string, blocks: FictionFlowRevisionBlock[]): string {
+  const changed = blocks
+    .map((b, i) => ({ ...b, n: i + 1 }))
+    .filter((b) => b.changed);
+  const header = `Change log — ${model} — ${changed.length}/${blocks.length} blocks changed`;
+  if (changed.length === 0) return `${header}\n(no changes)`;
+  const body = changed
+    .map((b) => `Block ${b.n}\n--- draft\n${b.draft}\n+++ final\n${b.final}`)
+    .join('\n\n');
+  return `${header}\n\n${body}`;
+}
+
 /** The Revision stage's per-block changes, changed blocks first (toggle for the rest). */
 function FlowRevisionDiff({ blocks }: { blocks: FictionFlowRevisionBlock[] }) {
   const [showUnchanged, setShowUnchanged] = useState(false);
@@ -1467,6 +1837,13 @@ function FlowResultCard({
               >
                 <GitCompare className="h-3 w-3" /> {showDiff ? 'Hide changes' : 'Show changes'}
               </button>
+            )}
+            {revBlocks.length > 0 && (
+              <CopyButton
+                text={buildChangeLog(r.model, revBlocks)}
+                label="Copy change log"
+                title="Copy the per-block draft → final change log"
+              />
             )}
           </div>
         )}

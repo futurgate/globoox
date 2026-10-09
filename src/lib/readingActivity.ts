@@ -58,6 +58,8 @@ export function createReadingActivityQueue(environment: QueueEnvironment) {
     const all = new Map([...memory].filter(([, event]) => event.scope_key === scope))
     const store = storage()
     const prefix = `${scopePrefix(scope)}event:`
+    const now = environment.wallNow()
+    const expired: Array<{ key: string; id: string }> = []
     if (store) {
       try {
         for (let i = 0; i < store.length; i++) {
@@ -70,12 +72,21 @@ export function createReadingActivityQueue(environment: QueueEnvironment) {
             || typeof event.page_id !== 'string' || key !== `${prefix}${event.event_id}`) {
             throw new ReadingActivityError('storage', 'A pending reading event is damaged; it has been preserved')
           }
+          // Past the 30-day delivery window the server can never accept it. Discard
+          // it so the queue self-heals instead of blocking every flush forever.
+          if (now - event.wall_ms > MAX_AGE_MS) { expired.push({ key, id: event.event_id }); continue }
           all.set(event.event_id, event)
         }
       } catch (error) {
         if (error instanceof ReadingActivityError || error instanceof SyntaxError) {
           throw new ReadingActivityError('storage', 'A pending reading event is damaged; it has been preserved')
         }
+        storageError = error instanceof Error ? error : new Error('Reading activity storage is unavailable')
+      }
+    }
+    for (const { key, id } of expired) {
+      memory.delete(id)
+      try { store?.removeItem(key) } catch (error) {
         storageError = error instanceof Error ? error : new Error('Reading activity storage is unavailable')
       }
     }
