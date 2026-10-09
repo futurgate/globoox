@@ -107,13 +107,22 @@ describe('durable event occurrence and clock policy', () => {
       .not.toBe(body(behind.fetcher.mock.calls[0][1]).events[0].occurred_at)
   })
 
-  it.each([-1, 31 * 86_400_000])('preserves invalid reloaded age %s without promoting it to current activity', async elapsed => {
+  it('preserves a reloaded event whose clock moved backwards, without promoting it', async () => {
     const first = fixture()
     first.queue.enqueue(context, BOOK)
-    const next = fixture(first.storage, first.clock.wall + elapsed)
+    const next = fixture(first.storage, first.clock.wall - 1)
     await expect(next.queue.flush(context, controller().signal)).rejects.toMatchObject({ kind: 'clock' })
     expect(next.fetcher).not.toHaveBeenCalled()
     expect(Object.keys(next.queue.getPendingRecency(context.scopeKey))).toEqual([BOOK])
+  })
+
+  it('discards a reloaded event past the 30-day delivery window instead of blocking flush forever', async () => {
+    const first = fixture()
+    first.queue.enqueue(context, BOOK)
+    const next = fixture(first.storage, first.clock.wall + 31 * 86_400_000)
+    await expect(next.queue.flush(context, controller().signal)).resolves.toBe('0')
+    expect(next.fetcher).not.toHaveBeenCalled()
+    expect(Object.keys(next.queue.getPendingRecency(context.scopeKey))).toEqual([])
   })
 })
 
