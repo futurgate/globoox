@@ -12,6 +12,7 @@ import {
   Download,
   Trash2,
   Maximize2,
+  Sparkles,
   Copy,
   Check,
   GitCompare,
@@ -29,6 +30,7 @@ import {
   fetchTranslationPrompt,
   runFictionFlowPlaygroundStream,
   fetchFictionFlowPrompts,
+  generateFictionFlowPrompt,
   fetchBooks,
   fetchChapters,
   fetchContent,
@@ -221,6 +223,8 @@ export default function TranslationPlaygroundPage() {
     revision: '',
   });
   const [flowLoadingPrompts, setFlowLoadingPrompts] = useState(false);
+  // Which stage prompt is currently being auto-generated (null = none).
+  const [flowGenerating, setFlowGenerating] = useState<'glossary' | 'translate' | 'revision' | null>(null);
   const [flowRunning, setFlowRunning] = useState(false);
   const [flowResponse, setFlowResponse] = useState<FictionFlowResponse | null>(null);
   // Live progress while the flow streams: completed stages / total stages.
@@ -400,6 +404,26 @@ export default function TranslationPlaygroundPage() {
 
   const updateFlowPrompt = (stage: 'glossary' | 'translate' | 'revision', value: string) => {
     setFlowPrompts((prev) => ({ ...prev, [stage]: value }));
+  };
+
+  // Auto-draft a prompt for this stage by LLM-adapting an existing-language
+  // prompt to the current target language. Useful when the target (e.g. RU) has
+  // no built-in prompt, so the editor would otherwise start blank.
+  const generateFlowPrompt = async (stage: 'glossary' | 'translate' | 'revision') => {
+    setFlowGenerating(stage);
+    setPromptError(null);
+    try {
+      const res = await generateFictionFlowPrompt({
+        stage,
+        targetLanguage,
+        useGlossary: flowUseGlossary,
+      });
+      setFlowPrompts((prev) => ({ ...prev, [stage]: res.prompt }));
+    } catch (e: unknown) {
+      setPromptError(e instanceof Error ? e.message : 'Failed to generate prompt');
+    } finally {
+      setFlowGenerating(null);
+    }
   };
 
   const updateFlowTemperature = (stage: 'glossary' | 'translate' | 'revision', value: string) => {
@@ -1093,6 +1117,19 @@ export default function TranslationPlaygroundPage() {
                         className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
                       >
                         <Maximize2 className="h-3.5 w-3.5" /> View
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => generateFlowPrompt(s.key)}
+                        disabled={flowGenerating !== null}
+                        title={`Auto-draft this prompt for ${targetLanguage} by adapting the existing-language prompt with an LLM`}
+                        className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-50"
+                      >
+                        {flowGenerating === s.key ? (
+                          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating…</>
+                        ) : (
+                          <><Sparkles className="h-3.5 w-3.5" /> Generate</>
+                        )}
                       </button>
                       <span className="ml-auto text-xs text-[var(--app-text-muted)]">
                         {value.trim() ? `${value.length} chars` : 'prod default'}
