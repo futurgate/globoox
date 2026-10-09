@@ -1735,6 +1735,57 @@ export function runTranslationPlayground(payload: PlaygroundRequest): Promise<Pl
   })
 }
 
+// ── Translation Quality (admin) ───────────────────────────────────────────────
+// Deterministic QA of a finished translation. Mirrors the report produced by
+// server/qa/qa_check.py. See docs/tasks/translation-quality-tool.md.
+
+export type QualityTargetLang = 'EN' | 'FR' | 'ES' | 'RU'
+
+export interface TranslationQualityChapterLength {
+  chapter: number
+  src_words: number
+  tgt_words: number
+  ratio: number
+}
+
+export interface TranslationQualityEntity {
+  entity: string
+  targets: string[]
+  src: number
+  tgt: number
+  flag: boolean
+  chapters: { chapter: number; src: number; tgt: number }[]
+}
+
+export interface TranslationQualityReport {
+  bookId: string
+  source: string
+  target: string
+  src_lang: string
+  tgt_lang: string
+  genre: 'fiction' | 'nonfiction'
+  hasGlossary: boolean
+  verdict: 'BLOCKING' | 'OK'
+  blocking: string[]
+  warnings: string[]
+  chapters: { source: number; target: number }
+  length: { median_ratio: number; per_chapter: TranslationQualityChapterLength[] }
+  entities?: TranslationQualityEntity[]
+}
+
+export interface TranslationQualityRequest {
+  bookId: string
+  targetLang: QualityTargetLang
+  genre?: 'fiction' | 'nonfiction'
+}
+
+export function runTranslationQuality(payload: TranslationQualityRequest): Promise<TranslationQualityReport> {
+  return request<TranslationQualityReport>('/api/admin/translation-quality', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
 export interface PlaygroundPromptTemplate {
   lang: string
   stage?: string
