@@ -231,13 +231,15 @@ describe('server-first catalog ownership and deadlines', () => {
     expect(controller.snapshot.offline).toBe(false)
   })
 
-  it('preserves cached order when pending activity is corrupt, with a distinct activity error', async () => {
-    const { controller } = setup({ flush: async () => { throw new Error('Stored reading activity is invalid') }, pendingRecency: () => { throw new Error('invalid') } })
+  it('treats a failed pending-activity flush as best-effort and still loads the server library', async () => {
+    const fetch = vi.fn(async () => manifest())
+    const { controller } = setup({ flush: async () => { throw new Error('Stored reading activity is invalid') }, fetch })
     await controller.refresh()
-    expect(controller.snapshot.books.map(book => book.id)).toEqual(['cached'])
-    expect(controller.snapshot.error?.kind).toBe('activity')
-    expect(controller.snapshot.error?.message).toContain('Stored reading activity')
-    expect(controller.snapshot.offline).toBe(true)
+    // A flush that throws must never block or sink the manifest fetch.
+    expect(fetch).toHaveBeenCalled()
+    expect(controller.snapshot.books.map(book => book.id)).toEqual(['a', 'b'])
+    expect(controller.snapshot.offline).toBe(false)
+    expect(controller.snapshot.error).toBeNull()
   })
 
   it('preserves DOM-driving array identity for identical mounted revalidation', async () => {

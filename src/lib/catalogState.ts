@@ -5,6 +5,9 @@ import { beginCatalogValidation, confirmCatalog, hasFreshCatalogConfirmation, ha
 
 // One bounded budget for identity, reading acknowledgements and the manifest.
 export const CATALOG_REFRESH_TIMEOUT_MS = 5_000
+// Reading activity is best-effort; cap its own slice so a stuck or slow flush
+// cannot consume the whole refresh budget and sink the manifest load.
+export const CATALOG_ACTIVITY_FLUSH_BUDGET_MS = 2_500
 
 export interface CatalogView {
   books: CatalogItem[]
@@ -132,12 +135,25 @@ export class CatalogController {
     try {
       let minVersion = '0'
       let fromCache = false
-      const flushPriorActivity = async (resolved: CatalogContext) => {
+      const flushPriorActivity = async (resolved: CatalogContext): Promise<string> => {
         await settlePriorWrites(resolved.scopeKey, controller.signal)
-        try { return await this.dependencies.flush(resolved, controller.signal) }
-        catch (error) {
-          if (controller.signal.aborted || error instanceof CatalogError) throw error
-          throw new CatalogError('activity', error instanceof Error ? error.message : 'Reading activity could not be confirmed')
+        // Best-effort: a failing, rejected or stuck flush must never abort the
+        // library load. Give it its own budget and fall back to '0' (no activity
+        // floor) on any failure, letting the manifest fetch proceed. A genuine
+        // refresh-wide abort (identity change / overall timeout) still propagates.
+        const flushController = new AbortController()
+        const relay = () => flushController.abort(controller.signal.reason)
+        controller.signal.addEventListener('abort', relay, { once: true })
+        const timer = setTimeout(() => flushController.abort(
+          new CatalogError('timeout', 'Reading activity flush timed out')), CATALOG_ACTIVITY_FLUSH_BUDGET_MS)
+        try {
+          return await this.dependencies.flush(resolved, flushController.signal)
+        } catch (error) {
+          if (controller.signal.aborted) throw controller.signal.reason
+          return '0'
+        } finally {
+          clearTimeout(timer)
+          controller.signal.removeEventListener('abort', relay)
         }
       }
       const fetchConfirmed = async (resolved: CatalogContext) => {
