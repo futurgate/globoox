@@ -3,16 +3,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Loader2, ShieldAlert, Play, ChevronDown, ChevronRight, FileWarning, Download,
+  Loader2, ShieldAlert, Play, ChevronDown, ChevronRight, FileWarning, Download, BookMarked,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   fetchBooks, fetchChapters, runTranslationQuality, dismissQualityIssues, listQualityRuns,
-  judgeChapterQuality, ApiRequestError,
+  judgeChapterQuality, downloadTranslatedEpub, getGlossary, ApiRequestError,
   type ApiBook, type ApiChapter, type QaTargetLang, type QaReportV2, type QaIssue, type QaCheckId, type QaGroup,
-  type QaRunSummaryRow, type ChapterJudgeResult,
+  type QaRunSummaryRow, type ChapterJudgeResult, type BookGlossary,
 } from '@/lib/api';
 
 const LANGS: QaTargetLang[] = ['EN', 'FR', 'ES', 'RU'];
@@ -127,6 +127,8 @@ export default function QualityPage() {
   const [epubOpen, setEpubOpen] = useState(false);
   const [runs, setRuns] = useState<QaRunSummaryRow[] | null>(null);
 
+  const [downloadingEpub, setDownloadingEpub] = useState(false);
+
   const loadBooks = useCallback(async () => {
     try {
       const list = await fetchBooks();
@@ -190,6 +192,19 @@ export default function QualityPage() {
     a.remove();
     URL.revokeObjectURL(url);
   }, [report, books]);
+
+  // Download the exact EPUB being evaluated (same build the QA engine checks).
+  const downloadEpub = useCallback(async () => {
+    if (!report) return;
+    setDownloadingEpub(true); setError(null);
+    try {
+      await downloadTranslatedEpub(report.bookId, report.tgtLang);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось скачать EPUB');
+    } finally {
+      setDownloadingEpub(false);
+    }
+  }, [report]);
 
   const loadRuns = useCallback(async () => {
     if (!report) return;
@@ -317,10 +332,21 @@ export default function QualityPage() {
             <Chip active={sevFilter === 'review'} tone="review" onClick={() => setSevFilter((s) => s === 'review' ? 'all' : 'review')}>{counts.review} проверить</Chip>
             <Chip active={sevFilter === 'dismissed'} tone="muted" onClick={() => setSevFilter((s) => s === 'dismissed' ? 'all' : 'dismissed')}>{counts.dismissed} принято</Chip>
             <span className="ml-1 text-xs text-[var(--app-text-muted)]">вердикт: {report.verdict === 'ERRORS' ? 'есть ошибки' : report.verdict === 'REVIEW' ? 'на проверку' : 'чисто'}{report.hasGlossary ? ' · глоссарий' : ''}</span>
-            <Button variant="outline" size="sm" className="ml-auto" onClick={downloadMarkdown} title="Скачать отчёт в Markdown — удобно скормить LLM">
-              <Download className="mr-1.5 h-4 w-4" />Скачать .md
+            <Button
+              variant="outline" size="sm" className="ml-auto"
+              onClick={downloadEpub} disabled={downloadingEpub}
+              title="Скачать переведённый EPUB — ровно тот файл, который проверяется"
+            >
+              {downloadingEpub ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Download className="mr-1.5 h-4 w-4" />}
+              Перевод .epub
+            </Button>
+            <Button variant="outline" size="sm" onClick={downloadMarkdown} title="Скачать отчёт в Markdown — удобно скормить LLM">
+              <Download className="mr-1.5 h-4 w-4" />Отчёт .md
             </Button>
           </div>
+
+          {/* ── glossary ── */}
+          <GlossaryPanel bookId={report.bookId} targetLang={report.tgtLang as QaTargetLang} hasGlossary={report.hasGlossary} />
 
           {/* ── chapter strip ── */}
           {chapterCells.length > 0 && (
@@ -476,6 +502,124 @@ function IssueGroup({ items, onDismiss }: { items: QaIssue[]; onDismiss: (items:
       {open && (
         <div className="space-y-3 border-t border-[var(--separator-opaque)] p-3">
           {items.map((it) => <IssueCard key={`${it.blockId}|${it.key}`} issue={it} onDismiss={onDismiss} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Глоссарий книги (для языка, который оценивается) ─────────────────────────
+
+function GlossaryPanel({ bookId, targetLang, hasGlossary }: { bookId: string; targetLang: QaTargetLang; hasGlossary: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [glossary, setGlossary] = useState<BookGlossary | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  const toggle = useCallback(async () => {
+    const next = !open;
+    setOpen(next);
+    if (!next || loaded) return;
+    setLoading(true); setError(null);
+    try {
+      const res = await getGlossary(bookId, targetLang);
+      setGlossary(res.glossary);
+      setLoaded(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось загрузить глоссарий');
+    } finally {
+      setLoading(false);
+    }
+  }, [open, loaded, bookId, targetLang]);
+
+  const names = glossary?.named_entities ?? [];
+  const terms = glossary?.terminology ?? [];
+  const style = glossary?.prose_style_profile;
+  const voices = glossary?.character_voice_profiles ?? [];
+
+  return (
+    <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+      <button className="flex w-full items-center gap-2 p-3 text-sm font-medium" onClick={toggle}>
+        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        <BookMarked className="h-4 w-4 text-[var(--app-text-muted)]" />
+        Глоссарий ({targetLang}){!hasGlossary && <span className="font-normal text-[var(--app-text-muted)]"> · не использовался в QA</span>}
+      </button>
+      {open && (
+        <div className="space-y-4 border-t border-[var(--separator-opaque)] p-3 text-sm">
+          {loading && <div className="flex items-center gap-2 text-[var(--app-text-muted)]"><Loader2 className="h-4 w-4 animate-spin" /> Загружаю…</div>}
+          {error && <div className="rounded-[var(--radius)] border border-red-500/40 bg-red-500/5 p-2">{error}</div>}
+          {loaded && !glossary && <p className="text-[var(--app-text-muted)]">Глоссарий для этого языка ещё не построен.</p>}
+
+          {glossary && (
+            <>
+              {style && (style.register || style.diction || style.narrative_tense || style.rhythm_target || style.domain) && (
+                <div>
+                  <div className="mb-1 text-[10px] uppercase text-[var(--app-text-muted)]">Стиль прозы</div>
+                  <ul className="space-y-0.5 text-[var(--app-text-muted)]">
+                    {style.register && <li><span className="text-[var(--app-text)]">регистр:</span> {style.register}</li>}
+                    {style.domain && <li><span className="text-[var(--app-text)]">домен:</span> {style.domain}</li>}
+                    {style.narrative_tense && <li><span className="text-[var(--app-text)]">время:</span> {style.narrative_tense}</li>}
+                    {style.diction && <li><span className="text-[var(--app-text)]">лексика:</span> {style.diction}</li>}
+                    {style.rhythm_target && <li><span className="text-[var(--app-text)]">ритм:</span> {style.rhythm_target}</li>}
+                  </ul>
+                </div>
+              )}
+
+              {names.length > 0 && (
+                <div>
+                  <div className="mb-1 text-[10px] uppercase text-[var(--app-text-muted)]">Имена и реалии ({names.length})</div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <tbody>
+                        {names.map((n, i) => (
+                          <tr key={i} className="border-b border-[var(--separator-opaque)] last:border-0 align-top">
+                            <td className="py-1 pr-3 font-medium">{n.entity}{n.type ? <span className="ml-1 text-[10px] text-[var(--app-text-muted)]">{n.type}</span> : null}</td>
+                            <td className="py-1 pr-3">{n.preferred_target || '—'}</td>
+                            <td className="py-1 text-[var(--app-text-muted)]">{n.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {terms.length > 0 && (
+                <div>
+                  <div className="mb-1 text-[10px] uppercase text-[var(--app-text-muted)]">Терминология ({terms.length})</div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                      <tbody>
+                        {terms.map((t, i) => (
+                          <tr key={i} className="border-b border-[var(--separator-opaque)] last:border-0 align-top">
+                            <td className="py-1 pr-3 font-medium">{t.source_term}</td>
+                            <td className="py-1 pr-3">{t.preferred_translation || '—'}</td>
+                            <td className="py-1 text-[var(--app-text-muted)]">{t.note}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {voices.length > 0 && (
+                <div>
+                  <div className="mb-1 text-[10px] uppercase text-[var(--app-text-muted)]">Голоса персонажей ({voices.length})</div>
+                  <ul className="space-y-1 text-[var(--app-text-muted)]">
+                    {voices.map((v, i) => (
+                      <li key={i}><span className="font-medium text-[var(--app-text)]">{v.character_id}</span>{v.register ? ` · ${v.register}` : ''}{v.speech_patterns ? ` — ${v.speech_patterns}` : ''}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {names.length === 0 && terms.length === 0 && voices.length === 0 && !style && (
+                <p className="text-[var(--app-text-muted)]">Глоссарий пуст.</p>
+              )}
+            </>
+          )}
         </div>
       )}
     </div>
