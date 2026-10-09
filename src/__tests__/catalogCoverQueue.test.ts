@@ -20,7 +20,13 @@ beforeEach(() => {
     const finish = () => { if (done) return false; done = true; live--; signal.removeEventListener('abort', abort); return true }
     const abort = () => { if (finish()) reject(new Error('aborted')) }
     signal.addEventListener('abort', abort, { once: true })
-    calls.push({ url, signal, resolve: (ok = true) => { if (finish()) resolve(new Response(new Blob(['image'], { type: 'image/png' }), { status: ok ? 200 : 404, headers: { 'Content-Type': 'image/png' } })) } })
+    // A real Response.blob() resolves on a macrotask undici schedules, which vi's fake
+    // timers stall — so the queue could never complete a download under tick(). Hand back
+    // a Response-like stub whose blob() settles on a microtask instead.
+    calls.push({ url, signal, resolve: (ok = true) => { if (!finish()) return
+      const body = new Blob(['image'], { type: 'image/png' })
+      resolve({ ok, headers: new Headers({ 'Content-Type': 'image/png' }), blob: () => Promise.resolve(body) } as unknown as Response)
+    } })
   })))
 })
 afterEach(async () => { for (const controller of controllers.splice(0)) controller.abort(); await tick(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers() })
