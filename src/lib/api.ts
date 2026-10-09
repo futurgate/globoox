@@ -1969,6 +1969,13 @@ export const COST_LAB_LANGS = ['EN', 'FR', 'ES', 'RU'] as const
 export type CostLabLang = (typeof COST_LAB_LANGS)[number]
 
 /**
+ * Publishing "author's sheet" (авторский лист): 40 000 source characters with spaces
+ * for prose. Mirrors AUTHOR_SHEET_CHARS in the backend translation-cost.ts. Rates
+ * per а.л. let translation cost be compared with a human translator's fee.
+ */
+export const AUTHOR_SHEET_CHARS = 40_000
+
+/**
  * A measured, real first-time translation cost run — one row of
  * `book_translation_cost_runs`. Mirrors `DbBookTranslationCostRun` in the
  * backend `types/index.ts`. `cost_per_block` / `cost_per_1k_source_chars` are
@@ -2026,6 +2033,8 @@ export interface BookTranslationEstimate {
   bookStats: {
     blockCount: number
     totalChars: number
+    /** Book volume in author's sheets (totalChars / 40 000). */
+    authorSheets: number
     medianBlockChars: number
     avgBlockChars: number
   }
@@ -2038,7 +2047,13 @@ export interface BookTranslationEstimate {
       fullInput: number
       estimatedOutput: number
     }
-    cost: { inputUsd: number | null; outputUsd: number | null; totalUsd: number | null }
+    cost: {
+      inputUsd: number | null
+      outputUsd: number | null
+      totalUsd: number | null
+      /** Formulaic estimate per author's sheet (totalUsd / authorSheets). Absent on per-language entries. */
+      perAuthorSheetUsd?: number | null
+    }
   }
   byLanguage: Array<{
     lang: string
@@ -2123,4 +2138,33 @@ export function fetchCostRuns(
   if (opts.limit != null) params.set('limit', String(opts.limit))
   const qs = params.toString()
   return request<{ runs: DbBookTranslationCostRun[] }>(`/api/admin/cost-runs${qs ? `?${qs}` : ''}`)
+}
+
+/**
+ * A measured real cost rate per author's sheet (а.л.), aggregated from runs by
+ * model × target language × source language. Volume-weighted; runs with errors or
+ * unknown pricing are excluded. Mirrors `AuthorSheetRate` in the backend.
+ */
+export interface AuthorSheetRate {
+  model: string
+  targetLang: string
+  sourceLanguage: string | null
+  runs: number
+  authorSheets: number
+  costUsd: number
+  ratePerSheetUsd: number | null
+  reliable: boolean
+}
+
+/** Real $/author-sheet rates aggregated from measured runs, newest 2000 rows. */
+export function fetchAuthorSheetRates(
+  opts: { model?: string; lang?: string } = {}
+): Promise<{ rates: AuthorSheetRate[] }> {
+  const params = new URLSearchParams()
+  if (opts.model) params.set('model', opts.model)
+  if (opts.lang) params.set('lang', opts.lang)
+  const qs = params.toString()
+  return request<{ rates: AuthorSheetRate[] }>(
+    `/api/admin/cost-runs/author-sheet-rates${qs ? `?${qs}` : ''}`
+  )
 }

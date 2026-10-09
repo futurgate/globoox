@@ -28,12 +28,15 @@ import {
   startCostRun,
   getCostRunStatus,
   fetchCostRuns,
+  fetchAuthorSheetRates,
+  AUTHOR_SHEET_CHARS,
   COST_LAB_LANGS,
   type ApiBook,
   type CostLabLang,
   type BookTranslationEstimate,
   type CostRunStatus,
   type DbBookTranslationCostRun,
+  type AuthorSheetRate,
 } from '@/lib/api';
 
 const FALLBACK_MODELS = [
@@ -129,6 +132,7 @@ export default function CostLabPage() {
   // ── history table ────────────────────────────────────────────────────────────
   const [runs, setRuns] = useState<DbBookTranslationCostRun[]>([]);
   const [runsLoading, setRunsLoading] = useState(false);
+  const [rates, setRates] = useState<AuthorSheetRate[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>('date');
   const [sortAsc, setSortAsc] = useState(false);
   const [filterBook, setFilterBook] = useState<string>('');
@@ -176,8 +180,12 @@ export default function CostLabPage() {
   const loadRuns = useCallback(async () => {
     setRunsLoading(true);
     try {
-      const { runs: rows } = await fetchCostRuns({ limit: 200 });
+      const [{ runs: rows }, { rates: rateRows }] = await Promise.all([
+        fetchCostRuns({ limit: 200 }),
+        fetchAuthorSheetRates(),
+      ]);
       setRuns(rows);
+      setRates(rateRows);
     } catch {
       /* leave prior rows */
     } finally {
@@ -343,6 +351,28 @@ export default function CostLabPage() {
   const selectedBook = books.find((b) => b.id === bookId);
   const fromScratchUsd = estimate?.fromScratch.cost.totalUsd ?? null;
 
+  // ── author's sheet (а.л.) figures for the estimate card ─────────────────────
+  const bookSheets = estimate?.bookStats.authorSheets ?? null;
+  const formulaPerSheet = estimate?.fromScratch.cost.perAuthorSheetUsd ?? null;
+  // Measured rate for exactly this model × target lang × source lang (if any).
+  const matchedRate = estimate
+    ? rates.find(
+        (r) =>
+          r.model === estimate.model &&
+          r.targetLang.toUpperCase() === lang.toUpperCase() &&
+          (r.sourceLanguage ?? '').toUpperCase() ===
+            (estimate.book.sourceLanguage ?? '').toUpperCase()
+      ) ?? null
+    : null;
+  const realWholeBookUsd =
+    matchedRate?.ratePerSheetUsd != null && bookSheets != null
+      ? matchedRate.ratePerSheetUsd * bookSheets
+      : null;
+  const divergencePct =
+    realWholeBookUsd != null && fromScratchUsd != null && fromScratchUsd > 0
+      ? ((realWholeBookUsd - fromScratchUsd) / fromScratchUsd) * 100
+      : null;
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <PageHeader title="Translation Cost Lab" />
@@ -499,8 +529,61 @@ export default function CostLabPage() {
                 </span>
               )}
             </div>
+            {/* Author's sheet (а.л.) breakdown */}
+            <div className="mt-3 grid grid-cols-1 gap-x-5 gap-y-1.5 border-t border-[var(--separator-opaque)] pt-3 text-sm sm:grid-cols-3">
+              <div>
+                <div className="text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
+                  Объём книги
+                </div>
+                <div className="tabular-nums">{fmtNum(bookSheets, 2)} а.л.</div>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
+                  Формула, $ / а.л.
+                </div>
+                <div className="tabular-nums">{fmtUsd(formulaPerSheet)}</div>
+              </div>
+              <div>
+                <div className="flex items-center gap-1 text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
+                  По реальной ставке
+                  {matchedRate && !matchedRate.reliable && (
+                    <AlertTriangle
+                      className="h-3 w-3 text-amber-600 dark:text-amber-400"
+                      aria-label="менее 1 а.л. измерено — ставка грубая"
+                    />
+                  )}
+                </div>
+                {realWholeBookUsd != null ? (
+                  <div className="tabular-nums">
+                    {fmtUsd(realWholeBookUsd)}
+                    {divergencePct != null && (
+                      <span
+                        className={
+                          'ml-1 text-xs ' +
+                          (Math.abs(divergencePct) <= 15
+                            ? 'text-[var(--app-text-muted)]'
+                            : 'text-amber-600 dark:text-amber-400')
+                        }
+                      >
+                        ({divergencePct >= 0 ? '+' : ''}
+                        {divergencePct.toFixed(0)}% к формуле)
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div
+                    className="text-[var(--app-text-muted)]"
+                    title="нет измерений для этой модели/языка"
+                  >
+                    —
+                  </div>
+                )}
+              </div>
+            </div>
+
             <p className="mt-2 text-xs text-[var(--app-text-muted)]">
               Pure token math — no LLM called. Projects the cold, empty-cache run for one language.
+              1 а.л. = {fmtInt(AUTHOR_SHEET_CHARS)} знаков исходника.
             </p>
           </div>
         )}
@@ -560,6 +643,55 @@ export default function CostLabPage() {
           </div>
         </div>
 
+        {/* ── Real $/author-sheet rates ── */}
+        {rates.length > 0 && (
+          <div className="mb-5">
+            <h3 className="mb-1 text-sm font-semibold">Реальная ставка за а.л.</h3>
+            <p className="mb-3 text-xs text-[var(--app-text-muted)]">
+              Взвешенное среднее Σ cost ÷ Σ знаков × {fmtInt(AUTHOR_SHEET_CHARS)} по модели × языку.
+              Прогоны с ошибками и без известной цены исключены.
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {[...rates]
+                .sort(
+                  (a, b) =>
+                    Number(b.reliable) - Number(a.reliable) || b.authorSheets - a.authorSheets
+                )
+                .map((r) => (
+                  <div
+                    key={`${r.model} ${r.targetLang} ${r.sourceLanguage ?? ''}`}
+                    className="rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3"
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="truncate font-mono text-xs" title={r.model}>
+                        {r.model}
+                      </span>
+                      <span className="whitespace-nowrap text-lg font-bold tabular-nums">
+                        {fmtUsd(r.ratePerSheetUsd)}
+                        <span className="text-xs font-normal text-[var(--app-text-muted)]">
+                          {' '}
+                          / а.л.
+                        </span>
+                      </span>
+                    </div>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[var(--app-text-muted)] tabular-nums">
+                      <span>
+                        {(r.sourceLanguage ?? '?').toUpperCase()} → {r.targetLang}
+                      </span>
+                      <span>{r.runs} прогон(ов)</span>
+                      <span>{fmtNum(r.authorSheets, 2)} а.л.</span>
+                      {!r.reliable && (
+                        <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                          <AlertTriangle className="h-3 w-3" /> &lt; 1 а.л.
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
         {visibleRuns.length === 0 ? (
           <div className="rounded-[var(--radius)] border border-dashed border-[var(--separator-opaque)] p-10 text-center text-sm text-[var(--app-text-muted)]">
             {runsLoading
@@ -570,7 +702,7 @@ export default function CostLabPage() {
           </div>
         ) : (
           <div className="overflow-x-auto rounded-[var(--radius)] border border-[var(--separator-opaque)]">
-            <table className="w-full min-w-[1100px] border-collapse text-sm">
+            <table className="w-full min-w-[1280px] border-collapse text-sm">
               <thead>
                 <tr className="border-b border-[var(--separator-opaque)] text-left text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
                   <Th onClick={() => toggleSort('date')} active={sortKey === 'date'} asc={sortAsc}>
@@ -590,6 +722,8 @@ export default function CostLabPage() {
                   <Th>Tokens in/out</Th>
                   <Th>$ / block</Th>
                   <Th>$ / 1k chars</Th>
+                  <Th>а.л.</Th>
+                  <Th>$ / а.л.</Th>
                   <Th>Duration</Th>
                   <Th>Errors</Th>
                 </tr>
@@ -643,6 +777,14 @@ export default function CostLabPage() {
                       <td className="whitespace-nowrap px-3 py-2">{fmtUsd(r.cost_per_block)}</td>
                       <td className="whitespace-nowrap px-3 py-2">
                         {fmtUsd(r.cost_per_1k_source_chars)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2">
+                        {fmtNum(r.total_source_chars / AUTHOR_SHEET_CHARS, 2)}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2">
+                        {r.cost_per_1k_source_chars != null
+                          ? fmtUsd(r.cost_per_1k_source_chars * 40)
+                          : '—'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-2">{fmtDuration(r.duration_ms)}</td>
                       <td className="px-3 py-2">
