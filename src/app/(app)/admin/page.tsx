@@ -41,7 +41,7 @@ const ADMIN_LINKS: AdminLink[] = [
     href: '/admin/quality',
     title: 'Translation Quality',
     description:
-      'Run deterministic QA on a finished translation — chapter structure, entity preservation, leaked source script or markup, and EPUB validity. First version; a smarter algorithm follows.',
+      'Block-level QA of a finished translation: find the exact paragraphs to fix (leaked markup, dropped names, untranslated lines) with source and translation side by side.',
     Icon: ClipboardCheck,
   },
 ];

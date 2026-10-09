@@ -1735,55 +1735,105 @@ export function runTranslationPlayground(payload: PlaygroundRequest): Promise<Pl
   })
 }
 
-// ── Translation Quality (admin) ───────────────────────────────────────────────
-// Deterministic QA of a finished translation. Mirrors the report produced by
-// server/qa/qa_check.py. See docs/tasks/translation-quality-tool.md.
+// ── Translation Quality (admin, v2 block-level) ───────────────────────────────
+// Mirrors server/utils/translation-qa-blocks.ts. See docs/tasks/translation-quality-tool.md § v2.
 
-export type QualityTargetLang = 'EN' | 'FR' | 'ES' | 'RU'
+export type QaTargetLang = 'EN' | 'FR' | 'ES' | 'RU'
+export type QaSeverity = 'error' | 'review'
+export type QaGroup = 'text' | 'names' | 'style'
+export type QaCheckId =
+  | 'untranslated' | 'source_script' | 'model_artifact' | 'markdown_leak'
+  | 'length_outlier' | 'chapter_title_untranslated'
+  | 'missing_name' | 'name_form_not_in_glossary'
+  | 'profanity_added' | 'translator_note' | 'number_missing'
 
-export interface TranslationQualityChapterLength {
-  chapter: number
-  src_words: number
-  tgt_words: number
-  ratio: number
-}
+export interface QaHighlight { side: 'source' | 'target'; start: number; end: number }
 
-export interface TranslationQualityEntity {
-  entity: string
-  targets: string[]
-  src: number
-  tgt: number
-  flag: boolean
-  chapters: { chapter: number; src: number; tgt: number }[]
-}
-
-export interface TranslationQualityReport {
-  bookId: string
+export interface QaIssue {
+  key: string
+  check: QaCheckId
+  severity: QaSeverity
+  group: QaGroup
+  chapterIndex: number
+  chapterId: string
+  chapterTitle: string
+  blockId: string
+  position: number
   source: string
   target: string
-  src_lang: string
-  tgt_lang: string
+  highlights: QaHighlight[]
+  message: string
+  expected?: string[]
+  dismissal?: { status: 'accepted' | 'false_positive'; at: string }
+}
+
+export interface QaChapterSummary {
+  index: number
+  id: string
+  title: string
+  blocks: number
+  srcWords: number
+  tgtWords: number
+  ratio: number
+  errors: number
+  review: number
+}
+
+export interface QaReportV2 {
+  engine: 'v2-blocks'
+  runId: string
+  bookId: string
+  srcLang: string
+  tgtLang: string
   genre: 'fiction' | 'nonfiction'
   hasGlossary: boolean
-  verdict: 'BLOCKING' | 'OK'
-  blocking: string[]
-  warnings: string[]
-  chapters: { source: number; target: number }
-  length: { median_ratio: number; per_chapter: TranslationQualityChapterLength[] }
-  entities?: TranslationQualityEntity[]
+  generatedAt: string
+  verdict: 'ERRORS' | 'REVIEW' | 'CLEAN'
+  summary: {
+    errors: number
+    review: number
+    dismissed: number
+    byCheck: Partial<Record<QaCheckId, number>>
+    truncated: QaCheckId[]
+  }
+  previousRun?: { runId: string; generatedAt: string; errors: number; review: number }
+  chapters: QaChapterSummary[]
+  issues: QaIssue[]
+  epub: { blocking: string[]; warnings: string[] }
 }
 
-export interface TranslationQualityRequest {
+export interface QaRunSummaryRow {
+  runId: string
+  generatedAt: string
+  engine: string
+  summary: { errors?: number; review?: number; dismissed?: number; blocks?: number }
+}
+
+export function runTranslationQuality(payload: {
   bookId: string
-  targetLang: QualityTargetLang
+  targetLang: QaTargetLang
   genre?: 'fiction' | 'nonfiction'
-}
-
-export function runTranslationQuality(payload: TranslationQualityRequest): Promise<TranslationQualityReport> {
-  return request<TranslationQualityReport>('/api/admin/translation-quality', {
+}): Promise<QaReportV2> {
+  return request<QaReportV2>('/api/admin/translation-quality', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export function dismissQualityIssues(payload: {
+  bookId: string
+  targetLang: QaTargetLang
+  items: { blockId: string; issueKey: string; status: 'accepted' | 'false_positive' | null }[]
+}): Promise<{ ok: boolean; upserted: number; cleared: number }> {
+  return request('/api/admin/translation-quality/dismiss', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function listQualityRuns(bookId: string, targetLang: QaTargetLang, limit = 20): Promise<{ runs: QaRunSummaryRow[] }> {
+  const params = new URLSearchParams({ bookId, targetLang, limit: String(limit) })
+  return request<{ runs: QaRunSummaryRow[] }>(`/api/admin/translation-quality/runs?${params}`)
 }
 
 export interface PlaygroundPromptTemplate {
