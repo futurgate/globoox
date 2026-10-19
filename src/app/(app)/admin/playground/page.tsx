@@ -16,6 +16,7 @@ import {
   Copy,
   Check,
   GitCompare,
+  Info,
   BookOpen,
   Upload as UploadIcon,
 } from 'lucide-react';
@@ -108,13 +109,45 @@ const MODE_PLACEHOLDERS: Record<Tab, string[]> = {
 type FlowStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction';
 type FlowGenStageKey = 'glossary' | 'translate' | 'revision';
 
-// Full-flow stage editors: one custom prompt per pipeline stage.
-const FLOW_STAGES: { key: FlowStageKey; label: string; placeholders: string; canGenerate: boolean }[] = [
-  { key: 'glossary', label: '1 · Glossary prompt', placeholders: '{SOURCE_LANG} {TARGET_LANG} {EXISTING_GLOSSARY} {SOURCE_TEXT}', canGenerate: true },
-  { key: 'translate', label: '2 · Translate prompt', placeholders: '{SOURCE_TEXT} {GLOSSARY}', canGenerate: true },
-  { key: 'revision', label: '3 · Revision prompt', placeholders: '{TARGET_LANGUAGE} {GLOSSARY} {SOURCE_NUMBERED} {DRAFT_NUMBERED}', canGenerate: true },
-  { key: 'readerCheck', label: '4 · Reader check prompt', placeholders: '{TARGET_LANG} {CHAPTER_TEXT}', canGenerate: false },
-  { key: 'correction', label: '5 · Correction prompt', placeholders: '{SOURCE_LANG} {TARGET_LANG} {GLOSSARY_EXCERPT} {SOURCE_WINDOW} {TRANSLATION_WINDOW} {PROBLEM}', canGenerate: false },
+// Full-flow stage editors: one custom prompt per pipeline stage. `input` is a
+// one-line, linguist-facing note on exactly what text reaches the model and in
+// what shape (shown muted under each stage header).
+const FLOW_STAGES: { key: FlowStageKey; label: string; placeholders: string; canGenerate: boolean; input: string }[] = [
+  {
+    key: 'glossary',
+    label: '1 · Glossary prompt',
+    placeholders: '{SOURCE_LANG} {TARGET_LANG} {EXISTING_GLOSSARY} {SOURCE_TEXT}',
+    canGenerate: true,
+    input: 'Whole chapter as plain source text + the running glossary JSON. One call; reads only.',
+  },
+  {
+    key: 'translate',
+    label: '2 · Translate prompt',
+    placeholders: '{SOURCE_TEXT} {GLOSSARY}',
+    canGenerate: true,
+    input: 'Whole passage as numbered [1] [2]… source segments; glossary injected when on. One call.',
+  },
+  {
+    key: 'revision',
+    label: '3 · Revision prompt',
+    placeholders: '{TARGET_LANGUAGE} {GLOSSARY} {SOURCE_NUMBERED} {DRAFT_NUMBERED}',
+    canGenerate: true,
+    input: 'Source + draft as paired numbered [N] segments, in batches; ±2 neighbour draft segments as context.',
+  },
+  {
+    key: 'readerCheck',
+    label: '4 · Reader check prompt',
+    placeholders: '{TARGET_LANG} {CHAPTER_TEXT}',
+    canGenerate: false,
+    input: 'The finished translation ONLY — plain text, no source, no numbering. One call → JSON list of places.',
+  },
+  {
+    key: 'correction',
+    label: '5 · Correction prompt',
+    placeholders: '{SOURCE_LANG} {TARGET_LANG} {GLOSSARY_EXCERPT} {SOURCE_WINDOW} {TRANSLATION_WINDOW} {PROBLEM}',
+    canGenerate: false,
+    input: 'Per reported place: a ±2-segment window of source + translation as numbered [N] segments + the problem. One call each.',
+  },
 ];
 
 const VARIANT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -1118,8 +1151,9 @@ export default function TranslationPlaygroundPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-[var(--app-text-muted)]">
                 Build one pipeline: switch each stage on/off and pick its model. The flow runs the
-                enabled stages in order (glossary → translate → revision) on the chapter above.
-                Leave a stage prompt blank to use the live production template.
+                enabled stages in order (glossary → translate → revision → reader check → correction)
+                on the chapter above. Each stage card notes what text it sends the model. Leave a
+                stage prompt blank to use the live production template.
               </p>
               <button
                 type="button"
@@ -1230,6 +1264,14 @@ export default function TranslationPlaygroundPage() {
                     {depBlocked && (
                       <p className="mb-2 text-xs text-amber-600 dark:text-amber-400">{blockedReason}</p>
                     )}
+
+                    {/* What actually reaches the model (linguist-facing). */}
+                    <p className="mb-2 flex items-start gap-1.5 text-xs text-[var(--app-text-muted)]">
+                      <Info className="mt-0.5 h-3 w-3 shrink-0" />
+                      <span>
+                        <span className="font-medium">To the model:</span> {s.input}
+                      </span>
+                    </p>
 
                     {/* Per-stage model + temperature. */}
                     <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2">
