@@ -2071,14 +2071,37 @@ function FlowResultCard({
   const secs = (ms?: number) => (ms != null ? `${(ms / 1000).toFixed(1)}s` : '—');
   const revBlocks = rev?.blocks ?? [];
 
+  // Per-stage $ breakdown for the stages that actually ran (judge included).
+  const judgeCost = typeof r.judge?.costUsd === 'number' ? r.judge.costUsd : undefined;
+  const costByStage: { label: string; cost: number }[] = [
+    { label: 'glossary', cost: g?.costUsd },
+    { label: 'translate', cost: t?.costUsd },
+    { label: 'revision', cost: rev?.costUsd },
+    { label: 'reader', cost: rc?.costUsd },
+    { label: 'correction', cost: corr?.costUsd },
+    { label: 'judge', cost: judgeCost },
+  ].filter((c): c is { label: string; cost: number } => typeof c.cost === 'number');
+
   return (
     <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <span className="font-mono text-sm font-semibold">{r.model}</span>
         <span className="text-xs text-[var(--app-text-muted)]">
           total {fmtCost(r.totalCostUsd)} · {secs(r.totalLatencyMs)}
         </span>
       </div>
+
+      {/* Per-stage cost in $ — what each step of the run cost. */}
+      {costByStage.length > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-[var(--app-text-muted)]">
+          <span className="font-medium text-[var(--app-text)]">Cost by stage:</span>
+          {costByStage.map((c) => (
+            <span key={c.label}>
+              {c.label} <span className="tabular-nums">{fmtCost(c.cost)}</span>
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* The flow's output: corrected > revised > draft, whichever ran last. */}
       {(() => {
