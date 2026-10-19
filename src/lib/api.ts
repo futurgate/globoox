@@ -1926,6 +1926,8 @@ export function fetchPlaygroundModels(): Promise<PlaygroundModels> {
 // chapter passage per model, with custom prompts per stage.
 
 export interface FictionFlowGlossaryStage {
+  /** Model that ran this stage. */
+  model?: string
   /** Raw glossary output from the model. */
   text: string
   /** Flattened glossary block injected into the later stages. */
@@ -1942,6 +1944,8 @@ export interface FictionFlowGlossaryStage {
 }
 
 export interface FictionFlowTranslateStage {
+  /** Model that ran this stage. */
+  model?: string
   /** Draft translation, blocks joined by blank lines. */
   draftText: string
   /** Raw numbered model output. */
@@ -1966,6 +1970,8 @@ export interface FictionFlowRevisionBlock {
 }
 
 export interface FictionFlowRevisionStage {
+  /** Model that ran this stage. */
+  model?: string
   /** Final polished translation, blocks joined by blank lines. */
   finalText: string
   rawText: string
@@ -1991,6 +1997,57 @@ export interface FictionFlowJudgeStage {
   error?: string
 }
 
+export type FictionReaderSeverity = 'blocks' | 'noticeable' | 'minor'
+
+/** One stumbling point the reader-check stage reported. */
+export interface FictionReaderProblem {
+  quote: string
+  problem: string
+  severity: FictionReaderSeverity
+}
+
+export interface FictionFlowReaderCheckStage {
+  model?: string
+  rawText: string
+  problems: FictionReaderProblem[]
+  problemCount: number
+  parsedOk: boolean
+  parseError: string | null
+  latencyMs: number
+  costUsd: number
+  tokensIn: number
+  tokensOut: number
+}
+
+/** One reader-reported place after the correction stage tried to fix it. */
+export interface FictionCorrectionItem {
+  quote: string
+  problem: string
+  severity: FictionReaderSeverity
+  matched: boolean
+  matchType: 'exact' | 'fuzzy' | 'none'
+  blockIndex: number | null
+  score?: number
+  change: string | null
+  before: string | null
+  after: string | null
+  changed: boolean
+}
+
+export interface FictionFlowCorrectionStage {
+  model?: string
+  /** Translation after all accepted point fixes. */
+  finalText: string
+  rawText: string
+  items: FictionCorrectionItem[]
+  matchedCount: number
+  changedCount: number
+  latencyMs: number
+  costUsd: number
+  tokensIn: number
+  tokensOut: number
+}
+
 export interface FictionFlowResult {
   model: string
   actualModel?: string
@@ -1998,6 +2055,8 @@ export interface FictionFlowResult {
   glossary?: FictionFlowGlossaryStage | null
   translate?: FictionFlowTranslateStage
   revision?: FictionFlowRevisionStage
+  readerCheck?: FictionFlowReaderCheckStage | null
+  correction?: FictionFlowCorrectionStage | null
   judge?: FictionFlowJudgeStage | null
   totalCostUsd?: number
   totalLatencyMs?: number
@@ -2009,12 +2068,37 @@ export interface FictionFlowTemperatures {
   glossary?: number
   translate?: number
   revision?: number
+  readerCheck?: number
+  correction?: number
+}
+
+/**
+ * Which pipeline stages run. Revision + reader check both need translate;
+ * correction needs the reader check (it fixes the places it reports).
+ */
+export interface FictionFlowEnabled {
+  glossary: boolean
+  translate: boolean
+  revision: boolean
+  readerCheck: boolean
+  correction: boolean
+}
+
+/** Model id chosen for each stage. */
+export interface FictionFlowStageModels {
+  glossary?: string
+  translate?: string
+  revision?: string
+  readerCheck?: string
+  correction?: string
 }
 
 export interface FictionFlowResponse {
   targetLanguage: string
   sourceLanguage: string
   useGlossary: boolean
+  enabled?: FictionFlowEnabled
+  stageModels?: FictionFlowStageModels
   temperatures?: FictionFlowTemperatures
   /** Blocks per Pass-2 call used for this run (default 12). */
   revisionBatchSize?: number
@@ -2026,34 +2110,44 @@ export interface FictionFlowRequest {
   sourceText: string
   targetLanguage: string
   sourceLanguage?: string
-  models: string[]
-  useGlossary?: boolean
+  /** Model id per stage (required for each enabled stage). */
+  stageModels: FictionFlowStageModels
+  /** Which stages run (default: all on). */
+  enabled?: FictionFlowEnabled
   existingGlossary?: string
-  prompts?: { glossary?: string; translate?: string; revision?: string }
+  prompts?: {
+    glossary?: string
+    translate?: string
+    revision?: string
+    readerCheck?: string
+    correction?: string
+  }
   temperatures?: FictionFlowTemperatures
   /** Blocks per Pass-2 call (1..100); omit → production default (12). */
   revisionBatchSize?: number
-  /** LLM-judge the final revised text per model. */
+  /** LLM-judge the final (revised, or draft) text. */
   judge?: boolean
   judgeModel?: string
 }
 
-export type FictionFlowStage = 'glossary' | 'translate' | 'revision' | 'judge'
+export type FictionFlowStage = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction' | 'judge'
 
 /** NDJSON progress events streamed by the fiction-flow-playground endpoint. */
 export type FictionFlowEvent =
   | {
       type: 'start'
       totalModels: number
-      /** Stages each model runs (2 without glossary, 3 with). */
+      /** Number of stages this run executes (drives the progress bar). */
       stagesPerModel: number
       blockCount: number
       targetLanguage: string
       sourceLanguage: string
       useGlossary: boolean
+      enabled?: FictionFlowEnabled
+      stageModels?: FictionFlowStageModels
       revisionBatchSize?: number
     }
-  | { type: 'stage'; model: string; stage: FictionFlowStage }
+  | { type: 'stage'; stage: FictionFlowStage }
   | { type: 'model'; result: FictionFlowResult }
   | ({ type: 'done' } & FictionFlowResponse)
   | { type: 'error'; error: string }
@@ -2102,6 +2196,8 @@ export async function runFictionFlowPlaygroundStream(
         targetLanguage: ev.targetLanguage,
         sourceLanguage: ev.sourceLanguage,
         useGlossary: ev.useGlossary,
+        enabled: ev.enabled,
+        stageModels: ev.stageModels,
         blockCount: ev.blockCount,
         results: ev.results,
       }
@@ -2128,6 +2224,8 @@ export interface FictionFlowPrompts {
   glossary: string
   translate: string
   revision: string
+  readerCheck: string
+  correction: string
 }
 
 /** Fetch all three production fiction-flow prompt templates to seed the editors. */

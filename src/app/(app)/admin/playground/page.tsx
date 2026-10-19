@@ -41,6 +41,8 @@ import {
   type FictionFlowResponse,
   type FictionFlowResult,
   type FictionFlowRevisionBlock,
+  type FictionReaderProblem,
+  type FictionCorrectionItem,
   type ApiBook,
   type ApiChapter,
   type ContentBlock,
@@ -100,11 +102,19 @@ const MODE_PLACEHOLDERS: Record<Tab, string[]> = {
   flow: [],
 };
 
+// Full-flow pipeline stages. `glossary`/`translate`/`revision` support the
+// LLM "Generate" button (an existing-language prompt to adapt); the reader
+// stages use fixed language-parameterised templates, so no Generate there.
+type FlowStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction';
+type FlowGenStageKey = 'glossary' | 'translate' | 'revision';
+
 // Full-flow stage editors: one custom prompt per pipeline stage.
-const FLOW_STAGES: { key: 'glossary' | 'translate' | 'revision'; label: string; placeholders: string }[] = [
-  { key: 'glossary', label: '1 · Glossary prompt', placeholders: '{SOURCE_LANG} {TARGET_LANG} {EXISTING_GLOSSARY} {SOURCE_TEXT}' },
-  { key: 'translate', label: '2 · Translate prompt', placeholders: '{SOURCE_TEXT} {GLOSSARY}' },
-  { key: 'revision', label: '3 · Revision prompt', placeholders: '{TARGET_LANGUAGE} {GLOSSARY} {SOURCE_NUMBERED} {DRAFT_NUMBERED}' },
+const FLOW_STAGES: { key: FlowStageKey; label: string; placeholders: string; canGenerate: boolean }[] = [
+  { key: 'glossary', label: '1 · Glossary prompt', placeholders: '{SOURCE_LANG} {TARGET_LANG} {EXISTING_GLOSSARY} {SOURCE_TEXT}', canGenerate: true },
+  { key: 'translate', label: '2 · Translate prompt', placeholders: '{SOURCE_TEXT} {GLOSSARY}', canGenerate: true },
+  { key: 'revision', label: '3 · Revision prompt', placeholders: '{TARGET_LANGUAGE} {GLOSSARY} {SOURCE_NUMBERED} {DRAFT_NUMBERED}', canGenerate: true },
+  { key: 'readerCheck', label: '4 · Reader check prompt', placeholders: '{TARGET_LANG} {CHAPTER_TEXT}', canGenerate: false },
+  { key: 'correction', label: '5 · Correction prompt', placeholders: '{SOURCE_LANG} {TARGET_LANG} {GLOSSARY_EXCERPT} {SOURCE_WINDOW} {TRANSLATION_WINDOW} {PROBLEM}', canGenerate: false },
 ];
 
 const VARIANT_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -209,22 +219,59 @@ export default function TranslationPlaygroundPage() {
   const [loadingSource, setLoadingSource] = useState(false);
 
   // Full-flow (end-to-end) inputs — one editable prompt per pipeline stage.
-  const [flowUseGlossary, setFlowUseGlossary] = useState(true);
+  // Each stage picks its own model and can be switched in or out of the flow.
+  // Revision needs a Pass-1 draft, so it can only run when Translate runs.
+  const [flowStages, setFlowStages] = useState<Record<FlowStageKey, { enabled: boolean; model: string }>>({
+    glossary: { enabled: true, model: 'gemini-2.5-flash' },
+    translate: { enabled: true, model: 'gemini-2.5-flash' },
+    revision: { enabled: true, model: 'gemini-2.5-flash' },
+    // The two reader stages (ТЗ п.13) default OFF and to a Pro model.
+    readerCheck: { enabled: false, model: 'gemini-2.5-pro' },
+    correction: { enabled: false, model: 'gemini-2.5-pro' },
+  });
+  const setStageEnabled = (key: FlowStageKey, enabled: boolean) => {
+    setFlowStages((prev) => {
+      const next = { ...prev, [key]: { ...prev[key], enabled } };
+      // Keep stage dependencies consistent: revision + reader check need translate;
+      // correction needs the reader check.
+      if (key === 'translate' && !enabled) {
+        next.revision = { ...next.revision, enabled: false };
+        next.readerCheck = { ...next.readerCheck, enabled: false };
+        next.correction = { ...next.correction, enabled: false };
+      }
+      if (key === 'revision' && enabled) next.translate = { ...next.translate, enabled: true };
+      if (key === 'readerCheck') {
+        if (enabled) next.translate = { ...next.translate, enabled: true };
+        else next.correction = { ...next.correction, enabled: false };
+      }
+      if (key === 'correction' && enabled) {
+        next.readerCheck = { ...next.readerCheck, enabled: true };
+        next.translate = { ...next.translate, enabled: true };
+      }
+      return next;
+    });
+  };
+  const setStageModel = (key: FlowStageKey, model: string) =>
+    setFlowStages((prev) => ({ ...prev, [key]: { ...prev[key], model } }));
   const [flowExistingGlossary, setFlowExistingGlossary] = useState('{}');
-  const [flowPrompts, setFlowPrompts] = useState<{ glossary: string; translate: string; revision: string }>({
+  const [flowPrompts, setFlowPrompts] = useState<Record<FlowStageKey, string>>({
     glossary: '',
     translate: '',
     revision: '',
+    readerCheck: '',
+    correction: '',
   });
   // Per-stage sampling temperature as raw strings; blank → model default for that stage.
-  const [flowTemperatures, setFlowTemperatures] = useState<{ glossary: string; translate: string; revision: string }>({
+  const [flowTemperatures, setFlowTemperatures] = useState<Record<FlowStageKey, string>>({
     glossary: '',
     translate: '',
     revision: '',
+    readerCheck: '',
+    correction: '',
   });
   const [flowLoadingPrompts, setFlowLoadingPrompts] = useState(false);
   // Which stage prompt is currently being auto-generated (null = none).
-  const [flowGenerating, setFlowGenerating] = useState<'glossary' | 'translate' | 'revision' | null>(null);
+  const [flowGenerating, setFlowGenerating] = useState<FlowGenStageKey | null>(null);
   const [flowRunning, setFlowRunning] = useState(false);
   const [flowResponse, setFlowResponse] = useState<FictionFlowResponse | null>(null);
   // Live progress while the flow streams: completed stages / total stages.
@@ -340,7 +387,20 @@ export default function TranslationPlaygroundPage() {
     models.length > 0 &&
     !running &&
     (mode !== 'revision' || draftText.trim().length > 0);
-  const canRunFlow = mode === 'flow' && sourceText.trim().length > 0 && models.length > 0 && !flowRunning;
+  // At least one stage on, every enabled stage has a model, and stage dependencies
+  // hold (revision + reader check need translate; correction needs reader check).
+  const anyFlowStageOn = (['glossary', 'translate', 'revision', 'readerCheck', 'correction'] as FlowStageKey[]).some(
+    (k) => flowStages[k].enabled,
+  );
+  const everyEnabledHasModel = (['glossary', 'translate', 'revision', 'readerCheck', 'correction'] as FlowStageKey[]).every(
+    (k) => !flowStages[k].enabled || flowStages[k].model.trim().length > 0,
+  );
+  const flowDepsOk =
+    (!flowStages.revision.enabled || flowStages.translate.enabled) &&
+    (!flowStages.readerCheck.enabled || flowStages.translate.enabled) &&
+    (!flowStages.correction.enabled || flowStages.readerCheck.enabled);
+  const flowStagesValid = anyFlowStageOn && everyEnabledHasModel && flowDepsOk;
+  const canRunFlow = mode === 'flow' && sourceText.trim().length > 0 && flowStagesValid && !flowRunning;
   const cellCount = models.length * variants.length;
 
   const handleRun = async () => {
@@ -393,8 +453,14 @@ export default function TranslationPlaygroundPage() {
     setFlowLoadingPrompts(true);
     setPromptError(null);
     try {
-      const res = await fetchFictionFlowPrompts(targetLanguage, flowUseGlossary);
-      setFlowPrompts({ glossary: res.glossary, translate: res.translate, revision: res.revision });
+      const res = await fetchFictionFlowPrompts(targetLanguage, flowStages.glossary.enabled);
+      setFlowPrompts({
+        glossary: res.glossary,
+        translate: res.translate,
+        revision: res.revision,
+        readerCheck: res.readerCheck,
+        correction: res.correction,
+      });
     } catch (e: unknown) {
       setPromptError(e instanceof Error ? e.message : 'Failed to load production prompts');
     } finally {
@@ -402,21 +468,21 @@ export default function TranslationPlaygroundPage() {
     }
   };
 
-  const updateFlowPrompt = (stage: 'glossary' | 'translate' | 'revision', value: string) => {
+  const updateFlowPrompt = (stage: FlowStageKey, value: string) => {
     setFlowPrompts((prev) => ({ ...prev, [stage]: value }));
   };
 
   // Auto-draft a prompt for this stage by LLM-adapting an existing-language
   // prompt to the current target language. Useful when the target (e.g. RU) has
   // no built-in prompt, so the editor would otherwise start blank.
-  const generateFlowPrompt = async (stage: 'glossary' | 'translate' | 'revision') => {
+  const generateFlowPrompt = async (stage: FlowGenStageKey) => {
     setFlowGenerating(stage);
     setPromptError(null);
     try {
       const res = await generateFictionFlowPrompt({
         stage,
         targetLanguage,
-        useGlossary: flowUseGlossary,
+        useGlossary: flowStages.glossary.enabled,
       });
       setFlowPrompts((prev) => ({ ...prev, [stage]: res.prompt }));
     } catch (e: unknown) {
@@ -426,7 +492,7 @@ export default function TranslationPlaygroundPage() {
     }
   };
 
-  const updateFlowTemperature = (stage: 'glossary' | 'translate' | 'revision', value: string) => {
+  const updateFlowTemperature = (stage: FlowStageKey, value: string) => {
     setFlowTemperatures((prev) => ({ ...prev, [stage]: value }));
   };
 
@@ -537,32 +603,45 @@ export default function TranslationPlaygroundPage() {
     setError(null);
     setFlowResponse(null);
     setFlowProgress({ done: 0, total: 0 });
-    // Track stages completed per model so a failed model (which never emits all
-    // its stage events) still tops out the bar via its `model` event.
-    const perModel: Record<string, number> = {};
-    let stagesPerModel = 0;
-    const recompute = () => {
-      const done = Object.values(perModel).reduce((a, b) => a + b, 0);
-      setFlowProgress({ done, total: models.length * stagesPerModel });
-    };
+    // The flow runs as one pipeline; count stage-complete events against the
+    // total reported in `start`. The `model` event tops the bar out to 100%
+    // even if the run failed partway.
+    let total = 0;
+    let done = 0;
     try {
       const res = await runFictionFlowPlaygroundStream(
         {
           sourceText: sourceText.trim(),
           targetLanguage,
           sourceLanguage,
-          models,
-          useGlossary: flowUseGlossary,
-          existingGlossary: flowUseGlossary ? flowExistingGlossary.trim() || '{}' : undefined,
+          stageModels: {
+            glossary: flowStages.glossary.model,
+            translate: flowStages.translate.model,
+            revision: flowStages.revision.model,
+            readerCheck: flowStages.readerCheck.model,
+            correction: flowStages.correction.model,
+          },
+          enabled: {
+            glossary: flowStages.glossary.enabled,
+            translate: flowStages.translate.enabled,
+            revision: flowStages.revision.enabled,
+            readerCheck: flowStages.readerCheck.enabled,
+            correction: flowStages.correction.enabled,
+          },
+          existingGlossary: flowStages.glossary.enabled ? flowExistingGlossary.trim() || '{}' : undefined,
           prompts: {
             glossary: flowPrompts.glossary.trim() || undefined,
             translate: flowPrompts.translate.trim() || undefined,
             revision: flowPrompts.revision.trim() || undefined,
+            readerCheck: flowPrompts.readerCheck.trim() || undefined,
+            correction: flowPrompts.correction.trim() || undefined,
           },
           temperatures: {
             glossary: parseTemp(flowTemperatures.glossary),
             translate: parseTemp(flowTemperatures.translate),
             revision: parseTemp(flowTemperatures.revision),
+            readerCheck: parseTemp(flowTemperatures.readerCheck),
+            correction: parseTemp(flowTemperatures.correction),
           },
           revisionBatchSize: parseBatchSize(revisionBatchSize),
           judge,
@@ -570,14 +649,15 @@ export default function TranslationPlaygroundPage() {
         },
         (ev) => {
           if (ev.type === 'start') {
-            stagesPerModel = ev.stagesPerModel;
-            setFlowProgress({ done: 0, total: ev.totalModels * ev.stagesPerModel });
+            total = ev.stagesPerModel;
+            done = 0;
+            setFlowProgress({ done, total });
           } else if (ev.type === 'stage') {
-            perModel[ev.model] = (perModel[ev.model] ?? 0) + 1;
-            recompute();
+            done += 1;
+            setFlowProgress({ done, total });
           } else if (ev.type === 'model') {
-            perModel[ev.result.model] = stagesPerModel;
-            recompute();
+            done = total;
+            setFlowProgress({ done, total });
           }
         },
       );
@@ -970,7 +1050,8 @@ export default function TranslationPlaygroundPage() {
           </div>
         </div>
 
-        {/* Models */}
+        {/* Models (flow mode picks a model per stage instead — see below) */}
+        {mode !== 'flow' && (
         <div>
           <div className="mb-1.5 flex items-center gap-2">
             <label className="block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
@@ -1029,19 +1110,17 @@ export default function TranslationPlaygroundPage() {
             </Button>
           </div>
         </div>
+        )}
 
         {/* Full flow: run+customise every pipeline stage */}
         {mode === 'flow' && (
           <div className="space-y-4 border-t border-[var(--separator-opaque)] pt-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <label className="flex cursor-pointer items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={flowUseGlossary}
-                  onChange={(e) => setFlowUseGlossary(e.target.checked)}
-                />
-                Build &amp; use a glossary (Pass 0 → injected into translate + revision)
-              </label>
+              <p className="text-xs text-[var(--app-text-muted)]">
+                Build one pipeline: switch each stage on/off and pick its model. The flow runs the
+                enabled stages in order (glossary → translate → revision) on the chapter above.
+                Leave a stage prompt blank to use the live production template.
+              </p>
               <button
                 type="button"
                 onClick={loadFlowPrompts}
@@ -1057,21 +1136,6 @@ export default function TranslationPlaygroundPage() {
                 Load prod prompts
               </button>
             </div>
-
-            {flowUseGlossary && (
-              <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-                  Seed glossary JSON (from earlier chapters — {'{}'} for the first)
-                </label>
-                <textarea
-                  value={flowExistingGlossary}
-                  onChange={(e) => setFlowExistingGlossary(e.target.value)}
-                  rows={2}
-                  placeholder="{}"
-                  className={inputCls + ' resize-y font-mono text-xs leading-relaxed'}
-                />
-              </div>
-            )}
 
             <div>
               <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
@@ -1091,18 +1155,43 @@ export default function TranslationPlaygroundPage() {
               </p>
             </div>
 
-            <p className="text-xs text-[var(--app-text-muted)]">
-              Each model runs the full chain (glossary → translate → revision) on the chapter above.
-              Leave a stage prompt blank to use the live production template, or load and tweak it.
-            </p>
-
             <div className="space-y-3">
-              {FLOW_STAGES.filter((s) => flowUseGlossary || s.key !== 'glossary').map((s) => {
+              {FLOW_STAGES.map((s) => {
                 const value = flowPrompts[s.key];
+                const stage = flowStages[s.key];
+                // A stage whose prerequisite is off can't be toggled on.
+                const blockedReason =
+                  (s.key === 'revision' || s.key === 'readerCheck') && !flowStages.translate.enabled
+                    ? 'Needs a translation — enable Translate to use it.'
+                    : s.key === 'correction' && !flowStages.readerCheck.enabled
+                      ? 'Needs the Reader check — it fixes the places that step reports.'
+                      : null;
+                const depBlocked = blockedReason != null;
+                const off = !stage.enabled;
+                const modelOptions = [...new Set([stage.model, ...availableModels].filter(Boolean))];
                 return (
-                  <div key={s.key} className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
-                    <div className="mb-2 flex items-center gap-2">
-                      <span className="text-sm font-medium">{s.label}</span>
+                  <div
+                    key={s.key}
+                    className={
+                      'rounded-[var(--radius)] border p-3 ' +
+                      (off
+                        ? 'border-dashed border-[var(--separator-opaque)] opacity-60'
+                        : 'border-[var(--separator-opaque)]')
+                    }
+                  >
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <label
+                        className="flex cursor-pointer items-center gap-2 text-sm font-medium"
+                        title={depBlocked ? blockedReason! : `Toggle the ${s.key} stage`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={stage.enabled}
+                          disabled={depBlocked}
+                          onChange={(e) => setStageEnabled(s.key, e.target.checked)}
+                        />
+                        {s.label}
+                      </label>
                       <button
                         type="button"
                         onClick={() =>
@@ -1118,37 +1207,80 @@ export default function TranslationPlaygroundPage() {
                       >
                         <Maximize2 className="h-3.5 w-3.5" /> View
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => generateFlowPrompt(s.key)}
-                        disabled={flowGenerating !== null}
-                        title={`Auto-draft this prompt for ${targetLanguage} by adapting the existing-language prompt with an LLM`}
-                        className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-50"
-                      >
-                        {flowGenerating === s.key ? (
-                          <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating…</>
-                        ) : (
-                          <><Sparkles className="h-3.5 w-3.5" /> Generate</>
-                        )}
-                      </button>
+                      {s.canGenerate && (
+                        <button
+                          type="button"
+                          onClick={() => generateFlowPrompt(s.key as FlowGenStageKey)}
+                          disabled={flowGenerating !== null}
+                          title={`Auto-draft this prompt for ${targetLanguage} by adapting the existing-language prompt with an LLM`}
+                          className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)] disabled:opacity-50"
+                        >
+                          {flowGenerating === s.key ? (
+                            <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generating…</>
+                          ) : (
+                            <><Sparkles className="h-3.5 w-3.5" /> Generate</>
+                          )}
+                        </button>
+                      )}
                       <span className="ml-auto text-xs text-[var(--app-text-muted)]">
                         {value.trim() ? `${value.length} chars` : 'prod default'}
                       </span>
                     </div>
-                    <div className="mb-2 flex items-center gap-2">
-                      <label className="text-xs text-[var(--app-text-muted)]">Temperature</label>
-                      <input
-                        type="number"
-                        min={0}
-                        max={2}
-                        step={0.1}
-                        value={flowTemperatures[s.key]}
-                        onChange={(e) => updateFlowTemperature(s.key, e.target.value)}
-                        placeholder="default"
-                        className="w-24 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-transparent px-2 py-1 text-xs"
-                      />
-                      <span className="text-xs text-[var(--app-text-muted)]">blank = model default · range 0–2</span>
+
+                    {depBlocked && (
+                      <p className="mb-2 text-xs text-amber-600 dark:text-amber-400">{blockedReason}</p>
+                    )}
+
+                    {/* Per-stage model + temperature. */}
+                    <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2">
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-[var(--app-text-muted)]">Model</label>
+                        <select
+                          value={stage.model}
+                          disabled={off}
+                          onChange={(e) => setStageModel(s.key, e.target.value)}
+                          className={inputCls + ' w-auto py-1 disabled:opacity-50'}
+                        >
+                          {modelOptions.map((m) => (
+                            <option key={m} value={m}>
+                              {m}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs text-[var(--app-text-muted)]">Temperature</label>
+                        <input
+                          type="number"
+                          min={0}
+                          max={2}
+                          step={0.1}
+                          value={flowTemperatures[s.key]}
+                          disabled={off}
+                          onChange={(e) => updateFlowTemperature(s.key, e.target.value)}
+                          placeholder="default"
+                          className="w-24 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-transparent px-2 py-1 text-xs disabled:opacity-50"
+                        />
+                        <span className="text-xs text-[var(--app-text-muted)]">blank = model default · 0–2</span>
+                      </div>
                     </div>
+
+                    {/* Glossary stage also seeds from prior chapters' glossary JSON. */}
+                    {s.key === 'glossary' && stage.enabled && (
+                      <div className="mb-2">
+                        <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                          Seed glossary JSON (from earlier chapters — {'{}'} for the first)
+                        </label>
+                        <textarea
+                          value={flowExistingGlossary}
+                          onChange={(e) => setFlowExistingGlossary(e.target.value)}
+                          rows={2}
+                          placeholder="{}"
+                          className={inputCls + ' resize-y font-mono text-xs leading-relaxed'}
+                        />
+                      </div>
+                    )}
+
                     <textarea
                       value={value}
                       onChange={(e) => updateFlowPrompt(s.key, e.target.value)}
@@ -1325,7 +1457,12 @@ export default function TranslationPlaygroundPage() {
               {flowRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
               {flowRunning
                 ? 'Running flow…'
-                : `Run flow (${models.length} model${models.length === 1 ? '' : 's'})`}
+                : (() => {
+                    const n = (['glossary', 'translate', 'revision', 'readerCheck', 'correction'] as FlowStageKey[]).filter(
+                      (k) => flowStages[k].enabled,
+                    ).length;
+                    return `Run flow (${n} stage${n === 1 ? '' : 's'})`;
+                  })()}
             </Button>
           ) : (
             <Button onClick={handleRun} disabled={!canRun}>
@@ -1370,7 +1507,15 @@ export default function TranslationPlaygroundPage() {
           <div className="mb-3 text-xs text-[var(--app-text-muted)]">
             full flow · {flowResponse.sourceLanguage} → {flowResponse.targetLanguage} ·{' '}
             {flowResponse.blockCount} block{flowResponse.blockCount === 1 ? '' : 's'}
-            {flowResponse.useGlossary ? ' · with glossary' : ' · no glossary'}
+            {flowResponse.enabled && (
+              <>
+                {' · stages: '}
+                {(['glossary', 'translate', 'revision', 'readerCheck', 'correction'] as const)
+                  .filter((k) => flowResponse.enabled![k])
+                  .map((k) => `${k}${flowResponse.stageModels?.[k] ? ` (${flowResponse.stageModels[k]})` : ''}`)
+                  .join(' → ')}
+              </>
+            )}
           </div>
           <div className="space-y-4">
             {flowResponse.results.map((r) => (
@@ -1779,6 +1924,84 @@ function FlowRevisionDiff({ blocks }: { blocks: FictionFlowRevisionBlock[] }) {
   );
 }
 
+const SEVERITY_CLS: Record<string, string> = {
+  blocks: 'text-red-600 dark:text-red-400',
+  noticeable: 'text-amber-600 dark:text-amber-400',
+  minor: 'text-[var(--app-text-muted)]',
+};
+
+/**
+ * Reader-check places and, when the correction stage ran, what it did with each.
+ * Problems and correction items are aligned by their quote (the correction stage
+ * carries the quote through), so a reader place shows its fix inline.
+ */
+function FlowReaderPanel({
+  problems,
+  items,
+}: {
+  problems: FictionReaderProblem[];
+  items: FictionCorrectionItem[];
+}) {
+  // Prefer the correction items when present (they carry the quote + outcome);
+  // otherwise just render the raw reader problems.
+  const rows: FictionCorrectionItem[] = items.length
+    ? items
+    : problems.map((p) => ({
+        quote: p.quote,
+        problem: p.problem,
+        severity: p.severity,
+        matched: false,
+        matchType: 'none' as const,
+        blockIndex: null,
+        change: null,
+        before: null,
+        after: null,
+        changed: false,
+      }));
+
+  if (rows.length === 0) {
+    return (
+      <p className="mt-2 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3 text-xs text-[var(--app-text-muted)]">
+        The reader found nothing to stumble on.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-2 space-y-2 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3">
+      <ol className="space-y-2">
+        {rows.map((it, idx) => (
+          <li key={idx} className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-2 text-sm">
+            <div className="mb-1 flex flex-wrap items-center gap-2 text-xs">
+              <span className={'font-semibold uppercase ' + (SEVERITY_CLS[it.severity] ?? '')}>{it.severity}</span>
+              {items.length > 0 &&
+                (it.changed ? (
+                  <span className="rounded bg-emerald-500/20 px-1 text-emerald-700 dark:text-emerald-300">fixed</span>
+                ) : it.matched ? (
+                  <span className="text-[var(--app-text-muted)]">matched, no change</span>
+                ) : (
+                  <span className="rounded bg-red-500/15 px-1 text-red-600 dark:text-red-400">not found</span>
+                ))}
+              {it.matchType === 'fuzzy' && it.score != null && (
+                <span className="text-[var(--app-text-muted)]">fuzzy {it.score}</span>
+              )}
+              {it.blockIndex != null && <span className="text-[var(--app-text-muted)]">block {it.blockIndex + 1}</span>}
+            </div>
+            <p className="italic text-[var(--app-text-muted)]">“{it.quote}”</p>
+            {it.problem && <p className="mt-0.5 text-[var(--app-text)]">{it.problem}</p>}
+            {it.change && <p className="mt-0.5 text-xs text-[var(--app-text-muted)]">CHANGE: {it.change}</p>}
+            {it.changed && it.before != null && it.after != null && (
+              <div className="mt-1">
+                <InlineDiff before={it.before} after={it.after} />
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
 /** One model's full-flow run: final translation + per-stage outputs and metrics. */
 function FlowResultCard({
   result: r,
@@ -1788,6 +2011,7 @@ function FlowResultCard({
   onView: (title: string, content: string) => void;
 }) {
   const [showDiff, setShowDiff] = useState(false);
+  const [showReader, setShowReader] = useState(false);
   if (!r.ok) {
     return (
       <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
@@ -1800,6 +2024,8 @@ function FlowResultCard({
   const g = r.glossary;
   const t = r.translate;
   const rev = r.revision;
+  const rc = r.readerCheck;
+  const corr = r.correction;
   const secs = (ms?: number) => (ms != null ? `${(ms / 1000).toFixed(1)}s` : '—');
   const revBlocks = rev?.blocks ?? [];
 
@@ -1812,26 +2038,35 @@ function FlowResultCard({
         </span>
       </div>
 
-      {/* Final polished translation — the flow's output. */}
-      {rev && (
-        <div className="mb-3">
-          <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
-              Final (revised)
-            </span>
-            <button
-              type="button"
-              onClick={() => onView(`${r.model} · final`, rev.finalText)}
-              className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
-            >
-              <Maximize2 className="h-3.5 w-3.5" /> View
-            </button>
+      {/* The flow's output: corrected > revised > draft, whichever ran last. */}
+      {(() => {
+        const outText = corr ? corr.finalText : rev ? rev.finalText : t ? t.draftText : '';
+        if (!outText) return null;
+        const label = corr
+          ? 'Final (corrected)'
+          : rev
+            ? 'Final (revised)'
+            : 'Final (draft — revision off)';
+        return (
+          <div className="mb-3">
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <span className="text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
+                {label}
+              </span>
+              <button
+                type="button"
+                onClick={() => onView(`${r.model} · final`, outText)}
+                className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:text-[var(--app-accent)]"
+              >
+                <Maximize2 className="h-3.5 w-3.5" /> View
+              </button>
+            </div>
+            <p className="max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">
+              {outText}
+            </p>
           </div>
-          <p className="max-h-64 overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed">
-            {rev.finalText}
-          </p>
-        </div>
-      )}
+        );
+      })()}
 
       {/* LLM-judge of the final revised text (optional). */}
       {r.judge && (
@@ -1875,6 +2110,7 @@ function FlowResultCard({
         {g && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-medium text-[var(--app-text)]">Glossary</span>
+            {g.model && <span className="font-mono">{g.model}</span>}
             <span
               className={
                 g.parsedOk
@@ -1900,6 +2136,7 @@ function FlowResultCard({
         {t && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-medium text-[var(--app-text)]">Translate</span>
+            {t.model && <span className="font-mono">{t.model}</span>}
             <span className={t.parsedCount === t.blockCount ? '' : 'text-amber-600 dark:text-amber-400'}>
               {t.parsedCount}/{t.blockCount} blocks
             </span>
@@ -1918,6 +2155,7 @@ function FlowResultCard({
         {rev && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="font-medium text-[var(--app-text)]">Revision</span>
+            {rev.model && <span className="font-mono">{rev.model}</span>}
             <span className={rev.changedCount > 0 ? '' : 'text-[var(--app-text-muted)]'}>
               {rev.changedCount}/{revBlocks.length} changed
             </span>
@@ -1942,10 +2180,55 @@ function FlowResultCard({
             )}
           </div>
         )}
+        {rc && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-medium text-[var(--app-text)]">Reader check</span>
+            {rc.model && <span className="font-mono">{rc.model}</span>}
+            <span
+              className={
+                rc.parsedOk
+                  ? rc.problemCount > 0
+                    ? ''
+                    : 'text-[var(--app-text-muted)]'
+                  : 'text-red-600 dark:text-red-400'
+              }
+            >
+              {rc.parsedOk ? `${rc.problemCount} problem${rc.problemCount === 1 ? '' : 's'}` : 'parse failed'}
+            </span>
+            <span>{fmtCost(rc.costUsd)}</span>
+            <span>{secs(rc.latencyMs)}</span>
+            <span>{rc.tokensIn}→{rc.tokensOut} tok</span>
+            {(rc.problemCount > 0 || !!corr) && (
+              <button
+                type="button"
+                onClick={() => setShowReader((s) => !s)}
+                className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
+              >
+                <GitCompare className="h-3 w-3" /> {showReader ? 'Hide places' : 'Show places'}
+              </button>
+            )}
+            {rc.parseError && <span className="text-amber-600 dark:text-amber-400">· {rc.parseError}</span>}
+          </div>
+        )}
+        {corr && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="font-medium text-[var(--app-text)]">Correction</span>
+            {corr.model && <span className="font-mono">{corr.model}</span>}
+            <span className={corr.changedCount > 0 ? '' : 'text-[var(--app-text-muted)]'}>
+              {corr.changedCount} fixed · {corr.matchedCount}/{corr.items.length} matched
+            </span>
+            <span>{fmtCost(corr.costUsd)}</span>
+            <span>{secs(corr.latencyMs)}</span>
+            <span>{corr.tokensIn}→{corr.tokensOut} tok</span>
+          </div>
+        )}
       </div>
 
       {/* Revision diff — what the Revision stage changed, highlighted per block. */}
       {rev && showDiff && <FlowRevisionDiff blocks={revBlocks} />}
+
+      {/* Reader-check places and what the Correction stage did with each. */}
+      {showReader && (rc || corr) && <FlowReaderPanel problems={rc?.problems ?? []} items={corr?.items ?? []} />}
     </div>
   );
 }
