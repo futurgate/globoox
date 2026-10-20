@@ -37,6 +37,24 @@ const inputCls =
 const FICTION_LANGS = ['EN', 'FR'] as const;
 type FictionLang = (typeof FICTION_LANGS)[number];
 
+// Shown when the live NDJSON stream drops mid-run but the backend keeps working
+// (Vercel function hit its duration cap, or a flaky connection). The run is NOT
+// failed — progress keeps advancing server-side and the status poll / Refresh
+// will catch up. See TZ P0 #3.
+const STREAM_DROPPED_NOTE =
+  'Live progress stream interrupted, but the run continues in the background. Progress updates automatically — use Refresh if it looks stalled.';
+
+/**
+ * Classify a thrown run error so an interrupted stream is not mis-reported as a
+ * hard failure. `streamStarted` is true once we have seen a `book_start` event:
+ * after that, any non-abort error is a dropped stream (backend still running),
+ * not a start failure.
+ */
+function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'dropped' | 'failed' {
+  if (e instanceof Error && e.name === 'AbortError') return 'aborted';
+  return streamStarted ? 'dropped' : 'failed';
+}
+
 export default function AdminFictionPage() {
   const router = useRouter();
   const { isAdmin, loading: authLoading, isAuthenticated } = useAuth();
@@ -206,10 +224,12 @@ export default function AdminFictionPage() {
 
     const controller = new AbortController();
     revisionAbortRef.current = controller;
+    let streamStarted = false;
 
     const onEvent = (ev: RevisionProgressEvent) => {
       switch (ev.type) {
         case 'book_start':
+          streamStarted = true;
           setRevisionTotal(ev.totalBlocks ?? 0);
           break;
         case 'block_done':
@@ -227,8 +247,15 @@ export default function AdminFictionPage() {
       await startStylisticRevision(bookId, lang, onEvent, { overwrite: overwriteRevision, signal: controller.signal });
       await loadRevisionProgress();
     } catch (e) {
-      setRevisionError(e instanceof Error ? e.message : 'Revision failed');
-      setRevisionState('error');
+      const kind = classifyRunError(e, streamStarted);
+      if (kind === 'dropped') {
+        // Backend keeps revising; reload status and let Refresh/cron continue it.
+        setRevisionError(STREAM_DROPPED_NOTE);
+        await loadRevisionProgress();
+      } else if (kind === 'failed') {
+        setRevisionError(e instanceof Error ? e.message : 'Revision failed');
+        setRevisionState('error');
+      } // 'aborted' (user stopped): leave the current status untouched.
     } finally {
       setRevisionRunning(false);
       revisionAbortRef.current = null;
@@ -269,10 +296,12 @@ export default function AdminFictionPage() {
 
     const controller = new AbortController();
     abortRef.current = controller;
+    let streamStarted = false;
 
     const onEvent = (ev: FictionProgressEvent) => {
       switch (ev.type) {
         case 'book_start':
+          streamStarted = true;
           setTotal(ev.totalChapters ?? 0);
           break;
         case 'chapter_start':
@@ -300,7 +329,14 @@ export default function AdminFictionPage() {
       });
       await loadProgress();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Translation failed');
+      const kind = classifyRunError(e, streamStarted);
+      if (kind === 'dropped') {
+        // Backend keeps translating; reload per-chapter progress from status.
+        setError(STREAM_DROPPED_NOTE);
+        await loadProgress();
+      } else if (kind === 'failed') {
+        setError(e instanceof Error ? e.message : 'Translation failed');
+      } // 'aborted' (user stopped): leave the current status untouched.
     } finally {
       setRunning(false);
       abortRef.current = null;
@@ -400,10 +436,12 @@ export default function AdminFictionPage() {
 
     const controller = new AbortController();
     glossaryAbortRef.current = controller;
+    let streamStarted = false;
 
     const onEvent = (ev: GlossaryProgressEvent) => {
       switch (ev.type) {
         case 'book_start':
+          streamStarted = true;
           setGlossaryTotal(ev.totalChapters ?? 0);
           if (typeof ev.resumingFrom === 'number') setGlossaryDone(ev.resumingFrom);
           break;
@@ -425,8 +463,15 @@ export default function AdminFictionPage() {
       await loadGlossary();
       setGlossaryOpen(true);
     } catch (e) {
-      setGlossaryError(e instanceof Error ? e.message : 'Glossary generation failed');
-      setGlossaryState('error');
+      const kind = classifyRunError(e, streamStarted);
+      if (kind === 'dropped') {
+        // Backend keeps building; reload status and let the poll effect continue.
+        setGlossaryError(STREAM_DROPPED_NOTE);
+        await loadGlossary();
+      } else if (kind === 'failed') {
+        setGlossaryError(e instanceof Error ? e.message : 'Glossary generation failed');
+        setGlossaryState('error');
+      } // 'aborted' (user stopped): leave the current status untouched.
     } finally {
       setGlossaryRunning(false);
       glossaryAbortRef.current = null;

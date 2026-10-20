@@ -1,6 +1,10 @@
 import { requireBackendProxy } from '../../../_proxy'
 
 export const runtime = 'nodejs'
+// Long NDJSON progress streams: a full-book run drives many sequential LLM
+// calls, so let the Vercel function live up to the platform max instead of the
+// short default that cut even small (2-chapter) runs mid-stream (TZ P0 #3).
+export const maxDuration = 300
 
 // Admin-gated on the backend (profiles.is_admin).
 // POST runs Pass-2 stylistic revision (NDJSON progress stream).
