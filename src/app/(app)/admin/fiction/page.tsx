@@ -69,6 +69,10 @@ export default function AdminFictionPage() {
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState<string | null>(null);
   const [complete, setComplete] = useState(false);
+  // Backend-reported translation run state (separate from `running`, which tracks
+  // the live stream this tab holds). Lets us poll to completion after a dropped
+  // stream — essential on Vercel Hobby, where the function caps at 60s (TZ P0 #3).
+  const [translationState, setTranslationState] = useState<'idle' | 'running' | 'complete'>('idle');
   const [errors, setErrors] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
@@ -178,12 +182,14 @@ export default function AdminFictionPage() {
       setTotal(p.totalChapters);
       setDone(p.counts.done);
       setComplete(p.state === 'complete');
+      setTranslationState(p.state);
       setCurrent(null);
     } catch {
       // No progress yet — reset.
       setTotal(0);
       setDone(0);
       setComplete(false);
+      setTranslationState('idle');
     }
   }, [bookId, lang]);
 
@@ -408,6 +414,24 @@ export default function AdminFictionPage() {
     const id = setInterval(() => { void loadGlossary(); }, 3000);
     return () => clearInterval(id);
   }, [isAdmin, bookId, glossaryState, glossaryRunning, loadGlossary]);
+
+  // Same for translation: on Hobby the stream caps at 60s and drops long before a
+  // multi-chapter book finishes, but the backend keeps going — poll the status
+  // endpoint while a run is in progress server-side and this tab isn't streaming.
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    if (translationState !== 'running' || running) return;
+    const id = setInterval(() => { void loadProgress(); }, 3000);
+    return () => clearInterval(id);
+  }, [isAdmin, bookId, translationState, running, loadProgress]);
+
+  // Same for stylistic revision (its server run-state heartbeats 'running').
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    if (revisionState !== 'running' || revisionRunning) return;
+    const id = setInterval(() => { void loadRevisionProgress(); }, 3000);
+    return () => clearInterval(id);
+  }, [isAdmin, bookId, revisionState, revisionRunning, loadRevisionProgress]);
 
   // Pull the freshest state for every stage at once (translation, glossary,
   // revision) + history — so an interrupted/resumed run shows its real progress.
