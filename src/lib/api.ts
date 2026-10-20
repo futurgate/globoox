@@ -638,7 +638,7 @@ export async function startGlossaryGeneration(
   bookId: string,
   lang: string,
   onEvent: (ev: GlossaryProgressEvent) => void,
-  opts: { restart?: boolean; signal?: AbortSignal } = {},
+  opts: { restart?: boolean; seedFromBookId?: string; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -647,7 +647,12 @@ export async function startGlossaryGeneration(
   const res = await fetch(`${API_URL}/api/books/${bookId}/generate-glossary`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ lang: lang.toUpperCase(), restart: opts.restart === true }),
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      restart: opts.restart === true,
+      // Seed a fresh build from another book's glossary (series continuity).
+      ...(opts.seedFromBookId ? { seedFromBookId: opts.seedFromBookId } : {}),
+    }),
     signal: opts.signal,
   })
   if (!res.ok) {

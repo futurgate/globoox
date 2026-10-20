@@ -108,6 +108,9 @@ export default function AdminFictionPage() {
   const [glossary, setGlossary] = useState<BookGlossary | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const [rebuildGlossary, setRebuildGlossary] = useState(false);
+  // Optional: seed a fresh glossary build from another book's finished glossary
+  // (same language) so a later book in a series inherits its names/terms/voice.
+  const [seedFromBookId, setSeedFromBookId] = useState('');
 
   // Per-stage cost / tokens / time for the selected book+language.
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
@@ -402,6 +405,7 @@ export default function AdminFictionPage() {
   useEffect(() => {
     if (!isAdmin || !bookId) return;
     setGlossaryOpen(false);
+    setSeedFromBookId(''); // a seed choice is per target book — don't carry it across
     void loadGlossary();
   }, [isAdmin, bookId, lang, loadGlossary]);
 
@@ -483,7 +487,11 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startGlossaryGeneration(bookId, lang, onEvent, { restart: rebuildGlossary, signal: controller.signal });
+      await startGlossaryGeneration(bookId, lang, onEvent, {
+        restart: rebuildGlossary,
+        seedFromBookId: seedFromBookId || undefined,
+        signal: controller.signal,
+      });
       await loadGlossary();
       setGlossaryOpen(true);
     } catch (e) {
@@ -501,7 +509,7 @@ export default function AdminFictionPage() {
       glossaryAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, glossaryRunning, rebuildGlossary, loadGlossary, loadFictionCosts]);
+  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, loadGlossary, loadFictionCosts]);
 
   useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
 
@@ -765,6 +773,30 @@ export default function AdminFictionPage() {
           <span>
             Rebuild from scratch
             <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = resume/merge into existing)</span>
+          </span>
+        </label>
+
+        {/* Series continuity: seed a fresh build from an earlier book's glossary
+            (same language). Applies only to a fresh/rebuild run — ignored on resume. */}
+        <label className="flex flex-wrap items-center gap-2 text-sm">
+          <span>Seed from book</span>
+          <select
+            value={seedFromBookId}
+            disabled={glossaryRunning}
+            onChange={(e) => setSeedFromBookId(e.target.value)}
+            className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
+          >
+            <option value="">— none (start empty) —</option>
+            {books
+              .filter((b) => b.id !== bookId)
+              .map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.title}
+                </option>
+              ))}
+          </select>
+          <span className="w-full text-xs text-[var(--app-text-muted)] sm:w-auto">
+            Inherit names/terms from a previous book in the series ({lang} glossary required on that book).
           </span>
         </label>
 
