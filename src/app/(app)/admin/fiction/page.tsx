@@ -18,6 +18,7 @@ import {
   getRevisionProgress,
   getRevisionDiff,
   getFictionCosts,
+  fetchPlaygroundModels,
   type ApiBook,
   type FictionProgressEvent,
   type FictionHistoryEntry,
@@ -36,6 +37,42 @@ const inputCls =
 // v1 fiction pipeline supports EN/FR targets (Russian source).
 const FICTION_LANGS = ['EN', 'FR'] as const;
 type FictionLang = (typeof FICTION_LANGS)[number];
+
+// Static fallback shown until GET /api/admin/models resolves (or if it fails) —
+// same discovery source the playground uses. An empty picker value means "use the
+// prod default model for that stage" (the backend's config model).
+const FALLBACK_MODELS = [
+  'gemini-3.5-flash',
+  'gemini-3.1-pro-preview',
+  'gemini-2.5-pro',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+];
+
+/** Per-stage model override picker. '' = use the prod default for that stage. */
+function ModelPicker({ value, onChange, models, disabled }: {
+  value: string;
+  onChange: (v: string) => void;
+  models: string[];
+  disabled?: boolean;
+}) {
+  return (
+    <label className="flex items-center gap-1.5 text-xs text-[var(--app-text-muted)]" title="Model for this stage (default = the production model)">
+      <span>Model</span>
+      <select
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+        className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-xs"
+      >
+        <option value="">default</option>
+        {models.map((m) => (
+          <option key={m} value={m}>{m}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
 
 // Shown when the live NDJSON stream drops mid-run but the backend keeps working
 // (Vercel function hit its duration cap, or a flaky connection). The run is NOT
@@ -63,6 +100,13 @@ export default function AdminFictionPage() {
   const [booksLoading, setBooksLoading] = useState(false);
   const [bookId, setBookId] = useState('');
   const [lang, setLang] = useState<FictionLang>('EN');
+
+  // Provider-discovered model list (shared with the playground) + the per-stage
+  // model override. '' = use the prod default for that stage.
+  const [availableModels, setAvailableModels] = useState<string[]>(FALLBACK_MODELS);
+  const [glossaryModel, setGlossaryModel] = useState('');
+  const [translateModel, setTranslateModel] = useState('');
+  const [revisionModel, setRevisionModel] = useState('');
 
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(0);
@@ -155,6 +199,11 @@ export default function AdminFictionPage() {
       .catch(() => setError('Failed to load books'))
       .finally(() => setBooksLoading(false));
     void loadHistory();
+    // Discover the provider's models for the per-stage pickers (best-effort —
+    // the static fallback stays if discovery fails).
+    fetchPlaygroundModels()
+      .then((res) => { if (res.models.length) setAvailableModels(res.models); })
+      .catch(() => { /* keep fallback */ });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
@@ -253,7 +302,7 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startStylisticRevision(bookId, lang, onEvent, { overwrite: overwriteRevision, signal: controller.signal });
+      await startStylisticRevision(bookId, lang, onEvent, { overwrite: overwriteRevision, model: revisionModel || undefined, signal: controller.signal });
       await loadRevisionProgress();
     } catch (e) {
       const kind = classifyRunError(e, streamStarted);
@@ -270,7 +319,7 @@ export default function AdminFictionPage() {
       revisionAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, revisionRunning, overwriteRevision, loadRevisionProgress, loadFictionCosts]);
+  }, [bookId, lang, revisionRunning, overwriteRevision, revisionModel, loadRevisionProgress, loadFictionCosts]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -334,6 +383,7 @@ export default function AdminFictionPage() {
       await startFictionTranslation(bookId, lang, onEvent, {
         useGlossary: useGlossaryForTranslate && glossaryReady,
         overwrite: overwriteTranslation,
+        model: translateModel || undefined,
         signal: controller.signal,
       });
       await loadProgress();
@@ -355,7 +405,7 @@ export default function AdminFictionPage() {
 
     // Pass 2 chains after a successful Pass 1 when the toggle is on.
     if (runRevisionAfter) await runRevision();
-  }, [bookId, lang, running, loadProgress, loadHistory, loadFictionCosts, useGlossaryForTranslate, glossaryReady, overwriteTranslation, runRevisionAfter, runRevision]);
+  }, [bookId, lang, running, loadProgress, loadHistory, loadFictionCosts, useGlossaryForTranslate, glossaryReady, overwriteTranslation, translateModel, runRevisionAfter, runRevision]);
 
   const handleDownload = useCallback(async () => {
     if (!bookId) return;
@@ -490,6 +540,7 @@ export default function AdminFictionPage() {
       await startGlossaryGeneration(bookId, lang, onEvent, {
         restart: rebuildGlossary,
         seedFromBookId: seedFromBookId || undefined,
+        model: glossaryModel || undefined,
         signal: controller.signal,
       });
       await loadGlossary();
@@ -509,7 +560,7 @@ export default function AdminFictionPage() {
       glossaryAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, loadGlossary, loadFictionCosts]);
+  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, glossaryModel, loadGlossary, loadFictionCosts]);
 
   useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
 
@@ -643,6 +694,7 @@ export default function AdminFictionPage() {
         </label>
 
         <div className="flex flex-wrap items-center gap-3">
+          <ModelPicker value={translateModel} onChange={setTranslateModel} models={availableModels} disabled={running} />
           <Button onClick={handleTranslate} disabled={!bookId || running}>
             {running ? (
               <>
@@ -729,6 +781,7 @@ export default function AdminFictionPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <ModelPicker value={glossaryModel} onChange={setGlossaryModel} models={availableModels} disabled={glossaryRunning} />
           <Button onClick={handleGenerateGlossary} disabled={!bookId || glossaryRunning}>
             {glossaryRunning ? (
               <>
@@ -844,6 +897,7 @@ export default function AdminFictionPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <ModelPicker value={revisionModel} onChange={setRevisionModel} models={availableModels} disabled={revisionRunning} />
           <Button onClick={runRevision} disabled={!bookId || revisionRunning || running}>
             {revisionRunning ? (
               <>

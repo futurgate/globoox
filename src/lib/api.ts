@@ -492,7 +492,7 @@ export async function startFictionTranslation(
   bookId: string,
   lang: string,
   onEvent: (ev: FictionProgressEvent) => void,
-  opts: { useGlossary?: boolean; overwrite?: boolean; signal?: AbortSignal } = {},
+  opts: { useGlossary?: boolean; overwrite?: boolean; model?: string; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -506,6 +506,8 @@ export async function startFictionTranslation(
       mode: 'fiction',
       useGlossary: opts.useGlossary === true,
       overwrite: opts.overwrite === true,
+      // Optional per-stage model override (else the prod default).
+      ...(opts.model ? { model: opts.model } : {}),
     }),
     signal: opts.signal,
   })
@@ -638,7 +640,7 @@ export async function startGlossaryGeneration(
   bookId: string,
   lang: string,
   onEvent: (ev: GlossaryProgressEvent) => void,
-  opts: { restart?: boolean; seedFromBookId?: string; signal?: AbortSignal } = {},
+  opts: { restart?: boolean; seedFromBookId?: string; model?: string; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -652,6 +654,8 @@ export async function startGlossaryGeneration(
       restart: opts.restart === true,
       // Seed a fresh build from another book's glossary (series continuity).
       ...(opts.seedFromBookId ? { seedFromBookId: opts.seedFromBookId } : {}),
+      // Optional per-stage model override (else the prod default).
+      ...(opts.model ? { model: opts.model } : {}),
     }),
     signal: opts.signal,
   })
@@ -821,7 +825,7 @@ export async function startStylisticRevision(
   bookId: string,
   lang: string,
   onEvent: (ev: RevisionProgressEvent) => void,
-  opts: { useGlossary?: boolean; overwrite?: boolean; signal?: AbortSignal } = {},
+  opts: { useGlossary?: boolean; overwrite?: boolean; model?: string; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -834,6 +838,8 @@ export async function startStylisticRevision(
       lang: lang.toUpperCase(),
       useGlossary: opts.useGlossary !== false,
       overwrite: opts.overwrite === true,
+      // Optional per-stage model override (else the prod revision default).
+      ...(opts.model ? { model: opts.model } : {}),
     }),
     signal: opts.signal,
   })
