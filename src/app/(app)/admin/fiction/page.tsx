@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -19,6 +19,7 @@ import {
   getRevisionDiff,
   getFictionCosts,
   fetchPlaygroundModels,
+  fetchFictionFlowPrompts,
   type ApiBook,
   type FictionProgressEvent,
   type FictionHistoryEntry,
@@ -28,6 +29,7 @@ import {
   type BookGlossary,
   type FictionCosts,
   type FictionStageCost,
+  type FictionFlowPrompts,
 } from '@/lib/api';
 // (FictionCostStage not imported — stage labels use a string-keyed map.)
 
@@ -90,6 +92,59 @@ const STREAM_DROPPED_NOTE =
 function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'dropped' | 'failed' {
   if (e instanceof Error && e.name === 'AbortError') return 'aborted';
   return streamStarted ? 'dropped' : 'failed';
+}
+
+// ── Per-stage prompt editor (localStorage-backed) ────────────────────────────
+// Edits here are saved per (language + glossary-variant) in the browser only —
+// they do NOT change the server-side book pipeline (which reads fixed prompt
+// files). Use this to draft/tune prompts and keep them between visits.
+type PromptStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction';
+type PromptMap = Record<PromptStageKey, string>;
+
+const PROMPT_STAGES: { key: PromptStageKey; label: string; hint: string }[] = [
+  { key: 'glossary', label: 'Glossary', hint: 'Builds the style bible / glossary per chapter.' },
+  { key: 'translate', label: 'Translation', hint: 'Main whole-chapter translation prompt.' },
+  { key: 'revision', label: 'Revision (Pass 2)', hint: 'Block-level stylistic polish.' },
+  { key: 'readerCheck', label: 'Reader check', hint: 'Flags places a reader would stumble.' },
+  { key: 'correction', label: 'Correction', hint: 'Fixes the spots the reader check reported.' },
+];
+
+const PROMPT_LS_KEY = 'globoox.fiction-prompt-overrides';
+
+function promptScope(lang: string, useGlossary: boolean): string {
+  return `${lang}:${useGlossary ? 1 : 0}`;
+}
+
+function readAllPromptOverrides(): Record<string, Partial<PromptMap>> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = window.localStorage.getItem(PROMPT_LS_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, Partial<PromptMap>>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writePromptOverrides(scope: string, map: Partial<PromptMap> | null): void {
+  if (typeof window === 'undefined') return;
+  const all = readAllPromptOverrides();
+  if (map && Object.keys(map).length) all[scope] = map;
+  else delete all[scope];
+  try {
+    window.localStorage.setItem(PROMPT_LS_KEY, JSON.stringify(all));
+  } catch {
+    // storage full / disabled — non-fatal, edits just won't persist
+  }
+}
+
+function toPromptMap(p: FictionFlowPrompts): PromptMap {
+  return {
+    glossary: p.glossary,
+    translate: p.translate,
+    revision: p.revision,
+    readerCheck: p.readerCheck,
+    correction: p.correction,
+  };
 }
 
 export default function AdminFictionPage() {
@@ -160,6 +215,14 @@ export default function AdminFictionPage() {
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
   const [costsLoading, setCostsLoading] = useState(false);
 
+  // Per-stage prompt editor (localStorage-backed; does not affect server runs).
+  const [promptsOpen, setPromptsOpen] = useState(false);
+  const [promptUseGlossary, setPromptUseGlossary] = useState(true);
+  const [defaultPrompts, setDefaultPrompts] = useState<PromptMap | null>(null);
+  const [prompts, setPrompts] = useState<PromptMap | null>(null);
+  const [promptsLoading, setPromptsLoading] = useState(false);
+  const [promptsError, setPromptsError] = useState<string | null>(null);
+
   const abortRef = useRef<AbortController | null>(null);
   const glossaryAbortRef = useRef<AbortController | null>(null);
   const revisionAbortRef = useRef<AbortController | null>(null);
@@ -186,6 +249,60 @@ export default function AdminFictionPage() {
       setCostsLoading(false);
     }
   }, [bookId, lang]);
+
+  // ── Per-stage prompt editor ──
+  // Seed editors from the live pipeline templates, then layer any saved edits
+  // for this (language + glossary-variant) scope on top.
+  const loadPrompts = useCallback(async () => {
+    setPromptsLoading(true);
+    setPromptsError(null);
+    try {
+      const p = await fetchFictionFlowPrompts(lang, promptUseGlossary);
+      const defaults = toPromptMap(p);
+      setDefaultPrompts(defaults);
+      const saved = readAllPromptOverrides()[promptScope(lang, promptUseGlossary)];
+      setPrompts(saved ? { ...defaults, ...saved } : defaults);
+    } catch (e) {
+      setPromptsError(e instanceof Error ? e.message : 'Failed to load prompts');
+      setDefaultPrompts(null);
+      setPrompts(null);
+    } finally {
+      setPromptsLoading(false);
+    }
+  }, [lang, promptUseGlossary]);
+
+  // Load (or reload) when the section is open and the scope changes.
+  useEffect(() => {
+    if (!isAdmin || !promptsOpen) return;
+    void loadPrompts();
+  }, [isAdmin, promptsOpen, loadPrompts]);
+
+  const updatePrompt = useCallback((key: PromptStageKey, value: string) => {
+    setPrompts((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, [key]: value };
+      // Persist only stages that differ from the shipped default, so a later
+      // prompt-file change still flows through for the untouched stages.
+      if (defaultPrompts) {
+        const diff: Partial<PromptMap> = {};
+        (Object.keys(next) as PromptStageKey[]).forEach((k) => {
+          if (next[k] !== defaultPrompts[k]) diff[k] = next[k];
+        });
+        writePromptOverrides(promptScope(lang, promptUseGlossary), Object.keys(diff).length ? diff : null);
+      }
+      return next;
+    });
+  }, [defaultPrompts, lang, promptUseGlossary]);
+
+  const resetPrompt = useCallback((key: PromptStageKey) => {
+    if (defaultPrompts) updatePrompt(key, defaultPrompts[key]);
+  }, [defaultPrompts, updatePrompt]);
+
+  const resetAllPrompts = useCallback(() => {
+    if (!defaultPrompts) return;
+    setPrompts({ ...defaultPrompts });
+    writePromptOverrides(promptScope(lang, promptUseGlossary), null);
+  }, [defaultPrompts, lang, promptUseGlossary]);
 
   // Load book list once admin is confirmed.
   useEffect(() => {
@@ -766,6 +883,106 @@ export default function AdminFictionPage() {
         )}
 
         {error && <p className="text-sm text-red-500">{error}</p>}
+      </div>
+
+      {/* ── Per-stage prompt editor (localStorage-backed) ── */}
+      <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <FileText className="h-4 w-4" /> Stage prompts
+            </h2>
+            <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+              View and tune the prompt for each pipeline stage. Edits are saved in this browser per
+              language (and glossary variant) only — they do <em>not</em> change the server-side book
+              translation, which uses the shipped prompt files.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => setPromptsOpen((o) => !o)}>
+            {promptsOpen ? <ChevronDown className="mr-2 h-4 w-4" /> : <ChevronRight className="mr-2 h-4 w-4" />}
+            {promptsOpen ? 'Hide' : 'Edit prompts'}
+          </Button>
+        </div>
+
+        {promptsOpen && (
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <label className="flex items-center gap-2 text-sm" title="Load the glossary-aware variant of the translation prompt">
+                <input
+                  type="checkbox"
+                  checked={promptUseGlossary}
+                  disabled={promptsLoading}
+                  onChange={(e) => setPromptUseGlossary(e.target.checked)}
+                  className="h-4 w-4 accent-[var(--app-accent)]"
+                />
+                <span>
+                  Glossary variant
+                  <span className="ml-1 text-xs text-[var(--app-text-muted)]">(affects the translation prompt)</span>
+                </span>
+              </label>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={loadPrompts} disabled={promptsLoading}>
+                  <RefreshCw className={`mr-2 h-3.5 w-3.5 ${promptsLoading ? 'animate-spin' : ''}`} />
+                  Reload
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetAllPrompts}
+                  disabled={promptsLoading || !defaultPrompts}
+                  title="Discard all edits for this language and restore the shipped prompts"
+                >
+                  <RotateCcw className="mr-2 h-3.5 w-3.5" />
+                  Reset all
+                </Button>
+              </div>
+            </div>
+
+            {promptsLoading && !prompts && (
+              <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+                <Loader2 className="h-4 w-4 animate-spin" /> Loading prompts…
+              </div>
+            )}
+
+            {promptsError && <p className="text-sm text-red-500">{promptsError}</p>}
+
+            {prompts && defaultPrompts && PROMPT_STAGES.map((stage) => {
+              const value = prompts[stage.key];
+              const edited = value !== defaultPrompts[stage.key];
+              return (
+                <div key={stage.key} className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <label className="flex items-center gap-2 text-sm font-medium">
+                      {stage.label}
+                      {edited && (
+                        <span className="rounded bg-[var(--app-accent)]/15 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-[var(--app-accent)]">
+                          edited
+                        </span>
+                      )}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => resetPrompt(stage.key)}
+                      disabled={!edited}
+                      className="inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline disabled:opacity-40 disabled:no-underline"
+                      title="Restore this stage to the shipped prompt"
+                    >
+                      <RotateCcw className="h-3 w-3" /> Reset
+                    </button>
+                  </div>
+                  <p className="text-xs text-[var(--app-text-muted)]">{stage.hint}</p>
+                  <textarea
+                    value={value}
+                    onChange={(e) => updatePrompt(stage.key, e.target.value)}
+                    spellCheck={false}
+                    rows={10}
+                    className={`${inputCls} min-h-[8rem] resize-y font-mono text-xs leading-relaxed`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ── Glossary / style bible (not wired into the pipeline yet) ── */}
