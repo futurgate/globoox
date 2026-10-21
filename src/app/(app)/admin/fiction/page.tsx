@@ -723,8 +723,9 @@ export default function AdminFictionPage() {
             <ScrollText className="h-4 w-4" /> Glossary / style bible
           </h2>
           <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-            Built incrementally, chapter by chapter, for the selected book + language. Not used by the
-            translation pipeline yet — generate and inspect it here.
+            Built incrementally, chapter by chapter, for the selected book + language. When “Use
+            glossary” is on, translation feeds it to the model as the {'{GLOSSARY}'} block to keep
+            names and terms consistent.
           </p>
         </div>
 
