@@ -312,7 +312,11 @@ export default function AdminFictionPage() {
     if (!isAdmin) return;
     setBooksLoading(true);
     fetchBooks()
-      .then((list) => {
+      .then((unsorted) => {
+        // Alphabetical by title so the book pickers are easy to scan.
+        const list = [...unsorted].sort((a, b) =>
+          (a.title || '').localeCompare(b.title || '', undefined, { sensitivity: 'base', numeric: true }),
+        );
         setBooks(list);
         if (list.length && !bookId) setBookId(list[0].id);
       })
