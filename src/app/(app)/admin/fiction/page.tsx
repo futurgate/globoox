@@ -14,6 +14,7 @@ import {
   downloadTranslatedEpub,
   startGlossaryGeneration,
   getGlossary,
+  copyGlossaryFromBook,
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
@@ -210,6 +211,8 @@ export default function AdminFictionPage() {
   // Optional: seed a fresh glossary build from another book's finished glossary
   // (same language) so a later book in a series inherits its names/terms/voice.
   const [seedFromBookId, setSeedFromBookId] = useState('');
+  // Reuse another book's finished glossary verbatim (copy, no LLM rebuild).
+  const [glossaryCopying, setGlossaryCopying] = useState(false);
 
   // Per-stage cost / tokens / time for the selected book+language.
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
@@ -679,6 +682,25 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, glossaryModel, loadGlossary, loadFictionCosts]);
 
+  // Reuse an existing glossary from another book verbatim — no generation.
+  const handleCopyGlossary = useCallback(async () => {
+    if (!bookId || !seedFromBookId || glossaryRunning || glossaryCopying) return;
+    setGlossaryCopying(true);
+    setGlossaryError(null);
+    try {
+      const g = await copyGlossaryFromBook(bookId, lang, seedFromBookId);
+      setGlossary(g.glossary);
+      setGlossaryState(g.state);
+      setGlossaryDone(g.chaptersDone);
+      setGlossaryTotal(g.chaptersTotal);
+      setGlossaryOpen(true);
+    } catch (e) {
+      setGlossaryError(e instanceof Error ? e.message : 'Failed to copy glossary');
+    } finally {
+      setGlossaryCopying(false);
+    }
+  }, [bookId, lang, seedFromBookId, glossaryRunning, glossaryCopying]);
+
   useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
 
   if (authLoading) {
@@ -1046,29 +1068,51 @@ export default function AdminFictionPage() {
           </span>
         </label>
 
-        {/* Series continuity: seed a fresh build from an earlier book's glossary
-            (same language). Applies only to a fresh/rebuild run — ignored on resume. */}
-        <label className="flex flex-wrap items-center gap-2 text-sm">
-          <span>Seed from book</span>
-          <select
-            value={seedFromBookId}
-            disabled={glossaryRunning}
-            onChange={(e) => setSeedFromBookId(e.target.value)}
-            className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
-          >
-            <option value="">— none (start empty) —</option>
-            {books
-              .filter((b) => b.id !== bookId)
-              .map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.title}
-                </option>
-              ))}
-          </select>
-          <span className="w-full text-xs text-[var(--app-text-muted)] sm:w-auto">
-            Inherit names/terms from a previous book in the series ({lang} glossary required on that book).
-          </span>
-        </label>
+        {/* Series continuity: either SEED a fresh build from an earlier book's
+            glossary (then "Rebuild"/"Generate" above folds chapters in), or COPY
+            that glossary verbatim with no generation at all. */}
+        <div className="space-y-2">
+          <label className="flex flex-wrap items-center gap-2 text-sm">
+            <span>Use another book</span>
+            <select
+              value={seedFromBookId}
+              disabled={glossaryRunning || glossaryCopying}
+              onChange={(e) => setSeedFromBookId(e.target.value)}
+              className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
+            >
+              <option value="">— none (start empty) —</option>
+              {books
+                .filter((b) => b.id !== bookId)
+                .map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.title}
+                  </option>
+                ))}
+            </select>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyGlossary}
+              disabled={!bookId || !seedFromBookId || glossaryRunning || glossaryCopying}
+              title="Copy that book's glossary as-is for this book + language — no generation"
+            >
+              {glossaryCopying ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Copying…
+                </>
+              ) : (
+                <>
+                  <ScrollText className="mr-2 h-4 w-4" /> Use as-is (copy)
+                </>
+              )}
+            </Button>
+          </label>
+          <p className="text-xs text-[var(--app-text-muted)]">
+            Requires a {lang} glossary on the selected book. <strong>Use as-is</strong> copies it
+            verbatim (no LLM). The <strong>Generate/Rebuild</strong> button above instead seeds a fresh
+            build from it (ignored on resume).
+          </p>
+        </div>
 
         {(glossaryBuilding || glossaryTotal > 0) && glossaryState !== 'idle' && (
           <div className="space-y-2">

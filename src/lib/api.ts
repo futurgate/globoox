@@ -684,6 +684,30 @@ export async function startGlossaryGeneration(
   if (buffer.trim()) processLine(buffer)
 }
 
+/**
+ * Reuse another book's finished glossary verbatim as this book's glossary (same
+ * language) — no LLM, no rebuild. Marks it done so the translate path picks it up.
+ */
+export async function copyGlossaryFromBook(
+  bookId: string,
+  lang: string,
+  sourceBookId: string,
+): Promise<GlossaryStatus> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/copy-glossary`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), sourceBookId }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to copy glossary: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryStatus>
+}
+
 /** Fetch the current fiction glossary + build progress (bypasses cache). */
 export async function getGlossary(bookId: string, lang: string): Promise<GlossaryStatus> {
   const headers = new Headers()
