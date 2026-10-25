@@ -16,6 +16,13 @@ const GROUP_LABEL: Record<string, string> = {
 };
 const GROUP_ORDER = ['translate', 'glossary', 'revise', 'reader-check'];
 
+/** Placeholders ({UPPER_CASE}) in the shipped prompt that the draft dropped. */
+function missingPlaceholders(shipped: string, draft: string): string[] {
+  const required = new Set<string>();
+  for (const m of shipped.matchAll(/\{[A-Z0-9_]+\}/g)) required.add(m[0]);
+  return [...required].filter((p) => !draft.includes(p));
+}
+
 export default function AdminPromptsPage() {
   const router = useRouter();
   const { isAdmin, loading: authLoading, isAuthenticated } = useAuth();
@@ -53,6 +60,11 @@ export default function AdminPromptsPage() {
 
   const onSave = useCallback(async (p: ServerPrompt) => {
     const content = drafts[p.name] ?? p.content;
+    const missing = missingPlaceholders(p.shipped, content);
+    if (missing.length > 0) {
+      setError(`${p.name}: missing required placeholder(s): ${missing.join(', ')}. Keep them in the prompt.`);
+      return;
+    }
     setBusyName(p.name);
     setError(null);
     try {
@@ -137,6 +149,7 @@ export default function AdminPromptsPage() {
                 const draft = drafts[p.name] ?? p.content;
                 const dirty = draft !== p.content;
                 const busy = busyName === p.name;
+                const missing = missingPlaceholders(p.shipped, draft);
                 return (
                   <div key={p.name} className="rounded-[var(--radius)] border border-[var(--separator-opaque)]">
                     <button
@@ -167,8 +180,13 @@ export default function AdminPromptsPage() {
                           disabled={busy}
                           className="w-full resize-y rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3 font-mono text-xs leading-relaxed outline-none focus:border-[var(--app-accent)]"
                         />
+                        {missing.length > 0 && (
+                          <p className="text-xs text-red-500">
+                            Missing placeholder(s): {missing.join(', ')} — keep them or Save is blocked.
+                          </p>
+                        )}
                         <div className="flex flex-wrap items-center gap-2">
-                          <Button size="sm" onClick={() => onSave(p)} disabled={busy || !dirty}>
+                          <Button size="sm" onClick={() => onSave(p)} disabled={busy || !dirty || missing.length > 0}>
                             {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                             Save (used by real runs)
                           </Button>
