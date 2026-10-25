@@ -726,7 +726,7 @@ export async function getGlossary(bookId: string, lang: string): Promise<Glossar
 
 // ── Fiction per-stage cost / tokens / time (admin) ──────────────────────────────
 
-export type FictionCostStage = 'glossary' | 'translate' | 'revise'
+export type FictionCostStage = 'glossary' | 'translate' | 'revise' | 'reader-check' | 'correction'
 
 /** Projected (worst-case) cost for a stage — always present. */
 export type FictionStageEstimate = {
@@ -927,6 +927,152 @@ export async function getRevisionDiff(
     throw new Error(body.message || `Failed to fetch revision diff: ${res.status}`)
   }
   return res.json() as Promise<RevisionDiff>
+}
+
+// ── Reader-check QA pass (admin) ────────────────────────────────────────────────
+
+export type ReaderCheckVariant = 'reader' | 'calques'
+
+export type ReaderCheckProgressEvent = {
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'error'
+  index?: number
+  title?: string
+  totalChapters?: number
+  done?: number
+  found?: number
+  fixed?: number
+  rejected?: number
+  unmatched?: number
+  variant?: string
+  model?: string
+  error?: string
+}
+
+export type ReaderCheckProgress = {
+  bookId: string
+  lang: string
+  state: 'idle' | 'running' | 'done' | 'error'
+  variant?: string | null
+  model?: string | null
+  chaptersDone: number
+  chaptersTotal: number
+  percent: number
+  found: number
+  fixed: number
+  rejected: number
+  unmatched: number
+  error?: string | null
+  updatedAt?: string | null
+}
+
+export type ReaderCheckJournalItem = {
+  chapterId: string
+  chapterNumber: number | null
+  chapterTitle: string | null
+  variant: string
+  quote: string
+  problem: string
+  severity: string
+  outcome: 'fixed' | 'rejected' | 'unmatched' | 'skipped'
+  rejectReason: string | null
+  blockId: string | null
+  matchType: string | null
+  matchScore: number | null
+  before: string | null
+  after: string | null
+  changeNote: string | null
+  createdAt: string
+}
+
+export type ReaderCheckJournal = {
+  bookId: string
+  lang: string
+  count: number
+  counts: { fixed: number; rejected: number; unmatched: number; skipped: number }
+  items: ReaderCheckJournalItem[]
+}
+
+/**
+ * Run a reader-check QA pass on an already-translated book (no re-translation) and
+ * stream per-chapter progress. Admin only (gated on the backend). Reads the NDJSON
+ * stream and invokes onEvent per line.
+ */
+export async function startReaderCheck(
+  bookId: string,
+  lang: string,
+  variant: ReaderCheckVariant,
+  onEvent: (ev: ReaderCheckProgressEvent) => void,
+  opts: { model?: string; signal?: AbortSignal } = {},
+): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  const res = await fetch(`${API_URL}/api/books/${bookId}/reader-check`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      variant,
+      ...(opts.model ? { model: opts.model } : {}),
+    }),
+    signal: opts.signal,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Reader-check failed to start: ${res.status}`)
+  }
+  if (!res.body) throw new Error('No response body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  const processLine = (raw: string) => {
+    const t = raw.trim()
+    if (!t) return
+    try { onEvent(JSON.parse(t) as ReaderCheckProgressEvent) } catch { /* ignore partial line */ }
+  }
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n')
+    buffer = lines.pop() ?? ''
+    for (const line of lines) processLine(line)
+  }
+  if (buffer.trim()) processLine(buffer)
+}
+
+/** Poll reader-check run progress (bypasses cache). */
+export async function getReaderCheckProgress(bookId: string, lang: string): Promise<ReaderCheckProgress> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/reader-check?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch reader-check progress: ${res.status}`)
+  }
+  return res.json() as Promise<ReaderCheckProgress>
+}
+
+/** Fetch the per-book reader-check journal (before/after + rejected places). */
+export async function getReaderCheckJournal(bookId: string, lang: string): Promise<ReaderCheckJournal> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/reader-check-journal?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch reader-check journal: ${res.status}`)
+  }
+  return res.json() as Promise<ReaderCheckJournal>
 }
 
 export function fetchBooks(status?: string): Promise<ApiBook[]> {

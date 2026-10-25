@@ -19,9 +19,15 @@ import {
   getRevisionProgress,
   getRevisionDiff,
   getFictionCosts,
+  startReaderCheck,
+  getReaderCheckProgress,
+  getReaderCheckJournal,
   fetchPlaygroundModels,
   fetchFictionFlowPrompts,
   type ApiBook,
+  type ReaderCheckVariant,
+  type ReaderCheckProgressEvent,
+  type ReaderCheckJournalItem,
   type FictionProgressEvent,
   type FictionHistoryEntry,
   type GlossaryProgressEvent,
@@ -214,6 +220,22 @@ export default function AdminFictionPage() {
   // Reuse another book's finished glossary verbatim (copy, no LLM rebuild).
   const [glossaryCopying, setGlossaryCopying] = useState(false);
 
+  // Reader-check QA pass (runs on an already-translated book; no re-translation).
+  const [readerVariant, setReaderVariant] = useState<ReaderCheckVariant>('reader');
+  const [readerModel, setReaderModel] = useState('');
+  const [readerRunning, setReaderRunning] = useState(false);
+  const [readerState, setReaderState] = useState<string>('idle');
+  const [readerDone, setReaderDone] = useState(0);
+  const [readerTotal, setReaderTotal] = useState(0);
+  const [readerFound, setReaderFound] = useState(0);
+  const [readerFixed, setReaderFixed] = useState(0);
+  const [readerRejected, setReaderRejected] = useState(0);
+  const [readerUnmatched, setReaderUnmatched] = useState(0);
+  const [readerError, setReaderError] = useState<string | null>(null);
+  const [readerJournal, setReaderJournal] = useState<ReaderCheckJournalItem[] | null>(null);
+  const [readerJournalOpen, setReaderJournalOpen] = useState(false);
+  const [readerJournalLoading, setReaderJournalLoading] = useState(false);
+
   // Per-stage cost / tokens / time for the selected book+language.
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
   const [costsLoading, setCostsLoading] = useState(false);
@@ -229,6 +251,7 @@ export default function AdminFictionPage() {
   const abortRef = useRef<AbortController | null>(null);
   const glossaryAbortRef = useRef<AbortController | null>(null);
   const revisionAbortRef = useRef<AbortController | null>(null);
+  const readerAbortRef = useRef<AbortController | null>(null);
 
   const loadHistory = useCallback(async () => {
     setHistoryLoading(true);
@@ -445,12 +468,119 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, revisionRunning, overwriteRevision, revisionModel, loadRevisionProgress, loadFictionCosts]);
 
+  // ── Reader-check QA pass ──
+  const loadReaderProgress = useCallback(async () => {
+    if (!bookId) return;
+    try {
+      const p = await getReaderCheckProgress(bookId, lang);
+      setReaderState(p.state);
+      setReaderTotal(p.chaptersTotal);
+      setReaderDone(p.chaptersDone);
+      setReaderFound(p.found);
+      setReaderFixed(p.fixed);
+      setReaderRejected(p.rejected);
+      setReaderUnmatched(p.unmatched);
+      setReaderError(p.error ?? null);
+    } catch {
+      setReaderState('idle');
+      setReaderTotal(0);
+      setReaderDone(0);
+      setReaderFound(0);
+      setReaderFixed(0);
+      setReaderRejected(0);
+      setReaderUnmatched(0);
+      setReaderError(null);
+    }
+  }, [bookId, lang]);
+
+  const loadReaderJournal = useCallback(async () => {
+    if (!bookId) return;
+    setReaderJournalLoading(true);
+    try {
+      const j = await getReaderCheckJournal(bookId, lang);
+      setReaderJournal(j.items);
+    } catch {
+      setReaderJournal(null);
+    } finally {
+      setReaderJournalLoading(false);
+    }
+  }, [bookId, lang]);
+
+  const runReaderCheckPass = useCallback(async () => {
+    if (!bookId || readerRunning) return;
+    setReaderRunning(true);
+    setReaderError(null);
+    setReaderState('running');
+    setReaderDone(0);
+    setReaderFound(0);
+    setReaderFixed(0);
+    setReaderRejected(0);
+    setReaderUnmatched(0);
+
+    const controller = new AbortController();
+    readerAbortRef.current = controller;
+    let streamStarted = false;
+
+    const onEvent = (ev: ReaderCheckProgressEvent) => {
+      switch (ev.type) {
+        case 'book_start':
+          streamStarted = true;
+          setReaderTotal(ev.totalChapters ?? 0);
+          break;
+        case 'chapter_done':
+          if (typeof ev.done === 'number') setReaderDone(ev.done);
+          if (typeof ev.totalChapters === 'number') setReaderTotal(ev.totalChapters);
+          setReaderFound((n) => n + (ev.found ?? 0));
+          setReaderFixed((n) => n + (ev.fixed ?? 0));
+          setReaderRejected((n) => n + (ev.rejected ?? 0));
+          setReaderUnmatched((n) => n + (ev.unmatched ?? 0));
+          break;
+        case 'book_done':
+          if (typeof ev.found === 'number') setReaderFound(ev.found);
+          if (typeof ev.fixed === 'number') setReaderFixed(ev.fixed);
+          if (typeof ev.rejected === 'number') setReaderRejected(ev.rejected);
+          if (typeof ev.unmatched === 'number') setReaderUnmatched(ev.unmatched);
+          setReaderState('done');
+          break;
+      }
+    };
+
+    try {
+      await startReaderCheck(bookId, lang, readerVariant, onEvent, { model: readerModel || undefined, signal: controller.signal });
+      await loadReaderProgress();
+      await loadReaderJournal();
+      setReaderJournalOpen(true);
+    } catch (e) {
+      const kind = classifyRunError(e, streamStarted);
+      if (kind === 'dropped') {
+        // Backend keeps running; reload status and let the poll effect continue.
+        setReaderError(STREAM_DROPPED_NOTE);
+        await loadReaderProgress();
+      } else if (kind === 'failed') {
+        setReaderError(e instanceof Error ? e.message : 'Reader-check failed');
+        setReaderState('error');
+      } // 'aborted' (user stopped): leave the current status untouched.
+    } finally {
+      setReaderRunning(false);
+      readerAbortRef.current = null;
+      void loadFictionCosts();
+    }
+  }, [bookId, lang, readerRunning, readerVariant, readerModel, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
+
   useEffect(() => {
     if (!isAdmin || !bookId) return;
     setDiffOpen(false);
     setDiffEntries(null);
     void loadRevisionProgress();
   }, [isAdmin, bookId, lang, loadRevisionProgress]);
+
+  // Load reader-check progress (and journal if a run exists) on book/lang change.
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    setReaderJournalOpen(false);
+    setReaderJournal(null);
+    void loadReaderProgress();
+  }, [isAdmin, bookId, lang, loadReaderProgress]);
 
   const handleViewChanges = useCallback(async () => {
     if (diffOpen) { setDiffOpen(false); return; }
@@ -611,6 +741,14 @@ export default function AdminFictionPage() {
     return () => clearInterval(id);
   }, [isAdmin, bookId, revisionState, revisionRunning, loadRevisionProgress]);
 
+  // Same for the reader-check pass (its run-state heartbeats 'running').
+  useEffect(() => {
+    if (!isAdmin || !bookId) return;
+    if (readerState !== 'running' || readerRunning) return;
+    const id = setInterval(() => { void loadReaderProgress(); }, 3000);
+    return () => clearInterval(id);
+  }, [isAdmin, bookId, readerState, readerRunning, loadReaderProgress]);
+
   // Pull the freshest state for every stage at once (translation, glossary,
   // revision) + history — so an interrupted/resumed run shows its real progress.
   const handleRefresh = useCallback(async () => {
@@ -705,7 +843,7 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, seedFromBookId, glossaryRunning, glossaryCopying]);
 
-  useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); }, []);
+  useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); readerAbortRef.current?.abort(); }, []);
 
   if (authLoading) {
     return (
@@ -1251,6 +1389,94 @@ export default function AdminFictionPage() {
         {diffOpen && diffEntries && <RevisionDiffView entries={diffEntries} />}
       </div>
 
+      {/* ── Reader-check QA pass (calques / reader) ── */}
+      <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-sm font-semibold">
+            <FileText className="h-4 w-4" /> Reader-check (QA pass)
+          </h2>
+          <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+            Runs on the <strong>already-translated</strong> book — no re-translation. Per chapter it searches the
+            translated text for stumbling places, anchors each quote to a segment, fixes
+            <em> blocks/noticeable</em> places using the source + neighbours + glossary, and verifies the fix
+            (same segments, 0.5–2× length, no Latin/Cyrillic mix). Accepted fixes are saved into the book, so the
+            downloadable EPUB reflects them. Every place is logged below.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-2 text-sm">
+            <span>Search prompt</span>
+            <select
+              value={readerVariant}
+              disabled={readerRunning}
+              onChange={(e) => setReaderVariant(e.target.value as ReaderCheckVariant)}
+              className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
+            >
+              <option value="reader">Reader (general stumbles)</option>
+              <option value="calques">Calques (RU idioms only)</option>
+            </select>
+          </label>
+          <ModelPicker value={readerModel} onChange={setReaderModel} models={availableModels} disabled={readerRunning} />
+          <Button onClick={runReaderCheckPass} disabled={!bookId || readerRunning || running || revisionRunning}>
+            {readerRunning ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking…
+              </>
+            ) : (
+              <>
+                <FileText className="mr-2 h-4 w-4" /> Run reader-check
+              </>
+            )}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (readerJournalOpen) { setReaderJournalOpen(false); return; }
+              if (!readerJournal) await loadReaderJournal();
+              setReaderJournalOpen(true);
+            }}
+            disabled={!bookId || readerJournalLoading}
+          >
+            {readerJournalLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : readerJournalOpen ? (
+              <ChevronDown className="mr-2 h-4 w-4" />
+            ) : (
+              <ChevronRight className="mr-2 h-4 w-4" />
+            )}
+            {readerJournalOpen ? 'Hide journal' : 'View journal'}
+          </Button>
+        </div>
+
+        {(readerRunning || readerTotal > 0) && readerState !== 'idle' && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className={readerState === 'error' ? 'font-medium text-amber-600 dark:text-amber-500' : 'text-[var(--app-text-muted)]'}>
+                {readerRunning ? 'Checking…' : readerState === 'done' ? 'Complete' : readerState === 'error' ? 'Stopped — error' : 'Progress'}
+                <span className="ml-2 text-xs text-[var(--app-text-muted)]">
+                  {readerFound} found · {readerFixed} fixed · {readerRejected} rejected · {readerUnmatched} unmatched
+                </span>
+              </span>
+              <span className="tabular-nums text-[var(--app-text-muted)]">
+                {readerDone}/{readerTotal} · {readerTotal > 0 ? Math.round((readerDone / readerTotal) * 100) : 0}%
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--separator-opaque)]">
+              <div
+                className={`h-full rounded-full transition-[width] duration-300 ${readerState === 'error' ? 'bg-amber-500' : 'bg-[var(--app-accent)]'}`}
+                style={{ width: `${readerTotal > 0 ? Math.round((readerDone / readerTotal) * 100) : 0}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {readerError && <p className="text-sm text-red-500">{readerError}</p>}
+
+        {readerJournalOpen && <ReaderCheckJournalView items={readerJournal} loading={readerJournalLoading} />}
+      </div>
+
       {/* ── Cost & tokens (per stage) ── */}
       <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
         <div className="flex items-start justify-between gap-3">
@@ -1481,6 +1707,78 @@ function Row({ label, value }: { label: string; value: string }) {
   );
 }
 
+const READER_OUTCOME_STYLE: Record<string, string> = {
+  fixed: 'text-emerald-600 dark:text-emerald-400',
+  rejected: 'text-amber-600 dark:text-amber-500',
+  unmatched: 'text-[var(--app-text-muted)]',
+  skipped: 'text-[var(--app-text-muted)]',
+};
+
+function ReaderCheckJournalView({ items, loading }: { items: ReaderCheckJournalItem[] | null; loading: boolean }) {
+  if (loading && !items) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading journal…
+      </div>
+    );
+  }
+  if (!items || items.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No journal yet — run a reader-check pass.</p>;
+  }
+
+  // Group by chapter, preserving the (chapter-number ordered) sequence.
+  const groups: { key: string; title: string; items: ReaderCheckJournalItem[] }[] = [];
+  for (const it of items) {
+    const key = it.chapterId || String(it.chapterNumber ?? '');
+    const title = `${it.chapterNumber != null ? `${it.chapterNumber}. ` : ''}${it.chapterTitle ?? 'Untitled'}`;
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.items.push(it);
+    else groups.push({ key, title, items: [it] });
+  }
+
+  return (
+    <div className="space-y-4">
+      {groups.map((g) => (
+        <div key={g.key} className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
+          <h4 className="mb-2 text-xs font-semibold text-[var(--app-text-muted)]">{g.title}</h4>
+          <div className="space-y-3">
+            {g.items.map((it, i) => (
+              <div key={i} className="border-t border-[var(--separator-opaque)] pt-2 first:border-t-0 first:pt-0">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className={`font-semibold uppercase ${READER_OUTCOME_STYLE[it.outcome] ?? ''}`}>{it.outcome}</span>
+                  {it.rejectReason && <span className="text-[var(--app-text-muted)]">({it.rejectReason})</span>}
+                  <span className="text-[var(--app-text-muted)]">· {it.severity}</span>
+                  {it.matchType && it.matchType !== 'none' && (
+                    <span className="text-[var(--app-text-muted)]">· {it.matchType}{it.matchScore != null ? ` ${it.matchScore}` : ''}</span>
+                  )}
+                </div>
+                <p className="mt-1 text-sm">
+                  <span className="text-[var(--app-text-muted)]">quote:</span> “{it.quote}”
+                </p>
+                {it.problem && <p className="mt-0.5 text-xs text-[var(--app-text-muted)]">{it.problem}</p>}
+                {(it.before != null || it.after != null) && (
+                  <div className="mt-1 space-y-1 text-sm">
+                    {it.before != null && (
+                      <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{it.before}</p>
+                    )}
+                    {it.after != null && it.outcome === 'fixed' && (
+                      <p className="text-emerald-600 dark:text-emerald-400"><span className="select-none">+ </span>{it.after}</p>
+                    )}
+                    {it.after != null && it.outcome !== 'fixed' && (
+                      <p className="text-[var(--app-text-muted)]"><span className="select-none">~ </span>{it.after} <span className="italic">(not applied)</span></p>
+                    )}
+                  </div>
+                )}
+                {it.changeNote && <p className="mt-0.5 text-xs italic text-[var(--app-text-muted)]">{it.changeNote}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
   // Group entries by chapter, preserving the (already chapter+position ordered) sequence.
   const groups: { key: string; title: string; items: RevisionDiffEntry[] }[] = [];
@@ -1520,6 +1818,8 @@ const STAGE_LABEL: Record<string, string> = {
   glossary: 'Glossary',
   translate: 'Translation',
   revise: 'Revision (Pass 2)',
+  'reader-check': 'Reader-check (search)',
+  correction: 'Reader-check (fix)',
 };
 
 function fmtUsd(n: number): string {
