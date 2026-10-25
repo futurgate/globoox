@@ -1057,9 +1057,10 @@ export default function AdminFictionPage() {
               <FileText className="h-4 w-4" /> Stage prompts
             </h2>
             <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-              View and tune the prompt for each pipeline stage. Edits are saved in this browser per
-              language (and glossary variant) only — they do <em>not</em> change the server-side book
-              translation, which uses the shipped prompt files.
+              View and tune the prompt for each pipeline stage. Edits here are a browser-only scratchpad
+              (per language + glossary variant) — they do <em>not</em> change real runs. To edit the prompts
+              used by real translation/glossary/revision/reader-check, go to{' '}
+              <a href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</a>.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setPromptsOpen((o) => !o)}>
