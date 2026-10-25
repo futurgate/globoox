@@ -945,6 +945,7 @@ export type ReaderCheckProgressEvent = {
   unmatched?: number
   variant?: string
   model?: string
+  resumingFrom?: number
   error?: string
 }
 
@@ -1002,7 +1003,7 @@ export async function startReaderCheck(
   lang: string,
   variant: ReaderCheckVariant,
   onEvent: (ev: ReaderCheckProgressEvent) => void,
-  opts: { model?: string; signal?: AbortSignal } = {},
+  opts: { model?: string; restart?: boolean; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -1015,6 +1016,7 @@ export async function startReaderCheck(
       lang: lang.toUpperCase(),
       variant,
       ...(opts.model ? { model: opts.model } : {}),
+      ...(opts.restart ? { restart: true } : {}),
     }),
     signal: opts.signal,
   })
