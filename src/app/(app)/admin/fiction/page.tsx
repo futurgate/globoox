@@ -223,6 +223,7 @@ export default function AdminFictionPage() {
   // Reader-check QA pass (runs on an already-translated book; no re-translation).
   const [readerVariant, setReaderVariant] = useState<ReaderCheckVariant>('reader');
   const [readerModel, setReaderModel] = useState('');
+  const [readerRestart, setReaderRestart] = useState(false);
   const [readerRunning, setReaderRunning] = useState(false);
   const [readerState, setReaderState] = useState<string>('idle');
   const [readerDone, setReaderDone] = useState(0);
@@ -526,14 +527,17 @@ export default function AdminFictionPage() {
         case 'book_start':
           streamStarted = true;
           setReaderTotal(ev.totalChapters ?? 0);
+          // Resume: the bar starts at the already-finished chapter count.
+          if (typeof ev.resumingFrom === 'number') setReaderDone(ev.resumingFrom);
           break;
         case 'chapter_done':
+          // Counts are emitted CUMULATIVE (seeded from the prior run on resume), so set.
           if (typeof ev.done === 'number') setReaderDone(ev.done);
           if (typeof ev.totalChapters === 'number') setReaderTotal(ev.totalChapters);
-          setReaderFound((n) => n + (ev.found ?? 0));
-          setReaderFixed((n) => n + (ev.fixed ?? 0));
-          setReaderRejected((n) => n + (ev.rejected ?? 0));
-          setReaderUnmatched((n) => n + (ev.unmatched ?? 0));
+          if (typeof ev.found === 'number') setReaderFound(ev.found);
+          if (typeof ev.fixed === 'number') setReaderFixed(ev.fixed);
+          if (typeof ev.rejected === 'number') setReaderRejected(ev.rejected);
+          if (typeof ev.unmatched === 'number') setReaderUnmatched(ev.unmatched);
           break;
         case 'book_done':
           if (typeof ev.found === 'number') setReaderFound(ev.found);
@@ -546,7 +550,7 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startReaderCheck(bookId, lang, readerVariant, onEvent, { model: readerModel || undefined, signal: controller.signal });
+      await startReaderCheck(bookId, lang, readerVariant, onEvent, { model: readerModel || undefined, restart: readerRestart, signal: controller.signal });
       await loadReaderProgress();
       await loadReaderJournal();
       setReaderJournalOpen(true);
@@ -565,7 +569,7 @@ export default function AdminFictionPage() {
       readerAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, readerRunning, readerVariant, readerModel, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
+  }, [bookId, lang, readerRunning, readerVariant, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -1057,9 +1061,10 @@ export default function AdminFictionPage() {
               <FileText className="h-4 w-4" /> Stage prompts
             </h2>
             <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-              View and tune the prompt for each pipeline stage. Edits are saved in this browser per
-              language (and glossary variant) only — they do <em>not</em> change the server-side book
-              translation, which uses the shipped prompt files.
+              View and tune the prompt for each pipeline stage. Edits here are a browser-only scratchpad
+              (per language + glossary variant) — they do <em>not</em> change real runs. To edit the prompts
+              used by real translation/glossary/revision/reader-check, go to{' '}
+              <a href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</a>.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setPromptsOpen((o) => !o)}>
@@ -1425,7 +1430,8 @@ export default function AdminFictionPage() {
               </>
             ) : (
               <>
-                <FileText className="mr-2 h-4 w-4" /> Run reader-check
+                <FileText className="mr-2 h-4 w-4" />
+                {!readerRestart && readerDone > 0 && readerDone < readerTotal ? 'Resume reader-check' : 'Run reader-check'}
               </>
             )}
           </Button>
@@ -1449,6 +1455,23 @@ export default function AdminFictionPage() {
             {readerJournalOpen ? 'Hide journal' : 'View journal'}
           </Button>
         </div>
+
+        <label
+          className="flex items-center gap-2 text-sm"
+          title="Re-check from chapter 1 and clear the journal. Off = resume from the last finished chapter."
+        >
+          <input
+            type="checkbox"
+            checked={readerRestart}
+            disabled={readerRunning}
+            onChange={(e) => setReaderRestart(e.target.checked)}
+            className="h-4 w-4 accent-[var(--app-accent)]"
+          />
+          <span>
+            Restart from scratch
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">(off = resume from where it stopped)</span>
+          </span>
+        </label>
 
         {(readerRunning || readerTotal > 0) && readerState !== 'idle' && (
           <div className="space-y-2">

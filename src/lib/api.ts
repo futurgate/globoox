@@ -945,6 +945,7 @@ export type ReaderCheckProgressEvent = {
   unmatched?: number
   variant?: string
   model?: string
+  resumingFrom?: number
   error?: string
 }
 
@@ -1002,7 +1003,7 @@ export async function startReaderCheck(
   lang: string,
   variant: ReaderCheckVariant,
   onEvent: (ev: ReaderCheckProgressEvent) => void,
-  opts: { model?: string; signal?: AbortSignal } = {},
+  opts: { model?: string; restart?: boolean; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -1015,6 +1016,7 @@ export async function startReaderCheck(
       lang: lang.toUpperCase(),
       variant,
       ...(opts.model ? { model: opts.model } : {}),
+      ...(opts.restart ? { restart: true } : {}),
     }),
     signal: opts.signal,
   })
@@ -1073,6 +1075,63 @@ export async function getReaderCheckJournal(bookId: string, lang: string): Promi
     throw new Error(body.message || `Failed to fetch reader-check journal: ${res.status}`)
   }
   return res.json() as Promise<ReaderCheckJournal>
+}
+
+// ── Server prompt overrides (admin) ─────────────────────────────────────────────
+
+export type ServerPrompt = {
+  name: string
+  label: string
+  group: 'translate' | 'glossary' | 'revise' | 'reader-check'
+  content: string
+  shipped: string
+  overridden: boolean
+  updatedAt: string | null
+}
+
+/** List editable server prompts with their effective content + override state. */
+export async function listServerPrompts(): Promise<ServerPrompt[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/prompts`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load prompts: ${res.status}`)
+  }
+  const data = (await res.json()) as { prompts: ServerPrompt[] }
+  return data.prompts
+}
+
+/** Save a server prompt override (used by real runs on the next run). */
+export async function saveServerPrompt(name: string, content: string): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/prompts`, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify({ name, content }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to save prompt: ${res.status}`)
+  }
+}
+
+/** Reset a server prompt to the shipped file (removes the override). */
+export async function resetServerPrompt(name: string): Promise<void> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/prompts?name=${encodeURIComponent(name)}`, {
+    method: 'DELETE',
+    headers,
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to reset prompt: ${res.status}`)
+  }
 }
 
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
