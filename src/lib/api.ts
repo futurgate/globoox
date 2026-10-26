@@ -1134,6 +1134,24 @@ export async function resetServerPrompt(name: string): Promise<void> {
   }
 }
 
+export type FictionStopStage = 'translate' | 'glossary' | 'revise' | 'reader-check'
+
+/** Ask the backend to stop a running fiction stage (halts new LLM calls). */
+export async function stopFictionStage(bookId: string, lang: string, stage: FictionStopStage): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/stop-stage`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), stage }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to stop: ${res.status}`)
+  }
+}
+
 export type BookStagePrompt = {
   stage: 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'calques' | 'correction'
   name: string        // real prompt filename used by the pipeline

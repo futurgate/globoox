@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -26,6 +26,8 @@ import {
   fetchBookStagePrompts,
   saveServerPrompt,
   resetServerPrompt,
+  stopFictionStage,
+  type FictionStopStage,
   type BookStagePrompt,
   type ApiBook,
   type ReaderCheckVariant,
@@ -209,6 +211,9 @@ export default function AdminFictionPage() {
   const [readerJournal, setReaderJournal] = useState<ReaderCheckJournalItem[] | null>(null);
   const [readerJournalOpen, setReaderJournalOpen] = useState(false);
   const [readerJournalLoading, setReaderJournalLoading] = useState(false);
+
+  // Stop: which stage is being stopped (disables its Stop button briefly).
+  const [stoppingStage, setStoppingStage] = useState<string | null>(null);
 
   // Per-stage cost / tokens / time for the selected book+language.
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
@@ -823,6 +828,22 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, seedFromBookId, glossaryRunning, glossaryCopying]);
 
+  // Stop a running stage: tell the backend to halt new LLM calls, then abort the
+  // client stream so the UI frees immediately (the backend stops at the next
+  // chapter/batch boundary; progress is preserved and resumable).
+  const stopStage = useCallback(async (stage: FictionStopStage, abortRef: { current: AbortController | null }) => {
+    if (!bookId) return;
+    setStoppingStage(stage);
+    try {
+      await stopFictionStage(bookId, lang, stage);
+    } catch {
+      // best-effort — still abort the client below
+    } finally {
+      abortRef.current?.abort();
+      setStoppingStage(null);
+    }
+  }, [bookId, lang]);
+
   useEffect(() => () => { abortRef.current?.abort(); glossaryAbortRef.current?.abort(); revisionAbortRef.current?.abort(); readerAbortRef.current?.abort(); }, []);
 
   if (authLoading) {
@@ -968,6 +989,11 @@ export default function AdminFictionPage() {
               </>
             )}
           </Button>
+          {running && (
+            <Button variant="outline" onClick={() => stopStage('translate', abortRef)} disabled={stoppingStage === 'translate'}>
+              <Square className="mr-2 h-4 w-4" /> Stop
+            </Button>
+          )}
 
           <Button
             variant="outline"
@@ -1170,6 +1196,11 @@ export default function AdminFictionPage() {
               </>
             )}
           </Button>
+          {glossaryRunning && (
+            <Button variant="outline" onClick={() => stopStage('glossary', glossaryAbortRef)} disabled={stoppingStage === 'glossary'}>
+              <Square className="mr-2 h-4 w-4" /> Stop
+            </Button>
+          )}
 
           {glossary && !glossaryBuilding && (
             <Button variant="outline" onClick={() => setGlossaryOpen((o) => !o)}>
@@ -1298,6 +1329,11 @@ export default function AdminFictionPage() {
               </>
             )}
           </Button>
+          {revisionRunning && (
+            <Button variant="outline" onClick={() => stopStage('revise', revisionAbortRef)} disabled={stoppingStage === 'revise'}>
+              <Square className="mr-2 h-4 w-4" /> Stop
+            </Button>
+          )}
 
           <Button
             variant="outline"
@@ -1416,6 +1452,11 @@ export default function AdminFictionPage() {
               </>
             )}
           </Button>
+          {readerRunning && (
+            <Button variant="outline" onClick={() => stopStage('reader-check', readerAbortRef)} disabled={stoppingStage === 'reader-check'}>
+              <Square className="mr-2 h-4 w-4" /> Stop
+            </Button>
+          )}
 
           <Button
             variant="outline"
