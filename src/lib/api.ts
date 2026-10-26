@@ -1135,7 +1135,7 @@ export async function resetServerPrompt(name: string): Promise<void> {
 }
 
 export type BookStagePrompt = {
-  stage: 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction'
+  stage: 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'calques' | 'correction'
   name: string        // real prompt filename used by the pipeline
   content: string     // effective (override or shipped)
   shipped: string

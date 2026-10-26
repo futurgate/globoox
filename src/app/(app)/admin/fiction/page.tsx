@@ -106,13 +106,14 @@ function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'drop
 // ── Per-stage prompt editor (server-backed) ──────────────────────────────────
 // Edits the REAL pipeline prompt files for the selected book's direction. Saving
 // stores a server-side override (prompt_overrides) that the next real run uses.
-type PromptStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction';
+type PromptStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'calques' | 'correction';
 
 const PROMPT_STAGES: { key: PromptStageKey; label: string; hint: string }[] = [
   { key: 'glossary', label: 'Glossary', hint: 'Builds the style bible / glossary per chapter.' },
   { key: 'translate', label: 'Translation', hint: 'Main whole-chapter translation prompt.' },
   { key: 'revision', label: 'Revision (Pass 2)', hint: 'Block-level stylistic polish.' },
-  { key: 'readerCheck', label: 'Reader check', hint: 'Flags places a reader would stumble.' },
+  { key: 'readerCheck', label: 'Reader check — reader', hint: 'Finds general reader stumbles (reader variant).' },
+  { key: 'calques', label: 'Reader check — calques', hint: 'Finds Russian calques only (calques variant).' },
   { key: 'correction', label: 'Correction', hint: 'Fixes the spots the reader check reported.' },
 ];
 const PROMPT_STAGE_LABEL: Record<string, { label: string; hint: string }> = Object.fromEntries(
