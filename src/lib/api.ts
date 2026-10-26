@@ -1134,6 +1134,33 @@ export async function resetServerPrompt(name: string): Promise<void> {
   }
 }
 
+export type BookStagePrompt = {
+  stage: 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction'
+  name: string        // real prompt filename used by the pipeline
+  content: string     // effective (override or shipped)
+  shipped: string
+  overridden: boolean
+}
+
+/** The REAL pipeline prompt files for a book's direction, one per stage. */
+export async function fetchBookStagePrompts(
+  bookId: string,
+  lang: string,
+): Promise<{ bookId: string; lang: string; sourceLang: string; stages: BookStagePrompt[] }> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/admin/fiction-book-prompts?bookId=${encodeURIComponent(bookId)}&lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load prompts: ${res.status}`)
+  }
+  return res.json() as Promise<{ bookId: string; lang: string; sourceLang: string; stages: BookStagePrompt[] }>
+}
+
 export function fetchBooks(status?: string): Promise<ApiBook[]> {
   const params = status ? `?status=${encodeURIComponent(status)}` : ''
   return request<ApiBook[]>(`/api/books${params}`).then((books) => {
