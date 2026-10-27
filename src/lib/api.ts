@@ -934,7 +934,7 @@ export async function getRevisionDiff(
 export type ReaderCheckVariant = 'reader' | 'calques'
 
 export type ReaderCheckProgressEvent = {
-  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'error'
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'item' | 'error'
   index?: number
   title?: string
   totalChapters?: number
@@ -947,6 +947,20 @@ export type ReaderCheckProgressEvent = {
   model?: string
   resumingFrom?: number
   error?: string
+  // 'item' — one journal entry, streamed the moment a place is processed.
+  chapterId?: string
+  chapterNumber?: number | null
+  chapterTitle?: string | null
+  quote?: string
+  problem?: string
+  severity?: string
+  outcome?: 'fixed' | 'rejected' | 'unmatched' | 'skipped'
+  rejectReason?: string | null
+  matchType?: string | null
+  matchScore?: number | null
+  before?: string | null
+  after?: string | null
+  changeNote?: string | null
 }
 
 export type ReaderCheckProgress = {
@@ -1153,7 +1167,7 @@ export async function stopFictionStage(bookId: string, lang: string, stage: Fict
 }
 
 export type BookStagePrompt = {
-  stage: 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'calques' | 'correction'
+  stage: 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction'
   name: string        // real prompt filename used by the pipeline
   content: string     // effective (override or shipped)
   shipped: string

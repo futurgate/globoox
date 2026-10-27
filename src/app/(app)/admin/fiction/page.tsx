@@ -108,14 +108,13 @@ function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'drop
 // ── Per-stage prompt editor (server-backed) ──────────────────────────────────
 // Edits the REAL pipeline prompt files for the selected book's direction. Saving
 // stores a server-side override (prompt_overrides) that the next real run uses.
-type PromptStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'calques' | 'correction';
+type PromptStageKey = 'glossary' | 'translate' | 'revision' | 'readerCheck' | 'correction';
 
 const PROMPT_STAGES: { key: PromptStageKey; label: string; hint: string }[] = [
   { key: 'glossary', label: 'Glossary', hint: 'Builds the style bible / glossary per chapter.' },
   { key: 'translate', label: 'Translation', hint: 'Main whole-chapter translation prompt.' },
   { key: 'revision', label: 'Revision (Pass 2)', hint: 'Block-level stylistic polish.' },
-  { key: 'readerCheck', label: 'Reader check — reader', hint: 'Finds general reader stumbles (reader variant).' },
-  { key: 'calques', label: 'Reader check — calques', hint: 'Finds Russian calques only (calques variant).' },
+  { key: 'readerCheck', label: 'Reader check', hint: 'Flags places a reader would stumble.' },
   { key: 'correction', label: 'Correction', hint: 'Fixes the spots the reader check reported.' },
 ];
 const PROMPT_STAGE_LABEL: Record<string, { label: string; hint: string }> = Object.fromEntries(
@@ -196,7 +195,8 @@ export default function AdminFictionPage() {
   const [glossaryCopying, setGlossaryCopying] = useState(false);
 
   // Reader-check QA pass (runs on an already-translated book; no re-translation).
-  const [readerVariant, setReaderVariant] = useState<ReaderCheckVariant>('reader');
+  // Only the general reader prompt is used from this page (calques removed).
+  const readerVariant: ReaderCheckVariant = 'reader';
   const [readerModel, setReaderModel] = useState('');
   const [readerRestart, setReaderRestart] = useState(false);
   const [readerRunning, setReaderRunning] = useState(false);
@@ -498,6 +498,9 @@ export default function AdminFictionPage() {
     setReaderFixed(0);
     setReaderRejected(0);
     setReaderUnmatched(0);
+    // Live journal: start empty and show it, then append each place as it streams in.
+    setReaderJournal([]);
+    setReaderJournalOpen(true);
 
     const controller = new AbortController();
     readerAbortRef.current = controller;
@@ -510,6 +513,27 @@ export default function AdminFictionPage() {
           setReaderTotal(ev.totalChapters ?? 0);
           // Resume: the bar starts at the already-finished chapter count.
           if (typeof ev.resumingFrom === 'number') setReaderDone(ev.resumingFrom);
+          break;
+        case 'item':
+          // One journal entry, the moment the place was processed — append live.
+          setReaderJournal((prev) => [...(prev ?? []), {
+            chapterId: ev.chapterId ?? '',
+            chapterNumber: ev.chapterNumber ?? null,
+            chapterTitle: ev.chapterTitle ?? null,
+            variant: ev.variant ?? 'reader',
+            quote: ev.quote ?? '',
+            problem: ev.problem ?? '',
+            severity: ev.severity ?? '',
+            outcome: ev.outcome ?? 'rejected',
+            rejectReason: ev.rejectReason ?? null,
+            blockId: null,
+            matchType: ev.matchType ?? null,
+            matchScore: ev.matchScore ?? null,
+            before: ev.before ?? null,
+            after: ev.after ?? null,
+            changeNote: ev.changeNote ?? null,
+            createdAt: new Date().toISOString(),
+          }]);
           break;
         case 'chapter_done':
           // Counts are emitted CUMULATIVE (seeded from the prior run on resume), so set.
@@ -551,6 +575,36 @@ export default function AdminFictionPage() {
       void loadFictionCosts();
     }
   }, [bookId, lang, readerRunning, readerVariant, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
+
+  // Export the reader-check journal as a CSV (loads it first if not in memory).
+  const downloadReaderJournalCsv = useCallback(async () => {
+    if (!bookId) return;
+    let items = readerJournal;
+    if (!items || items.length === 0) {
+      try {
+        const j = await getReaderCheckJournal(bookId, lang);
+        items = j.items;
+        setReaderJournal(j.items);
+      } catch { /* fall through to the empty check */ }
+    }
+    if (!items || items.length === 0) { setReaderError('No journal to export yet.'); return; }
+
+    const esc = (v: unknown) => `"${(v == null ? '' : String(v)).replace(/"/g, '""')}"`;
+    const header = ['Chapter #', 'Chapter', 'Variant', 'Severity', 'Outcome', 'Reason', 'Quote', 'Problem', 'Before', 'After', 'Change', 'Match', 'Score'];
+    const rows = items.map((it) => [
+      it.chapterNumber ?? '', it.chapterTitle ?? '', it.variant, it.severity, it.outcome, it.rejectReason ?? '',
+      it.quote, it.problem, it.before ?? '', it.after ?? '', it.changeNote ?? '', it.matchType ?? '', it.matchScore ?? '',
+    ]);
+    // Prepend a BOM so Excel reads the Cyrillic/UTF-8 correctly.
+    const csv = '﻿' + [header, ...rows].map((r) => r.map(esc).join(',')).join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reader-check-${bookId}-${lang}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [bookId, lang, readerJournal]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -1427,18 +1481,6 @@ export default function AdminFictionPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-sm">
-            <span>Search prompt</span>
-            <select
-              value={readerVariant}
-              disabled={readerRunning}
-              onChange={(e) => setReaderVariant(e.target.value as ReaderCheckVariant)}
-              className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
-            >
-              <option value="reader">Reader (general stumbles)</option>
-              <option value="calques">Calques (RU idioms only)</option>
-            </select>
-          </label>
           <ModelPicker value={readerModel} onChange={setReaderModel} models={availableModels} disabled={readerRunning} />
           <Button onClick={runReaderCheckPass} disabled={!bookId || readerRunning || running || revisionRunning}>
             {readerRunning ? (
@@ -1475,6 +1517,15 @@ export default function AdminFictionPage() {
               <ChevronRight className="mr-2 h-4 w-4" />
             )}
             {readerJournalOpen ? 'Hide journal' : 'View journal'}
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={downloadReaderJournalCsv}
+            disabled={!bookId || readerJournalLoading}
+            title="Download the reader-check journal as a CSV file"
+          >
+            <Download className="mr-2 h-4 w-4" /> Download CSV
           </Button>
         </div>
 
