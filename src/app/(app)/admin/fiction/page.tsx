@@ -498,6 +498,22 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang]);
 
+  // Refresh the journal from the DB WITHOUT toggling the loading spinner — used by
+  // the fallback poll while a run continues server-side but this tab is no longer
+  // streaming (e.g. the NDJSON stream was cut at the ~60s proxy cap after chapter 1).
+  // Without this, the live journal freezes at the last streamed chapter until a
+  // manual reload. Only replaces when the DB has at least as many rows, so a brief
+  // empty/partial read never wipes a richer live journal.
+  const refreshReaderJournalQuiet = useCallback(async () => {
+    if (!bookId) return;
+    try {
+      const j = await getReaderCheckJournal(bookId, lang);
+      setReaderJournal((prev) => (prev && prev.length > j.items.length ? prev : j.items));
+    } catch {
+      /* transient read error — keep what we have */
+    }
+  }, [bookId, lang]);
+
   const runReaderCheckPass = useCallback(async () => {
     if (!bookId || readerRunning) return;
     setReaderRunning(true);
@@ -675,7 +691,7 @@ export default function AdminFictionPage() {
   // journal row in place and keeps the proposed counter in sync.
   const handleReaderApply = useCallback(
     async (itemId: string, action: 'approve' | 'reject', editedText?: string) => {
-      if (!bookId || !itemId) return;
+      if (!bookId || !isPersistedItemId(itemId)) return;
       setReaderApplyBusyId(itemId);
       setReaderError(null);
       try {
@@ -694,16 +710,16 @@ export default function AdminFictionPage() {
               )
             : prev,
         );
-        setReaderProposed((n) => Math.max(0, n - 1));
-        if (action === 'approve') setReaderFixed((n) => n + 1);
-        else setReaderRejected((n) => n + 1);
+        // The transition may be from any editable state (proposed/rejected/fixed),
+        // so resync the run counters from the server rather than guessing deltas.
+        void loadReaderProgress();
       } catch (e) {
         setReaderError(e instanceof Error ? e.message : `Failed to ${action} correction`);
       } finally {
         setReaderApplyBusyId(null);
       }
     },
-    [bookId, lang],
+    [bookId, lang, loadReaderProgress],
   );
 
   // Approve every proposed correction as-is (the model's suggested text). Items the
@@ -711,7 +727,7 @@ export default function AdminFictionPage() {
   // their original suggestion — edit + approve those one by one to keep the edit.
   const handleReaderApproveAll = useCallback(async () => {
     if (!bookId || readerApprovingAll) return;
-    const targets = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && it.id);
+    const targets = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && isPersistedItemId(it.id));
     if (targets.length === 0) return;
     setReaderApprovingAll(true);
     setReaderError(null);
@@ -900,13 +916,19 @@ export default function AdminFictionPage() {
     return () => clearInterval(id);
   }, [isAdmin, bookId, revisionState, revisionRunning, loadRevisionProgress]);
 
-  // Same for the reader-check pass (its run-state heartbeats 'running').
+  // Same for the reader-check pass (its run-state heartbeats 'running'). Also pull
+  // the journal from the DB each tick so chapters processed after the stream was
+  // cut appear live-ish, instead of freezing at the last streamed chapter until a
+  // manual reload.
   useEffect(() => {
     if (!isAdmin || !bookId) return;
     if (readerState !== 'running' || readerRunning) return;
-    const id = setInterval(() => { void loadReaderProgress(); }, 3000);
+    const id = setInterval(() => {
+      void loadReaderProgress();
+      void refreshReaderJournalQuiet();
+    }, 3000);
     return () => clearInterval(id);
-  }, [isAdmin, bookId, readerState, readerRunning, loadReaderProgress]);
+  }, [isAdmin, bookId, readerState, readerRunning, loadReaderProgress, refreshReaderJournalQuiet]);
 
   // Pull the freshest state for every stage at once (translation, glossary,
   // revision) + history — so an interrupted/resumed run shows its real progress.
@@ -1651,7 +1673,7 @@ export default function AdminFictionPage() {
           </Button>
 
           {(() => {
-            const approvable = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && it.id).length;
+            const approvable = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && isPersistedItemId(it.id)).length;
             if (approvable === 0) return null;
             return (
               <Button
@@ -1965,7 +1987,19 @@ const READER_OUTCOME_STYLE: Record<string, string> = {
 // with Approve (apply the edited text to the book) / Reject (discard) actions.
 // The item has no id until the journal is (re)loaded from the server, so actions
 // stay disabled for freshly-streamed rows until the next journal load.
-function ProposedFixEditor({
+// A journal item is approvable only once it has a real persisted row id. While a
+// run streams, live rows carry a transient key `${chapterId}#${index}` (NOT a uuid)
+// so previews can be matched to their final outcome — sending that to the backend
+// fails the uuid cast (500). Real ids arrive when the journal is (re)loaded.
+const isPersistedItemId = (id: string | null | undefined): boolean => !!id && !id.includes('#');
+
+// Which outcomes expose the edit/approve/reject controls. 'proposed' awaits a first
+// decision; a 'rejected' place can be edited and applied; an applied 'fixed' place
+// can be re-edited or reverted. (unmatched/skipped/correcting are not editable.)
+const isEditableOutcome = (outcome: string): boolean =>
+  outcome === 'proposed' || outcome === 'rejected' || outcome === 'fixed';
+
+function ReaderFixEditor({
   item,
   onApply,
   busy,
@@ -1974,8 +2008,14 @@ function ProposedFixEditor({
   onApply: (itemId: string, action: 'approve' | 'reject', editedText?: string) => void;
   busy: boolean;
 }) {
-  const [text, setText] = useState(item.after ?? '');
-  const ready = !!item.id && !busy;
+  // Seed from the suggested/applied text, falling back to the original so a
+  // rejected place with no suggestion (e.g. missing_segment) is still editable.
+  const [text, setText] = useState(item.after ?? item.before ?? '');
+  const ready = isPersistedItemId(item.id) && !busy;
+  const applyLabel = item.outcome === 'fixed' ? 'Save & re-apply' : 'Approve & apply';
+  // Reject is a no-op on an already-rejected row; for a fixed row it also reverts.
+  const showReject = item.outcome !== 'rejected';
+  const rejectLabel = item.outcome === 'fixed' ? 'Reject & revert' : 'Reject';
   return (
     <div className="mt-1 space-y-2 text-sm">
       {item.before != null && (
@@ -1991,12 +2031,14 @@ function ProposedFixEditor({
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={() => onApply(item.id, 'approve', text)} disabled={!ready || !text.trim()}>
           {busy ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Check className="mr-1 h-3 w-3" />}
-          Approve &amp; apply
+          {applyLabel}
         </Button>
-        <Button size="sm" variant="outline" onClick={() => onApply(item.id, 'reject')} disabled={!ready}>
-          <X className="mr-1 h-3 w-3" /> Reject
-        </Button>
-        {!item.id && <span className="text-xs text-[var(--app-text-muted)]">Reload the journal to approve</span>}
+        {showReject && (
+          <Button size="sm" variant="outline" onClick={() => onApply(item.id, 'reject')} disabled={!ready}>
+            <X className="mr-1 h-3 w-3" /> {rejectLabel}
+          </Button>
+        )}
+        {!isPersistedItemId(item.id) && <span className="text-xs text-[var(--app-text-muted)]">Finish the run to edit</span>}
       </div>
     </div>
   );
@@ -2054,8 +2096,8 @@ function ReaderCheckJournalView({
                   <span className="text-[var(--app-text-muted)]">quote:</span> “{it.quote}”
                 </p>
                 {it.problem && <p className="mt-0.5 text-xs text-[var(--app-text-muted)]">{it.problem}</p>}
-                {it.outcome === 'proposed' ? (
-                  <ProposedFixEditor item={it} onApply={onApply} busy={busyId === it.id} />
+                {isEditableOutcome(it.outcome) && it.blockId ? (
+                  <ReaderFixEditor item={it} onApply={onApply} busy={busyId === it.id} />
                 ) : (
                   (it.before != null || it.after != null) && (
                     <div className="mt-1 space-y-1 text-sm">
