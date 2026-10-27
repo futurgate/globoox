@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -22,6 +22,7 @@ import {
   startReaderCheck,
   getReaderCheckProgress,
   getReaderCheckJournal,
+  applyReaderCheckFix,
   fetchPlaygroundModels,
   fetchBookStagePrompts,
   saveServerPrompt,
@@ -205,12 +206,17 @@ export default function AdminFictionPage() {
   const [readerTotal, setReaderTotal] = useState(0);
   const [readerFound, setReaderFound] = useState(0);
   const [readerFixed, setReaderFixed] = useState(0);
+  const [readerProposed, setReaderProposed] = useState(0);
   const [readerRejected, setReaderRejected] = useState(0);
   const [readerUnmatched, setReaderUnmatched] = useState(0);
   const [readerError, setReaderError] = useState<string | null>(null);
   const [readerJournal, setReaderJournal] = useState<ReaderCheckJournalItem[] | null>(null);
   const [readerJournalOpen, setReaderJournalOpen] = useState(false);
   const [readerJournalLoading, setReaderJournalLoading] = useState(false);
+  // Which proposed item is being approved/rejected (disables its buttons briefly).
+  const [readerApplyBusyId, setReaderApplyBusyId] = useState<string | null>(null);
+  // Bulk "approve all proposed" in progress.
+  const [readerApprovingAll, setReaderApprovingAll] = useState(false);
 
   // Stop: which stage is being stopped (disables its Stop button briefly).
   const [stoppingStage, setStoppingStage] = useState<string | null>(null);
@@ -460,6 +466,7 @@ export default function AdminFictionPage() {
       setReaderDone(p.chaptersDone);
       setReaderFound(p.found);
       setReaderFixed(p.fixed);
+      setReaderProposed(p.proposed ?? 0);
       setReaderRejected(p.rejected);
       setReaderUnmatched(p.unmatched);
       setReaderError(p.error ?? null);
@@ -469,6 +476,7 @@ export default function AdminFictionPage() {
       setReaderDone(0);
       setReaderFound(0);
       setReaderFixed(0);
+      setReaderProposed(0);
       setReaderRejected(0);
       setReaderUnmatched(0);
       setReaderError(null);
@@ -482,7 +490,9 @@ export default function AdminFictionPage() {
       const j = await getReaderCheckJournal(bookId, lang);
       setReaderJournal(j.items);
     } catch {
-      setReaderJournal(null);
+      // Don't wipe a populated (possibly live) journal on a transient read error —
+      // only clear when there was nothing to show.
+      setReaderJournal((prev) => (prev && prev.length > 0 ? prev : null));
     } finally {
       setReaderJournalLoading(false);
     }
@@ -496,6 +506,7 @@ export default function AdminFictionPage() {
     setReaderDone(0);
     setReaderFound(0);
     setReaderFixed(0);
+    setReaderProposed(0);
     setReaderRejected(0);
     setReaderUnmatched(0);
     // Live journal: start empty and show it, then append each place as it streams in.
@@ -505,6 +516,11 @@ export default function AdminFictionPage() {
     const controller = new AbortController();
     readerAbortRef.current = controller;
     let streamStarted = false;
+    // Whether the stream reached its natural end. A premature close (proxy/idle
+    // timeout on a long run) resolves the fetch WITHOUT a book_done, while the
+    // backend keeps processing — we must NOT reload the (still-partial) DB journal
+    // over the richer live one in that case, or it flashes to 0 entries.
+    let sawBookDone = false;
 
     const onEvent = (ev: ReaderCheckProgressEvent) => {
       switch (ev.type) {
@@ -514,9 +530,39 @@ export default function AdminFictionPage() {
           // Resume: the bar starts at the already-finished chapter count.
           if (typeof ev.resumingFrom === 'number') setReaderDone(ev.resumingFrom);
           break;
-        case 'item':
-          // One journal entry, the moment the place was processed — append live.
+        case 'anchored': {
+          // Intermediate between reader-check and correction: the quote is now
+          // pinned to a block and the correction call is in flight. Show it live as
+          // a 'correcting' row, keyed by itemId so the final 'item' replaces it.
+          const key = ev.itemId ?? '';
           setReaderJournal((prev) => [...(prev ?? []), {
+            id: key,
+            chapterId: ev.chapterId ?? '',
+            chapterNumber: ev.chapterNumber ?? null,
+            chapterTitle: ev.chapterTitle ?? null,
+            variant: ev.variant ?? 'reader',
+            quote: ev.quote ?? '',
+            problem: ev.problem ?? '',
+            severity: ev.severity ?? '',
+            outcome: 'correcting',
+            rejectReason: null,
+            blockId: ev.blockId ?? null,
+            matchType: ev.matchType ?? null,
+            matchScore: ev.matchScore ?? null,
+            before: ev.before ?? null,
+            after: null,
+            changeNote: null,
+            createdAt: new Date().toISOString(),
+          }]);
+          break;
+        }
+        case 'item': {
+          // Final outcome. If it carries an itemId it replaces the matching
+          // 'correcting' preview in place; otherwise (skipped/unmatched/no-anchor,
+          // which never had a preview) it appends.
+          const key = ev.itemId ?? '';
+          const row = {
+            id: key,
             chapterId: ev.chapterId ?? '',
             chapterNumber: ev.chapterNumber ?? null,
             chapterTitle: ev.chapterTitle ?? null,
@@ -526,27 +572,37 @@ export default function AdminFictionPage() {
             severity: ev.severity ?? '',
             outcome: ev.outcome ?? 'rejected',
             rejectReason: ev.rejectReason ?? null,
-            blockId: null,
+            blockId: ev.blockId ?? null,
             matchType: ev.matchType ?? null,
             matchScore: ev.matchScore ?? null,
             before: ev.before ?? null,
             after: ev.after ?? null,
             changeNote: ev.changeNote ?? null,
             createdAt: new Date().toISOString(),
-          }]);
+          };
+          setReaderJournal((prev) => {
+            const list = prev ?? [];
+            const i = key ? list.findIndex((it) => it.id === key && it.outcome === 'correcting') : -1;
+            if (i === -1) return [...list, row];
+            const next = list.slice();
+            next[i] = row;
+            return next;
+          });
           break;
+        }
         case 'chapter_done':
           // Counts are emitted CUMULATIVE (seeded from the prior run on resume), so set.
           if (typeof ev.done === 'number') setReaderDone(ev.done);
           if (typeof ev.totalChapters === 'number') setReaderTotal(ev.totalChapters);
           if (typeof ev.found === 'number') setReaderFound(ev.found);
-          if (typeof ev.fixed === 'number') setReaderFixed(ev.fixed);
+          if (typeof ev.proposed === 'number') setReaderProposed(ev.proposed);
           if (typeof ev.rejected === 'number') setReaderRejected(ev.rejected);
           if (typeof ev.unmatched === 'number') setReaderUnmatched(ev.unmatched);
           break;
         case 'book_done':
+          sawBookDone = true;
           if (typeof ev.found === 'number') setReaderFound(ev.found);
-          if (typeof ev.fixed === 'number') setReaderFixed(ev.fixed);
+          if (typeof ev.proposed === 'number') setReaderProposed(ev.proposed);
           if (typeof ev.rejected === 'number') setReaderRejected(ev.rejected);
           if (typeof ev.unmatched === 'number') setReaderUnmatched(ev.unmatched);
           setReaderState('done');
@@ -557,7 +613,15 @@ export default function AdminFictionPage() {
     try {
       await startReaderCheck(bookId, lang, readerVariant, onEvent, { model: readerModel || undefined, restart: readerRestart, signal: controller.signal });
       await loadReaderProgress();
-      await loadReaderJournal();
+      if (sawBookDone) {
+        // Clean finish: swap the live journal for the persisted one (real row ids,
+        // needed by the approve/reject actions).
+        await loadReaderJournal();
+      } else {
+        // Stream closed early but the backend is still running. Keep the live
+        // journal and let the status poll continue to completion.
+        setReaderError(STREAM_DROPPED_NOTE);
+      }
       setReaderJournalOpen(true);
     } catch (e) {
       const kind = classifyRunError(e, streamStarted);
@@ -605,6 +669,62 @@ export default function AdminFictionPage() {
     a.click();
     URL.revokeObjectURL(url);
   }, [bookId, lang, readerJournal]);
+
+  // Approve (apply) or reject one proposed correction. Approve writes the (possibly
+  // edited) text into the book; reject leaves the book untouched. Updates the
+  // journal row in place and keeps the proposed counter in sync.
+  const handleReaderApply = useCallback(
+    async (itemId: string, action: 'approve' | 'reject', editedText?: string) => {
+      if (!bookId || !itemId) return;
+      setReaderApplyBusyId(itemId);
+      setReaderError(null);
+      try {
+        const r = await applyReaderCheckFix(bookId, lang, itemId, action, editedText);
+        setReaderJournal((prev) =>
+          prev
+            ? prev.map((it) =>
+                it.id === itemId
+                  ? {
+                      ...it,
+                      outcome: r.outcome,
+                      after: r.after ?? it.after,
+                      rejectReason: action === 'reject' ? 'human_rejected' : null,
+                    }
+                  : it,
+              )
+            : prev,
+        );
+        setReaderProposed((n) => Math.max(0, n - 1));
+        if (action === 'approve') setReaderFixed((n) => n + 1);
+        else setReaderRejected((n) => n + 1);
+      } catch (e) {
+        setReaderError(e instanceof Error ? e.message : `Failed to ${action} correction`);
+      } finally {
+        setReaderApplyBusyId(null);
+      }
+    },
+    [bookId, lang],
+  );
+
+  // Approve every proposed correction as-is (the model's suggested text). Items the
+  // admin edited in a textarea but has not approved individually are applied with
+  // their original suggestion — edit + approve those one by one to keep the edit.
+  const handleReaderApproveAll = useCallback(async () => {
+    if (!bookId || readerApprovingAll) return;
+    const targets = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && it.id);
+    if (targets.length === 0) return;
+    setReaderApprovingAll(true);
+    setReaderError(null);
+    try {
+      // Sequential: each apply is a small write; a failed one is left proposed and
+      // the rest continue (handleReaderApply surfaces the error, never throws).
+      for (const it of targets) {
+        await handleReaderApply(it.id, 'approve', it.after ?? '');
+      }
+    } finally {
+      setReaderApprovingAll(false);
+    }
+  }, [bookId, readerApprovingAll, readerJournal, handleReaderApply]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -1475,8 +1595,10 @@ export default function AdminFictionPage() {
             Runs on the <strong>already-translated</strong> book — no re-translation. Per chapter it searches the
             translated text for stumbling places, anchors each quote to a segment, fixes
             <em> blocks/noticeable</em> places using the source + neighbours + glossary, and verifies the fix
-            (same segments, 0.5–2× length, no Latin/Cyrillic mix). Accepted fixes are saved into the book, so the
-            downloadable EPUB reflects them. Every place is logged below.
+            (same segments, 0.5–2× length, no Latin/Cyrillic mix). Verified fixes are <strong>proposed, not
+            applied</strong> — review each in the journal below, edit if needed, and <em>Approve</em> to write it
+            into the book (so the downloadable EPUB reflects it) or <em>Reject</em> to discard it. Every place is
+            logged below.
           </p>
         </div>
 
@@ -1527,6 +1649,25 @@ export default function AdminFictionPage() {
           >
             <Download className="mr-2 h-4 w-4" /> Download CSV
           </Button>
+
+          {(() => {
+            const approvable = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && it.id).length;
+            if (approvable === 0) return null;
+            return (
+              <Button
+                onClick={handleReaderApproveAll}
+                disabled={!bookId || readerApprovingAll || readerRunning}
+                title="Apply every proposed correction as suggested by the model"
+              >
+                {readerApprovingAll ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCheck className="mr-2 h-4 w-4" />
+                )}
+                Approve all ({approvable})
+              </Button>
+            );
+          })()}
         </div>
 
         <label
@@ -1552,7 +1693,7 @@ export default function AdminFictionPage() {
               <span className={readerState === 'error' ? 'font-medium text-amber-600 dark:text-amber-500' : 'text-[var(--app-text-muted)]'}>
                 {readerRunning ? 'Checking…' : readerState === 'done' ? 'Complete' : readerState === 'error' ? 'Stopped — error' : 'Progress'}
                 <span className="ml-2 text-xs text-[var(--app-text-muted)]">
-                  {readerFound} found · {readerFixed} fixed · {readerRejected} rejected · {readerUnmatched} unmatched
+                  {readerFound} found · {readerProposed} proposed · {readerFixed} applied · {readerRejected} rejected · {readerUnmatched} unmatched
                 </span>
               </span>
               <span className="tabular-nums text-[var(--app-text-muted)]">
@@ -1570,7 +1711,14 @@ export default function AdminFictionPage() {
 
         {readerError && <p className="text-sm text-red-500">{readerError}</p>}
 
-        {readerJournalOpen && <ReaderCheckJournalView items={readerJournal} loading={readerJournalLoading} />}
+        {readerJournalOpen && (
+          <ReaderCheckJournalView
+            items={readerJournal}
+            loading={readerJournalLoading}
+            onApply={handleReaderApply}
+            busyId={readerApplyBusyId}
+          />
+        )}
       </div>
 
       {/* ── Cost & tokens (per stage) ── */}
@@ -1805,12 +1953,66 @@ function Row({ label, value }: { label: string; value: string }) {
 
 const READER_OUTCOME_STYLE: Record<string, string> = {
   fixed: 'text-emerald-600 dark:text-emerald-400',
+  proposed: 'text-sky-600 dark:text-sky-400',
   rejected: 'text-amber-600 dark:text-amber-500',
   unmatched: 'text-[var(--app-text-muted)]',
   skipped: 'text-[var(--app-text-muted)]',
+  // Transient: quote anchored, correction LLM call in flight.
+  correcting: 'text-violet-600 dark:text-violet-400 animate-pulse',
 };
 
-function ReaderCheckJournalView({ items, loading }: { items: ReaderCheckJournalItem[] | null; loading: boolean }) {
+// One proposed correction: shows the original (red) and an editable suggestion,
+// with Approve (apply the edited text to the book) / Reject (discard) actions.
+// The item has no id until the journal is (re)loaded from the server, so actions
+// stay disabled for freshly-streamed rows until the next journal load.
+function ProposedFixEditor({
+  item,
+  onApply,
+  busy,
+}: {
+  item: ReaderCheckJournalItem;
+  onApply: (itemId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busy: boolean;
+}) {
+  const [text, setText] = useState(item.after ?? '');
+  const ready = !!item.id && !busy;
+  return (
+    <div className="mt-1 space-y-2 text-sm">
+      {item.before != null && (
+        <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{item.before}</p>
+      )}
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        rows={Math.min(8, Math.max(2, text.split('\n').length))}
+        disabled={busy}
+        className="w-full rounded-[var(--radius)] border border-sky-500/40 bg-[var(--app-surface-bg)] p-2 text-sm outline-none focus:border-[var(--app-accent)]"
+      />
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={() => onApply(item.id, 'approve', text)} disabled={!ready || !text.trim()}>
+          {busy ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Check className="mr-1 h-3 w-3" />}
+          Approve &amp; apply
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => onApply(item.id, 'reject')} disabled={!ready}>
+          <X className="mr-1 h-3 w-3" /> Reject
+        </Button>
+        {!item.id && <span className="text-xs text-[var(--app-text-muted)]">Reload the journal to approve</span>}
+      </div>
+    </div>
+  );
+}
+
+function ReaderCheckJournalView({
+  items,
+  loading,
+  onApply,
+  busyId,
+}: {
+  items: ReaderCheckJournalItem[] | null;
+  loading: boolean;
+  onApply: (itemId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busyId: string | null;
+}) {
   if (loading && !items) {
     return (
       <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
@@ -1852,18 +2054,22 @@ function ReaderCheckJournalView({ items, loading }: { items: ReaderCheckJournalI
                   <span className="text-[var(--app-text-muted)]">quote:</span> “{it.quote}”
                 </p>
                 {it.problem && <p className="mt-0.5 text-xs text-[var(--app-text-muted)]">{it.problem}</p>}
-                {(it.before != null || it.after != null) && (
-                  <div className="mt-1 space-y-1 text-sm">
-                    {it.before != null && (
-                      <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{it.before}</p>
-                    )}
-                    {it.after != null && it.outcome === 'fixed' && (
-                      <p className="text-emerald-600 dark:text-emerald-400"><span className="select-none">+ </span>{it.after}</p>
-                    )}
-                    {it.after != null && it.outcome !== 'fixed' && (
-                      <p className="text-[var(--app-text-muted)]"><span className="select-none">~ </span>{it.after} <span className="italic">(not applied)</span></p>
-                    )}
-                  </div>
+                {it.outcome === 'proposed' ? (
+                  <ProposedFixEditor item={it} onApply={onApply} busy={busyId === it.id} />
+                ) : (
+                  (it.before != null || it.after != null) && (
+                    <div className="mt-1 space-y-1 text-sm">
+                      {it.before != null && (
+                        <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{it.before}</p>
+                      )}
+                      {it.after != null && it.outcome === 'fixed' && (
+                        <p className="text-emerald-600 dark:text-emerald-400"><span className="select-none">+ </span>{it.after}</p>
+                      )}
+                      {it.after != null && it.outcome !== 'fixed' && (
+                        <p className="text-[var(--app-text-muted)]"><span className="select-none">~ </span>{it.after} <span className="italic">(not applied)</span></p>
+                      )}
+                    </div>
+                  )
                 )}
                 {it.changeNote && <p className="mt-0.5 text-xs italic text-[var(--app-text-muted)]">{it.changeNote}</p>}
               </div>
