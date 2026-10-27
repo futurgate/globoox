@@ -934,13 +934,17 @@ export async function getRevisionDiff(
 export type ReaderCheckVariant = 'reader' | 'calques'
 
 export type ReaderCheckProgressEvent = {
-  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'item' | 'error'
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'item' | 'anchored' | 'error'
+  // Transient key tying an 'anchored' preview to its final 'item' (live stream only).
+  itemId?: string
+  blockId?: string | null
   index?: number
   title?: string
   totalChapters?: number
   done?: number
   found?: number
   fixed?: number
+  proposed?: number
   rejected?: number
   unmatched?: number
   variant?: string
@@ -954,7 +958,7 @@ export type ReaderCheckProgressEvent = {
   quote?: string
   problem?: string
   severity?: string
-  outcome?: 'fixed' | 'rejected' | 'unmatched' | 'skipped'
+  outcome?: 'fixed' | 'proposed' | 'rejected' | 'unmatched' | 'skipped'
   rejectReason?: string | null
   matchType?: string | null
   matchScore?: number | null
@@ -974,6 +978,7 @@ export type ReaderCheckProgress = {
   percent: number
   found: number
   fixed: number
+  proposed: number
   rejected: number
   unmatched: number
   error?: string | null
@@ -981,6 +986,7 @@ export type ReaderCheckProgress = {
 }
 
 export type ReaderCheckJournalItem = {
+  id: string
   chapterId: string
   chapterNumber: number | null
   chapterTitle: string | null
@@ -988,7 +994,9 @@ export type ReaderCheckJournalItem = {
   quote: string
   problem: string
   severity: string
-  outcome: 'fixed' | 'rejected' | 'unmatched' | 'skipped'
+  // 'correcting' is a transient live-stream state: the quote is anchored to a block
+  // and the correction LLM call is in flight. It never comes back from the DB journal.
+  outcome: 'fixed' | 'proposed' | 'rejected' | 'unmatched' | 'skipped' | 'correcting'
   rejectReason: string | null
   blockId: string | null
   matchType: string | null
@@ -1003,8 +1011,15 @@ export type ReaderCheckJournal = {
   bookId: string
   lang: string
   count: number
-  counts: { fixed: number; rejected: number; unmatched: number; skipped: number }
+  counts: { fixed: number; proposed: number; rejected: number; unmatched: number; skipped: number }
   items: ReaderCheckJournalItem[]
+}
+
+export type ReaderCheckApplyResult = {
+  ok: boolean
+  itemId: string
+  outcome: 'fixed' | 'rejected'
+  after?: string
 }
 
 /**
@@ -1089,6 +1104,38 @@ export async function getReaderCheckJournal(bookId: string, lang: string): Promi
     throw new Error(body.message || `Failed to fetch reader-check journal: ${res.status}`)
   }
   return res.json() as Promise<ReaderCheckJournal>
+}
+
+/**
+ * Approve (apply) or reject one proposed reader-check correction. Admin only.
+ * `editedText` (approve only) overrides the suggested text before it is written
+ * into the book. Returns the item's new outcome.
+ */
+export async function applyReaderCheckFix(
+  bookId: string,
+  lang: string,
+  itemId: string,
+  action: 'approve' | 'reject',
+  editedText?: string,
+): Promise<ReaderCheckApplyResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/reader-check-apply`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      itemId,
+      action,
+      ...(action === 'approve' && editedText != null ? { editedText } : {}),
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${action} correction: ${res.status}`)
+  }
+  return res.json() as Promise<ReaderCheckApplyResult>
 }
 
 // ── Server prompt overrides (admin) ─────────────────────────────────────────────
