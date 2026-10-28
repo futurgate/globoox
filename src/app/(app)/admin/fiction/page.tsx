@@ -22,6 +22,7 @@ import {
   startReaderCheck,
   getReaderCheckProgress,
   getReaderCheckJournal,
+  getReaderCheckCostRuns,
   applyReaderCheckFix,
   fetchPlaygroundModels,
   fetchBookStagePrompts,
@@ -34,6 +35,7 @@ import {
   type ReaderCheckVariant,
   type ReaderCheckProgressEvent,
   type ReaderCheckJournalItem,
+  type ReaderCheckCostRun,
   type FictionProgressEvent,
   type FictionHistoryEntry,
   type GlossaryProgressEvent,
@@ -217,6 +219,10 @@ export default function AdminFictionPage() {
   const [readerApplyBusyId, setReaderApplyBusyId] = useState<string | null>(null);
   // Bulk "approve all proposed" in progress.
   const [readerApprovingAll, setReaderApprovingAll] = useState(false);
+  // Per-run reader-check cost history (spend per run + dynamics across runs).
+  const [readerCostRuns, setReaderCostRuns] = useState<ReaderCheckCostRun[] | null>(null);
+  const [readerCostRunsOpen, setReaderCostRunsOpen] = useState(false);
+  const [readerCostRunsLoading, setReaderCostRunsLoading] = useState(false);
 
   // Stop: which stage is being stopped (disables its Stop button briefly).
   const [stoppingStage, setStoppingStage] = useState<string | null>(null);
@@ -656,6 +662,20 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, readerRunning, readerVariant, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
 
+  // Load the per-run reader-check cost history (spend per run + dynamics).
+  const loadReaderCostRuns = useCallback(async () => {
+    if (!bookId) return;
+    setReaderCostRunsLoading(true);
+    try {
+      const r = await getReaderCheckCostRuns(bookId, lang);
+      setReaderCostRuns(r.runs);
+    } catch {
+      setReaderCostRuns(null);
+    } finally {
+      setReaderCostRunsLoading(false);
+    }
+  }, [bookId, lang]);
+
   // Export the reader-check journal as a CSV (loads it first if not in memory).
   const downloadReaderJournalCsv = useCallback(async () => {
     if (!bookId) return;
@@ -754,6 +774,8 @@ export default function AdminFictionPage() {
     if (!isAdmin || !bookId) return;
     setReaderJournalOpen(false);
     setReaderJournal(null);
+    setReaderCostRunsOpen(false);
+    setReaderCostRuns(null);
     void loadReaderProgress();
   }, [isAdmin, bookId, lang, loadReaderProgress]);
 
@@ -1672,6 +1694,26 @@ export default function AdminFictionPage() {
             <Download className="mr-2 h-4 w-4" /> Download CSV
           </Button>
 
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (readerCostRunsOpen) { setReaderCostRunsOpen(false); return; }
+              await loadReaderCostRuns();
+              setReaderCostRunsOpen(true);
+            }}
+            disabled={!bookId || readerCostRunsLoading}
+            title="Cost of each reader-check run (search + correction), newest first"
+          >
+            {readerCostRunsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : readerCostRunsOpen ? (
+              <ChevronDown className="mr-2 h-4 w-4" />
+            ) : (
+              <ChevronRight className="mr-2 h-4 w-4" />
+            )}
+            Cost per run
+          </Button>
+
           {(() => {
             const approvable = (readerJournal ?? []).filter((it) => it.outcome === 'proposed' && isPersistedItemId(it.id)).length;
             if (approvable === 0) return null;
@@ -1741,6 +1783,8 @@ export default function AdminFictionPage() {
             busyId={readerApplyBusyId}
           />
         )}
+
+        {readerCostRunsOpen && <ReaderCostRunsTable runs={readerCostRuns} loading={readerCostRunsLoading} />}
       </div>
 
       {/* ── Cost & tokens (per stage) ── */}
@@ -2154,6 +2198,53 @@ function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
           </ul>
         </section>
       ))}
+    </div>
+  );
+}
+
+// Per-run reader-check cost history: one row per pass (newest first) so you can see
+// spend per run and how it moves as prompts/models change. LLM time is summed call
+// time across the run's calls (not wall-clock).
+function ReaderCostRunsTable({ runs, loading }: { runs: ReaderCheckCostRun[] | null; loading: boolean }) {
+  if (loading && !runs) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading cost history…
+      </div>
+    );
+  }
+  if (!runs || runs.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No runs recorded yet — run a reader-check pass.</p>;
+  }
+  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+  return (
+    <div className="overflow-x-auto rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-[var(--separator-opaque)] text-left text-xs text-[var(--app-text-muted)]">
+            <th className="p-2 font-medium">Run</th>
+            <th className="p-2 font-medium">Model</th>
+            <th className="p-2 text-right font-medium">Search calls</th>
+            <th className="p-2 text-right font-medium">Fix calls</th>
+            <th className="p-2 text-right font-medium">Tokens</th>
+            <th className="p-2 text-right font-medium">Cost</th>
+            <th className="p-2 text-right font-medium">LLM time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {runs.map((r) => (
+            <tr key={r.runId} className="border-b border-[var(--separator-opaque)] last:border-b-0">
+              <td className="p-2 tabular-nums">{when(r.startedAt)}</td>
+              <td className="p-2 text-[var(--app-text-muted)]">{r.model ?? '—'}</td>
+              <td className="p-2 text-right tabular-nums">{r.search?.calls ?? 0}</td>
+              <td className="p-2 text-right tabular-nums">{r.correction?.calls ?? 0}</td>
+              <td className="p-2 text-right tabular-nums">{fmtTokens(r.totals.tokensIn + r.totals.tokensOut)}</td>
+              <td className="p-2 text-right font-medium tabular-nums">{fmtUsd(r.totals.costUsd)}</td>
+              <td className="p-2 text-right tabular-nums text-[var(--app-text-muted)]">{fmtDuration(r.totals.durationMs)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
