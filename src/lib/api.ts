@@ -1106,6 +1106,49 @@ export async function getReaderCheckJournal(bookId: string, lang: string): Promi
   return res.json() as Promise<ReaderCheckJournal>
 }
 
+// ── Reader-check per-run cost history (admin) ───────────────────────────────────
+
+export type ReaderCheckCostStageBreakdown = {
+  calls: number
+  tokensIn: number
+  tokensOut: number
+  costUsd: number
+  durationMs: number
+}
+
+export type ReaderCheckCostRun = {
+  runId: string
+  model: string | null
+  startedAt: string | null
+  finishedAt: string | null
+  search: ReaderCheckCostStageBreakdown | null
+  correction: ReaderCheckCostStageBreakdown | null
+  totals: ReaderCheckCostStageBreakdown
+}
+
+export type ReaderCheckCostRuns = {
+  bookId: string
+  lang: string
+  count: number
+  runs: ReaderCheckCostRun[]
+}
+
+/** Per-run reader-check cost history (newest first), for the admin cost panel. */
+export async function getReaderCheckCostRuns(bookId: string, lang: string): Promise<ReaderCheckCostRuns> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/reader-check-cost-runs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch reader-check cost runs: ${res.status}`)
+  }
+  return res.json() as Promise<ReaderCheckCostRuns>
+}
+
 /**
  * Approve (apply) or reject one proposed reader-check correction. Admin only.
  * `editedText` (approve only) overrides the suggested text before it is written
