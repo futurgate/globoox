@@ -708,6 +708,31 @@ export async function copyGlossaryFromBook(
   return res.json() as Promise<GlossaryStatus>
 }
 
+/**
+ * Store a hand-provided glossary JSON for this book + language verbatim — no LLM,
+ * no rebuild. Accepts either a raw JSON string or a parsed object; the backend
+ * validates the shape and marks it done so the translate path picks it up.
+ */
+export async function setGlossaryJson(
+  bookId: string,
+  lang: string,
+  glossary: string | BookGlossary,
+): Promise<GlossaryStatus> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/set-glossary`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), glossary }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to save glossary: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryStatus>
+}
+
 /** Fetch the current fiction glossary + build progress (bypasses cache). */
 export async function getGlossary(bookId: string, lang: string): Promise<GlossaryStatus> {
   const headers = new Headers()

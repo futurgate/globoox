@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import {
   startGlossaryGeneration,
   getGlossary,
   copyGlossaryFromBook,
+  setGlossaryJson,
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
@@ -196,6 +197,10 @@ export default function AdminFictionPage() {
   const [seedFromBookId, setSeedFromBookId] = useState('');
   // Reuse another book's finished glossary verbatim (copy, no LLM rebuild).
   const [glossaryCopying, setGlossaryCopying] = useState(false);
+  // Paste a glossary JSON by hand (no LLM generation).
+  const [pasteOpen, setPasteOpen] = useState(false);
+  const [pasteJson, setPasteJson] = useState('');
+  const [pasteSaving, setPasteSaving] = useState(false);
 
   // Reader-check QA pass (runs on an already-translated book; no re-translation).
   // Only the general reader prompt is used from this page (calques removed).
@@ -1046,6 +1051,61 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, seedFromBookId, glossaryRunning, glossaryCopying]);
 
+  // Client-side validation for the hand-pasted glossary JSON: must be valid JSON,
+  // an object, and carry ≥1 usable terminology/named_entities entry (mirrors the
+  // backend's glossaryHasEntries). Empty input is "pending" — no error shown, but
+  // Save stays disabled. The backend re-validates; this is just a fast local gate.
+  const pasteValidation = useMemo<{ ok: boolean; error: string | null }>(() => {
+    const text = pasteJson.trim();
+    if (!text) return { ok: false, error: null };
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(text);
+    } catch (e) {
+      return { ok: false, error: `Invalid JSON: ${e instanceof Error ? e.message : 'parse error'}` };
+    }
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return { ok: false, error: 'Glossary must be a JSON object (not an array or a bare value).' };
+    }
+    const g = parsed as BookGlossary;
+    const hasTerm = (g.terminology ?? []).some(
+      (t) => t?.source_term?.trim() && t?.preferred_translation?.trim(),
+    );
+    const hasName = (g.named_entities ?? []).some(
+      (e) => e?.entity?.trim() && e?.preferred_target?.trim(),
+    );
+    if (!hasTerm && !hasName) {
+      return {
+        ok: false,
+        error:
+          'Needs at least one terminology (source_term + preferred_translation) or named_entities (entity + preferred_target) entry.',
+      };
+    }
+    return { ok: true, error: null };
+  }, [pasteJson]);
+
+  // Save a hand-pasted glossary JSON verbatim — no LLM generation. The backend
+  // validates the shape (needs ≥1 usable term/entity) and marks it done.
+  const handlePasteGlossary = useCallback(async () => {
+    if (!bookId || !pasteValidation.ok || glossaryRunning || pasteSaving) return;
+    setPasteSaving(true);
+    setGlossaryError(null);
+    try {
+      const g = await setGlossaryJson(bookId, lang, pasteJson);
+      setGlossary(g.glossary);
+      setGlossaryState(g.state);
+      setGlossaryDone(g.chaptersDone);
+      setGlossaryTotal(g.chaptersTotal);
+      setGlossaryOpen(true);
+      setPasteOpen(false);
+      setPasteJson('');
+    } catch (e) {
+      setGlossaryError(e instanceof Error ? e.message : 'Failed to save glossary JSON');
+    } finally {
+      setPasteSaving(false);
+    }
+  }, [bookId, lang, pasteJson, pasteValidation.ok, glossaryRunning, pasteSaving]);
+
   // Stop a running stage: tell the backend to halt new LLM calls, then abort the
   // client stream so the UI frees immediately (the backend stops at the next
   // chapter/batch boundary; progress is preserved and resumable).
@@ -1489,6 +1549,58 @@ export default function AdminFictionPage() {
             verbatim (no LLM). The <strong>Generate/Rebuild</strong> button above instead seeds a fresh
             build from it (ignored on resume).
           </p>
+        </div>
+
+        {/* Paste a glossary JSON by hand — no LLM. Shape must match BookGlossary
+            (terminology / named_entities / prose_style_profile / …) and carry at
+            least one usable term or named entity. Saved verbatim, marked done. */}
+        <div className="space-y-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPasteOpen((o) => !o)}
+            disabled={glossaryRunning}
+          >
+            {pasteOpen ? <ChevronDown className="mr-2 h-4 w-4" /> : <ChevronRight className="mr-2 h-4 w-4" />}
+            Paste glossary JSON
+          </Button>
+          {pasteOpen && (
+            <div className="space-y-2">
+              <textarea
+                value={pasteJson}
+                onChange={(e) => setPasteJson(e.target.value)}
+                disabled={pasteSaving}
+                rows={10}
+                spellCheck={false}
+                placeholder={'{\n  "terminology": [\n    { "source_term": "…", "preferred_translation": "…" }\n  ],\n  "named_entities": [\n    { "entity": "…", "preferred_target": "…" }\n  ]\n}'}
+                className={`${inputCls} font-mono text-xs ${pasteValidation.error ? 'border-red-500 focus:border-red-500' : ''}`}
+                aria-invalid={!!pasteValidation.error}
+              />
+              {pasteValidation.error && <p className="text-xs text-red-500">{pasteValidation.error}</p>}
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  onClick={handlePasteGlossary}
+                  disabled={!bookId || !pasteValidation.ok || glossaryRunning || pasteSaving}
+                  title="Save this JSON as the glossary for this book + language (no generation)"
+                >
+                  {pasteSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving…
+                    </>
+                  ) : (
+                    <>
+                      <ScrollText className="mr-2 h-4 w-4" /> Save glossary JSON
+                    </>
+                  )}
+                </Button>
+              </div>
+              <p className="text-xs text-[var(--app-text-muted)]">
+                Saved verbatim for {lang} (no LLM). Overwrites any existing glossary. Must be a JSON object
+                matching the glossary shape with at least one <code>terminology</code> or{' '}
+                <code>named_entities</code> entry.
+              </p>
+            </div>
+          )}
         </div>
 
         {(glossaryBuilding || glossaryTotal > 0) && glossaryState !== 'idle' && (
