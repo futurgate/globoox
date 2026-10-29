@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -1051,10 +1051,43 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, seedFromBookId, glossaryRunning, glossaryCopying]);
 
+  // Client-side validation for the hand-pasted glossary JSON: must be valid JSON,
+  // an object, and carry ≥1 usable terminology/named_entities entry (mirrors the
+  // backend's glossaryHasEntries). Empty input is "pending" — no error shown, but
+  // Save stays disabled. The backend re-validates; this is just a fast local gate.
+  const pasteValidation = useMemo<{ ok: boolean; error: string | null }>(() => {
+    const text = pasteJson.trim();
+    if (!text) return { ok: false, error: null };
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(text);
+    } catch (e) {
+      return { ok: false, error: `Invalid JSON: ${e instanceof Error ? e.message : 'parse error'}` };
+    }
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return { ok: false, error: 'Glossary must be a JSON object (not an array or a bare value).' };
+    }
+    const g = parsed as BookGlossary;
+    const hasTerm = (g.terminology ?? []).some(
+      (t) => t?.source_term?.trim() && t?.preferred_translation?.trim(),
+    );
+    const hasName = (g.named_entities ?? []).some(
+      (e) => e?.entity?.trim() && e?.preferred_target?.trim(),
+    );
+    if (!hasTerm && !hasName) {
+      return {
+        ok: false,
+        error:
+          'Needs at least one terminology (source_term + preferred_translation) or named_entities (entity + preferred_target) entry.',
+      };
+    }
+    return { ok: true, error: null };
+  }, [pasteJson]);
+
   // Save a hand-pasted glossary JSON verbatim — no LLM generation. The backend
   // validates the shape (needs ≥1 usable term/entity) and marks it done.
   const handlePasteGlossary = useCallback(async () => {
-    if (!bookId || !pasteJson.trim() || glossaryRunning || pasteSaving) return;
+    if (!bookId || !pasteValidation.ok || glossaryRunning || pasteSaving) return;
     setPasteSaving(true);
     setGlossaryError(null);
     try {
@@ -1071,7 +1104,7 @@ export default function AdminFictionPage() {
     } finally {
       setPasteSaving(false);
     }
-  }, [bookId, lang, pasteJson, glossaryRunning, pasteSaving]);
+  }, [bookId, lang, pasteJson, pasteValidation.ok, glossaryRunning, pasteSaving]);
 
   // Stop a running stage: tell the backend to halt new LLM calls, then abort the
   // client stream so the UI frees immediately (the backend stops at the next
@@ -1540,12 +1573,14 @@ export default function AdminFictionPage() {
                 rows={10}
                 spellCheck={false}
                 placeholder={'{\n  "terminology": [\n    { "source_term": "…", "preferred_translation": "…" }\n  ],\n  "named_entities": [\n    { "entity": "…", "preferred_target": "…" }\n  ]\n}'}
-                className={`${inputCls} font-mono text-xs`}
+                className={`${inputCls} font-mono text-xs ${pasteValidation.error ? 'border-red-500 focus:border-red-500' : ''}`}
+                aria-invalid={!!pasteValidation.error}
               />
+              {pasteValidation.error && <p className="text-xs text-red-500">{pasteValidation.error}</p>}
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   onClick={handlePasteGlossary}
-                  disabled={!bookId || !pasteJson.trim() || glossaryRunning || pasteSaving}
+                  disabled={!bookId || !pasteValidation.ok || glossaryRunning || pasteSaving}
                   title="Save this JSON as the glossary for this book + language (no generation)"
                 >
                   {pasteSaving ? (
