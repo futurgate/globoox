@@ -1,0 +1,551 @@
+[
+  {
+    "route": "authors",
+    "width": 1536,
+    "status": 200,
+    "scrollWidth": 1536,
+    "logos": [
+      {
+        "src": "/images/marketplaces/amazon.png",
+        "rect": {
+          "x": 1258.4375,
+          "y": 177.671875,
+          "width": 172.640625,
+          "height": 57.828125,
+          "top": 177.671875,
+          "right": 1431.078125,
+          "bottom": 235.5,
+          "left": 1258.4375
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 175.046875,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 175.046875,
+          "right": 1479.78125,
+          "bottom": 238.140625,
+          "left": 1258.4375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/kobo.png",
+        "rect": {
+          "x": 1231.999267578125,
+          "y": 284.59375,
+          "width": 221.34375,
+          "height": 49.1875,
+          "top": 284.59375,
+          "right": 1453.343017578125,
+          "bottom": 333.78125,
+          "left": 1231.999267578125
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 277.640625,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 277.640625,
+          "right": 1479.78125,
+          "bottom": 340.734375,
+          "left": 1258.4375
+        },
+        "fit": "cover",
+        "transform": "matrix(1, 0, 0, 1, -26.4382, 0)"
+      },
+      {
+        "src": "/images/marketplaces/apple-books.png",
+        "rect": {
+          "x": 1258.4375,
+          "y": 388.4375,
+          "width": 46.71875,
+          "height": 46.71875,
+          "top": 388.4375,
+          "right": 1305.15625,
+          "bottom": 435.15625,
+          "left": 1258.4375
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 380.25,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 380.25,
+          "right": 1479.78125,
+          "bottom": 443.34375,
+          "left": 1258.4375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/google-play-books.png",
+        "rect": {
+          "x": 1258.4375,
+          "y": 491.03125,
+          "width": 46.71875,
+          "height": 46.71875,
+          "top": 491.03125,
+          "right": 1305.15625,
+          "bottom": 537.75,
+          "left": 1258.4375
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 482.84375,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 482.84375,
+          "right": 1479.78125,
+          "bottom": 545.9375,
+          "left": 1258.4375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/barnes-noble.svg",
+        "rect": {
+          "x": 1258.4375,
+          "y": 601.6875,
+          "width": 221.34375,
+          "height": 30.578125,
+          "top": 601.6875,
+          "right": 1479.78125,
+          "bottom": 632.265625,
+          "left": 1258.4375
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 585.4375,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 585.4375,
+          "right": 1479.78125,
+          "bottom": 648.53125,
+          "left": 1258.4375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/thalia.png",
+        "rect": {
+          "x": 1258.4375,
+          "y": 697.421875,
+          "width": 199.203125,
+          "height": 44.328125,
+          "top": 697.421875,
+          "right": 1457.640625,
+          "bottom": 741.75,
+          "left": 1258.4375
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 688.046875,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 688.046875,
+          "right": 1479.78125,
+          "bottom": 751.140625,
+          "left": 1258.4375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/bookshop.png",
+        "rect": {
+          "x": 1258.4375,
+          "y": 798.828125,
+          "width": 46.71875,
+          "height": 46.71875,
+          "top": 798.828125,
+          "right": 1305.15625,
+          "bottom": 845.546875,
+          "left": 1258.4375
+        },
+        "parent": {
+          "x": 1258.4375,
+          "y": 790.640625,
+          "width": 221.34375,
+          "height": 63.09375,
+          "top": 790.640625,
+          "right": 1479.78125,
+          "bottom": 853.734375,
+          "left": 1258.4375
+        },
+        "fit": "contain",
+        "transform": "none"
+      }
+    ]
+  },
+  {
+    "route": "authors",
+    "width": 390,
+    "status": 200,
+    "scrollWidth": 390,
+    "logos": [
+      {
+        "src": "/images/marketplaces/amazon.png",
+        "rect": {
+          "x": 254.5,
+          "y": 526.21875,
+          "width": 90.078125,
+          "height": 26.90625,
+          "top": 526.21875,
+          "right": 344.578125,
+          "bottom": 553.125,
+          "left": 254.5
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 526.21875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 526.21875,
+          "right": 370,
+          "bottom": 553.125,
+          "left": 254.5
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/kobo.png",
+        "rect": {
+          "x": 240.7042236328125,
+          "y": 572.921875,
+          "width": 115.5,
+          "height": 21,
+          "top": 572.921875,
+          "right": 356.2042236328125,
+          "bottom": 593.921875,
+          "left": 240.7042236328125
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 569.96875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 569.96875,
+          "right": 370,
+          "bottom": 596.875,
+          "left": 254.5
+        },
+        "fit": "cover",
+        "transform": "matrix(1, 0, 0, 1, -13.7958, 0)"
+      },
+      {
+        "src": "/images/marketplaces/apple-books.png",
+        "rect": {
+          "x": 254.5,
+          "y": 618.171875,
+          "width": 18,
+          "height": 18,
+          "top": 618.171875,
+          "right": 272.5,
+          "bottom": 636.171875,
+          "left": 254.5
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 613.71875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 613.71875,
+          "right": 370,
+          "bottom": 640.625,
+          "left": 254.5
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/google-play-books.png",
+        "rect": {
+          "x": 254.5,
+          "y": 661.921875,
+          "width": 18,
+          "height": 18,
+          "top": 661.921875,
+          "right": 272.5,
+          "bottom": 679.921875,
+          "left": 254.5
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 657.46875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 657.46875,
+          "right": 370,
+          "bottom": 684.375,
+          "left": 254.5
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/barnes-noble.svg",
+        "rect": {
+          "x": 254.5,
+          "y": 699.453125,
+          "width": 115.5,
+          "height": 15.953125,
+          "top": 699.453125,
+          "right": 370,
+          "bottom": 715.40625,
+          "left": 254.5
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 701.21875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 701.21875,
+          "right": 370,
+          "bottom": 728.125,
+          "left": 254.5
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/thalia.png",
+        "rect": {
+          "x": 254.5,
+          "y": 746.859375,
+          "width": 103.9375,
+          "height": 23.125,
+          "top": 746.859375,
+          "right": 358.4375,
+          "bottom": 769.984375,
+          "left": 254.5
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 744.96875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 744.96875,
+          "right": 370,
+          "bottom": 771.875,
+          "left": 254.5
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/bookshop.png",
+        "rect": {
+          "x": 254.5,
+          "y": 793.171875,
+          "width": 18,
+          "height": 18,
+          "top": 793.171875,
+          "right": 272.5,
+          "bottom": 811.171875,
+          "left": 254.5
+        },
+        "parent": {
+          "x": 254.5,
+          "y": 788.71875,
+          "width": 115.5,
+          "height": 26.90625,
+          "top": 788.71875,
+          "right": 370,
+          "bottom": 815.625,
+          "left": 254.5
+        },
+        "fit": "contain",
+        "transform": "none"
+      }
+    ]
+  },
+  {
+    "route": "publishers",
+    "width": 1536,
+    "status": 200,
+    "scrollWidth": 1536,
+    "logos": [
+      {
+        "src": "/images/marketplaces/amazon.png",
+        "rect": {
+          "x": 1230.203125,
+          "y": 193.40625,
+          "width": 109.421875,
+          "height": 36.65625,
+          "top": 193.40625,
+          "right": 1339.625,
+          "bottom": 230.0625,
+          "left": 1230.203125
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 181.125,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 181.125,
+          "right": 1364.5,
+          "bottom": 242.34375,
+          "left": 1205.34375
+        },
+        "fit": "fill",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/kobo.png",
+        "rect": {
+          "x": 1215.296875,
+          "y": 269.5,
+          "width": 139.25,
+          "height": 29.84375,
+          "top": 269.5,
+          "right": 1354.546875,
+          "bottom": 299.34375,
+          "left": 1215.296875
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 253.8125,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 253.8125,
+          "right": 1364.5,
+          "bottom": 315.03125,
+          "left": 1205.34375
+        },
+        "fit": "cover",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/apple-books.png",
+        "rect": {
+          "x": 1245.359375,
+          "y": 339.71875,
+          "width": 34.8125,
+          "height": 34.8125,
+          "top": 339.71875,
+          "right": 1280.171875,
+          "bottom": 374.53125,
+          "left": 1245.359375
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 326.515625,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 326.515625,
+          "right": 1364.5,
+          "bottom": 387.734375,
+          "left": 1205.34375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/google-play-books.png",
+        "rect": {
+          "x": 1228.34375,
+          "y": 412.421875,
+          "width": 34.8125,
+          "height": 34.8125,
+          "top": 412.421875,
+          "right": 1263.15625,
+          "bottom": 447.234375,
+          "left": 1228.34375
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 399.21875,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 399.21875,
+          "right": 1364.5,
+          "bottom": 460.4375,
+          "left": 1205.34375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/barnes-noble.svg",
+        "rect": {
+          "x": 1220.265625,
+          "y": 493.578125,
+          "width": 129.3125,
+          "height": 17.859375,
+          "top": 493.578125,
+          "right": 1349.578125,
+          "bottom": 511.4375,
+          "left": 1220.265625
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 471.90625,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 471.90625,
+          "right": 1364.5,
+          "bottom": 533.125,
+          "left": 1205.34375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/thalia.png",
+        "rect": {
+          "x": 1220.265625,
+          "y": 560.828125,
+          "width": 129.3125,
+          "height": 28.765625,
+          "top": 560.828125,
+          "right": 1349.578125,
+          "bottom": 589.59375,
+          "left": 1220.265625
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 544.609375,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 544.609375,
+          "right": 1364.5,
+          "bottom": 605.828125,
+          "left": 1205.34375
+        },
+        "fit": "contain",
+        "transform": "none"
+      },
+      {
+        "src": "/images/marketplaces/bookshop.png",
+        "rect": {
+          "x": 1227.734375,
+          "y": 630.5,
+          "width": 34.8125,
+          "height": 34.8125,
+          "top": 630.5,
+          "right": 1262.546875,
+          "bottom": 665.3125,
+          "left": 1227.734375
+        },
+        "parent": {
+          "x": 1205.34375,
+          "y": 617.296875,
+          "width": 159.15625,
+          "height": 61.21875,
+          "top": 617.296875,
+          "right": 1364.5,
+          "bottom": 678.515625,
+          "left": 1205.34375
+        },
+        "fit": "contain",
+        "transform": "none"
+      }
+    ]
+  }
+]

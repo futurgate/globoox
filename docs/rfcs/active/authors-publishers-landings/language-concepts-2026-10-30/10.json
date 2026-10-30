@@ -1,0 +1,46 @@
+{
+  "id": "10",
+  "name": "Типографическое созвездие",
+  "tool": "image_gen.imagegen (built-in)",
+  "status": "generated-reviewed",
+  "prompt": "Use case: ui-mockup. Create ONE distinctive, beautiful, production-plausible DESKTOP LANGUAGES SECTION for the Globoox authors landing. Single flat full-width website section, landscape1536×1024. Not a whole site, not a collage or multiple alternatives. No header, hero, footer, team or browser/device chrome.\nReference1 is the selected live hero: use its contemporary editorial typography and refined book-design sensibility; ignore its comparison marker, content and logos. Reference2 is the newly APPROVED closing section: use its dark forest-green base, warm cream lettering/paper, terracotta accents and carefully restrained physical materials. These are STYLE references only. Do not copy their compositions. Design a new composition exactly as described below.\nKeep this shared design system: forest-green #2C3B2D edge-to-edge section, warm ivory/parchment #F4F0E8, terracotta #C05A3A or readable peach accents on green, thin rules, Lora-like Cyrillic serif display and Inter-like supporting typography. Natural soft shadows only for physical paper/books. No neon, glassmorphism, blue SaaS styling, decorative plants, flags, generic floating appcards, heavy borders, gratuitous gradients or shiny3Dglobes. Prioritize actual reading hierarchy. Do not add a button, form, language picker, testimonials, statistics, fake partner claims, translations of the language names or explanatory marketing paragraphs. No extra slogan or an isolated G monogram. Keep all13 language names easily readable and visibly grouped by status; upcoming languages must NOT look available.\nEXACT CONTENT, each item once (do not duplicate names in headings, books, captions or lists):\nMain heading: “Языки перевода”.\nAvailable group label: “Уже доступны”. Exactly FOUR available names: “English”, “Français”, “Español”, “Русский”.\nUpcoming group label: “Скоро”. Exactly NINE upcoming names: “Deutsch”, “Italiano”, “Português”, “Türkçe”, “中文”, “日本語”, “한국어”, “العربية”, “فارسی”.\nPreserve accents and all scripts correctly. Use at least roughly20px visual language-name size at1536px width. The layout should work as a coherent website section continuing the references, but be clearly different from other arrangements. No tiny scattered soon labels. The image is a design proposal, not a screenshot of current implementation.\n\nDISTINCT COMPOSITION 10:\nTYPOGRAPHIC CONSTELLATION. Main heading and “Уже доступны” occupy the leftthird. In the upper-righttwo-thirds, the four available language names are large ivory typographic anchors arranged on a broad asymmetrical arc, connected by extremelyfine mutedcream curves and four terracotta rounddots; no centralbook, globe, mapborders, geographical claims or buttonpills. Leave deliberate negative space between these language anchors and do not let curves cross glyphs. Across the bottom, a completely ordered low horizontal index headed “Скоро” contains all9future names in a3×3 grid with hairline row separators. This juxtaposes a poetic fluid upperlanguagefield with a rigorous lowerindex; it must still read immediately as exactly4available languages and9forthcoming.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/selected-authors-1536.png",
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/06.png"
+  ],
+  "transparent_background": false,
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-608f6b03-552c-4df7-aef9-876f043ce3d1.png",
+  "output": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/images/10.png",
+  "review": {
+    "result": "passed",
+    "currentNames": [
+      "English",
+      "Français",
+      "Español",
+      "Русский"
+    ],
+    "upcomingNames": [
+      "Deutsch",
+      "Italiano",
+      "Português",
+      "Türkçe",
+      "中文",
+      "日本語",
+      "한국어",
+      "العربية",
+      "فارسی"
+    ],
+    "findings": [
+      "All four available and nine forthcoming names appear once in the correct groups, with readable accents/scripts.",
+      "Forest-green base and cream/terracotta editorial system retained.",
+      "No extra header, button, team, marketing copy or unsupported claims.",
+      "Asymmetrical four-anchor typographic constellation and ordered nine-name lower grid remain distinct and legible."
+    ],
+    "corrections": 0
+  },
+  "width": 1536,
+  "height": 1024,
+  "mode": "RGB",
+  "bytes": 1405870,
+  "sha256": "a112f0498e982741fe83217bbdb7cefcc7f2f38bf6cb766aab106b4336c227b7"
+}

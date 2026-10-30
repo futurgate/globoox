@@ -1,0 +1,17 @@
+{
+  "reviewer": "root",
+  "status": "all_six_visually_reviewed",
+  "review": {
+    "01": "Russian maincopy retained; invented decorative narrative removed in targeted edit. Editorial split and paper detail match selectedhero.",
+    "02": "Four current and nine upcoming languages preserved; upcoming row-major order corrected. Green, readable, book/orbit retained.",
+    "03": "Darwin titles/author and EN/RU comparison retained in direct paper surface. Readable, no overlap. Uses actual copy as reference; final code must use canonical strings.",
+    "04": "Exact trial title/body/button. Paper proof and book, no form/newclaims.",
+    "05": "Three exact steps on green. Unrequested foliage and statementheading removed. No monetary data.",
+    "06": "Exact finalCTA and copyright; one cream book, greenbackground, no removedmission or team."
+  },
+  "generationCalls": 9,
+  "initialConcepts": 6,
+  "targetedCorrections": 3,
+  "team": "excluded; live component untouched",
+  "selection": "pending"
+}

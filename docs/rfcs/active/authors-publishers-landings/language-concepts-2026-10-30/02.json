@@ -1,0 +1,42 @@
+{
+  "id": "02",
+  "name": "Четыре издания",
+  "status": "generated-and-visually-reviewed",
+  "mode": "built-in image_gen.imagegen",
+  "scope": "Language layout proposal only; no implementation",
+  "specSource": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/spec.json",
+  "executedPrompt": "Use case: ui-mockup. Create ONE distinctive, beautiful, production-plausible DESKTOP LANGUAGES SECTION for the Globoox authors landing. Single flat full-width website section, landscape1536×1024. Not a whole site, not a collage or multiple alternatives. No header, hero, footer, team or browser/device chrome.\nReference1 is the selected live hero: use its contemporary editorial typography and refined book-design sensibility; ignore its comparison marker, content and logos. Reference2 is the newly APPROVED closing section: use its dark forest-green base, warm cream lettering/paper, terracotta accents and carefully restrained physical materials. These are STYLE references only. Do not copy their compositions. Design a new composition exactly as described below.\nKeep this shared design system: forest-green #2C3B2D edge-to-edge section, warm ivory/parchment #F4F0E8, terracotta #C05A3A or readable peach accents on green, thin rules, Lora-like Cyrillic serif display and Inter-like supporting typography. Natural soft shadows only for physical paper/books. No neon, glassmorphism, blue SaaS styling, decorative plants, flags, generic floating appcards, heavy borders, gratuitous gradients or shiny3Dglobes. Prioritize actual reading hierarchy. Do not add a button, form, language picker, testimonials, statistics, fake partner claims, translations of the language names or explanatory marketing paragraphs. No extra slogan or an isolated G monogram. Keep all13 language names easily readable and visibly grouped by status; upcoming languages must NOT look available.\nEXACT CONTENT, each item once (do not duplicate names in headings, books, captions or lists):\nMain heading: “Языки перевода”.\nAvailable group label: “Уже доступны”. Exactly FOUR available names: “English”, “Français”, “Español”, “Русский”.\nUpcoming group label: “Скоро”. Exactly NINE upcoming names: “Deutsch”, “Italiano”, “Português”, “Türkçe”, “中文”, “日本語”, “한국어”, “العربية”, “فارسی”.\nPreserve accents and all scripts correctly. Use at least roughly20px visual language-name size at1536px width. The layout should work as a coherent website section continuing the references, but be clearly different from other arrangements. No tiny scattered soon labels. The image is a design proposal, not a screenshot of current implementation.\n\nDISTINCT COMPOSITION 02:\nFOUR LANGUAGE EDITIONS. Main heading left-aligned across the upper third. Under “Уже доступны”, four refined upright cream cloth books stand in one clean horizontal row, each book cover carries exactly ONE available language name instead of a book title, in forest serif. Vary their slight material tones and heights subtly while maintaining an aligned baseline. Never write a language a second time below a cover. No other covertext. The rightmostquarter of the overall section is a distinct quieter editorial sidebar separated by a hairline, containing “Скоро” and all9 future names in a generous vertical list. Four books occupy the left70%, future list right25%; no orbit or pills. Physically believable soft lighting, strongly legible covertext.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/selected-authors-1536.png",
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/06.png"
+  ],
+  "referencesInspected": true,
+  "transparent_background": false,
+  "sourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-e54f860c-373e-4f90-abc0-a411106471c5.png",
+  "asset": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/images/02.png",
+  "pixels": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "bytes": 1875274,
+  "sha256": "100b24a5d4eef08fde4003d7b7fadde13baabef8b6115099287453c5bcf60c53",
+  "review": {
+    "result": "accepted",
+    "method": "Visual inspection of actual generated output",
+    "observations": [
+      "Four upright linen editions, each carrying exactly one current language name; right sidebar separated by a hairline contains all nine upcoming names. No duplicate labels below books.",
+      "Heading Языки перевода and status labels Уже доступны / Скоро are present.",
+      "Available: English, Français, Español, Русский, each once and correctly grouped.",
+      "Upcoming: Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی, each once and correctly grouped.",
+      "Forest-green section base, cream type/paper, restrained terracotta accents.",
+      "Names comfortably readable, no overlap/crowding or clipped labels.",
+      "No extra header, hero, footer, CTA, team, flags, claims or marketing prose."
+    ],
+    "remainingDefects": [],
+    "caveats": [
+      "Raster proposal; names must remain live canonical text in any later implementation."
+    ]
+  },
+  "corrections": []
+}

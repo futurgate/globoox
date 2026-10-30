@@ -1,0 +1,553 @@
+{
+  "checkedAt": "2026-10-30T20:13:32.763Z",
+  "layouts": [
+    {
+      "width": 1536,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 123.640625,
+        "y": 515.671875,
+        "width": 728.84375,
+        "height": 149.65625,
+        "right": 852.484375,
+        "bottom": 665.328125
+      },
+      "buttonBox": {
+        "x": 123.640625,
+        "y": 768.921875,
+        "width": 355.796875,
+        "height": 63.40625,
+        "right": 479.4375,
+        "bottom": 832.328125
+      },
+      "imageBox": {
+        "x": 912.359375,
+        "y": 368.234375,
+        "width": 567.546875,
+        "height": 567.546875,
+        "right": 1479.90625,
+        "bottom": 935.78125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1536,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 122.875,
+        "y": 596.171875,
+        "width": 774.140625,
+        "height": 167.46875,
+        "right": 897.015625,
+        "bottom": 763.640625
+      },
+      "buttonBox": {
+        "x": 122.875,
+        "y": 803.640625,
+        "width": 321.25,
+        "height": 73.40625,
+        "right": 444.125,
+        "bottom": 877.046875
+      },
+      "imageBox": {
+        "x": 897.015625,
+        "y": 412.5625,
+        "width": 656.09375,
+        "height": 656.09375,
+        "right": 1553.109375,
+        "bottom": 1068.65625
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1024,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 68.09375,
+        "y": 520.671875,
+        "width": 495.96875,
+        "height": 99.78125,
+        "right": 564.0625,
+        "bottom": 620.453125
+      },
+      "buttonBox": {
+        "x": 68.09375,
+        "y": 726.828125,
+        "width": 274.015625,
+        "height": 57.1875,
+        "right": 342.109375,
+        "bottom": 784.015625
+      },
+      "imageBox": {
+        "x": 600.390625,
+        "y": 459.234375,
+        "width": 386.21875,
+        "height": 386.21875,
+        "right": 986.609375,
+        "bottom": 845.453125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1024,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 40,
+        "y": 694.28125,
+        "width": 514.90625,
+        "height": 111.34375,
+        "right": 554.90625,
+        "bottom": 805.625
+      },
+      "buttonBox": {
+        "x": 40,
+        "y": 845.625,
+        "width": 241.34375,
+        "height": 62.09375,
+        "right": 281.34375,
+        "bottom": 907.71875
+      },
+      "imageBox": {
+        "x": 554.90625,
+        "y": 553.453125,
+        "width": 519.09375,
+        "height": 519.09375,
+        "right": 1074,
+        "bottom": 1072.546875
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 768,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 51.0625,
+        "y": 527.1875,
+        "width": 369.78125,
+        "height": 85.09375,
+        "right": 420.84375,
+        "bottom": 612.28125
+      },
+      "buttonBox": {
+        "x": 51.0625,
+        "y": 718.65625,
+        "width": 274.015625,
+        "height": 57.1875,
+        "right": 325.078125,
+        "bottom": 775.84375
+      },
+      "imageBox": {
+        "x": 452,
+        "y": 507.546875,
+        "width": 287.953125,
+        "height": 287.953125,
+        "right": 739.953125,
+        "bottom": 795.5
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 768,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 40,
+        "y": 666.234375,
+        "width": 375.265625,
+        "height": 167.015625,
+        "right": 415.265625,
+        "bottom": 833.25
+      },
+      "buttonBox": {
+        "x": 40,
+        "y": 873.25,
+        "width": 241.34375,
+        "height": 62.09375,
+        "right": 281.34375,
+        "bottom": 935.34375
+      },
+      "imageBox": {
+        "x": 415.265625,
+        "y": 611.421875,
+        "width": 402.734375,
+        "height": 402.734375,
+        "right": 818,
+        "bottom": 1014.15625
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 390,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 20,
+        "y": 351.984375,
+        "width": 350,
+        "height": 76.15625,
+        "right": 370,
+        "bottom": 428.140625
+      },
+      "buttonBox": {
+        "x": 20,
+        "y": 534.515625,
+        "width": 272.015625,
+        "height": 55.1875,
+        "right": 292.015625,
+        "bottom": 589.703125
+      },
+      "imageBox": {
+        "x": 20,
+        "y": 617.703125,
+        "width": 350,
+        "height": 350,
+        "right": 370,
+        "bottom": 967.703125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 390,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 20,
+        "y": 471.171875,
+        "width": 350,
+        "height": 125.25,
+        "right": 370,
+        "bottom": 596.421875
+      },
+      "buttonBox": {
+        "x": 20,
+        "y": 624.421875,
+        "width": 231.046875,
+        "height": 58.640625,
+        "right": 251.046875,
+        "bottom": 683.0625
+      },
+      "imageBox": {
+        "x": 20,
+        "y": 707.0625,
+        "width": 350,
+        "height": 350,
+        "right": 370,
+        "bottom": 1057.0625
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 320,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 20,
+        "y": 389.609375,
+        "width": 280,
+        "height": 71.65625,
+        "right": 300,
+        "bottom": 461.265625
+      },
+      "buttonBox": {
+        "x": 20,
+        "y": 567.640625,
+        "width": 272.015625,
+        "height": 55.1875,
+        "right": 292.015625,
+        "bottom": 622.828125
+      },
+      "imageBox": {
+        "x": 20,
+        "y": 650.828125,
+        "width": 280,
+        "height": 280,
+        "right": 300,
+        "bottom": 930.828125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 320,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 20,
+        "y": 547.625,
+        "width": 280,
+        "height": 118.3125,
+        "right": 300,
+        "bottom": 665.9375
+      },
+      "buttonBox": {
+        "x": 20,
+        "y": 693.9375,
+        "width": 231.046875,
+        "height": 58.640625,
+        "right": 251.046875,
+        "bottom": 752.578125
+      },
+      "imageBox": {
+        "x": 20,
+        "y": 776.578125,
+        "width": 280,
+        "height": 280,
+        "right": 300,
+        "bottom": 1056.578125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1832,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 147.46875,
+        "y": 495.328125,
+        "width": 850,
+        "height": 178.5,
+        "right": 997.46875,
+        "bottom": 673.828125
+      },
+      "buttonBox": {
+        "x": 147.46875,
+        "y": 784.625,
+        "width": 408.03125,
+        "height": 68.796875,
+        "right": 555.5,
+        "bottom": 853.421875
+      },
+      "imageBox": {
+        "x": 1085.71875,
+        "y": 312.671875,
+        "width": 679.40625,
+        "height": 679.40625,
+        "right": 1765.125,
+        "bottom": 992.078125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1832,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 236,
+        "y": 560.421875,
+        "width": 816,
+        "height": 185.59375,
+        "right": 1052,
+        "bottom": 746.015625
+      },
+      "buttonBox": {
+        "x": 236,
+        "y": 786.015625,
+        "width": 341.421875,
+        "height": 76.25,
+        "right": 577.421875,
+        "bottom": 862.265625
+      },
+      "imageBox": {
+        "x": 1052,
+        "y": 373.34375,
+        "width": 684,
+        "height": 684,
+        "right": 1736,
+        "bottom": 1057.34375
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1639,
+      "id": "trial",
+      "overflow": 0,
+      "heading": "Бесплатный пробный перевод",
+      "button": "Получить пробный перевод",
+      "headingBox": {
+        "x": 131.9375,
+        "y": 508.203125,
+        "width": 778.828125,
+        "height": 159.6875,
+        "right": 910.765625,
+        "bottom": 667.890625
+      },
+      "buttonBox": {
+        "x": 131.9375,
+        "y": 774.015625,
+        "width": 374.84375,
+        "height": 65.375,
+        "right": 506.78125,
+        "bottom": 839.390625
+      },
+      "imageBox": {
+        "x": 972.6875,
+        "y": 348.5625,
+        "width": 606.484375,
+        "height": 606.484375,
+        "right": 1579.171875,
+        "bottom": 955.046875
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    },
+    {
+      "width": 1639,
+      "id": "contact",
+      "overflow": 0,
+      "heading": "Откройте свою книгу читателям всего мира",
+      "button": "Связаться с Globoox",
+      "headingBox": {
+        "x": 139.5,
+        "y": 563.796875,
+        "width": 816,
+        "height": 178.6875,
+        "right": 955.5,
+        "bottom": 742.484375
+      },
+      "buttonBox": {
+        "x": 139.5,
+        "y": 782.484375,
+        "width": 337.09375,
+        "height": 75.625,
+        "right": 476.59375,
+        "bottom": 858.109375
+      },
+      "imageBox": {
+        "x": 955.5,
+        "y": 372.953125,
+        "width": 684,
+        "height": 684,
+        "right": 1639.5,
+        "bottom": 1056.953125
+      },
+      "imageLoaded": true,
+      "headingFont": "Lora, serif",
+      "buttonFont": "Inter, -apple-system, sans-serif"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "trial",
+      "modality": "mouse",
+      "target": "mailto:lomovski@globoox.co?subject=%D0%91%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D1%8B%D0%B9%20%D0%BF%D1%80%D0%BE%D0%B1%D0%BD%D1%8B%D0%B9%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "trial",
+      "modality": "keyboard",
+      "target": "mailto:lomovski@globoox.co?subject=%D0%91%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D1%8B%D0%B9%20%D0%BF%D1%80%D0%BE%D0%B1%D0%BD%D1%8B%D0%B9%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "contact",
+      "modality": "mouse",
+      "target": "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "contact",
+      "modality": "keyboard",
+      "target": "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "trial",
+      "modality": "touch",
+      "target": "mailto:lomovski@globoox.co?subject=%D0%91%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D1%8B%D0%B9%20%D0%BF%D1%80%D0%BE%D0%B1%D0%BD%D1%8B%D0%B9%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "contact",
+      "modality": "touch",
+      "target": "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox"
+    }
+  ],
+  "isolation": [
+    "publishers",
+    "ru",
+    "authors/hero-archive"
+  ],
+  "errors": [],
+  "paragraphChecks": [
+    {
+      "width": 768,
+      "textRight": 329.125,
+      "imageLeft": 452,
+      "overflow": 0,
+      "body": "Пришлите книгу, и мы бесплатно переведём из неё одну главу.",
+      "textWrap": "balance"
+    },
+    {
+      "width": 1024,
+      "textRight": 346.15625,
+      "imageLeft": 600.390625,
+      "overflow": 0,
+      "body": "Пришлите книгу, и мы бесплатно переведём из неё одну главу.",
+      "textWrap": "balance"
+    },
+    {
+      "width": 1536,
+      "textRight": 861.3125,
+      "imageLeft": 912.359375,
+      "overflow": 0,
+      "body": "Пришлите книгу, и мы бесплатно переведём из неё одну главу.",
+      "textWrap": "wrap"
+    },
+    {
+      "width": 1832,
+      "textRight": 1026.390625,
+      "imageLeft": 1085.71875,
+      "overflow": 0,
+      "body": "Пришлите книгу, и мы бесплатно переведём из неё одну главу.",
+      "textWrap": "wrap"
+    }
+  ]
+}

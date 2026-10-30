@@ -2,10 +2,13 @@
 type: reference
 status: current
 owner: marketing
-last_verified: 2026-09-01
+last_verified: 2026-10-30
 implementation:
   - src/app/landing/landing.css
   - src/components/landing
+  - src/components/landing-business
+  - src/app/authors/page.tsx
+  - src/app/publishers/page.tsx
 ---
 
 # Marketing Subsystem
@@ -46,7 +49,23 @@ Marketing should still stay aligned with shared brand foundation:
 
 ## Current Implementation
 
-Landing foundation lives in `src/app/landing/landing.css`.
+The primary localized landing foundation lives in `src/components/landing/landing.css`; legacy `/landing` also retains `src/app/landing/landing.css`.
+
+### Authors and publishers
+
+`/authors` and `/publishers` are public Russian business landings, built from the supplied B2B presentation with the primary landing's Lora/Inter typography and marketing tokens. Both use `BusinessLandingPage` with an explicit audience and share their translation, languages, comparison, trial, publishing process and contact sections. Each has its own canonical/social metadata and sitemap entry.
+
+- Authors omit the partner strip and advisors. Their four-person team reuses the main landing's copy, profiles and photos, excluding only the final future-of-reading sentence.
+- Publishers retain the presentation's partner strip, four biographies and advisors.
+- Languages reuse the primary landing's `SupportedLanguages` book/orbit composition, with nine upcoming languages from the presentation. Its six-position layout on the main landing is unchanged. Publishing steps use the forest-green surface and contrasting light type.
+- Hero eyebrows name only the page's own audience; both first-screen buttons say `Связаться с нами` and open email directly.
+- `BusinessEmailButton` opens email to the user-confirmed `lomovski@globoox.co` for hero/contact/trial, with distinct contact and trial subjects. No book or message is submitted by the site.
+- The recipient and ready-made `mailto:` are absent from server HTML and the passive page DOM. Client code assembles the URI on native mouse/touch/keyboard activation and rejects synthetic DOM clicks. This is light obfuscation, not human verification: scripts can recover the address from the client bundle, and browser automation can generate trusted events. No CAPTCHA/server check is installed. A no-JavaScript contact hint explains why the action is unavailable.
+- Shared header defaults preserve the main landing. Business pages hide the locale selector and link the logo to `/ru`, avoiding nonexistent translated audience routes.
+- Both pages use the existing cookie banner and consent boundary, remain public for signed-in visitors, and set `lang="ru"` on the page shell.
+- The shared comparison supports pointer/touch and keyboard arrows, Shift, Home/End with slider semantics.
+
+Implementation, source provenance and checks: [authors/publishers record](../../rfcs/active/authors-publishers-landings/README.md).
 
 Marketing semantic aliases should be preferred there, for example:
 

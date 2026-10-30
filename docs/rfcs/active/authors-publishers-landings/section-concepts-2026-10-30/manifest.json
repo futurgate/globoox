@@ -1,0 +1,99 @@
+{
+  "scope": "authors, all remaining sections except team; selected hero04 fixed;6 concepts with contact+footer combined",
+  "selected_hero": "04, displayed as second hero in preceding live comparison",
+  "concepts": [
+    {
+      "id": "01",
+      "name": "Перевод",
+      "slug": "translation",
+      "file": "images/01.png",
+      "pixels": [
+        1717,
+        916
+      ],
+      "bytes": 1710832,
+      "sha256": "2e4941e36724745de4a9fdd6a1410c21df271d05dbdcf95199b5b439639515c2",
+      "executionRecord": "01.json",
+      "corrected": true
+    },
+    {
+      "id": "02",
+      "name": "Языки",
+      "slug": "languages",
+      "file": "images/02.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "bytes": 1636565,
+      "sha256": "03cc7bcc8c2407b2207468bd69b50f14b3c9b3cada9f242ba7ad3cb3f07e7db7",
+      "executionRecord": "02.json",
+      "corrected": true
+    },
+    {
+      "id": "03",
+      "name": "Пример перевода",
+      "slug": "quality",
+      "file": "images/03.png",
+      "pixels": [
+        1482,
+        1061
+      ],
+      "bytes": 2104385,
+      "sha256": "1e4175ad07a4c0ecb400698e06c23fcb99dc6e1b24a25eeb60ceb37bdeb8c99b",
+      "executionRecord": "03.json",
+      "corrected": false
+    },
+    {
+      "id": "04",
+      "name": "Пробная глава",
+      "slug": "trial",
+      "file": "images/04.png",
+      "pixels": [
+        1832,
+        859
+      ],
+      "bytes": 1748343,
+      "sha256": "f4003bad1ed75d8bd3051b4b7253cde14d3645a6b4f2b5d1687c150661c096df",
+      "executionRecord": "04.json",
+      "corrected": false
+    },
+    {
+      "id": "05",
+      "name": "Путь книги к читателю",
+      "slug": "publishing",
+      "file": "images/05.png",
+      "pixels": [
+        1620,
+        971
+      ],
+      "bytes": 1734039,
+      "sha256": "9ad238bad0f5aa5a54090f3b17eed2da4fc7ede194c7fb51b9366b936ecc6cc4",
+      "executionRecord": "05.json",
+      "corrected": true
+    },
+    {
+      "id": "06",
+      "name": "Контакт и футер",
+      "slug": "contact-footer",
+      "file": "images/06.png",
+      "pixels": [
+        1639,
+        960
+      ],
+      "bytes": 1499303,
+      "sha256": "021b40fb0b4375972436f8824cd2e38ad62c759a0e891e06eceb26dcfe85e4a1",
+      "executionRecord": "06.json",
+      "corrected": false
+    }
+  ],
+  "presentation_order": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06"
+  ],
+  "implementation": "Only selected hero promoted; these sections are proposals."
+}

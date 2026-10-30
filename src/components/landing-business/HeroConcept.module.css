@@ -1,0 +1,161 @@
+.section {
+  background: var(--marketing-shell-bg);
+  border-top: 1px solid var(--marketing-border);
+  padding-bottom: 32px;
+}
+
+.primary {
+  border-top: 0;
+  padding-top: 104px;
+}
+
+.version,
+.layout {
+  width: min(1440px, calc(100% - 80px));
+  margin-inline: auto;
+}
+
+.version {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 20px;
+  color: var(--marketing-text-muted);
+  font: 500 12px/1.5 'Inter', sans-serif;
+}
+
+.layout { position: relative; }
+.copy { position: relative; z-index: 1; }
+.eyebrow {
+  margin-bottom: 26px;
+  color: var(--marketing-text-muted);
+  font: 500 13px/1.5 'Inter', sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin: 0;
+  font: 400 clamp(40px, 4.15vw, 64px)/1.12 'Lora', serif;
+  letter-spacing: -.045em;
+  text-wrap: pretty;
+}
+
+.heading em { color: var(--marketing-accent); font-weight: inherit; }
+.subtitle {
+  display: block;
+  margin-top: 26px;
+  font-size: .56em;
+  line-height: 1.3;
+  letter-spacing: -.025em;
+}
+
+.primary .subtitle { margin-top: 15px; }
+
+.description { margin-top: 42px; }
+.description p {
+  margin: 0 0 34px;
+  max-width: 530px;
+  font: 400 clamp(17px, 1.5vw, 22px)/1.6 'Inter', sans-serif;
+  color: var(--marketing-text-muted);
+  hyphens: none;
+}
+
+.diagram { position: relative; min-width: 0; isolation: isolate; container-type: inline-size; background: var(--marketing-shell-bg); }
+.threads { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.thread { stroke: var(--ink); stroke-width: 1; opacity: .38; vector-effect: non-scaling-stroke; }
+.dot { fill: var(--marketing-accent); stroke: var(--parchment); stroke-width: 1; }
+.endpoint { fill: var(--marketing-accent); opacity: .8; }
+.book { position: absolute; object-fit: contain; pointer-events: none; }
+.marketplace {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 1.3cqw;
+  height: 7.5%;
+  transform: translateY(-50%);
+  color: var(--ink);
+  font: 500 clamp(10px, 2.3cqw, 20px)/1.25 'Inter', sans-serif;
+  mix-blend-mode: multiply;
+}
+.logo { width: 100%; height: auto; max-height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.logo[data-logo='amazon.png'] { width: 78%; }
+.logo[data-logo='kobo.png'] {
+  height: 6cqw;
+  object-fit: cover;
+  /* Align the visible mark, compensating the PNG's 43px left inset in 360px. */
+  transform: translateX(-11.944444%);
+}
+.logo[data-logo='thalia.png'] { width: 90%; }
+.logo:is([data-logo='apple-books.png'], [data-logo='google-play-books.png'], [data-logo='bookshop.png']) { width: 5.7cqw; height: 5.7cqw; flex-shrink: 0; }
+.logo[data-logo='bookshop.png'] + span { font-size: .92em; white-space: nowrap; }
+.nookLabel { display: none; }
+
+.ruled .layout { display: grid; grid-template-columns: 43% 57%; }
+.ruled .copy { align-self: center; padding: 44px 28px 64px 0; }
+.ruled .heading { font-size: clamp(38px, 3.7vw, 57px); }
+.ruled .heading em { white-space: nowrap; }
+.ruled .diagram { aspect-ratio: 800 / 820; border-left: 1px solid var(--marketing-border); }
+.ruled .diagram::before { content: ''; position: absolute; left: 51%; top: 0; bottom: 0; border-left: 1px solid var(--marketing-border); }
+.ruled .book { left: -2%; top: 11%; width: 58%; height: 85%; }
+.ruled .marketplace { left: 72%; width: 27%; }
+
+.poster .layout { min-height: 690px; aspect-ratio: 1.66; }
+.poster .copy { width: 79%; padding-top: 28px; }
+.poster .heading { font-size: clamp(46px, 5.05vw, 78px); line-height: 1.09; }
+.poster .heading em { display: block; }
+.poster .subtitle { margin-top: 24px; font-size: .51em; }
+.poster .description { width: 44%; margin-top: 78px; }
+.poster .diagram { position: absolute; right: 0; top: 0; width: 65%; aspect-ratio: 800 / 740; }
+.poster .book { left: 1.5%; top: 26%; width: 61%; height: 74%; }
+.poster .marketplace { left: 80%; width: 20%; font-size: clamp(10px, 2cqw, 19px); }
+.poster .logo:is([data-logo='apple-books.png'], [data-logo='google-play-books.png'], [data-logo='bookshop.png']) { width: 4.7cqw; height: 4.7cqw; }
+
+@media (min-width: 901px) and (max-width: 1199px) {
+  .ruled .heading { font-size: 37px; }
+  .description p { font-size: 17px; }
+  .ruled .copy { padding-right: 20px; }
+  .ruled .diagram { align-self: center; }
+  .poster .layout { min-height: 700px; }
+  .poster .description { margin-top: 48px; width: 43%; }
+  .poster .diagram { top: 75px; }
+  .poster .heading { font-size: 46px; }
+}
+
+@media (max-width: 900px) {
+  .primary { padding-top: 92px; }
+  .version, .layout { width: calc(100% - 40px); }
+  .version { font-size: 11px; padding-block: 18px; }
+  .ruled .layout { display: block; }
+  .ruled .copy, .poster .copy { width: 100%; padding: 32px 0 0; }
+  .eyebrow { margin-bottom: 20px; font-size: 11px; }
+  .ruled .heading, .poster .heading { font-size: clamp(34px, 6.2vw, 54px); line-height: 1.12; letter-spacing: -.04em; }
+  .subtitle, .poster .subtitle { margin-top: 20px; font-size: .6em; }
+  .description, .poster .description { width: 100%; margin-top: 26px; }
+  .description p { max-width: 560px; font-size: 17px; margin-bottom: 26px; }
+  .ruled .diagram { border-left: 0; max-width: 650px; margin: 24px auto 0; }
+  .ruled .diagram::before { top: 8%; bottom: 8%; }
+  .poster .layout { min-height: 0; aspect-ratio: auto; }
+  .poster .diagram { position: relative; top: auto; right: auto; width: 100%; max-width: 650px; margin: 16px auto 0; }
+  .poster .book { top: 22%; }
+  .poster .marketplace { left: 76%; width: 24%; font-size: clamp(10px, 2.3cqw, 17px); }
+  .poster .threads { width: 95%; }
+  .marketplace { gap: 1cqw; }
+}
+
+@media (max-width: 480px) {
+  .ruled .marketplace { left: 67%; width: 33%; font-size: 11px; }
+  .ruled .threads { width: 94%; }
+  .poster .marketplace { left: 68%; width: 32%; font-size: 11px; }
+  .poster .threads { width: 86%; }
+  .logo:is([data-logo='apple-books.png'], [data-logo='google-play-books.png'], [data-logo='bookshop.png']),
+  .poster .logo:is([data-logo='apple-books.png'], [data-logo='google-play-books.png'], [data-logo='bookshop.png']) { width: 18px; height: 18px; }
+  .logo[data-logo='bookshop.png'] + span { font-size: 9.5px; }
+  .marketplace:has(.nookLabel) { flex-direction: column; justify-content: center; gap: 2px; }
+  .nookLabel { display: block; font-size: 10px; letter-spacing: .08em; }
+}
+
+@media (max-width: 360px) {
+  .version { font-size: 10px; gap: 10px; }
+  .ruled .heading, .poster .heading { font-size: 31px; }
+}

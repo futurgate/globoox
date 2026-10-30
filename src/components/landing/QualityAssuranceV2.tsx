@@ -4,13 +4,14 @@ interface QualityAssuranceV2Props {
   label: string;
   heading: string;
   description: string;
+  sliderLabel?: string;
   compare: {
     original: CompareSliderText;
     translated: CompareSliderText;
   };
 }
 
-export function QualityAssuranceV2({ label, heading, description, compare }: QualityAssuranceV2Props) {
+export function QualityAssuranceV2({ label, heading, description, compare, sliderLabel }: QualityAssuranceV2Props) {
   return (
     <section className="qa-section" style={{ padding: '120px 0', background: 'var(--parchment)' }}>
       <div className="qa-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
@@ -84,6 +85,7 @@ export function QualityAssuranceV2({ label, heading, description, compare }: Qua
                 <CompareSlider
                   original={compare.original}
                   translated={compare.translated}
+                  sliderLabel={sliderLabel}
                   hideStatusBarContent
                   statusBarHeight={4}
                   statusBarPadding="0 24px"
@@ -129,7 +131,7 @@ export function QualityAssuranceV2({ label, heading, description, compare }: Qua
               }}
             >
               <div className="device-screen-slider" style={{ width: '100%', height: '100%' }}>
-                <CompareSlider original={compare.original} translated={compare.translated} />
+                <CompareSlider original={compare.original} translated={compare.translated} sliderLabel={sliderLabel} />
               </div>
             </div>
           </div>
@@ -161,7 +163,7 @@ export function QualityAssuranceV2({ label, heading, description, compare }: Qua
               }}
             >
               <div className="device-screen-slider" style={{ width: '100%', height: '100%', background: '#fcfcfc' }}>
-                <CompareSlider original={compare.original} translated={compare.translated} />
+                <CompareSlider original={compare.original} translated={compare.translated} sliderLabel={sliderLabel} />
               </div>
             </div>
           </div>

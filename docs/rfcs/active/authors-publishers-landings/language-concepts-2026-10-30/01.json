@@ -1,0 +1,42 @@
+{
+  "id": "01",
+  "name": "Типографический атлас",
+  "status": "generated-and-visually-reviewed",
+  "mode": "built-in image_gen.imagegen",
+  "scope": "Language layout proposal only; no implementation",
+  "specSource": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/spec.json",
+  "executedPrompt": "Use case: ui-mockup. Create ONE distinctive, beautiful, production-plausible DESKTOP LANGUAGES SECTION for the Globoox authors landing. Single flat full-width website section, landscape1536×1024. Not a whole site, not a collage or multiple alternatives. No header, hero, footer, team or browser/device chrome.\nReference1 is the selected live hero: use its contemporary editorial typography and refined book-design sensibility; ignore its comparison marker, content and logos. Reference2 is the newly APPROVED closing section: use its dark forest-green base, warm cream lettering/paper, terracotta accents and carefully restrained physical materials. These are STYLE references only. Do not copy their compositions. Design a new composition exactly as described below.\nKeep this shared design system: forest-green #2C3B2D edge-to-edge section, warm ivory/parchment #F4F0E8, terracotta #C05A3A or readable peach accents on green, thin rules, Lora-like Cyrillic serif display and Inter-like supporting typography. Natural soft shadows only for physical paper/books. No neon, glassmorphism, blue SaaS styling, decorative plants, flags, generic floating appcards, heavy borders, gratuitous gradients or shiny3Dglobes. Prioritize actual reading hierarchy. Do not add a button, form, language picker, testimonials, statistics, fake partner claims, translations of the language names or explanatory marketing paragraphs. No extra slogan or an isolated G monogram. Keep all13 language names easily readable and visibly grouped by status; upcoming languages must NOT look available.\nEXACT CONTENT, each item once (do not duplicate names in headings, books, captions or lists):\nMain heading: “Языки перевода”.\nAvailable group label: “Уже доступны”. Exactly FOUR available names: “English”, “Français”, “Español”, “Русский”.\nUpcoming group label: “Скоро”. Exactly NINE upcoming names: “Deutsch”, “Italiano”, “Português”, “Türkçe”, “中文”, “日本語”, “한국어”, “العربية”, “فارسی”.\nPreserve accents and all scripts correctly. Use at least roughly20px visual language-name size at1536px width. The layout should work as a coherent website section continuing the references, but be clearly different from other arrangements. No tiny scattered soon labels. The image is a design proposal, not a screenshot of current implementation.\n\nDISTINCT COMPOSITION 01:\nTYPOGRAPHIC ATLAS. Entirely typography, no book or illustration. Place the main heading in a narrow left top column with expressive two-line serif rhythm. The upper-right and central field is an expansive2×2 arrangement of the FOUR available names, very large72px+, each on the same green surface with slender terracotta underlines; “Уже доступны” above that group. Below a long inset horizontal rule, use a calm three-column × three-row typographic catalogue for the NINE upcoming names under “Скоро”. Generous gutters, crisp alignment, confidence of an art-book contents page. The current group dominates through size, upcoming stays readable. No boxes around individual names.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/selected-authors-1536.png",
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/06.png"
+  ],
+  "referencesInspected": true,
+  "transparent_background": false,
+  "sourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-c99d66d4-c148-4edc-b1c1-9f0f58f8242d.png",
+  "asset": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/images/01.png",
+  "pixels": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "bytes": 1361964,
+  "sha256": "13095c1ccb20b45e0650c5e4cea74e05cab31c344a37efdcf6b0a2e4bf99bf3d",
+  "review": {
+    "result": "accepted",
+    "method": "Visual inspection of actual generated output",
+    "observations": [
+      "Pure typographic atlas: oversized two-line heading at upper left, large2×2 current names with terracotta underlines, nine upcoming names in lower3×3 catalogue separated by a fine rule. No illustration.",
+      "Heading Языки перевода and status labels Уже доступны / Скоро are present.",
+      "Available: English, Français, Español, Русский, each once and correctly grouped.",
+      "Upcoming: Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی, each once and correctly grouped.",
+      "Forest-green section base, cream type/paper, restrained terracotta accents.",
+      "Names comfortably readable, no overlap/crowding or clipped labels.",
+      "No extra header, hero, footer, CTA, team, flags, claims or marketing prose."
+    ],
+    "remainingDefects": [],
+    "caveats": [
+      "Raster proposal; names must remain live canonical text in any later implementation."
+    ]
+  },
+  "corrections": []
+}

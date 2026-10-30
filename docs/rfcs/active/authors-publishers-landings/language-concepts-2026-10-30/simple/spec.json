@@ -1,0 +1,81 @@
+{
+  "round": "simple",
+  "status": "selected_03_implemented_authors",
+  "reason": "User rejected excessive compositions and requested simpler layouts.",
+  "tool": "built-in image_gen.imagegen",
+  "references": [],
+  "variants": [
+    {
+      "id": "01",
+      "name": "По центру",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Centered layout. Heading on top, small current label below, all four current names in one clean horizontal row. Upcoming label and the nine upcoming names in two centered lines beneath. No dividers. Balanced, calm and compact; active names in serif.",
+      "references": [],
+      "output": "images/01.png"
+    },
+    {
+      "id": "02",
+      "name": "По левому краю",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Everything left aligned. Heading, then current label and one horizontal row of four medium sans-serif current names. One thin horizontal rule. Below, upcoming label and the nine future names in a three-column, three-row grid. Airy but compact spacing.",
+      "references": [],
+      "output": "images/02.png"
+    },
+    {
+      "id": "03",
+      "name": "Заголовок сбоку",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Two-column composition: large two-line title in the left third; all language content in the right two-thirds. Current label and a clean 2 by 2 arrangement of current names, then a smaller upcoming label and nine names in three compact rows. No rules or boxes.",
+      "references": [],
+      "output": "images/03.png"
+    },
+    {
+      "id": "04",
+      "name": "Два списка",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Heading upper left. Under it two text columns side by side: current group on the left with four vertically stacked medium serif names; upcoming group on the right as a 3 by 3 smaller sans-serif grid. Both group labels align on one baseline. No lines or decoration.",
+      "references": [],
+      "output": "images/04.png"
+    },
+    {
+      "id": "05",
+      "name": "Две строки текста",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Very concise editorial text layout. Left aligned heading, then small current label, current languages set as one continuous serif line separated only by middle dots. Upcoming label below and all future languages as two neat lines separated by middle dots. No separate grid cells and no dividers.",
+      "references": [],
+      "output": "images/05.png"
+    },
+    {
+      "id": "06",
+      "name": "Четыре колонки",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Heading left, current label below. Four equal typographic columns across width, each carries one large sans-serif current name. No column rules or cards. Upcoming group sits beneath as a single compact left-aligned block: label followed by the nine names wrapping naturally into two evenly spaced rows.",
+      "references": [],
+      "output": "images/06.png"
+    },
+    {
+      "id": "07",
+      "name": "Компактная сетка",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Centered narrow composition occupying central 65% of width. Heading centered, current label below, four medium serif current names in an evenly spaced 2 by 2 grid. Under a subtle short hairline, upcoming label and nine smaller names arranged as a centered 3 by 3 grid. Tight logical spacing, not a tall poster.",
+      "references": [],
+      "output": "images/07.png"
+    },
+    {
+      "id": "08",
+      "name": "Две строки таблицы",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. A simple borderless typographic table. Heading left aligned above. First row: current label in a narrow left column, all four current names in one aligned row to its right. Second row below: upcoming label in the same label column, future names in three columns and three rows to the right. One faint horizontal divider between the two status rows. No other rules.",
+      "references": [],
+      "output": "images/08.png"
+    },
+    {
+      "id": "09",
+      "name": "Список «Скоро» справа",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Heading upper left. Main left area (65%) contains current label and four medium serif names in two lines, two per line. Narrow right area (35%) contains upcoming label and nine modest sans-serif names in a three-column grid. No vertical rule; distinguish groups using whitespace only.",
+      "references": [],
+      "output": "images/09.png"
+    },
+    {
+      "id": "10",
+      "name": "Строгая типографика",
+      "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Simple centered all-sans-serif section, with a modest serif title only. Current label and all four current names in one horizontal row in medium-weight sans-serif. A subtle full-width hairline separates a smaller upcoming label and nine names in three short centered rows. Same width for both groups, restrained sizes, very quiet hierarchy.",
+      "references": [],
+      "output": "images/10.png"
+    }
+  ],
+  "selected": "03",
+  "selectionSource": "User attached exact exec-5f1ab378-9dcf-4b7c-8d55-cab87c2a4257.png"
+}

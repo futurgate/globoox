@@ -1,0 +1,25 @@
+{
+  "id": "08",
+  "name": "Две строки таблицы",
+  "tool": "image_gen.imagegen (built-in)",
+  "status": "generated-reviewed",
+  "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. A simple borderless typographic table. Heading left aligned above. First row: current label in a narrow left column, all four current names in one aligned row to its right. Second row below: upcoming label in the same label column, future names in three columns and three rows to the right. One faint horizontal divider between the two status rows. No other rules.",
+  "references": [],
+  "transparent_background": false,
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-e4f091f8-b119-4266-9566-7268e3e7fdf3.png",
+  "output": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/simple/images/08.png",
+  "review": {
+    "result": "passed",
+    "findings": [
+      "All four current and nine upcoming names are present exactly once, with correct status grouping and readable accents/scripts.",
+      "Minimal typography-only composition on green, no illustration, card, pill, controls, team or additional copy.",
+      "Two status rows with label column and one subtle horizontal divider."
+    ],
+    "corrections": 0
+  },
+  "width": 1672,
+  "height": 941,
+  "mode": "RGB",
+  "bytes": 1320865,
+  "sha256": "9c8867d99a93103be9e2b2cdf6a8e8a795ced26b4606a06e0438a834921522b5"
+}

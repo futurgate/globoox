@@ -1,0 +1,190 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "checkedAt": "2026-10-30T19:17:57.525Z",
+  "viewports": [
+    {
+      "route": "authors",
+      "width": 320,
+      "scrollWidth": 320,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/authors",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "authors",
+      "width": 390,
+      "scrollWidth": 390,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/authors",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "authors",
+      "width": 768,
+      "scrollWidth": 768,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/authors",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "authors",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/authors",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "authors",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/authors",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "publishers",
+      "width": 320,
+      "scrollWidth": 320,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/publishers",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "publishers",
+      "width": 390,
+      "scrollWidth": 390,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/publishers",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "publishers",
+      "width": 768,
+      "scrollWidth": 768,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/publishers",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "publishers",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/publishers",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    },
+    {
+      "route": "publishers",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "h1Count": 1,
+      "lang": "ru",
+      "canonical": "https://globoox.co/publishers",
+      "visibleLanguageSelectors": 0,
+      "localTargetsMissing": [],
+      "languageLayout": {
+        "count": 13,
+        "outside": [],
+        "overlaps": [],
+        "languageBackground": "rgb(44, 59, 45)",
+        "stepBackground": "rgb(44, 59, 45)"
+      }
+    }
+  ],
+  "interactions": [
+    "Cookie choice dismisses banner and persists across routes",
+    "Mobile menu opens, closes with Escape and closes on an unobscured section anchor",
+    "Comparison keyboard arrows, Shift, Home/End, bounds and mouse drag work",
+    "authors: synthetic DOM clicks ignored; browser mouse/Enter/Space open correct mailto and subject; target captured without opening mail",
+    "publishers: synthetic DOM clicks ignored; browser mouse/Enter/Space open correct mailto and subject; target captured without opening mail",
+    "Touch activation opens the correct mailto; browser automation remains able to activate by design (not CAPTCHA)",
+    "All four founder photos load",
+    "Reduced-motion preference disables smooth scrolling",
+    "Main /ru retains reader hero and working language selector",
+    "Both routes included in sitemap"
+  ],
+  "errors": [],
+  "passed": true
+}

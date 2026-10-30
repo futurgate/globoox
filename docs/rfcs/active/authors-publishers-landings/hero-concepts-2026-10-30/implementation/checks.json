@@ -1,0 +1,1894 @@
+{
+  "checkedAt": "2026-10-30T19:36:35.806Z",
+  "viewports": [
+    {
+      "width": 1536,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 1230.203125,
+          "right": 1339.625,
+          "top": 193.40625,
+          "bottom": 230.0625,
+          "width": 109.421875,
+          "height": 36.65625
+        },
+        {
+          "loaded": true,
+          "left": 1215.296875,
+          "right": 1354.546875,
+          "top": 269.5,
+          "bottom": 299.34375,
+          "width": 139.25,
+          "height": 29.84375
+        },
+        {
+          "loaded": true,
+          "left": 1245.359375,
+          "right": 1280.171875,
+          "top": 339.71875,
+          "bottom": 374.53125,
+          "width": 34.8125,
+          "height": 34.8125
+        },
+        {
+          "loaded": true,
+          "left": 1228.34375,
+          "right": 1263.15625,
+          "top": 412.421875,
+          "bottom": 447.234375,
+          "width": 34.8125,
+          "height": 34.8125
+        },
+        {
+          "loaded": true,
+          "left": 1220.265625,
+          "right": 1349.578125,
+          "top": 493.578125,
+          "bottom": 511.4375,
+          "width": 129.3125,
+          "height": 17.859375
+        },
+        {
+          "loaded": true,
+          "left": 1220.265625,
+          "right": 1349.578125,
+          "top": 560.828125,
+          "bottom": 589.59375,
+          "width": 129.3125,
+          "height": 28.765625
+        },
+        {
+          "loaded": true,
+          "left": 1227.734375,
+          "right": 1262.546875,
+          "top": 630.5,
+          "bottom": 665.3125,
+          "width": 34.8125,
+          "height": 34.8125
+        }
+      ],
+      "scene": {
+        "left": 870.59375,
+        "right": 1368,
+        "top": 162,
+        "bottom": 697.65625,
+        "width": 497.40625,
+        "height": 535.65625
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1536,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 651.796875,
+          "right": 1127.265625,
+          "top": 255.1875,
+          "bottom": 970.296875,
+          "width": 475.46875,
+          "height": 715.109375
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1431.078125,
+          "top": 236.328125,
+          "bottom": 294.15625,
+          "width": 172.640625,
+          "height": 57.828125
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1479.78125,
+          "top": 343.25,
+          "bottom": 392.4375,
+          "width": 221.34375,
+          "height": 49.1875
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1305.15625,
+          "top": 447.09375,
+          "bottom": 493.8125,
+          "width": 46.71875,
+          "height": 46.71875
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1305.15625,
+          "top": 549.6875,
+          "bottom": 596.40625,
+          "width": 46.71875,
+          "height": 46.71875
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1479.78125,
+          "top": 660.34375,
+          "bottom": 690.921875,
+          "width": 221.34375,
+          "height": 30.578125
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1457.640625,
+          "top": 756.078125,
+          "bottom": 800.40625,
+          "width": 199.203125,
+          "height": 44.328125
+        },
+        {
+          "loaded": true,
+          "left": 1258.4375,
+          "right": 1305.15625,
+          "top": 857.484375,
+          "bottom": 904.203125,
+          "width": 46.71875,
+          "height": 46.71875
+        }
+      ],
+      "scene": {
+        "left": 667.1875,
+        "right": 1487.984375,
+        "top": 162.65625,
+        "bottom": 1003.96875,
+        "width": 820.796875,
+        "height": 841.3125
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1536,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 566.03125,
+          "right": 1136.984375,
+          "top": 369.0625,
+          "bottom": 1009.75,
+          "width": 570.953125,
+          "height": 640.6875
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1446.796875,
+          "top": 195.5546875,
+          "bottom": 244.4609375,
+          "width": 146,
+          "height": 48.90625
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1487.984375,
+          "top": 308.9296875,
+          "bottom": 365.0859375,
+          "width": 187.1875,
+          "height": 56.15625
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1344.78125,
+          "top": 432.0234375,
+          "bottom": 476.0078125,
+          "width": 43.984375,
+          "height": 43.984375
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1344.78125,
+          "top": 549.0234375,
+          "bottom": 593.0078125,
+          "width": 43.984375,
+          "height": 43.984375
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1487.984375,
+          "top": 675.0859375,
+          "bottom": 700.9453125,
+          "width": 187.1875,
+          "height": 25.859375
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1469.265625,
+          "top": 786.2734375,
+          "bottom": 823.7578125,
+          "width": 168.46875,
+          "height": 37.484375
+        },
+        {
+          "loaded": true,
+          "left": 1300.796875,
+          "right": 1344.78125,
+          "top": 900.0234375,
+          "bottom": 944.0078125,
+          "width": 43.984375,
+          "height": 43.984375
+        }
+      ],
+      "scene": {
+        "left": 552,
+        "right": 1488,
+        "top": 143.96875,
+        "bottom": 1009.765625,
+        "width": 936,
+        "height": 865.796875
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1440,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 1182.203125,
+          "right": 1291.625,
+          "top": 193.40625,
+          "bottom": 230.0625,
+          "width": 109.421875,
+          "height": 36.65625
+        },
+        {
+          "loaded": true,
+          "left": 1167.296875,
+          "right": 1306.546875,
+          "top": 269.5,
+          "bottom": 299.34375,
+          "width": 139.25,
+          "height": 29.84375
+        },
+        {
+          "loaded": true,
+          "left": 1197.359375,
+          "right": 1232.171875,
+          "top": 339.71875,
+          "bottom": 374.53125,
+          "width": 34.8125,
+          "height": 34.8125
+        },
+        {
+          "loaded": true,
+          "left": 1180.34375,
+          "right": 1215.15625,
+          "top": 412.421875,
+          "bottom": 447.234375,
+          "width": 34.8125,
+          "height": 34.8125
+        },
+        {
+          "loaded": true,
+          "left": 1172.265625,
+          "right": 1301.578125,
+          "top": 493.578125,
+          "bottom": 511.4375,
+          "width": 129.3125,
+          "height": 17.859375
+        },
+        {
+          "loaded": true,
+          "left": 1172.265625,
+          "right": 1301.578125,
+          "top": 560.828125,
+          "bottom": 589.59375,
+          "width": 129.3125,
+          "height": 28.765625
+        },
+        {
+          "loaded": true,
+          "left": 1179.734375,
+          "right": 1214.546875,
+          "top": 630.5,
+          "bottom": 665.3125,
+          "width": 34.8125,
+          "height": 34.8125
+        }
+      ],
+      "scene": {
+        "left": 822.59375,
+        "right": 1320,
+        "top": 162,
+        "bottom": 697.65625,
+        "width": 497.40625,
+        "height": 535.65625
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1440,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 610.328125,
+          "right": 1059.34375,
+          "top": 285.046875,
+          "bottom": 960.421875,
+          "width": 449.015625,
+          "height": 675.375
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1346.234375,
+          "top": 267.2421875,
+          "bottom": 321.8515625,
+          "width": 163.03125,
+          "height": 54.609375
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1392.21875,
+          "top": 368.2109375,
+          "bottom": 414.6484375,
+          "width": 209.015625,
+          "height": 46.4375
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1227.328125,
+          "top": 466.2734375,
+          "bottom": 510.3984375,
+          "width": 44.125,
+          "height": 44.125
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1227.328125,
+          "top": 563.1640625,
+          "bottom": 607.2890625,
+          "width": 44.125,
+          "height": 44.125
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1392.21875,
+          "top": 667.6953125,
+          "bottom": 696.5703125,
+          "width": 209.015625,
+          "height": 28.875
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1371.3125,
+          "top": 758.1015625,
+          "bottom": 799.9609375,
+          "width": 188.109375,
+          "height": 41.859375
+        },
+        {
+          "loaded": true,
+          "left": 1183.203125,
+          "right": 1227.328125,
+          "top": 853.8671875,
+          "bottom": 897.9921875,
+          "width": 44.125,
+          "height": 44.125
+        }
+      ],
+      "scene": {
+        "left": 624.796875,
+        "right": 1399.984375,
+        "top": 197.65625,
+        "bottom": 992.21875,
+        "width": 775.1875,
+        "height": 794.5625
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1440,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 529.25,
+          "right": 1068.484375,
+          "top": 380.8125,
+          "bottom": 985.890625,
+          "width": 539.234375,
+          "height": 605.078125
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1361.078125,
+          "top": 216.9375,
+          "bottom": 263.125,
+          "width": 137.890625,
+          "height": 46.1875
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1399.984375,
+          "top": 324.015625,
+          "bottom": 377.046875,
+          "width": 176.796875,
+          "height": 53.03125
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1264.734375,
+          "top": 440.25,
+          "bottom": 481.796875,
+          "width": 41.546875,
+          "height": 41.546875
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1264.734375,
+          "top": 550.75,
+          "bottom": 592.296875,
+          "width": 41.546875,
+          "height": 41.546875
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1399.984375,
+          "top": 669.8125,
+          "bottom": 694.234375,
+          "width": 176.796875,
+          "height": 24.421875
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1382.296875,
+          "top": 774.828125,
+          "bottom": 810.234375,
+          "width": 159.109375,
+          "height": 35.40625
+        },
+        {
+          "loaded": true,
+          "left": 1223.1875,
+          "right": 1264.734375,
+          "top": 882.25,
+          "bottom": 923.796875,
+          "width": 41.546875,
+          "height": 41.546875
+        }
+      ],
+      "scene": {
+        "left": 516,
+        "right": 1400,
+        "top": 168.21875,
+        "bottom": 985.90625,
+        "width": 884,
+        "height": 817.6875
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1024,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 877.03125,
+          "right": 961.96875,
+          "top": 233.484375,
+          "bottom": 261.9375,
+          "width": 84.9375,
+          "height": 28.453125
+        },
+        {
+          "loaded": true,
+          "left": 865.671875,
+          "right": 973.34375,
+          "top": 292.546875,
+          "bottom": 315.703125,
+          "width": 107.671875,
+          "height": 23.15625
+        },
+        {
+          "loaded": true,
+          "left": 888.8125,
+          "right": 915.828125,
+          "top": 347.0625,
+          "bottom": 374.078125,
+          "width": 27.015625,
+          "height": 27.015625
+        },
+        {
+          "loaded": true,
+          "left": 875.59375,
+          "right": 902.609375,
+          "top": 403.484375,
+          "bottom": 430.5,
+          "width": 27.015625,
+          "height": 27.015625
+        },
+        {
+          "loaded": true,
+          "left": 869.3125,
+          "right": 969.6875,
+          "top": 466.484375,
+          "bottom": 480.34375,
+          "width": 100.375,
+          "height": 13.859375
+        },
+        {
+          "loaded": true,
+          "left": 869.3125,
+          "right": 969.6875,
+          "top": 518.6875,
+          "bottom": 541.015625,
+          "width": 100.375,
+          "height": 22.328125
+        },
+        {
+          "loaded": true,
+          "left": 875.140625,
+          "right": 902.15625,
+          "top": 572.765625,
+          "bottom": 599.78125,
+          "width": 27.015625,
+          "height": 27.015625
+        }
+      ],
+      "scene": {
+        "left": 597.90625,
+        "right": 984,
+        "top": 209.109375,
+        "bottom": 624.890625,
+        "width": 386.09375,
+        "height": 415.78125
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1024,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 436.171875,
+          "right": 747.671875,
+          "top": 500.65625,
+          "bottom": 969.4375,
+          "width": 311.5,
+          "height": 468.78125
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 946.6875,
+          "top": 488.3046875,
+          "bottom": 526.1796875,
+          "width": 113.09375,
+          "height": 37.875
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 978.59375,
+          "top": 558.3984375,
+          "bottom": 590.6171875,
+          "width": 145,
+          "height": 32.21875
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 864.203125,
+          "top": 626.4609375,
+          "bottom": 657.0703125,
+          "width": 30.609375,
+          "height": 30.609375
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 864.203125,
+          "top": 693.7265625,
+          "bottom": 724.3359375,
+          "width": 30.609375,
+          "height": 30.609375
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 978.59375,
+          "top": 766.2578125,
+          "bottom": 786.2890625,
+          "width": 145,
+          "height": 20.03125
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 964.09375,
+          "top": 829.0234375,
+          "bottom": 858.0546875,
+          "width": 130.5,
+          "height": 29.03125
+        },
+        {
+          "loaded": true,
+          "left": 833.59375,
+          "right": 864.203125,
+          "top": 895.4921875,
+          "bottom": 926.1015625,
+          "width": 30.609375,
+          "height": 30.609375
+        }
+      ],
+      "scene": {
+        "left": 445.90625,
+        "right": 983.984375,
+        "top": 440,
+        "bottom": 991.515625,
+        "width": 538.078125,
+        "height": 551.515625
+      },
+      "buttons": 1
+    },
+    {
+      "width": 1024,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 379.609375,
+          "right": 753.890625,
+          "top": 514.078125,
+          "bottom": 934.0625,
+          "width": 374.28125,
+          "height": 419.984375
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 957,
+          "top": 400.328125,
+          "bottom": 432.390625,
+          "width": 95.71875,
+          "height": 32.0625
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 984,
+          "top": 474.65625,
+          "bottom": 511.46875,
+          "width": 122.71875,
+          "height": 36.8125
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 890.109375,
+          "top": 555.328125,
+          "bottom": 584.15625,
+          "width": 28.828125,
+          "height": 28.828125
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 890.109375,
+          "top": 632.03125,
+          "bottom": 660.859375,
+          "width": 28.828125,
+          "height": 28.828125
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 984,
+          "top": 714.671875,
+          "bottom": 731.625,
+          "width": 122.71875,
+          "height": 16.953125
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 971.71875,
+          "top": 787.5625,
+          "bottom": 812.125,
+          "width": 110.4375,
+          "height": 24.5625
+        },
+        {
+          "loaded": true,
+          "left": 861.28125,
+          "right": 890.109375,
+          "top": 862.125,
+          "bottom": 890.953125,
+          "width": 28.828125,
+          "height": 28.828125
+        }
+      ],
+      "scene": {
+        "left": 370.40625,
+        "right": 984,
+        "top": 366.515625,
+        "bottom": 934.078125,
+        "width": 613.59375,
+        "height": 567.5625
+      },
+      "buttons": 1
+    },
+    {
+      "width": 900,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 759.765625,
+          "right": 839.359375,
+          "top": 245.015625,
+          "bottom": 271.671875,
+          "width": 79.59375,
+          "height": 26.65625
+        },
+        {
+          "loaded": true,
+          "left": 749.171875,
+          "right": 849.953125,
+          "top": 300.375,
+          "bottom": 322.078125,
+          "width": 100.78125,
+          "height": 21.703125
+        },
+        {
+          "loaded": true,
+          "left": 770.796875,
+          "right": 796.109375,
+          "top": 351.453125,
+          "bottom": 376.765625,
+          "width": 25.3125,
+          "height": 25.3125
+        },
+        {
+          "loaded": true,
+          "left": 758.40625,
+          "right": 783.71875,
+          "top": 404.328125,
+          "bottom": 429.640625,
+          "width": 25.3125,
+          "height": 25.3125
+        },
+        {
+          "loaded": true,
+          "left": 752.53125,
+          "right": 846.59375,
+          "top": 463.375,
+          "bottom": 476.375,
+          "width": 94.0625,
+          "height": 13
+        },
+        {
+          "loaded": true,
+          "left": 752.53125,
+          "right": 846.59375,
+          "top": 512.28125,
+          "bottom": 533.203125,
+          "width": 94.0625,
+          "height": 20.921875
+        },
+        {
+          "loaded": true,
+          "left": 757.96875,
+          "right": 783.28125,
+          "top": 562.984375,
+          "bottom": 588.296875,
+          "width": 25.3125,
+          "height": 25.3125
+        }
+      ],
+      "scene": {
+        "left": 498.171875,
+        "right": 860,
+        "top": 222.171875,
+        "bottom": 611.828125,
+        "width": 361.828125,
+        "height": 389.65625
+      },
+      "buttons": 1
+    },
+    {
+      "width": 900,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 112,
+          "right": 489,
+          "top": 667.90625,
+          "bottom": 1234.21875,
+          "width": 377,
+          "height": 566.3125
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 729.875,
+          "top": 652.953125,
+          "bottom": 698.796875,
+          "width": 136.875,
+          "height": 45.84375
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 768.5,
+          "top": 737.625,
+          "bottom": 776.625,
+          "width": 175.5,
+          "height": 39
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 630.046875,
+          "top": 819.84375,
+          "bottom": 856.890625,
+          "width": 37.046875,
+          "height": 37.046875
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 630.046875,
+          "top": 901.09375,
+          "bottom": 938.140625,
+          "width": 37.046875,
+          "height": 37.046875
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 768.5,
+          "top": 988.75,
+          "bottom": 1013,
+          "width": 175.5,
+          "height": 24.25
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 750.9375,
+          "top": 1064.546875,
+          "bottom": 1099.6875,
+          "width": 157.9375,
+          "height": 35.140625
+        },
+        {
+          "loaded": true,
+          "left": 593,
+          "right": 630.046875,
+          "top": 1144.84375,
+          "bottom": 1181.890625,
+          "width": 37.046875,
+          "height": 37.046875
+        }
+      ],
+      "scene": {
+        "left": 125,
+        "right": 775,
+        "top": 594.625,
+        "bottom": 1260.875,
+        "width": 650,
+        "height": 666.25
+      },
+      "buttons": 1
+    },
+    {
+      "width": 900,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 134.75,
+          "right": 531.25,
+          "top": 620.765625,
+          "bottom": 1065.6875,
+          "width": 396.5,
+          "height": 444.921875
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 740.671875,
+          "top": 520.9375,
+          "bottom": 561.6875,
+          "width": 121.671875,
+          "height": 40.75
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 775,
+          "top": 603.0625,
+          "bottom": 642.0625,
+          "width": 156,
+          "height": 39
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 649.546875,
+          "top": 688.53125,
+          "bottom": 719.078125,
+          "width": 30.546875,
+          "height": 30.546875
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 649.546875,
+          "top": 769.78125,
+          "bottom": 800.328125,
+          "width": 30.546875,
+          "height": 30.546875
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 775,
+          "top": 855.53125,
+          "bottom": 877.078125,
+          "width": 156,
+          "height": 21.546875
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 759.390625,
+          "top": 931.9375,
+          "bottom": 963.171875,
+          "width": 140.390625,
+          "height": 31.234375
+        },
+        {
+          "loaded": true,
+          "left": 619,
+          "right": 649.546875,
+          "top": 1013.53125,
+          "bottom": 1044.078125,
+          "width": 30.546875,
+          "height": 30.546875
+        }
+      ],
+      "scene": {
+        "left": 125,
+        "right": 775,
+        "top": 488.5,
+        "bottom": 1089.75,
+        "width": 650,
+        "height": 601.25
+      },
+      "buttons": 1
+    },
+    {
+      "width": 768,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 644.390625,
+          "right": 710.78125,
+          "top": 273.53125,
+          "bottom": 295.765625,
+          "width": 66.390625,
+          "height": 22.234375
+        },
+        {
+          "loaded": true,
+          "left": 635.71875,
+          "right": 719.453125,
+          "top": 319.71875,
+          "bottom": 337.828125,
+          "width": 83.734375,
+          "height": 18.109375
+        },
+        {
+          "loaded": true,
+          "left": 651.421875,
+          "right": 672.546875,
+          "top": 362.3125,
+          "bottom": 383.4375,
+          "width": 21.125,
+          "height": 21.125
+        },
+        {
+          "loaded": true,
+          "left": 639.09375,
+          "right": 660.21875,
+          "top": 406.421875,
+          "bottom": 427.546875,
+          "width": 21.125,
+          "height": 21.125
+        },
+        {
+          "loaded": true,
+          "left": 638.34375,
+          "right": 716.8125,
+          "top": 455.671875,
+          "bottom": 466.515625,
+          "width": 78.46875,
+          "height": 10.84375
+        },
+        {
+          "loaded": true,
+          "left": 638.34375,
+          "right": 716.8125,
+          "top": 496.484375,
+          "bottom": 513.9375,
+          "width": 78.46875,
+          "height": 17.453125
+        },
+        {
+          "loaded": true,
+          "left": 638.671875,
+          "right": 659.796875,
+          "top": 538.75,
+          "bottom": 559.875,
+          "width": 21.125,
+          "height": 21.125
+        }
+      ],
+      "scene": {
+        "left": 426.171875,
+        "right": 728,
+        "top": 254.484375,
+        "bottom": 579.515625,
+        "width": 301.828125,
+        "height": 325.03125
+      },
+      "buttons": 1
+    },
+    {
+      "width": 768,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 46,
+          "right": 423,
+          "top": 648.59375,
+          "bottom": 1214.90625,
+          "width": 377,
+          "height": 566.3125
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 663.875,
+          "top": 633.640625,
+          "bottom": 679.484375,
+          "width": 136.875,
+          "height": 45.84375
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 702.5,
+          "top": 718.3125,
+          "bottom": 757.3125,
+          "width": 175.5,
+          "height": 39
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 564.046875,
+          "top": 800.53125,
+          "bottom": 837.578125,
+          "width": 37.046875,
+          "height": 37.046875
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 564.046875,
+          "top": 881.78125,
+          "bottom": 918.828125,
+          "width": 37.046875,
+          "height": 37.046875
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 702.5,
+          "top": 969.4375,
+          "bottom": 993.6875,
+          "width": 175.5,
+          "height": 24.25
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 684.9375,
+          "top": 1045.234375,
+          "bottom": 1080.375,
+          "width": 157.9375,
+          "height": 35.140625
+        },
+        {
+          "loaded": true,
+          "left": 527,
+          "right": 564.046875,
+          "top": 1125.53125,
+          "bottom": 1162.578125,
+          "width": 37.046875,
+          "height": 37.046875
+        }
+      ],
+      "scene": {
+        "left": 59,
+        "right": 709,
+        "top": 575.3125,
+        "bottom": 1241.5625,
+        "width": 650,
+        "height": 666.25
+      },
+      "buttons": 1
+    },
+    {
+      "width": 768,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 68.75,
+          "right": 465.25,
+          "top": 611.140625,
+          "bottom": 1056.0625,
+          "width": 396.5,
+          "height": 444.921875
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 674.671875,
+          "top": 511.3125,
+          "bottom": 552.0625,
+          "width": 121.671875,
+          "height": 40.75
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 709,
+          "top": 593.4375,
+          "bottom": 632.4375,
+          "width": 156,
+          "height": 39
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 583.546875,
+          "top": 678.90625,
+          "bottom": 709.453125,
+          "width": 30.546875,
+          "height": 30.546875
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 583.546875,
+          "top": 760.15625,
+          "bottom": 790.703125,
+          "width": 30.546875,
+          "height": 30.546875
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 709,
+          "top": 845.90625,
+          "bottom": 867.453125,
+          "width": 156,
+          "height": 21.546875
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 693.390625,
+          "top": 922.3125,
+          "bottom": 953.546875,
+          "width": 140.390625,
+          "height": 31.234375
+        },
+        {
+          "loaded": true,
+          "left": 553,
+          "right": 583.546875,
+          "top": 1003.90625,
+          "bottom": 1034.453125,
+          "width": 30.546875,
+          "height": 30.546875
+        }
+      ],
+      "scene": {
+        "left": 59,
+        "right": 709,
+        "top": 478.875,
+        "bottom": 1080.125,
+        "width": 650,
+        "height": 601.25
+      },
+      "buttons": 1
+    },
+    {
+      "width": 390,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 273.046875,
+          "right": 350.046875,
+          "top": 551.421875,
+          "bottom": 577.21875,
+          "width": 77,
+          "height": 25.796875
+        },
+        {
+          "loaded": true,
+          "left": 262.84375,
+          "right": 360.25,
+          "top": 604.96875,
+          "bottom": 625.96875,
+          "width": 97.40625,
+          "height": 21
+        },
+        {
+          "loaded": true,
+          "left": 283.328125,
+          "right": 307.828125,
+          "top": 654.375,
+          "bottom": 678.875,
+          "width": 24.5,
+          "height": 24.5
+        },
+        {
+          "loaded": true,
+          "left": 271,
+          "right": 295.5,
+          "top": 705.53125,
+          "bottom": 730.03125,
+          "width": 24.5,
+          "height": 24.5
+        },
+        {
+          "loaded": true,
+          "left": 266.046875,
+          "right": 357.046875,
+          "top": 762.640625,
+          "bottom": 775.203125,
+          "width": 91,
+          "height": 12.5625
+        },
+        {
+          "loaded": true,
+          "left": 266.046875,
+          "right": 357.046875,
+          "top": 809.953125,
+          "bottom": 830.203125,
+          "width": 91,
+          "height": 20.25
+        },
+        {
+          "loaded": true,
+          "left": 270.578125,
+          "right": 295.078125,
+          "top": 858.984375,
+          "bottom": 883.484375,
+          "width": 24.5,
+          "height": 24.5
+        }
+      ],
+      "scene": {
+        "left": 20,
+        "right": 370,
+        "top": 529.328125,
+        "bottom": 906.25,
+        "width": 350,
+        "height": 376.921875
+      },
+      "buttons": 1
+    },
+    {
+      "width": 390,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 13,
+          "right": 216,
+          "top": 673.125,
+          "bottom": 978.0625,
+          "width": 203,
+          "height": 304.9375
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 344.578125,
+          "top": 663.96875,
+          "bottom": 690.875,
+          "width": 90.078125,
+          "height": 26.90625
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 370,
+          "top": 710.671875,
+          "bottom": 731.671875,
+          "width": 115.5,
+          "height": 21
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 272.5,
+          "top": 755.921875,
+          "bottom": 773.921875,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 272.5,
+          "top": 799.671875,
+          "bottom": 817.671875,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 370,
+          "top": 837.203125,
+          "bottom": 853.15625,
+          "width": 115.5,
+          "height": 15.953125
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 358.4375,
+          "top": 884.609375,
+          "bottom": 907.734375,
+          "width": 103.9375,
+          "height": 23.125
+        },
+        {
+          "loaded": true,
+          "left": 254.5,
+          "right": 272.5,
+          "top": 930.921875,
+          "bottom": 948.921875,
+          "width": 18,
+          "height": 18
+        }
+      ],
+      "scene": {
+        "left": 20,
+        "right": 370,
+        "top": 633.671875,
+        "bottom": 992.421875,
+        "width": 350,
+        "height": 358.75
+      },
+      "buttons": 1
+    },
+    {
+      "width": 390,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 25.25,
+          "right": 238.75,
+          "top": 701.140625,
+          "bottom": 940.703125,
+          "width": 213.5,
+          "height": 239.5625
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 345.359375,
+          "top": 646.21875,
+          "bottom": 670.5,
+          "width": 87.359375,
+          "height": 24.28125
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 370,
+          "top": 691.59375,
+          "bottom": 712.59375,
+          "width": 112,
+          "height": 21
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 276,
+          "top": 736.859375,
+          "bottom": 754.859375,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 276,
+          "top": 780.609375,
+          "bottom": 798.609375,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 370,
+          "top": 818.375,
+          "bottom": 833.84375,
+          "width": 112,
+          "height": 15.46875
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 358.796875,
+          "top": 865.890625,
+          "bottom": 888.3125,
+          "width": 100.796875,
+          "height": 22.421875
+        },
+        {
+          "loaded": true,
+          "left": 258,
+          "right": 276,
+          "top": 911.859375,
+          "bottom": 929.859375,
+          "width": 18,
+          "height": 18
+        }
+      ],
+      "scene": {
+        "left": 20,
+        "right": 370,
+        "top": 629.921875,
+        "bottom": 953.671875,
+        "width": 350,
+        "height": 323.75
+      },
+      "buttons": 1
+    },
+    {
+      "width": 320,
+      "id": "hero",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 222.4375,
+          "right": 284.03125,
+          "top": 639.46875,
+          "bottom": 660.09375,
+          "width": 61.59375,
+          "height": 20.625
+        },
+        {
+          "loaded": true,
+          "left": 214.46875,
+          "right": 292,
+          "top": 682.3125,
+          "bottom": 699.109375,
+          "width": 77.53125,
+          "height": 16.796875
+        },
+        {
+          "loaded": true,
+          "left": 228,
+          "right": 247.59375,
+          "top": 721.828125,
+          "bottom": 741.421875,
+          "width": 19.59375,
+          "height": 19.59375
+        },
+        {
+          "loaded": true,
+          "left": 215.671875,
+          "right": 235.265625,
+          "top": 762.75,
+          "bottom": 782.34375,
+          "width": 19.59375,
+          "height": 19.59375
+        },
+        {
+          "loaded": true,
+          "left": 216.828125,
+          "right": 289.625,
+          "top": 808.453125,
+          "bottom": 818.5,
+          "width": 72.796875,
+          "height": 10.046875
+        },
+        {
+          "loaded": true,
+          "left": 216.828125,
+          "right": 289.625,
+          "top": 846.296875,
+          "bottom": 862.484375,
+          "width": 72.796875,
+          "height": 16.1875
+        },
+        {
+          "loaded": true,
+          "left": 215.25,
+          "right": 234.84375,
+          "top": 885.515625,
+          "bottom": 905.109375,
+          "width": 19.59375,
+          "height": 19.59375
+        }
+      ],
+      "scene": {
+        "left": 20,
+        "right": 300,
+        "top": 621.796875,
+        "bottom": 923.328125,
+        "width": 280,
+        "height": 301.53125
+      },
+      "buttons": 1
+    },
+    {
+      "width": 320,
+      "id": "hero-concept-04",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 14.40625,
+          "right": 176.796875,
+          "top": 736.65625,
+          "bottom": 980.59375,
+          "width": 162.390625,
+          "height": 243.9375
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 279.65625,
+          "top": 729.3359375,
+          "bottom": 750.8515625,
+          "width": 72.0625,
+          "height": 21.515625
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 299.984375,
+          "top": 766.6953125,
+          "bottom": 783.4921875,
+          "width": 92.390625,
+          "height": 16.796875
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 225.59375,
+          "top": 801.0859375,
+          "bottom": 819.0859375,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 225.59375,
+          "top": 836.0859375,
+          "bottom": 854.0859375,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 299.984375,
+          "top": 866.4609375,
+          "bottom": 879.2265625,
+          "width": 92.390625,
+          "height": 12.765625
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 290.734375,
+          "top": 905.8359375,
+          "bottom": 924.3359375,
+          "width": 83.140625,
+          "height": 18.5
+        },
+        {
+          "loaded": true,
+          "left": 207.59375,
+          "right": 225.59375,
+          "top": 941.0859375,
+          "bottom": 959.0859375,
+          "width": 18,
+          "height": 18
+        }
+      ],
+      "scene": {
+        "left": 20,
+        "right": 300,
+        "top": 705.09375,
+        "bottom": 992.09375,
+        "width": 280,
+        "height": 287
+      },
+      "buttons": 1
+    },
+    {
+      "width": 320,
+      "id": "hero-concept-05",
+      "overflow": 0,
+      "heading": "Продавайте свои книги по всему миру на всех языках и платформах.",
+      "images": [
+        {
+          "loaded": true,
+          "left": 24.1875,
+          "right": 194.984375,
+          "top": 725.828125,
+          "bottom": 917.484375,
+          "width": 170.796875,
+          "height": 191.65625
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 280.265625,
+          "top": 681.8984375,
+          "bottom": 701.3203125,
+          "width": 69.875,
+          "height": 19.421875
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 299.984375,
+          "top": 718.2109375,
+          "bottom": 735.0078125,
+          "width": 89.59375,
+          "height": 16.796875
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 228.390625,
+          "top": 752.6015625,
+          "bottom": 770.6015625,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 228.390625,
+          "top": 787.6015625,
+          "bottom": 805.6015625,
+          "width": 18,
+          "height": 18
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 299.984375,
+          "top": 818.1796875,
+          "bottom": 830.5546875,
+          "width": 89.59375,
+          "height": 12.375
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 291.015625,
+          "top": 857.6328125,
+          "bottom": 875.5703125,
+          "width": 80.625,
+          "height": 17.9375
+        },
+        {
+          "loaded": true,
+          "left": 210.390625,
+          "right": 228.390625,
+          "top": 892.6015625,
+          "bottom": 910.6015625,
+          "width": 18,
+          "height": 18
+        }
+      ],
+      "scene": {
+        "left": 20,
+        "right": 300,
+        "top": 668.859375,
+        "bottom": 927.859375,
+        "width": 280,
+        "height": 259
+      },
+      "buttons": 1
+    }
+  ],
+  "motion": [
+    {
+      "preference": "no-preference",
+      "id": "hero",
+      "before": {
+        "x": 320.8252611534936,
+        "y": 51.99198472414698
+      },
+      "after": {
+        "x": 187.26297878026963,
+        "y": 266.49033299684527
+      }
+    },
+    {
+      "preference": "no-preference",
+      "id": "hero-concept-04",
+      "before": {
+        "x": 386.6968867635727,
+        "y": 217.55174535393718
+      },
+      "after": {
+        "x": 402.93396221637727,
+        "y": 212.3775648617745
+      }
+    },
+    {
+      "preference": "no-preference",
+      "id": "hero-concept-05",
+      "before": {
+        "x": 456.41121478467375,
+        "y": 362.6084956478428
+      },
+      "after": {
+        "x": 486.6304188083958,
+        "y": 342.61166678763726
+      }
+    },
+    {
+      "preference": "reduce",
+      "id": "hero",
+      "before": {
+        "x": 226.1878103162561,
+        "y": 223.37357901164464
+      },
+      "after": {
+        "x": 235.8231295815536,
+        "y": 201.6612343583788
+      }
+    },
+    {
+      "preference": "reduce",
+      "id": "hero-concept-04",
+      "before": {
+        "x": 435.1612475323677,
+        "y": 182.01696614980702
+      },
+      "after": {
+        "x": 445.37845286607745,
+        "y": 166.86856233596805
+      }
+    },
+    {
+      "preference": "reduce",
+      "id": "hero-concept-05",
+      "before": {
+        "x": 545.6177946554648,
+        "y": 263.4419268917393
+      },
+      "after": {
+        "x": 561.705401812373,
+        "y": 230.78660402684596
+      }
+    }
+  ],
+  "mailTargets": [
+    "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+    "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+    "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+    "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+    "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+    "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox"
+  ],
+  "errors": []
+}

@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-30",
+  "task": "Extract concept 05 book as transparent standalone website asset",
+  "method": "Built-in image_gen.imagegen reference edit; no CLI, post-generation image editing, cropping, or alpha modification",
+  "reference": "docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/gallery/images/05.png",
+  "referenceInspected": true,
+  "prompt": "Use case: background-extraction.\nAsset type: transparent PNG product-book cutout for an existing Globoox website hero.\nInput image 1 is the EDIT TARGET and exact visual reference. Extract ONLY the cream linen-covered book shown in the lower center of that screenshot. This is not a redesign: reproduce that exact book faithfully at higher isolated resolution.\nKeep the same clockwise tilt of about 9 degrees, perspective, proportions, visible ivory page-block thickness along right and bottom edges, curved spine edge on the left, cover cloth texture, fine embossed flowing horizontal wave lines across the lower half, and natural warm soft shadow extending gently toward the lower left. Keep the book opaque.\nCover text must be EXACT: dark forest-green serif “Ваша” on the first line and “книга” on the second, tightly stacked at the same proportions and position as the reference, plus small dark “Globoox” centered near the bottom. No extra text.\nRemove absolutely everything else: website background, heading, navigation, paragraphs, buttons, platform logos, connectors and dots. Output actual transparent alpha, not a white or cream background, not a checkerboard. Preserve the book's natural semitransparent soft contact shadow on the transparent background, without any large rectangular haze.\nFrame near the full visible book silhouette, with modest transparent margins (about 5–8% each side), whole book and soft shadow fully visible and uncropped. Portrait-oriented standalone asset. The book will display around 380 pixels wide on desktop, so retain clean readable cover lettering and realistic linen detail.",
+  "toolArguments": {
+    "referenced_image_paths": [
+      "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/gallery/images/05.png"
+    ],
+    "transparent_background": true
+  },
+  "generatedSource": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-8db53d77-ac00-461f-a493-514b12b8f868.png",
+  "asset": "public/images/business-hero/book-concept-05.png",
+  "sha256": "02ae121e2ffbccb5b73622d5633db2de25c105aa4f70ca4e6661002839bd1731",
+  "pixels": {
+    "width": 1145,
+    "height": 1374,
+    "mode": "RGBA",
+    "bytes": 2138099
+  },
+  "alpha": {
+    "range": [
+      0,
+      255
+    ],
+    "nonzeroBounds": [
+      0,
+      51,
+      1097,
+      1374
+    ],
+    "above16Bounds": [
+      86,
+      127,
+      1089,
+      1325
+    ],
+    "above128Bounds": [
+      133,
+      128,
+      1089,
+      1316
+    ],
+    "boundsConvention": "[left, top, right-exclusive, bottom-exclusive]",
+    "transparentPixels": 652572,
+    "fullyOpaquePixels": 920,
+    "semitransparentPixels": 919738,
+    "centralCoverRange": [
+      252,
+      254
+    ],
+    "note": "Generated book is visually opaque but near-opaque alpha (predominantly 253–254); original generated alpha retained. Very faint shadow/edge pixels reach left and bottom boundaries; substantial silhouette is uncropped."
+  },
+  "visualReview": {
+    "result": "accepted",
+    "observed": "Single cream linen book, same clockwise tilt and perspective; exact two-line «Ваша»/«книга», small Globoox near bottom, embossed flowing waves, right/bottom page thickness, warm soft lower-left shadow. No page copy, connectors, logos or surrounding website elements remain.",
+    "iterationCount": 1
+  }
+}

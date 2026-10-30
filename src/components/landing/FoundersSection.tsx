@@ -15,6 +15,7 @@ interface FoundersSectionProps {
     initials: string;
     photoSrc?: string;
     linkedinUrl?: string;
+    description?: string;
   }>;
 }
 
@@ -147,6 +148,12 @@ export function FoundersSection({
                     >
                       {founder.role}
                     </div>
+
+                    {founder.description ? (
+                      <p style={{ fontSize: '16px', lineHeight: 1.6, color: 'var(--marketing-text-muted)', marginBottom: founder.linkedinUrl ? '16px' : 0 }}>
+                        {founder.description}
+                      </p>
+                    ) : null}
 
                     {founder.linkedinUrl ? (
                       <a

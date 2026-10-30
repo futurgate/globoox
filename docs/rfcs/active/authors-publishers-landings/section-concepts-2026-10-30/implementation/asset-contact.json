@@ -1,0 +1,53 @@
+{
+  "tool": "built-in image_gen",
+  "intent": "reference edit/extraction",
+  "reference": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/06.png",
+  "source_output": "/Users/user/.codex/generated_images/01a18e30-57eb-7cf1-901f-a5ea5442142b/exec-ff94e84f-8243-4392-bcb3-65c7ace4ef9a.png",
+  "output": "public/images/business-sections/contact-book-arcs.png",
+  "transparent_background": true,
+  "prompt": "Edit/extract the selected reference image into one standalone transparent product illustration for the right side of a website closing section. Preserve EXACTLY the upright cream linen book and the delicate sweeping arcs extending from its cover toward the RIGHT in the reference. The book is front-facing, very narrow spine on its left, rectangular ivory woven-linen cover, forest-green serif cover text on two tight lines exactly «Ваша» then «книга», small «Globoox» centered near its bottom, and shallow embossed overlapping arcs across the lower cover. Keep the book's pose, materials, typography and relative cover decoration faithful. Preserve three or four very thin warm-cream arc lines outside the book, fanning only to the right; they are part of the extracted illustration and must remain light enough to show on a dark forest-green page. Remove ALL surrounding dark green background, website heading, button, footer, divider and copyright. Produce true transparent alpha, not a checkerboard or colored rectangle. Keep a restrained soft contact shadow beneath the book, with transparent surroundings. No logos, foliage, extra text, extra books, halos or new objects. Frame near the full scene's edges, roughly square 1024x1024: book occupies the LEFT 55% of this standalone asset and about85% of its height; the arcs occupy the remaining right45% and can meet the right canvas edge as in the reference. Full book remains visible with a small clear margin above and below. This is faithful asset extraction for implementation, not a new page mockup.",
+  "pixels": [
+    1254,
+    1254
+  ],
+  "mode": "RGBA",
+  "bytes": 2018753,
+  "sha256": "e1f28410307660e0efa2cfd701a8fc5106c462fae1e6333008f835284e0746df",
+  "reference_sha256": "021b40fb0b4375972436f8824cd2e38ad62c759a0e891e06eceb26dcfe85e4a1",
+  "alpha_extrema": [
+    0,
+    255
+  ],
+  "alpha_bounds": {
+    "1": [
+      0,
+      17,
+      1254,
+      1254
+    ],
+    "4": [
+      37,
+      127,
+      1254,
+      1192
+    ],
+    "128": [
+      91,
+      130,
+      1254,
+      1141
+    ],
+    "240": [
+      92,
+      131,
+      1245,
+      1138
+    ]
+  },
+  "postprocessing": "None; copied generated PNG byte for byte. Pillow used read-only for alpha measurements.",
+  "review": {
+    "inspected": true,
+    "actual_background_verified": "var(--ink), rendered on /authors at320,390,768,1024,1536,1639px",
+    "findings": "Front-facing cream linen book, exact cover title and small Globoox, embossed arcs and rightward external arcs preserved. Transparent PNG renders without a rectangular background or visible halo. Flat native page color and real Lora/Inter intentionally retained."
+  }
+}

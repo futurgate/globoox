@@ -4,11 +4,12 @@ import { useEffect, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface FooterProps {
-  tagline: string;
+  tagline?: string;
   legalLabel: string;
   termsLabel: string;
   privacyLabel: string;
   copyright: string;
+  insetDivider?: boolean;
 }
 
 function LegalModal({
@@ -371,6 +372,7 @@ export function Footer({
   termsLabel,
   privacyLabel,
   copyright,
+  insetDivider = false,
 }: FooterProps) {
   const [openModal, setOpenModal] = useState<'terms' | 'privacy' | null>(null);
 
@@ -378,13 +380,14 @@ export function Footer({
     <>
       <footer
         style={{
-          padding: '32px 0',
+          padding: insetDivider ? '0 0 38px' : '32px 0',
           textAlign: 'center',
           background: 'var(--ink)',
           color: 'var(--text-dark-muted)',
           fontSize: '13.5px',
         }}
       >
+        {insetDivider && <div aria-hidden="true" style={{ width: 'min(1460px, calc(100% - 10.5vw))', margin: '0 auto', borderTop: '1px solid var(--ash)' }} />}
         <div className="footer-container" style={{ maxWidth: '960px', margin: '0 auto', padding: '0 40px' }}>
           <div
             className="footer-links"
@@ -430,8 +433,7 @@ export function Footer({
             </button>
           </div>
           <p style={{ fontSize: '13.5px', color: 'var(--text-dark-muted)', margin: '20px auto 0', lineHeight: 1.6 }}>
-            {tagline}
-            <br />
+            {tagline && <>{tagline}<br /></>}
             <span style={{ fontSize: '24px', lineHeight: 1.6 }}>❧</span>
             <br />
             {copyright}

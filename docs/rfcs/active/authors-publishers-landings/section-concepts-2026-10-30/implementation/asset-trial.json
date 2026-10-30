@@ -1,0 +1,62 @@
+{
+  "tool": "image_gen.imagegen (built-in)",
+  "intent": "faithful reference extraction",
+  "prompt": "Use case: background-extraction / precise-object-edit.\nAsset type: one standalone transparent PNG illustration for the existing Globoox website.\nThe supplied image is the EXACT approved composition to extract, not a loose style reference. Reproduce ONLY its illustration on the right: one closed cream linen-bound book tilted slightly clockwise, visible stacked page edges along the lower and right sides, delicate blind-embossed sweeping arcs on the cover, and a narrow terracotta woven ribbon hanging from the lower edge. Resting above the book is a detached warm-cream chapter proof sheet, tilted slightly counterclockwise relative to the canvas. Preserve the exact overlap, perspective, paper thickness, cream shades, woven linen texture, delicate gray unlettered typesetting rules and natural soft contact shadows of this book-and-sheet arrangement.\nThe sheet's ONLY text must read exactly “Глава 1” in a dark forest-green serif near its upper-left area. Preserve its position, scale and direction from the reference. All lines below it must remain fine gray unlettered rules; no prose, filler words, logos or invented text. The book cover has only its embossed arcs, with no added title or mark.\nRemove absolutely all surrounding website material: no heading, body copy, button, background paper surface, horizontal section rules, ornament, label, extra book or object. Keep the whole illustration, ribbon and soft shadow fully inside the canvas without clipping.\nOutput actual RGBA transparency, not a white rectangle or a drawn checkerboard. Only the illustration and a restrained translucent natural contact shadow should remain. Use roughly square 1024×1024 framing, tightly filled while keeping a modest transparent margin on every side. Preserve the reference faithfully and do not redesign, exaggerate the tilt, or make the sheet stand vertically. High quality detailed linen and paper, legible Cyrillic, intended to render around400px wide.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/04.png"
+  ],
+  "transparent_background": true,
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-b33c089c-b55b-4261-a4e6-c06958cae248.png",
+  "output": "public/images/business-sections/trial-book-chapter.png",
+  "review": {
+    "result": "passed",
+    "findings": [
+      "Exact Глава 1 text; rules remain unlettered.",
+      "Single cream linen book and overlapping proof sheet retain approved poses, embossing, ribbon and natural shadow.",
+      "No webpage text/button/rules/background remain; alpha is real.",
+      "Full book/ribbon silhouette has transparent margin; faint shadow extends near lower edge."
+    ]
+  },
+  "width": 1254,
+  "height": 1254,
+  "mode": "RGBA",
+  "bytes": 1990292,
+  "sha256": "1c03e67b82e4f07dcee44bd9a943c50693705a9d4a2876d6a9e28069afc8e413",
+  "reference_sha256": "f4003bad1ed75d8bd3051b4b7253cde14d3645a6b4f2b5d1687c150661c096df",
+  "alpha": {
+    "extrema": [
+      0,
+      255
+    ],
+    "bounds_gt_0": [
+      0,
+      0,
+      1238,
+      1254
+    ],
+    "bounds_gt_4": [
+      55,
+      70,
+      1221,
+      1244
+    ],
+    "bounds_gt_16": [
+      57,
+      72,
+      1206,
+      1230
+    ],
+    "bounds_gt_128": [
+      58,
+      72,
+      1205,
+      1219
+    ],
+    "bounds_gt_240": [
+      59,
+      73,
+      1204,
+      1217
+    ]
+  }
+}

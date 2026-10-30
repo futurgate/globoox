@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "tool": "image_gen.imagegen (built-in)",
+  "intent": "reference edit / isolated transparent book extraction",
+  "transparent_background": true,
+  "prompt": "Use case: compositing / precise-object-edit.\nAsset type: one isolated transparent PNG book asset for a real website.\nEdit target/reference: the supplied Globoox hero image. Extract and faithfully reproduce ONLY the cream linen-covered book from its middle column. The book in that reference is the exact design to preserve, not inspiration for a new design.\nKeep the same straight-on front view, upright rectangular proportions (book width:height about 337:543), narrow pale spine/bevel on its left edge, warm ivory woven linen texture, dark forest-green serif cover title, small dark serif Globoox wordmark near the bottom center, and the delicate embossed sweeping overlapping arcs in the lower half. The title must read exactly on two tightly spaced lines: first line \"Ваша\", second line \"книга\". The bottom text must read exactly \"Globoox\". Preserve the typography placement, cover artwork and restrained dimensional edge treatment from the reference.\nRemove absolutely everything outside this single book: no webpage background, navigation, column rules, page headline or paragraph, buttons, store logos, connecting lines, orange dots, extra books, other objects or decorative captions. Do not add any new text or symbols.\nOutput a genuinely transparent RGBA background, not a white rectangle and not a painted checkerboard. Keep only a restrained, soft translucent contact shadow close behind/below the book, fading to full transparency. The entire book must be fully visible, not clipped.\nPortrait asset framing, ideally 1024 x 1536 pixels. Fill roughly 90 percent of the canvas height with the book while keeping a small transparent margin and enough room for the modest shadow. High-fidelity material detail and crisp legible Cyrillic text suitable for display at about 270 pixels wide on the website.",
+  "source_output": "/Users/user/.codex/generated_images/01a18e30-57eb-7cf1-901f-a5ea5442142b/exec-2f1e1eae-c7d0-4da3-814e-7c2003bbd923.png",
+  "reference": {
+    "path": "docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/gallery/images/04.png",
+    "sha256": "d25142ce033946be233485d2edc5209c1089e553ec5cfc653ae760bcaba16611"
+  },
+  "output": {
+    "path": "public/images/business-hero/book-concept-04.png",
+    "sha256": "67366cf90eef07533eee6d6ffacc7061d1711b3ff9136ba27ec6659c35a5042f",
+    "bytes": 2988579,
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA"
+  },
+  "alpha": {
+    "extrema": [
+      0,
+      254
+    ],
+    "bounds_alpha_gt_0": [
+      0,
+      31,
+      1008,
+      1536
+    ],
+    "bounds_alpha_gte_4": [
+      99,
+      136,
+      959,
+      1453
+    ],
+    "bounds_alpha_gte_128": [
+      117,
+      139,
+      905,
+      1404
+    ],
+    "bounds_alpha_gte_240": [
+      118,
+      140,
+      905,
+      1399
+    ],
+    "transparent_pixels": 474635,
+    "partial_alpha_pixels": 1098229,
+    "opaque_pixels": 0
+  },
+  "inspection": {
+    "visual": "Cream linen upright book, tight two-line dark serif «Ваша» / «книга», small Globoox at bottom and embossed sweeping arcs visually reviewed against concept 04. No surrounding webpage, marketplace logos, connector lines or dots.",
+    "alpha": "Real RGBA transparency. Alpha maxima are 254 (near-opaque), not 255; faint residual alpha 1 extends beyond the material shadow. Substantial shadow bounds are alpha >=4; book body is approximated by alpha >=240.",
+    "bounds_convention": "[left, top, right, bottom], right/bottom exclusive",
+    "book_body_approx_pixels": {
+      "left": 118,
+      "top": 140,
+      "right": 905,
+      "bottom": 1399,
+      "width": 787,
+      "height": 1259
+    },
+    "display_guidance": "At image element width 350px, the visible book body is approximately 269px wide; preserve transparent pixels and use contain sizing.",
+    "postprocessing": "No image alteration. Original generated PNG copied byte-for-byte to the repository."
+  }
+}

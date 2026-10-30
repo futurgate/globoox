@@ -1,0 +1,140 @@
+{
+  "tool": "built-in image_gen.imagegen",
+  "displayOrder": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10"
+  ],
+  "selected": "03",
+  "items": [
+    {
+      "id": "01",
+      "name": "По центру",
+      "image": "images/01.png",
+      "dimensions": [
+        1672,
+        940
+      ],
+      "bytes": 1308200,
+      "sha256": "0174aeb4288417c3864b98535cba0bfec928d9f8ce1d91370fa48acd677e9ad8",
+      "execution": "01.json"
+    },
+    {
+      "id": "02",
+      "name": "По левому краю",
+      "image": "images/02.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1277145,
+      "sha256": "0c6036d22dadae4b06434dd8022279a506bf7c1cd217740338f17404547f5f79",
+      "execution": "02.json"
+    },
+    {
+      "id": "03",
+      "name": "Заголовок сбоку",
+      "image": "images/03.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1333565,
+      "sha256": "0dc9a3d97bbfb3774a35c81dd1bab1e6565ac07da50a4e92daa81d4af379075b",
+      "execution": "03.json"
+    },
+    {
+      "id": "04",
+      "name": "Два списка",
+      "image": "images/04.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1343275,
+      "sha256": "380073fe889a324dde7df7ef99bd49b50106db57fac4fdf2b70465f19c18e640",
+      "execution": "04.json"
+    },
+    {
+      "id": "05",
+      "name": "Две строки текста",
+      "image": "images/05.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1362365,
+      "sha256": "09498e625f0ca20f863883dd35b7908b91ca6cbe3d2c30af1206cc455c2d3625",
+      "execution": "05.json"
+    },
+    {
+      "id": "06",
+      "name": "Четыре колонки",
+      "image": "images/06.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1336759,
+      "sha256": "b77ac9ea362c4fc32201a2c7c9038f00a64f0077e5b913c72fd73dec86dd479f",
+      "execution": "06.json"
+    },
+    {
+      "id": "07",
+      "name": "Компактная сетка",
+      "image": "images/07.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1268211,
+      "sha256": "a09c1c99097a39394e42dc78855b984c01e7de1cbcc94fcaa486901b3afbfcf5",
+      "execution": "07.json"
+    },
+    {
+      "id": "08",
+      "name": "Две строки таблицы",
+      "image": "images/08.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1320865,
+      "sha256": "9c8867d99a93103be9e2b2cdf6a8e8a795ced26b4606a06e0438a834921522b5",
+      "execution": "08.json"
+    },
+    {
+      "id": "09",
+      "name": "Список «Скоро» справа",
+      "image": "images/09.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1357684,
+      "sha256": "35168ba4f5c12e7330f34d613b68cb5bdef677dd53317356ed0189de0b24a291",
+      "execution": "09.json"
+    },
+    {
+      "id": "10",
+      "name": "Строгая типографика",
+      "image": "images/10.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "bytes": 1290079,
+      "sha256": "fa65935e3fa979699ac49db6da2032db354f8011a2f2e2c021a5806571a75adc",
+      "execution": "10.json"
+    }
+  ],
+  "status": "selected_03_implemented_authors",
+  "selectionSource": "User attached exact exec-5f1ab378-9dcf-4b7c-8d55-cab87c2a4257.png"
+}

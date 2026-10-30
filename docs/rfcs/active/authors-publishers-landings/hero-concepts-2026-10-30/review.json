@@ -1,0 +1,47 @@
+{
+  "reviewed": "2026-10-30",
+  "review_method": "All ten generated images visually inspected in the conversation; final concept 10 inspected again after a targeted edit.",
+  "purpose": "Composition selection only. Generated logos and typography are concept artwork, not production assets.",
+  "findings": [
+    {
+      "id": "01",
+      "note": "Balanced editorial split with a larger book and unboxed marks. Generated cover adds landscape art."
+    },
+    {
+      "id": "02",
+      "note": "Centered title and lower distribution scene; generator added botanical decoration. Taller than a compact desktop hero."
+    },
+    {
+      "id": "03",
+      "note": "Strong sage illustration panel and narrow text column; some thread endpoints are schematic rather than exact."
+    },
+    {
+      "id": "04",
+      "note": "Clear ruled three-column structure with a quiet typographic cloth cover."
+    },
+    {
+      "id": "05",
+      "note": "Dynamic diagonal book and asymmetric headline. Generator retained a vertical retailer column instead of the planned staggered rows."
+    },
+    {
+      "id": "06",
+      "note": "Very large book on left, text and store grid right. Generated CTA includes an extra arrow; production CTA remains unchanged."
+    },
+    {
+      "id": "07",
+      "note": "Distinct dark upper text band and light lower horizontal distribution scene."
+    },
+    {
+      "id": "08",
+      "note": "Wide panoramic composition with heading/body split above and long connections below."
+    },
+    {
+      "id": "09",
+      "note": "Image-first hierarchy with text below. Generated Apple branding includes an extra Apple mark; use real assets if selected."
+    },
+    {
+      "id": "10",
+      "note": "Experimental open-book canvas. Initial output added a second book; targeted edit removed it. Final image has one open book and seven marks on its right."
+    }
+  ]
+}
