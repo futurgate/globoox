@@ -16,6 +16,7 @@ import {
   getGlossary,
   copyGlossaryFromBook,
   setGlossaryJson,
+  freezeGlossary,
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
@@ -192,6 +193,10 @@ export default function AdminFictionPage() {
   const [glossary, setGlossary] = useState<BookGlossary | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const [rebuildGlossary, setRebuildGlossary] = useState(false);
+  // Freeze flag (point 2 principle 3): a frozen glossary can't be regenerated /
+  // overwritten (generate/set/copy 409) until unfrozen.
+  const [glossaryFrozen, setGlossaryFrozen] = useState(false);
+  const [glossaryFreezing, setGlossaryFreezing] = useState(false);
   // Optional: seed a fresh glossary build from another book's finished glossary
   // (same language) so a later book in a series inherits its names/terms/voice.
   const [seedFromBookId, setSeedFromBookId] = useState('');
@@ -899,14 +904,32 @@ export default function AdminFictionPage() {
       setGlossaryDone(g.chaptersDone);
       setGlossaryTotal(g.chaptersTotal);
       setGlossaryError(g.error);
+      setGlossaryFrozen(g.frozen === true);
     } catch {
       setGlossary(null);
       setGlossaryState('idle');
       setGlossaryDone(0);
       setGlossaryTotal(0);
       setGlossaryError(null);
+      setGlossaryFrozen(false);
     }
   }, [bookId, lang]);
+
+  // Freeze / unfreeze the current glossary, then refresh status.
+  const handleToggleFreeze = useCallback(async () => {
+    if (!bookId) return;
+    setGlossaryFreezing(true);
+    try {
+      const next = !glossaryFrozen;
+      await freezeGlossary(bookId, lang, next);
+      setGlossaryFrozen(next);
+      await loadGlossary();
+    } catch (e) {
+      setGlossaryError(e instanceof Error ? e.message : 'Failed to change freeze state');
+    } finally {
+      setGlossaryFreezing(false);
+    }
+  }, [bookId, lang, glossaryFrozen, loadGlossary]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -1485,6 +1508,26 @@ export default function AdminFictionPage() {
               {glossaryOpen ? <ChevronDown className="mr-2 h-4 w-4" /> : <ChevronRight className="mr-2 h-4 w-4" />}
               {glossaryOpen ? 'Hide glossary' : 'View glossary'}
             </Button>
+          )}
+
+          {glossary && !glossaryBuilding && (
+            <Button
+              variant="outline"
+              onClick={handleToggleFreeze}
+              disabled={glossaryFreezing}
+              title={glossaryFrozen
+                ? 'Unfreeze: allow regenerating / overwriting this glossary'
+                : 'Freeze: stop generate / set / copy from modifying this glossary while volumes translate against it'}
+            >
+              {glossaryFreezing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {glossaryFrozen ? 'Unfreeze glossary' : 'Freeze glossary'}
+            </Button>
+          )}
+
+          {glossaryFrozen && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              🔒 Frozen
+            </span>
           )}
         </div>
 
