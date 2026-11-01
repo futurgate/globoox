@@ -635,6 +635,8 @@ export type GlossaryStatus = {
   percent: number
   error: string | null
   updatedAt?: string
+  /** True when generation/overwrite is frozen for this glossary (point 2 principle 3). */
+  frozen?: boolean
   glossary: BookGlossary | null
 }
 
@@ -738,6 +740,31 @@ export async function setGlossaryJson(
     throw new Error(body.message || `Failed to save glossary: ${res.status}`)
   }
   return res.json() as Promise<GlossaryStatus>
+}
+
+/**
+ * Freeze or unfreeze the book-wide fiction glossary (point 2, principle 3). A frozen
+ * glossary cannot be modified by generation / set / copy (they 409) so volumes can
+ * translate against a stable object. Admin only.
+ */
+export async function freezeGlossary(
+  bookId: string,
+  lang: string,
+  frozen: boolean,
+): Promise<{ bookId: string; lang: string; frozen: boolean }> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/glossary-freeze`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), frozen }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${frozen ? 'freeze' : 'unfreeze'} glossary: ${res.status}`)
+  }
+  return res.json() as Promise<{ bookId: string; lang: string; frozen: boolean }>
 }
 
 /** Fetch the current fiction glossary + build progress (bypasses cache). */
