@@ -828,6 +828,13 @@ export default function AdminFictionPage() {
         case 'chapter_error':
           setErrors((e) => [...e, `Chapter ${(ev.index ?? 0) + 1}: ${ev.error ?? 'error'}`]);
           break;
+        case 'stopped':
+          // Automatic stop (call-budget guard) or a user Stop seen before the
+          // client aborted. Surface the backend's reason so the run no longer
+          // just "freezes" silently — the colleague's original complaint.
+          setError(ev.message || `Run stopped (${ev.reason ?? 'unknown'})`);
+          setCurrent(null);
+          break;
         case 'book_done':
           if (typeof ev.done === 'number') setDone(ev.done);
           setCurrent(null);

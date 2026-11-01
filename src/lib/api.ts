@@ -462,7 +462,7 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 // ── Full-book fiction translation (admin) ──────────────────────────────────
 
 export type FictionProgressEvent = {
-  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done'
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'stopped'
   chapterId?: string
   index?: number
   title?: string
@@ -471,6 +471,13 @@ export type FictionProgressEvent = {
   done?: number
   totalChapters?: number
   error?: string
+  // 'stopped' events (user Stop or the backend call-budget guard): the run halted
+  // early. `reason` says which; `message` is the human explanation to surface;
+  // `calls`/`callBudget` report how far the run got against its ceiling.
+  reason?: 'user' | 'budget'
+  message?: string
+  calls?: number
+  callBudget?: number
 }
 
 export type FictionProgress = {
