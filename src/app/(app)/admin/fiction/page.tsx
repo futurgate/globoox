@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
@@ -16,9 +18,12 @@ import {
   getGlossary,
   copyGlossaryFromBook,
   setGlossaryJson,
+  freezeGlossary,
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
+  applyRevision,
+  getRevisionCostRuns,
   getFictionCosts,
   getFictionCostRuns,
   startReaderCheck,
@@ -43,6 +48,7 @@ import {
   type GlossaryProgressEvent,
   type RevisionProgressEvent,
   type RevisionDiffEntry,
+  type RevisionCostRun,
   type BookGlossary,
   type FictionCosts,
   type FictionStageCost,
@@ -109,6 +115,69 @@ const STREAM_DROPPED_NOTE =
 function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'dropped' | 'failed' {
   if (e instanceof Error && e.name === 'AbortError') return 'aborted';
   return streamStarted ? 'dropped' : 'failed';
+}
+
+/**
+ * At-a-glance Pass-2 revision run state. Keyed off the backend run-state (GET
+ * /revise-full-book) so a run that stalled, stopped incomplete, failed, or
+ * finished in the background is obvious without reading the progress bar. States
+ * mirror the GET endpoint: running | stalled | incomplete | error | done | idle.
+ * A STOPPED run (stalled / incomplete / error) is highlighted so it's easy to
+ * spot that it needs a resume. `live` forces 'running' while THIS tab is streaming
+ * (before the first server heartbeat lands).
+ */
+function RevisionStateBadge({ state, live, error }: { state: string; live: boolean; error?: string | null }) {
+  const s = live ? 'running' : state;
+  const meta: Record<
+    string,
+    { label: string; className: string; Icon: React.ComponentType<{ className?: string }> | null; spin?: boolean; title: string }
+  > = {
+    running: {
+      label: 'In progress',
+      className: 'border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400',
+      Icon: Loader2, spin: true,
+      title: 'A revision run is in progress.',
+    },
+    done: {
+      label: 'Complete',
+      className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      Icon: Check,
+      title: 'All revisable blocks are revised.',
+    },
+    stalled: {
+      label: 'Interrupted',
+      className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
+      Icon: ShieldAlert,
+      // Prefer the server's note (e.g. a rate-limit summary) when present.
+      title: error || 'The run stopped heartbeating (proxy/platform timeout, deploy, or crash). Click “Run revision” to resume the rest — finished blocks are skipped.',
+    },
+    incomplete: {
+      label: 'Stopped — incomplete',
+      className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
+      Icon: ShieldAlert,
+      title: error || 'The run finished but some blocks were left unrevised. Click “Run revision” to finish the rest.',
+    },
+    error: {
+      label: 'Failed',
+      className: 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
+      Icon: X,
+      title: error || 'The run failed — see the error below.',
+    },
+    idle: {
+      label: 'Not started',
+      className: 'border-transparent bg-[var(--separator-opaque)] text-[var(--app-text-muted)]',
+      Icon: null,
+      title: 'No revision has run for this book/language yet.',
+    },
+  };
+  const m = meta[s] ?? meta.idle;
+  const Icon = m.Icon;
+  return (
+    <Badge variant="outline" className={m.className} title={m.title}>
+      {Icon && <Icon className={m.spin ? 'animate-spin' : undefined} />}
+      {m.label}
+    </Badge>
+  );
 }
 
 // ── Per-stage prompt editor (server-backed) ──────────────────────────────────
@@ -185,6 +254,11 @@ export default function AdminFictionPage() {
   const [diffOpen, setDiffOpen] = useState(false);
   const [diffLoading, setDiffLoading] = useState(false);
   const [diffEntries, setDiffEntries] = useState<RevisionDiffEntry[] | null>(null);
+  const [revisionApplyBusyId, setRevisionApplyBusyId] = useState<string | null>(null);
+  const [revisionApprovingAll, setRevisionApprovingAll] = useState(false);
+  const [revisionCostRuns, setRevisionCostRuns] = useState<RevisionCostRun[] | null>(null);
+  const [revisionCostRunsOpen, setRevisionCostRunsOpen] = useState(false);
+  const [revisionCostRunsLoading, setRevisionCostRunsLoading] = useState(false);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -200,6 +274,10 @@ export default function AdminFictionPage() {
   const [glossary, setGlossary] = useState<BookGlossary | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const [rebuildGlossary, setRebuildGlossary] = useState(false);
+  // Freeze flag (point 2 principle 3): a frozen glossary can't be regenerated /
+  // overwritten (generate/set/copy 409) until unfrozen.
+  const [glossaryFrozen, setGlossaryFrozen] = useState(false);
+  const [glossaryFreezing, setGlossaryFreezing] = useState(false);
   // Optional: seed a fresh glossary build from another book's finished glossary
   // (same language) so a later book in a series inherits its names/terms/voice.
   const [seedFromBookId, setSeedFromBookId] = useState('');
@@ -820,6 +898,8 @@ export default function AdminFictionPage() {
     if (!isAdmin || !bookId) return;
     setDiffOpen(false);
     setDiffEntries(null);
+    setRevisionCostRunsOpen(false);
+    setRevisionCostRuns(null);
     void loadRevisionProgress();
   }, [isAdmin, bookId, lang, loadRevisionProgress]);
 
@@ -847,6 +927,70 @@ export default function AdminFictionPage() {
       setDiffLoading(false);
     }
   }, [bookId, lang, diffOpen]);
+
+  // Review one revised block (auto-commit mode). approve accepts the applied text
+  // (or `editedText`); reject reverts the block to its Pass-1 draft. Updates the
+  // open diff entry in place so the panel reflects the new outcome without a reload.
+  const handleRevisionApply = useCallback(
+    async (blockId: string, action: 'approve' | 'reject', editedText?: string) => {
+      if (!bookId) return;
+      setRevisionApplyBusyId(blockId);
+      setRevisionError(null);
+      try {
+        const r = await applyRevision(bookId, lang, blockId, action, editedText);
+        setDiffEntries((prev) =>
+          prev
+            ? prev.map((e) =>
+                e.blockId === blockId
+                  ? {
+                      ...e,
+                      outcome: r.outcome,
+                      revised: r.after ?? e.revised,
+                      rejectReason: action === 'reject' ? 'human_rejected' : null,
+                    }
+                  : e,
+              )
+            : prev,
+        );
+      } catch (e) {
+        setRevisionError(e instanceof Error ? e.message : `Failed to ${action} revision`);
+      } finally {
+        setRevisionApplyBusyId(null);
+      }
+    },
+    [bookId, lang],
+  );
+
+  // Accept every still-unreviewed ('applied') block as-is. Items edited in a
+  // textarea but not individually approved are accepted with their current revised
+  // text — edit + approve those one by one to keep a manual edit.
+  const handleRevisionApproveAll = useCallback(async () => {
+    if (!bookId || revisionApprovingAll) return;
+    const targets = (diffEntries ?? []).filter((e) => e.outcome === 'applied');
+    if (targets.length === 0) return;
+    setRevisionApprovingAll(true);
+    setRevisionError(null);
+    try {
+      for (const e of targets) {
+        await handleRevisionApply(e.blockId, 'approve');
+      }
+    } finally {
+      setRevisionApprovingAll(false);
+    }
+  }, [bookId, revisionApprovingAll, diffEntries, handleRevisionApply]);
+
+  const loadRevisionCostRuns = useCallback(async () => {
+    if (!bookId) return;
+    setRevisionCostRunsLoading(true);
+    try {
+      const r = await getRevisionCostRuns(bookId, lang);
+      setRevisionCostRuns(r.runs);
+    } catch {
+      setRevisionCostRuns(null);
+    } finally {
+      setRevisionCostRunsLoading(false);
+    }
+  }, [bookId, lang]);
 
   const handleTranslate = useCallback(async () => {
     if (!bookId || running) return;
@@ -878,6 +1022,13 @@ export default function AdminFictionPage() {
           break;
         case 'chapter_error':
           setErrors((e) => [...e, `Chapter ${(ev.index ?? 0) + 1}: ${ev.error ?? 'error'}`]);
+          break;
+        case 'stopped':
+          // Automatic stop (call-budget guard) or a user Stop seen before the
+          // client aborted. Surface the backend's reason so the run no longer
+          // just "freezes" silently — the colleague's original complaint.
+          setError(ev.message || `Run stopped (${ev.reason ?? 'unknown'})`);
+          setCurrent(null);
           break;
         case 'glossary_scope':
           setScopeLog((log) => [
@@ -963,14 +1114,32 @@ export default function AdminFictionPage() {
       setGlossaryDone(g.chaptersDone);
       setGlossaryTotal(g.chaptersTotal);
       setGlossaryError(g.error);
+      setGlossaryFrozen(g.frozen === true);
     } catch {
       setGlossary(null);
       setGlossaryState('idle');
       setGlossaryDone(0);
       setGlossaryTotal(0);
       setGlossaryError(null);
+      setGlossaryFrozen(false);
     }
   }, [bookId, lang]);
+
+  // Freeze / unfreeze the current glossary, then refresh status.
+  const handleToggleFreeze = useCallback(async () => {
+    if (!bookId) return;
+    setGlossaryFreezing(true);
+    try {
+      const next = !glossaryFrozen;
+      await freezeGlossary(bookId, lang, next);
+      setGlossaryFrozen(next);
+      await loadGlossary();
+    } catch (e) {
+      setGlossaryError(e instanceof Error ? e.message : 'Failed to change freeze state');
+    } finally {
+      setGlossaryFreezing(false);
+    }
+  }, [bookId, lang, glossaryFrozen, loadGlossary]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -1207,6 +1376,12 @@ export default function AdminFictionPage() {
       </div>
     );
   }
+
+  // A run that stopped before completing (crashed/stalled, incomplete, or errored)
+  // while nothing is streaming now — its reason note (e.g. a rate-limit summary) is
+  // shown inside the progress panel rather than as a generic red error line.
+  const revisionStopped =
+    !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
@@ -1450,7 +1625,7 @@ export default function AdminFictionPage() {
               server-side override that the next <em>real</em> run uses (for cached stages — translate/revision —
               re-run with <em>Overwrite</em> to regenerate). <strong>Reset to shipped</strong> removes the override.
               All editable prompts across directions are also on{' '}
-              <a href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</a>.
+              <Link href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</Link>.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setPromptsOpen((o) => !o)}>
@@ -1590,6 +1765,26 @@ export default function AdminFictionPage() {
               {glossaryOpen ? <ChevronDown className="mr-2 h-4 w-4" /> : <ChevronRight className="mr-2 h-4 w-4" />}
               {glossaryOpen ? 'Hide glossary' : 'View glossary'}
             </Button>
+          )}
+
+          {glossary && !glossaryBuilding && (
+            <Button
+              variant="outline"
+              onClick={handleToggleFreeze}
+              disabled={glossaryFreezing}
+              title={glossaryFrozen
+                ? 'Unfreeze: allow regenerating / overwriting this glossary'
+                : 'Freeze: stop generate / set / copy from modifying this glossary while volumes translate against it'}
+            >
+              {glossaryFreezing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {glossaryFrozen ? 'Unfreeze glossary' : 'Freeze glossary'}
+            </Button>
+          )}
+
+          {glossaryFrozen && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              🔒 Frozen
+            </span>
           )}
         </div>
 
@@ -1741,14 +1936,17 @@ export default function AdminFictionPage() {
 
       {/* ── Stylistic revision (Pass 2) ── */}
       <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
-        <div>
-          <h2 className="flex items-center gap-2 text-sm font-semibold">
-            <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
-          </h2>
-          <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-            Polishes the translated text block by block using neighboring context + the glossary. Runs on
-            the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
-          </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
+            </h2>
+            <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+              Polishes the translated text block by block using neighboring context + the glossary. Runs on
+              the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
+            </p>
+          </div>
+          {bookId && <RevisionStateBadge state={revisionState} live={revisionRunning} error={revisionError} />}
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -1783,6 +1981,41 @@ export default function AdminFictionPage() {
             )}
             {diffOpen ? 'Hide changes' : 'View changes'}
           </Button>
+
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (revisionCostRunsOpen) { setRevisionCostRunsOpen(false); return; }
+              await loadRevisionCostRuns();
+              setRevisionCostRunsOpen(true);
+            }}
+            disabled={!bookId || revisionCostRunsLoading}
+            title="Cost of each revision run, newest first"
+          >
+            {revisionCostRunsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : revisionCostRunsOpen ? (
+              <ChevronDown className="mr-2 h-4 w-4" />
+            ) : (
+              <ChevronRight className="mr-2 h-4 w-4" />
+            )}
+            Cost per run
+          </Button>
+
+          {(() => {
+            const pending = (diffEntries ?? []).filter((e) => e.outcome === 'applied').length;
+            if (!diffOpen || pending === 0) return null;
+            return (
+              <Button onClick={handleRevisionApproveAll} disabled={!bookId || revisionApprovingAll}>
+                {revisionApprovingAll ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCheck className="mr-2 h-4 w-4" />
+                )}
+                Approve all ({pending})
+              </Button>
+            );
+          })()}
         </div>
 
         <label
@@ -1803,7 +2036,7 @@ export default function AdminFictionPage() {
         </label>
 
         {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (() => {
-          const stopped = !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
+          const stopped = revisionStopped;
           const label = revisionRunning
             ? 'Revising…'
             : revisionState === 'done'
@@ -1833,17 +2066,29 @@ export default function AdminFictionPage() {
                 />
               </div>
               {stopped && (
-                <p className="text-xs text-[var(--app-text-muted)]">
-                  Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
-                </p>
+                <div className="space-y-1">
+                  {/* Server-reported reason for the stop (e.g. a rate-limit summary). */}
+                  {revisionError && (
+                    <p className="text-xs font-medium text-amber-600 dark:text-amber-500">{revisionError}</p>
+                  )}
+                  <p className="text-xs text-[var(--app-text-muted)]">
+                    Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
+                  </p>
+                </div>
               )}
             </div>
           );
         })()}
 
-        {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
+        {/* Live-run errors (dropped stream / failed start / apply errors). The
+            stopped-state note is shown inside the panel above, so don't duplicate it. */}
+        {revisionError && !revisionStopped && <p className="text-sm text-red-500">{revisionError}</p>}
 
-        {diffOpen && diffEntries && <RevisionDiffView entries={diffEntries} />}
+        {revisionCostRunsOpen && <RevisionCostRunsTable runs={revisionCostRuns} loading={revisionCostRunsLoading} />}
+
+        {diffOpen && diffEntries && (
+          <RevisionDiffView entries={diffEntries} onApply={handleRevisionApply} busyId={revisionApplyBusyId} />
+        )}
       </div>
 
       {/* ── Reader-check QA pass (calques / reader) ── */}
@@ -2417,7 +2662,28 @@ function ReaderCheckJournalView({
   );
 }
 
-function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
+const REVISION_OUTCOME_STYLE: Record<string, string> = {
+  applied: 'text-sky-600 dark:text-sky-400',
+  approved: 'text-emerald-600 dark:text-emerald-400',
+  rejected: 'text-amber-600 dark:text-amber-500',
+  unchanged: 'text-[var(--app-text-muted)]',
+};
+const REVISION_OUTCOME_LABEL: Record<string, string> = {
+  applied: 'applied — review',
+  approved: 'approved',
+  rejected: 'rejected (reverted)',
+  unchanged: 'unchanged',
+};
+
+function RevisionDiffView({
+  entries,
+  onApply,
+  busyId,
+}: {
+  entries: RevisionDiffEntry[];
+  onApply: (blockId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busyId: string | null;
+}) {
   // Group entries by chapter, preserving the (already chapter+position ordered) sequence.
   const groups: { key: string; title: string; items: RevisionDiffEntry[] }[] = [];
   for (const e of entries) {
@@ -2435,19 +2701,69 @@ function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
     );
   }
 
+  const applied = entries.filter((e) => e.outcome === 'applied').length;
+  const approved = entries.filter((e) => e.outcome === 'approved').length;
+  const rejected = entries.filter((e) => e.outcome === 'rejected').length;
+
   return (
     <div className="space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-4 text-sm">
-      <p className="text-xs text-[var(--app-text-muted)]">{entries.length} changed block{entries.length === 1 ? '' : 's'}</p>
+      <p className="text-xs text-[var(--app-text-muted)]">
+        {entries.length} changed block{entries.length === 1 ? '' : 's'} · {applied} to review · {approved} approved · {rejected} rejected
+      </p>
       {groups.map((g) => (
         <section key={g.key} className="space-y-2">
           <h4 className="text-xs font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">{g.title}</h4>
           <ul className="space-y-3">
             {g.items.map((e) => (
-              <RevisionDiffEntryRow key={e.blockId} entry={e} />
+              <RevisionDiffEntryRow key={e.blockId} entry={e} onApply={onApply} busy={busyId === e.blockId} />
             ))}
           </ul>
         </section>
       ))}
+    </div>
+  );
+}
+
+// Per-run Pass-2 revision cost history: one row per run (newest first). LLM time is
+// summed call time across the run's calls (not wall-clock).
+function RevisionCostRunsTable({ runs, loading }: { runs: RevisionCostRun[] | null; loading: boolean }) {
+  if (loading && !runs) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading cost history…
+      </div>
+    );
+  }
+  if (!runs || runs.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No runs recorded yet — run a revision pass.</p>;
+  }
+  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+  return (
+    <div className="overflow-x-auto rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-[var(--separator-opaque)] text-left text-xs text-[var(--app-text-muted)]">
+            <th className="p-2 font-medium">Run</th>
+            <th className="p-2 font-medium">Model</th>
+            <th className="p-2 text-right font-medium">Calls</th>
+            <th className="p-2 text-right font-medium">Tokens</th>
+            <th className="p-2 text-right font-medium">Cost</th>
+            <th className="p-2 text-right font-medium">LLM time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {runs.map((r) => (
+            <tr key={r.runId} className="border-b border-[var(--separator-opaque)] last:border-b-0">
+              <td className="p-2 tabular-nums">{when(r.startedAt)}</td>
+              <td className="p-2 text-[var(--app-text-muted)]">{r.model ?? '—'}</td>
+              <td className="p-2 text-right tabular-nums">{r.totals.calls}</td>
+              <td className="p-2 text-right tabular-nums">{fmtTokens(r.totals.tokensIn + r.totals.tokensOut)}</td>
+              <td className="p-2 text-right font-medium tabular-nums">{fmtUsd(r.totals.costUsd)}</td>
+              <td className="p-2 text-right tabular-nums text-[var(--app-text-muted)]">{fmtDuration(r.totals.durationMs)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -2642,10 +2958,30 @@ function StageCostRows({ row }: { row: FictionStageCost }) {
   );
 }
 
-function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
+function RevisionDiffEntryRow({
+  entry,
+  onApply,
+  busy,
+}: {
+  entry: RevisionDiffEntry;
+  onApply: (blockId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busy: boolean;
+}) {
   const [showSource, setShowSource] = useState(false);
+  // Seeded once from the revised text; the row is keyed by blockId so edits persist
+  // across outcome changes (same pattern as ReaderFixEditor).
+  const [text, setText] = useState(entry.revised);
+
+  const rejected = entry.outcome === 'rejected';
+  const approveLabel = entry.outcome === 'approved' ? 'Save & re-apply' : 'Approve';
   return (
     <li className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
+      <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
+        <span className={`font-semibold uppercase ${REVISION_OUTCOME_STYLE[entry.outcome] ?? ''}`}>
+          {REVISION_OUTCOME_LABEL[entry.outcome] ?? entry.outcome}
+        </span>
+        {rejected && <span className="text-[var(--app-text-muted)]">· showing the Pass-1 draft (revision not in the book)</span>}
+      </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">Draft (before)</div>
@@ -2653,17 +2989,34 @@ function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
         </div>
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
-          <p className="whitespace-pre-wrap">{entry.revised}</p>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={Math.min(10, Math.max(2, text.split('\n').length))}
+            disabled={busy}
+            className="w-full rounded-[var(--radius)] border border-sky-500/40 bg-[var(--app-surface-bg)] p-2 text-sm outline-none focus:border-[var(--app-accent)]"
+          />
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => setShowSource((s) => !s)}
-        className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
-      >
-        {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-        {showSource ? 'Hide source' : 'Show source'}
-      </button>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={() => onApply(entry.blockId, 'approve', text)} disabled={busy || !text.trim()}>
+          {busy ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Check className="mr-1 h-3 w-3" />}
+          {approveLabel}
+        </Button>
+        {!rejected && (
+          <Button size="sm" variant="outline" onClick={() => onApply(entry.blockId, 'reject')} disabled={busy}>
+            <X className="mr-1 h-3 w-3" /> Reject &amp; revert
+          </Button>
+        )}
+        <button
+          type="button"
+          onClick={() => setShowSource((s) => !s)}
+          className="ml-auto inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
+        >
+          {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+          {showSource ? 'Hide source' : 'Show source'}
+        </button>
+      </div>
       {showSource && <p className="mt-1 whitespace-pre-wrap text-xs text-[var(--app-text-muted)]">{entry.source}</p>}
     </li>
   );

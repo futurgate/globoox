@@ -2,6 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { isLandingConsentPath } from '@/lib/landingConsentPath';
 
 describe('landing consent route boundary', () => {
+  it.each(['/authors', '/authors/', '/authors/hero-archive', '/authors/hero-archive/', '/publishers', '/publishers/'])(
+    'requires consent on public business landings: %s', (pathname) => {
+      expect(isLandingConsentPath(pathname)).toBe(true);
+    },
+  );
+
+  it.each(['/authors-other', '/publishers-other', '/authors/private', '/publishers/private', '/ru/authors'])(
+    'keeps business landing matching exact: %s', (pathname) => {
+      expect(isLandingConsentPath(pathname)).toBe(false);
+    },
+  );
+
   it.each([
     '/landing-editorial', '/landing-editorial/',
     ...['en', 'es', 'fr', 'ru'].flatMap((locale) => [

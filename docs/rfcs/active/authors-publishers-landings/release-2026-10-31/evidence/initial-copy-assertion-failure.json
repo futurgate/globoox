@@ -1,0 +1,106 @@
+{
+  "base": "http://127.0.0.1:3004",
+  "startedAt": "2026-10-30T21:47:12.598Z",
+  "status": "failed",
+  "business": [
+    {
+      "route": "authors",
+      "width": 1440,
+      "audience": "Для авторов",
+      "heroTitle": "Продавайте свои книги по всему миру на всех языках и платформах",
+      "logoCount": 7,
+      "dotMovementPx": {
+        "normal": [
+          17.09,
+          15.2,
+          13.66,
+          12.93,
+          143.64,
+          14.21,
+          16.09
+        ],
+        "reduced": [
+          17.1,
+          15.18,
+          13.67,
+          12.95,
+          13.11,
+          14.25,
+          16.02
+        ]
+      },
+      "languages": {
+        "layout": "author text lists",
+        "available": 4,
+        "upcoming": 9
+      },
+      "ctaStyle": {
+        "fontFamily": "Inter, -apple-system, sans-serif",
+        "fontSize": "17px",
+        "fontWeight": "600",
+        "lineHeight": "24.65px",
+        "paddingTop": "18px",
+        "paddingRight": "30px",
+        "paddingBottom": "18px",
+        "paddingLeft": "30px",
+        "borderRadius": "7px",
+        "borderWidth": "0px",
+        "minHeight": "54px",
+        "backgroundColor": "rgb(192, 90, 58)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "activations": [
+        {
+          "section": "hero",
+          "modality": "mouse",
+          "recipient": "lomovski@globoox.co",
+          "subject": "Перевод и публикация книги — Globoox"
+        },
+        {
+          "section": "trial",
+          "modality": "mouse",
+          "recipient": "lomovski@globoox.co",
+          "subject": "Бесплатный пробный перевод — Globoox"
+        },
+        {
+          "section": "contact",
+          "modality": "mouse",
+          "recipient": "lomovski@globoox.co",
+          "subject": "Перевод и публикация книги — Globoox"
+        },
+        {
+          "section": "trial",
+          "modality": "keyboard",
+          "recipient": "lomovski@globoox.co",
+          "subject": "Бесплатный пробный перевод — Globoox"
+        }
+      ],
+      "overflow": 0
+    }
+  ],
+  "consent": [
+    {
+      "width": 1440,
+      "choice": "necessary",
+      "dismissed": true
+    }
+  ],
+  "menus": [],
+  "main": [],
+  "archive": null,
+  "screenshots": [
+    "authors-1440.png"
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "url": "http://127.0.0.1:3004/authors",
+      "message": "[PostHog.js] PostHog was initialized without a token. This likely indicates a misconfiguration. Please check the first argument passed to posthog.init()"
+    }
+  ],
+  "failure": {
+    "message": "The expression evaluated to a falsy value:\n\n  assert(mainText.includes('С нами уже работают'))\n",
+    "location": "\n  assert(mainText.includes('С нами уже работают'))"
+  },
+  "finishedAt": "2026-10-30T21:47:18.002Z"
+}

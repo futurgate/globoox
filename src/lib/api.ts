@@ -462,7 +462,7 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 // ── Full-book fiction translation (admin) ──────────────────────────────────
 
 export type FictionProgressEvent = {
-  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'glossary_scope'
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'stopped' | 'glossary_scope'
   chapterId?: string
   index?: number
   title?: string | null
@@ -471,6 +471,13 @@ export type FictionProgressEvent = {
   done?: number
   totalChapters?: number
   error?: string
+  // 'stopped' events (user Stop or the backend call-budget guard): the run halted
+  // early. `reason` says which; `message` is the human explanation to surface;
+  // `calls`/`callBudget` report how far the run got against its ceiling.
+  reason?: 'user' | 'budget'
+  message?: string
+  calls?: number
+  callBudget?: number
   // glossary_scope: which glossary entries were sent for this chapter (point 2
   // principle 2), so a human can check that declined forms still pull their entry.
   entriesIn?: number
@@ -634,6 +641,8 @@ export type GlossaryStatus = {
   percent: number
   error: string | null
   updatedAt?: string
+  /** True when generation/overwrite is frozen for this glossary (point 2 principle 3). */
+  frozen?: boolean
   glossary: BookGlossary | null
 }
 
@@ -737,6 +746,31 @@ export async function setGlossaryJson(
     throw new Error(body.message || `Failed to save glossary: ${res.status}`)
   }
   return res.json() as Promise<GlossaryStatus>
+}
+
+/**
+ * Freeze or unfreeze the book-wide fiction glossary (point 2, principle 3). A frozen
+ * glossary cannot be modified by generation / set / copy (they 409) so volumes can
+ * translate against a stable object. Admin only.
+ */
+export async function freezeGlossary(
+  bookId: string,
+  lang: string,
+  frozen: boolean,
+): Promise<{ bookId: string; lang: string; frozen: boolean }> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/glossary-freeze`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), frozen }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${frozen ? 'freeze' : 'unfreeze'} glossary: ${res.status}`)
+  }
+  return res.json() as Promise<{ bookId: string; lang: string; frozen: boolean }>
 }
 
 /** Fetch the current fiction glossary + build progress (bypasses cache). */
@@ -852,6 +886,8 @@ export type RevisionProgress = {
   error?: string | null
 }
 
+export type RevisionItemOutcome = 'unchanged' | 'applied' | 'approved' | 'rejected'
+
 export type RevisionDiffEntry = {
   chapterId: string
   chapterNumber: number
@@ -862,6 +898,8 @@ export type RevisionDiffEntry = {
   draft: string
   revised: string
   changed: boolean
+  outcome: RevisionItemOutcome
+  rejectReason: string | null
 }
 
 export type RevisionDiff = {
@@ -958,6 +996,76 @@ export async function getRevisionDiff(
     throw new Error(body.message || `Failed to fetch revision diff: ${res.status}`)
   }
   return res.json() as Promise<RevisionDiff>
+}
+
+export type RevisionApplyResult = {
+  ok: boolean
+  blockId: string
+  outcome: 'approved' | 'rejected'
+  after?: string
+}
+
+/**
+ * Review one revised block (auto-commit mode). approve accepts the applied text or
+ * writes `editedText` in its place; reject reverts the block to its Pass-1 draft.
+ * Admin only. Keyed by blockId. Returns the block's new outcome.
+ */
+export async function applyRevision(
+  bookId: string,
+  lang: string,
+  blockId: string,
+  action: 'approve' | 'reject',
+  editedText?: string,
+): Promise<RevisionApplyResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/revise-apply`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      blockId,
+      action,
+      ...(action === 'approve' && editedText != null ? { editedText } : {}),
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${action} revision: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionApplyResult>
+}
+
+export type RevisionCostRun = {
+  runId: string
+  model: string | null
+  startedAt: string | null
+  finishedAt: string | null
+  totals: { calls: number; tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
+}
+
+export type RevisionCostRuns = {
+  bookId: string
+  lang: string
+  count: number
+  runs: RevisionCostRun[]
+}
+
+/** Per-run Pass-2 revision cost history (newest first), for the admin cost panel. */
+export async function getRevisionCostRuns(bookId: string, lang: string): Promise<RevisionCostRuns> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revise-cost-runs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision cost runs: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionCostRuns>
 }
 
 // ── Reader-check QA pass (admin) ────────────────────────────────────────────────

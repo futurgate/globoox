@@ -1,0 +1,25 @@
+{
+  "id": "09",
+  "name": "Список «Скоро» справа",
+  "tool": "image_gen.imagegen (built-in)",
+  "status": "generated-reviewed",
+  "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Heading upper left. Main left area (65%) contains current label and four medium serif names in two lines, two per line. Narrow right area (35%) contains upcoming label and nine modest sans-serif names in a three-column grid. No vertical rule; distinguish groups using whitespace only.",
+  "references": [],
+  "transparent_background": false,
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-559ef07d-8568-44a3-9306-28704767f11c.png",
+  "output": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/simple/images/09.png",
+  "review": {
+    "result": "passed",
+    "findings": [
+      "All four current and nine upcoming names are present exactly once, with correct status grouping and readable accents/scripts.",
+      "Minimal typography-only composition on green, no illustration, card, pill, controls, team or additional copy.",
+      "Available two-by-two serif group on left; nine-name sans-serif future grid on right, separated by whitespace only."
+    ],
+    "corrections": 0
+  },
+  "width": 1672,
+  "height": 941,
+  "mode": "RGB",
+  "bytes": 1357684,
+  "sha256": "35168ba4f5c12e7330f34d613b68cb5bdef677dd53317356ed0189de0b24a291"
+}

@@ -1,0 +1,21 @@
+.intro {
+  width: min(1200px, calc(100% - 80px));
+  margin-inline: auto;
+  padding-top: 112px;
+  color: var(--marketing-text-muted);
+  font: 400 16px/1.6 'Inter', sans-serif;
+}
+
+.label {
+  margin: 0 0 12px;
+  color: var(--marketing-text);
+  font-weight: 600;
+}
+
+.intro a { display: inline-block; margin-top: 12px; }
+.originalLabel { margin-top: 36px; font-size: 13px; }
+.original > section { padding-top: 36px; }
+
+@media (max-width: 900px) {
+  .intro { width: calc(100% - 40px); padding-top: 104px; }
+}

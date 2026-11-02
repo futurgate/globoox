@@ -1,0 +1,476 @@
+{
+  "layouts": [
+    {
+      "width": 1672,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 60.640625,
+          "radius": "7px",
+          "padding": "18px 30px",
+          "font": "600 17px / 24.65px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "24.65px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 760,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "titleColor": "rgb(244, 240, 232)",
+      "background": "rgb(44, 59, 45)",
+      "heading": "Языки\nперевода",
+      "clipped": [],
+      "cookie": {
+        "copy": [
+          {
+            "text": "Cookies в Globoox",
+            "lines": 1
+          },
+          {
+            "text": "Cookies для работы и аналитики.",
+            "lines": 1
+          },
+          {
+            "text": "Только нужные",
+            "lines": 1
+          },
+          {
+            "text": "Принять все",
+            "lines": 1
+          }
+        ]
+      },
+      "buttons": [
+        {
+          "text": "Связаться с нами",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Получить пробный перевод",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        },
+        {
+          "text": "Связаться с Globoox",
+          "height": 55.1875,
+          "radius": "7px",
+          "padding": "16px 25px",
+          "font": "600 16px / 23.2px Inter, -apple-system, sans-serif",
+          "fontWeight": "600",
+          "lineHeight": "23.2px",
+          "background": "rgb(192, 90, 58)",
+          "lines": 1
+        }
+      ]
+    }
+  ],
+  "email": [
+    {
+      "width": 1440,
+      "emails": [
+        "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+        "mailto:lomovski@globoox.co?subject=%D0%91%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D1%8B%D0%B9%20%D0%BF%D1%80%D0%BE%D0%B1%D0%BD%D1%8B%D0%B9%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%E2%80%94%20Globoox",
+        "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox"
+      ]
+    },
+    {
+      "width": 390,
+      "emails": [
+        "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox",
+        "mailto:lomovski@globoox.co?subject=%D0%91%D0%B5%D1%81%D0%BF%D0%BB%D0%B0%D1%82%D0%BD%D1%8B%D0%B9%20%D0%BF%D1%80%D0%BE%D0%B1%D0%BD%D1%8B%D0%B9%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%E2%80%94%20Globoox",
+        "mailto:lomovski@globoox.co?subject=%D0%9F%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B4%20%D0%B8%20%D0%BF%D1%83%D0%B1%D0%BB%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F%20%D0%BA%D0%BD%D0%B8%D0%B3%D0%B8%20%E2%80%94%20Globoox"
+      ]
+    }
+  ],
+  "isolation": [
+    {
+      "route": "publishers",
+      "description": "Cookies для работы и аналитики.",
+      "newLanguageLayout": 0
+    },
+    {
+      "route": "ru",
+      "description": "Используем cookies для работы сайта и улучшения Globoox.",
+      "newLanguageLayout": 0
+    }
+  ],
+  "errors": []
+}

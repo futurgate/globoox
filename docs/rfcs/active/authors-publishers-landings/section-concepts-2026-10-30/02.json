@@ -1,0 +1,51 @@
+{
+  "id": "02",
+  "slug": "languages",
+  "name": "Языки",
+  "status": "generated-and-visually-reviewed",
+  "mode": "built-in image_gen.imagegen",
+  "scope": "Visual section proposal only; no source implementation",
+  "specSource": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/spec.json",
+  "referenceImagesInspected": true,
+  "executedPrompt": "Use case: ui-mockup. Create ONE polished desktop website SECTION concept for the existing Globoox landing for authors, naturally continuing its selected hero. This is one section design, not multiple alternatives and not an entire website. Flat, full-bleed website screenshot; no browser chrome, app-device frame, montage, option labels, header, hero, team, publisher claims or navigation. Target1536px wide; use the stated section-height naturally, without stretching typography or content.\nReference image1 is the SELECTED LIVE HERO: use its premium contemporary editorial art direction, Lora-like Cyrillic serif, Inter-like body, warm parchment #F4F0E8, dark forest #2C3B2D, terracotta #C05A3A, restrained sage/mist, hairline rules, generous calm spacing, subtle linen/paper materials. Ignore its small comparison label and do not repeat its hero. Subsequent reference images show CURRENT SECTION CONTENT and any retained interaction/illustration principle; redesign the layout coherently rather than copying their old appearance. Preserve the exact supplied Russian wording. No testimonials, statistics, promises, new features, forms, prices, badges, or invented paragraphs. No generic card grids, heavy shadows, gradients, glassmorphism or tech-network decoration. Prefer clear typographic hierarchy and fine dividers; realistic implementable web design with readable text. Do not add the removed footer mission, “КНИГИ БЕЗ ГРАНИЦ”, “Открыть приложение”, a standalone G monogram, contact email text, or a team block. Team is explicitly out of scope. The concepts are visual proposals only, no production changes.\n\nTARGET SECTION: Языки. Target image1536×1000, natural full-width section.\n\nART DIRECTION:\nDeep forest-green language chapter. Left one-third holds the large cream heading. Right two-thirds contains a beautiful restrained OPEN BOOK in cream linen/paper, with four softly curving orbit paths like the current language block; this is the established language illustration principle (not the hero distribution diagram). The FOUR available language labels are large, legible terracotta-on-cream or cream-on-terracotta tabs near the book, never covering it. Beneath an inset hairline across the full section, present the NINE upcoming languages as a deliberate airy typographic catalogue in three equal columns × three rows, clearly grouped under “Скоро”. No tiny scattered upcoming tags. Keep all13 names exactly once in their correct status group. Do not repeat the four available languages in a subtitle. No flags, globe icon, CTA, stats or additional copy. Preserve accents and non-Latin scripts. This concept prioritizes readability of ALL language statuses and the original book/orbit relationship.\n\nEXACT CONTENT:\nHeading: «Языки перевода». Available group label: «Уже доступны». Four available: English; Français; Español; Русский. Upcoming group label: «Скоро». Nine upcoming, exact order in row-major reading: Deutsch; Italiano; Português; Türkçe; 中文; 日本語; 한국어; العربية; فارسی.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/hero-concept-04-1536.png",
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/references/languages.png"
+  ],
+  "transparent_background": false,
+  "initialSourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-5de4f4a8-493c-4a7e-a2cf-3b43de486ee4.png",
+  "finalSourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-5f5ac92b-a565-41ee-b2bd-74607f9a2172.png",
+  "asset": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/02.png",
+  "pixels": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "bytes": 1636565,
+  "sha256": "03cc7bcc8c2407b2207468bd69b50f14b3c9b3cada9f242ba7ad3cb3f07e7db7",
+  "review": {
+    "result": "accepted",
+    "observations": [
+      "Forest-green section with cream heading, open linen/paper book and orbit paths.",
+      "Available languages English, Français, Español, Русский each appear once, separate from book and readable.",
+      "Upcoming nine labels appear once in correct row-major order: Deutsch/Italiano/Português; Türkçe/中文/日本語; 한국어/العربية/فارسی.",
+      "No team, hero, navigation, contact, extra marketing claims or CTA.",
+      "No text/image crowding; clear status grouping and generous catalogue spacing."
+    ],
+    "caveats": [
+      "Generator output is1536×1024 rather than requested1536×1000; preserved without scaling/cropping.",
+      "Book pages contain decorative tiny text texture rather than canonical body content; no body copy is part of this section."
+    ]
+  },
+  "correction": {
+    "namedDefect": "Upcoming-language catalogue initially used column-major instead of approved row-major reading order.",
+    "prompt": "Edit ONLY the lower upcoming-language catalogue of the supplied generated Globoox section. Named defect: the nine upcoming languages were laid out column-major, but the approved brief requires row-major reading. Preserve EVERYTHING ELSE unchanged: canvas, green background, exact heading, label «УЖЕ ДОСТУПНЫ», open cream book, orbit curves, four available-language tabs, top spacing, typography, divider, and «СКОРО» label. Keep the lower catalogue as three equal columns by three rows, same size and spacing and hairline dividers, but replace/rearrange the labels so that the rows read LEFT TO RIGHT exactly as follows:\nROW 1: Deutsch | Italiano | Português\nROW 2: Türkçe | 中文 | 日本語\nROW 3: 한국어 | العربية | فارسی\nEach of these nine names appears exactly once. Preserve the accents and exact non-Latin glyphs. Do not change any available-language tab or duplicate any name. No additional copy, controls, team, hero or footer.",
+    "referenced_image_paths": [
+      "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-5de4f4a8-493c-4a7e-a2cf-3b43de486ee4.png"
+    ],
+    "transparent_background": false,
+    "sourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-5f5ac92b-a565-41ee-b2bd-74607f9a2172.png",
+    "result": "Corrected; all other composition retained",
+    "originalRetained": true
+  }
+}

@@ -11,8 +11,12 @@ interface LandingHeaderProps {
   navItems?: Array<{ label: string; href: string }>;
   locale?: LandingLocale;
   openAppLabel?: string;
+  showOpenApp?: boolean;
   languageLabel?: string;
   languages?: Array<{ value: LandingLocale; label: string }>;
+  showLanguageSelector?: boolean;
+  logoHref?: string;
+  menuLabel?: string;
 }
 
 const DEFAULT_LANGUAGES: Array<{ value: LandingLocale; label: string }> = [
@@ -25,8 +29,12 @@ export function LandingHeader({
   navItems = [],
   locale = 'en',
   openAppLabel = 'Open App',
+  showOpenApp = true,
   languageLabel = 'Language',
   languages = DEFAULT_LANGUAGES,
+  showLanguageSelector = true,
+  logoHref = '#hero',
+  menuLabel = 'Toggle navigation',
 }: LandingHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [shouldCollapse, setShouldCollapse] = useState(false);
@@ -71,13 +79,6 @@ export function LandingHeader({
 
     if (sections.length === 0) return;
 
-    const initialHash = window.location.hash;
-    const initialHref =
-      initialHash && sectionIds.includes(initialHash.slice(1)) ? initialHash : `#${sections[0].id}`;
-    const frameId = window.requestAnimationFrame(() => {
-      setActiveHref(initialHref);
-    });
-
     const updateActiveSection = () => {
       const scrollAnchor = window.scrollY + 180;
       const firstSectionTop = sections[0].offsetTop;
@@ -99,7 +100,7 @@ export function LandingHeader({
       setActiveHref(`#${currentId}`);
     };
 
-    updateActiveSection();
+    const frameId = window.requestAnimationFrame(updateActiveSection);
     window.addEventListener('scroll', updateActiveSection, { passive: true });
     window.addEventListener('resize', updateActiveSection);
 
@@ -138,7 +139,7 @@ export function LandingHeader({
       resizeObserver.disconnect();
       window.removeEventListener('resize', updateCollapse);
     };
-  }, [activeLanguageLabel, navItems, openAppLabel]);
+  }, [activeLanguageLabel, navItems, openAppLabel, showLanguageSelector, showOpenApp]);
 
   useEffect(() => {
     if (!shouldCollapse) {
@@ -148,6 +149,18 @@ export function LandingHeader({
       setDesktopLanguageMenuOpen(false);
     }
   }, [shouldCollapse]);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setMenuOpen(false);
+      setDesktopLanguageMenuOpen(false);
+      setMobileLanguageMenuOpen(false);
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, []);
 
   const handleSectionNavigation = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -272,6 +285,7 @@ export function LandingHeader({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            minHeight: showOpenApp ? undefined : '60px',
             padding: '8px 8px 8px 20px',
             borderRadius: '28px',
             backdropFilter: 'blur(14px)',
@@ -281,8 +295,8 @@ export function LandingHeader({
           }}
         >
           <Link
-            href="#hero"
-            onClick={(event) => handleSectionNavigation(event, '#hero')}
+            href={logoHref}
+            onClick={(event) => handleSectionNavigation(event, logoHref)}
             className="landing-header-logo"
             style={{
               fontFamily: "'Lora', serif",
@@ -301,7 +315,7 @@ export function LandingHeader({
             <span className="landing-header-logo-compact" style={{ display: 'none' }}>G</span>
           </Link>
 
-          <nav className="landing-header-links" style={{ display: shouldCollapse ? 'none' : 'flex', alignItems: 'center', gap: '0', whiteSpace: 'nowrap' }}>
+          <nav className="landing-header-links" style={{ display: shouldCollapse ? 'none' : 'flex', alignItems: 'center', gap: '0', whiteSpace: 'nowrap', marginLeft: showOpenApp ? undefined : 'auto' }}>
             {navItems.map((item) => (
               <div key={item.href} className="landing-header-nav-item" style={{ display: 'flex', alignItems: 'center' }}>
                 <a
@@ -323,7 +337,7 @@ export function LandingHeader({
                 </a>
               </div>
             ))}
-            <div
+            {showLanguageSelector && <div
               className="landing-header-language"
               style={{
                 display: shouldCollapse ? 'none' : 'flex',
@@ -386,10 +400,10 @@ export function LandingHeader({
                   {renderLanguageMenu(false)}
                 </div>
               ) : null}
-            </div>
+            </div>}
           </nav>
 
-          <Link
+          {showOpenApp && <Link
             href="/my-books"
             className="landing-header-open-app"
             style={{
@@ -409,7 +423,7 @@ export function LandingHeader({
             }}
           >
             {openAppLabel}
-          </Link>
+          </Link>}
 
           <button
             type="button"
@@ -419,9 +433,11 @@ export function LandingHeader({
               setMobileLanguageMenuOpen(false);
               setMenuOpen((v) => !v);
             }}
-            aria-label="Toggle navigation"
+            aria-label={menuLabel}
+            aria-expanded={menuOpen}
             style={{
               display: shouldCollapse ? 'inline-flex' : 'none',
+              marginLeft: showOpenApp ? undefined : 'auto',
               alignItems: 'center',
               justifyContent: 'center',
               width: '44px',
@@ -531,7 +547,7 @@ export function LandingHeader({
                   {item.label}
                 </span>
               ))}
-              <span
+              {showLanguageSelector && <span
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -547,8 +563,8 @@ export function LandingHeader({
               >
                 <span>{activeLanguageLabel}</span>
                 <ChevronDown size={16} />
-              </span>
-              <span
+              </span>}
+              {showOpenApp && <span
                 style={{
                   fontSize: '14px',
                   fontWeight: 600,
@@ -560,7 +576,7 @@ export function LandingHeader({
                 }}
               >
                 {openAppLabel}
-              </span>
+              </span>}
             </div>
           </div>
         </div>
@@ -606,7 +622,7 @@ export function LandingHeader({
                 {item.label}
               </a>
             ))}
-            <div
+            {showLanguageSelector && <div
               className="landing-header-mobile-language-wrap"
               style={{
                 display: 'block',
@@ -671,8 +687,8 @@ export function LandingHeader({
                   {renderLanguageMenu(true)}
                 </div>
               ) : null}
-            </div>
-            <Link
+            </div>}
+            {showOpenApp && <Link
               href="/my-books"
               onClick={() => setMenuOpen(false)}
               className="landing-header-open-app-mobile"
@@ -689,7 +705,7 @@ export function LandingHeader({
               }}
             >
               {openAppLabel}
-            </Link>
+            </Link>}
           </div>
         )}
       </header>

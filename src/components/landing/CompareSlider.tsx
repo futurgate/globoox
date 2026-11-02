@@ -17,6 +17,7 @@ interface CompareSliderProps {
   hideStatusBarContent?: boolean;
   statusBarHeight?: number;
   statusBarPadding?: string;
+  sliderLabel?: string;
 }
 
 const DEFAULT_ORIGINAL: CompareSliderText = {
@@ -51,6 +52,7 @@ export function CompareSlider({
   hideStatusBarContent = false,
   statusBarHeight = 22,
   statusBarPadding = '12px 24px 0',
+  sliderLabel,
 }: CompareSliderProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(50);
@@ -320,6 +322,28 @@ export function CompareSlider({
         />
 
         <div
+          role="slider"
+          tabIndex={0}
+          aria-label={sliderLabel ?? `${original.languageLabel} / ${translated.languageLabel}`}
+          aria-orientation="horizontal"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(position)}
+          aria-valuetext={`${Math.round(position)}% ${original.languageLabel}, ${Math.round(100 - position)}% ${translated.languageLabel}`}
+          onKeyDown={(event) => {
+            const step = event.shiftKey ? 10 : 5;
+            const nextPosition = {
+              ArrowLeft: position - step,
+              ArrowDown: position - step,
+              ArrowRight: position + step,
+              ArrowUp: position + step,
+              Home: 0,
+              End: 100,
+            }[event.key];
+            if (nextPosition === undefined) return;
+            event.preventDefault();
+            setPosition(Math.max(0, Math.min(nextPosition, 100)));
+          }}
           style={{
             position: 'absolute',
             top: '50%',

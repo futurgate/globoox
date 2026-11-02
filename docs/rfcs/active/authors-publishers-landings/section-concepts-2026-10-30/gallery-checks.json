@@ -1,0 +1,90 @@
+{
+  "url": "http://localhost:3002/",
+  "errors": [],
+  "viewports": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "images": [
+        {
+          "file": "images/01.png",
+          "complete": true,
+          "w": 1717,
+          "h": 916
+        },
+        {
+          "file": "images/02.png",
+          "complete": true,
+          "w": 1536,
+          "h": 1024
+        },
+        {
+          "file": "images/03.png",
+          "complete": true,
+          "w": 1482,
+          "h": 1061
+        },
+        {
+          "file": "images/04.png",
+          "complete": true,
+          "w": 1832,
+          "h": 859
+        },
+        {
+          "file": "images/05.png",
+          "complete": true,
+          "w": 1620,
+          "h": 971
+        },
+        {
+          "file": "images/06.png",
+          "complete": true,
+          "w": 1639,
+          "h": 960
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "images": [
+        {
+          "file": "images/01.png",
+          "complete": true,
+          "w": 1717,
+          "h": 916
+        },
+        {
+          "file": "images/02.png",
+          "complete": true,
+          "w": 1536,
+          "h": 1024
+        },
+        {
+          "file": "images/03.png",
+          "complete": true,
+          "w": 1482,
+          "h": 1061
+        },
+        {
+          "file": "images/04.png",
+          "complete": true,
+          "w": 1832,
+          "h": 859
+        },
+        {
+          "file": "images/05.png",
+          "complete": true,
+          "w": 1620,
+          "h": 971
+        },
+        {
+          "file": "images/06.png",
+          "complete": true,
+          "w": 1639,
+          "h": 960
+        }
+      ]
+    }
+  ]
+}

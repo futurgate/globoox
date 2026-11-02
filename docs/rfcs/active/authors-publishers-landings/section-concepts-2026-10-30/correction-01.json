@@ -1,0 +1,7 @@
+{
+  "prompt": "Use case: precise-object-edit / ui-mockup. Edit this exact translation-section design. Change ONLY the invented narrative paragraphs printed on the two lower-right decorative manuscript sheets: remove those paragraph words and replace them with fine, neutral grey typesetting rules of comparable density, so they read as an abstract manuscript illustration, not a second real text sample. Keep the small headings 'Chapter I' and 'Глава I', the restrained terracotta proofreader marks and connecting thread. Preserve the entire main Russian headline and full upper-right Russian explanation verbatim; keep their layout, fonts, colors, spacing, vertical divider, paper positions/material/shadows, overall image dimensions and all other pixels as closely as possible. Do not introduce any additional words, UI, people, books or logos. The only text content change is removing the invented story from the decorative paper sheets.",
+  "referenced_image_paths": [
+    "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/01.png (initial generation, original path retained in 01.json)"
+  ],
+  "source": "/Users/user/.codex/generated_images/01a18db4-8f7b-7162-a166-c46ddb7a7a34/exec-43a97e12-9568-4485-9d1a-ae6260d1e1e1.png"
+}

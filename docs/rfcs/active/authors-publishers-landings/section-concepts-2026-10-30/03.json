@@ -1,0 +1,41 @@
+{
+  "id": "03",
+  "slug": "quality",
+  "name": "Пример перевода",
+  "status": "generated-and-visually-reviewed",
+  "mode": "built-in image_gen.imagegen",
+  "scope": "Visual section proposal only; no source implementation",
+  "specSource": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/spec.json",
+  "referenceImagesInspected": true,
+  "executedPrompt": "Use case: ui-mockup. Create ONE polished desktop website SECTION concept for the existing Globoox landing for authors, naturally continuing its selected hero. This is one section design, not multiple alternatives and not an entire website. Flat, full-bleed website screenshot; no browser chrome, app-device frame, montage, option labels, header, hero, team, publisher claims or navigation. Target1536px wide; use the stated section-height naturally, without stretching typography or content.\nReference image1 is the SELECTED LIVE HERO: use its premium contemporary editorial art direction, Lora-like Cyrillic serif, Inter-like body, warm parchment #F4F0E8, dark forest #2C3B2D, terracotta #C05A3A, restrained sage/mist, hairline rules, generous calm spacing, subtle linen/paper materials. Ignore its small comparison label and do not repeat its hero. Subsequent reference images show CURRENT SECTION CONTENT and any retained interaction/illustration principle; redesign the layout coherently rather than copying their old appearance. Preserve the exact supplied Russian wording. No testimonials, statistics, promises, new features, forms, prices, badges, or invented paragraphs. No generic card grids, heavy shadows, gradients, glassmorphism or tech-network decoration. Prefer clear typographic hierarchy and fine dividers; realistic implementable web design with readable text. Do not add the removed footer mission, “КНИГИ БЕЗ ГРАНИЦ”, “Открыть приложение”, a standalone G monogram, contact email text, or a team block. Team is explicitly out of scope. The concepts are visual proposals only, no production changes.\n\nTARGET SECTION: Пример перевода. Target image1536×1100, natural full-width section.\n\nART DIRECTION:\nWarm parchment reading-proof section. Headline, small eyebrow and instruction align left above a broad, exquisite paper reading frame with a single thin outer rule and virtually no shadow. Replace the current laptop shell with a sophisticated direct reading surface; retain the central vertical wipe divider with one small circular terracotta drag handle, indicating the existing original/translation comparison interaction. Put language/title metadata at the upper corners of the reading frame. The compared reading surface should show enough of the actual English and Russian sample to judge its typography, not a decorative blurred texture. Left English and right Russian may be presented as two clear adjacent excerpt columns at the half-way wipe position, with the center divider uninterrupted, no overlap of sentences. Long body can be excerpted after the supplied first2 sentences, without inventing text. No new controls, invented ratings, translator faces or changed book/author. Excellent readable book typography. Exact top label: “ОРИГИНАЛ И ПЕРЕВОД”. Title: “Пример перевода”. Instruction: “Сдвиньте разделитель, чтобы сравнить текст на английском и русском.”\n\nEXACT CONTENT:\nОРИГИНАЛ И ПЕРЕВОД\nПример перевода\n\nСдвиньте разделитель, чтобы сравнить текст на английском и русском.\n\nПутешествие на «Бигле»\nЧарльз Дарвин\nEN→RU\nПутешествие на «Бигле»\n\n27 декабря 1831 года десятипушечный бриг Ее Величества «Бигль» под командованием капитана королевского флота Фицроя покинул Девонпорт, до этого дважды вынужденный возвращаться из-за жестоких юго-западных штормов. Цель экспедиции заключалась в том, чтобы завершить картографирование Патагонии и Огненной Земли, начатое капитаном Кингом в 1826–1830 годах, исследовать побережья Чили, Перу и ряда тихоокеанских островов, а также провести серию хронометрических измерений вокруг земного шара. 6 января мы достигли Тенерифе, однако высадиться нам не разрешили из-за опасений, что экипаж может занести холеру. На следующее утро мы наблюдали, как солнце, взойдя из-за зубчатых очертаний острова Гран-Канария, внезапно озарило Тенерифский пик, тогда как его подножие все еще скрывалось в пелене легких облаков. Это был первый из многих восхитительных дней, навсегда оставшихся в памяти. 16 января 1832 года мы бросили якорь в Порту-Прая на Сантьягу — главном острове архипелага Островов Зеленого Мыса.\n\nThe Voyage of the Beagle\nCharles Darwin\nEN→RU\nThe Voyage of the Beagle\n\nAfter having been twice driven back by heavy southwestern gales, Her Majesty’s ship Beagle, a ten-gun brig, under the command of Captain Fitz Roy, R.N., sailed from Devonport on the 27th of December, 1831. The object of the expedition was to complete the survey of Patagonia and Tierra del Fuego, commenced under Captain King in 1826 to 1830﻿—to survey the shores of Chile, Peru, and of some islands in the Pacific﻿—and to carry a chain of chronometrical measurements round the world. On the 6th of January we reached Teneriffe, but were prevented landing, by fears of our bringing the cholera: the next morning we saw the sun rise behind the rugged outline of the Grand Canary island, and suddenly illuminate the Peak of Teneriffe, whilst the lower parts were veiled in fleecy clouds. This was the first of many delightful days never to be forgotten. On the 16th of January, 1832, we anchored at Porto Praya, in St. Jago, the chief island of the Cape de Verd archipelago.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/hero-concept-04-1536.png",
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/references/quality.png"
+  ],
+  "transparent_background": false,
+  "initialSourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-a8549d8e-d1d1-4e55-a18a-cfe79fc85cdf.png",
+  "finalSourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-a8549d8e-d1d1-4e55-a18a-cfe79fc85cdf.png",
+  "asset": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/03.png",
+  "pixels": {
+    "width": 1482,
+    "height": 1061,
+    "mode": "RGB"
+  },
+  "bytes": 2104385,
+  "sha256": "1e4175ad07a4c0ecb400698e06c23fcb99dc6e1b24a25eeb60ceb37bdeb8c99b",
+  "review": {
+    "result": "accepted",
+    "observations": [
+      "Exact heading «Пример перевода», eyebrow «ОРИГИНАЛ И ПЕРЕВОД» and supplied instruction.",
+      "The Voyage of the Beagle / Charles Darwin and Путешествие на «Бигле» / Чарльз Дарвин are retained.",
+      "Readable supplied English/Russian Darwin passages in separate balanced columns; no overlapping sentences.",
+      "Single uninterrupted center divider with small terracotta circular handle; direct paper surface replaces laptop frame.",
+      "No team, ratings, faces, new controls, CTA or surrounding page sections.",
+      "Text/frame stay inside canvas with visible margins and no crowding."
+    ],
+    "caveats": [
+      "Generator output is1482×1061 rather than requested1536×1100; near-identical aspect ratio retained without scaling/cropping.",
+      "Raster concept only: canonical text and the existing real wipe interaction must be retained in any later implementation."
+    ]
+  }
+}

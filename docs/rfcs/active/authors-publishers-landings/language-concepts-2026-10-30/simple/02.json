@@ -1,0 +1,11 @@
+{
+  "id": "02",
+  "name": "По левому краю",
+  "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Everything left aligned. Heading, then current label and one horizontal row of four medium sans-serif current names. One thin horizontal rule. Below, upcoming label and the nine future names in a three-column, three-row grid. Airy but compact spacing.",
+  "references": [],
+  "output": "images/02.png",
+  "status": "generated",
+  "tool": "built-in image_gen.imagegen",
+  "sourceOutput": "/Users/user/.codex/generated_images/01a18db4-8f7b-7162-a166-c46ddb7a7a34/exec-1b15a876-de8d-4fd4-a5a3-8b9cf9048c72.png",
+  "transparent_background": false
+}

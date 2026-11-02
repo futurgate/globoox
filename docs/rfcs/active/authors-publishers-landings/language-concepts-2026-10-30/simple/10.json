@@ -1,0 +1,25 @@
+{
+  "id": "10",
+  "name": "Строгая типографика",
+  "tool": "image_gen.imagegen (built-in)",
+  "status": "generated-reviewed",
+  "prompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Simple centered all-sans-serif section, with a modest serif title only. Current label and all four current names in one horizontal row in medium-weight sans-serif. A subtle full-width hairline separates a smaller upcoming label and nine names in three short centered rows. Same width for both groups, restrained sizes, very quiet hierarchy.",
+  "references": [],
+  "transparent_background": false,
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-216b5077-71db-4e59-80eb-0864a9718832.png",
+  "output": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/simple/images/10.png",
+  "review": {
+    "result": "passed",
+    "findings": [
+      "All four current and nine upcoming names are present exactly once, with correct status grouping and readable accents/scripts.",
+      "Minimal typography-only composition on green, no illustration, card, pill, controls, team or additional copy.",
+      "Centered sans-serif language groups with modest serif title and a single hairline."
+    ],
+    "corrections": 0
+  },
+  "width": 1672,
+  "height": 941,
+  "mode": "RGB",
+  "bytes": 1290079,
+  "sha256": "fa65935e3fa979699ac49db6da2032db354f8011a2f2e2c021a5806571a75adc"
+}

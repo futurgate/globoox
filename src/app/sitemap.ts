@@ -13,6 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const staticPages: MetadataRoute.Sitemap = [
+    ...['authors', 'publishers'].map((audience) => ({
+      url: `${SITE_URL}/${audience}`,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
     {
       url: `${SITE_URL}/store`,
       lastModified: new Date(),

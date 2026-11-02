@@ -1,0 +1,35 @@
+{
+  "id": "07",
+  "name": "Компактная сетка",
+  "round": "simple",
+  "status": "generated-and-visually-reviewed",
+  "mode": "built-in image_gen.imagegen",
+  "executedPrompt": "Use case: ui-mockup. Create one extremely simple, polished website Languages section for Globoox, landscape 1536×864. Flat forest-green #2C3B2D background, warm ivory #F4F0E8 text, muted light sage secondary text. Lora-like Cyrillic serif headline, Inter-like supporting text. Realistic compact website spacing, generous side margins, no huge empty lower half. ONLY typography and, when specified, a single subtle hairline. No illustrations, books, cards, badges, pills, flags, icons, ornamental lines, gradients, textures, shadows, buttons, controls, header or footer. Avoid decorative cleverness. This is a quiet supporting section, not a spectacular hero. Required exact copy, each item ONCE: heading “Языки перевода”; current label “Уже доступны” with English, Français, Español, Русский; upcoming label “Скоро” with Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی. Keep all four available names and all nine upcoming names clearly grouped and readable; correct accents/scripts. Available names medium-large, upcoming smaller but readable. Do not add any text or numbering. Centered narrow composition occupying central 65% of width. Heading centered, current label below, four medium serif current names in an evenly spaced 2 by 2 grid. Under a subtle short hairline, upcoming label and nine smaller names arranged as a centered 3 by 3 grid. Tight logical spacing, not a tall poster.",
+  "references": [],
+  "transparent_background": false,
+  "sourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-775828c9-8462-4002-a4c9-3d1e8d185ce1.png",
+  "asset": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/simple/images/07.png",
+  "pixels": {
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB"
+  },
+  "bytes": 1268211,
+  "sha256": "a09c1c99097a39394e42dc78855b984c01e7de1cbcc94fcaa486901b3afbfcf5",
+  "review": {
+    "result": "accepted",
+    "method": "Visual inspection of actual generated image",
+    "observations": [
+      "Centered narrow layout: serif current names2×2, short subtle hairline, upcoming names3×3. No imagery or additional ornament.",
+      "Exact main heading and status labels present.",
+      "Four available names and nine upcoming names each appear once in correct status group; accents and scripts visually checked.",
+      "Green background, cream text, muted sage labels; all names legible and uncrowded.",
+      "No books, illustrations, cards, badges, flags, icons, controls, CTA, header or footer."
+    ],
+    "remainingDefects": [],
+    "caveats": [
+      "Native generated dimensions retained unchanged; raster proposal, not implemented UI."
+    ]
+  },
+  "corrections": []
+}

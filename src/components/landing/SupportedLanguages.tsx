@@ -4,6 +4,35 @@ import Image from 'next/image';
 import { BookOpen } from 'lucide-react';
 import { SectionLabel } from './SectionLabel';
 
+// Keep the original six positions unchanged for the primary landing.
+// The business presentation includes three additional upcoming languages.
+const futureLanguagePositions: Array<{
+  top?: string;
+  bottom?: string;
+  left?: string;
+  right?: string;
+  center?: boolean;
+}> = [
+  { top: '6%', left: '53%', center: true },
+  { top: '36%', left: '4%' },
+  { top: '46%', right: '0%' },
+  { bottom: '8%', left: '2%' },
+  { bottom: '4%', right: '4%' },
+  { bottom: '-2%', left: '50%', center: true },
+];
+
+const extendedFutureLanguagePositions: typeof futureLanguagePositions = [
+  { top: '-3%', left: '50%', center: true },
+  { top: '38%', left: '2%' },
+  { top: '49%', right: '3%' },
+  { bottom: '-1%', left: '0%' },
+  { bottom: '-1%', right: '3%' },
+  { bottom: '-14%', left: '50%', center: true },
+  { top: '-3%', left: '0%' },
+  { top: '-3%', right: '3%' },
+  { top: '36%', right: '3%' },
+];
+
 interface SupportedLanguagesProps {
   label: string;
   heading: string;
@@ -23,6 +52,23 @@ export function SupportedLanguages({
   soonLabel,
   globeAlt,
 }: SupportedLanguagesProps) {
+  const hasExtendedLanguages = futureLangs.length > futureLanguagePositions.length;
+  const languagePositions = hasExtendedLanguages ? extendedFutureLanguagePositions : futureLanguagePositions;
+  const languagePills: Array<(typeof futureLanguagePositions)[number] & {
+    label: string;
+    active: boolean;
+    soon?: boolean;
+  }> = [
+    { label: currentLangs[0], top: '11%', left: '15%', active: true },
+    { label: currentLangs[1], top: '18%', right: '8%', active: true },
+    { label: currentLangs[2], bottom: '23%', left: '10%', active: true },
+    { label: currentLangs[3], bottom: '14%', right: '14%', active: true },
+    ...futureLangs.map((language, index) => ({
+      ...language,
+      ...languagePositions[index],
+      active: false,
+    })),
+  ];
 
   return (
     <section className="supported-section" style={{ padding: '120px 40px', background: 'var(--ink)' }}>
@@ -85,7 +131,7 @@ export function SupportedLanguages({
               minWidth: 0,
               overflow: 'visible',
             }}
-            className="supported-card"
+            className={`supported-card${hasExtendedLanguages ? ' supported-card-extended' : ''}`}
           >
               <div
                 className="supported-card-visual"
@@ -180,18 +226,7 @@ export function SupportedLanguages({
                   />
                 </div>
 
-                {[
-                  { label: currentLangs[0], top: '11%', left: '15%', active: true },
-                  { label: currentLangs[1], top: '18%', right: '8%', active: true },
-                  { label: currentLangs[2], bottom: '23%', left: '10%', active: true },
-                  { label: currentLangs[3], bottom: '14%', right: '14%', active: true },
-                  { label: futureLangs[0].label, soon: futureLangs[0].soon, top: '6%', left: '53%', active: false, center: true },
-                  { label: futureLangs[1].label, soon: futureLangs[1].soon, top: '36%', left: '4%', active: false },
-                  { label: futureLangs[2].label, soon: futureLangs[2].soon, top: '46%', right: '0%', active: false },
-                  { label: futureLangs[3].label, soon: futureLangs[3].soon, bottom: '8%', left: '2%', active: false },
-                  { label: futureLangs[4].label, soon: futureLangs[4].soon, bottom: '4%', right: '4%', active: false },
-                  { label: futureLangs[5].label, soon: futureLangs[5].soon, bottom: '-2%', left: '50%', active: false, center: true },
-                ].map((lang) => (
+                {languagePills.map((lang) => (
                   <span
                     key={lang.label}
                     className="supported-lang-pill"
@@ -216,7 +251,7 @@ export function SupportedLanguages({
                       zIndex: lang.active ? 2 : 1,
                     }}
                   >
-                    <span>{lang.label}</span>
+                    <bdi>{lang.label}</bdi>
                     {lang.soon && (
                       <span
                         style={{
@@ -278,6 +313,9 @@ export function SupportedLanguages({
           }
           .supported-card {
             min-height: 360px !important;
+          }
+          .supported-card-extended {
+            min-height: 410px !important;
           }
           .supported-card-wrap {
             position: relative !important;

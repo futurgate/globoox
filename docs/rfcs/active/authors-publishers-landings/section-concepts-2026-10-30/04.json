@@ -1,0 +1,34 @@
+{
+  "id": "04",
+  "name": "Пробная глава",
+  "tool": "image_gen.imagegen (built-in)",
+  "status": "generated-reviewed",
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-03837546-352e-431f-a821-d3f703a6a532.png",
+  "output": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/04.png",
+  "executed": [
+    {
+      "prompt": "Use case: ui-mockup. Create ONE polished desktop website SECTION concept for the existing Globoox landing for authors, naturally continuing its selected hero. This is one section design, not multiple alternatives and not an entire website. Flat, full-bleed website screenshot; no browser chrome, app-device frame, montage, option labels, header, hero, team, publisher claims or navigation. Target1536px wide; use the stated section-height naturally, without stretching typography or content.\nReference image1 is the SELECTED LIVE HERO: use its premium contemporary editorial art direction, Lora-like Cyrillic serif, Inter-like body, warm parchment #F4F0E8, dark forest #2C3B2D, terracotta #C05A3A, restrained sage/mist, hairline rules, generous calm spacing, subtle linen/paper materials. Ignore its small comparison label and do not repeat its hero. Subsequent reference images show CURRENT SECTION CONTENT and any retained interaction/illustration principle; redesign the layout coherently rather than copying their old appearance. Preserve the exact supplied Russian wording. No testimonials, statistics, promises, new features, forms, prices, badges, or invented paragraphs. No generic card grids, heavy shadows, gradients, glassmorphism or tech-network decoration. Prefer clear typographic hierarchy and fine dividers; realistic implementable web design with readable text. Do not add the removed footer mission, “КНИГИ БЕЗ ГРАНИЦ”, “Открыть приложение”, a standalone G monogram, contact email text, or a team block. Team is explicitly out of scope. The concepts are visual proposals only, no production changes.\n\nTARGET SECTION: Пробная глава. Target image1536×720, natural full-width section.\n\nART DIRECTION:\nWarm slightly darker parchment invitation, spacious horizontal composition. Large serif title in the left60%, exact one-sentence explanation below, followed by one terracotta rounded-rectangle button matching the selectedhero. Right30% shows a single tangible cream chapter proof sheet resting partly over a slim closed cream book, a discreet terracotta bookmark peeking out. The sheet may show only “Глава1” and faint unlettered typesetting rules; no invented prose, claims or badges. Subtle high-quality paper relief and natural soft shadow, not a floating SaaS card or upload-form. No price label, gift icon, checkmarks or “без обязательств” copy. Narrow fine rules at top/bottom tie this invitation to the editorial system. All exact user content stays easily readable and the CTA is the visual action.\n\nEXACT CONTENT:\nБесплатный пробный перевод\n\nПришлите книгу, и мы бесплатно переведём из неё одну главу.\n\nПолучить пробный перевод",
+      "referenced_image_paths": [
+        "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/hero-concept-04-1536.png",
+        "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/references/trial.png"
+      ],
+      "transparent_background": false,
+      "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-03837546-352e-431f-a821-d3f703a6a532.png"
+    }
+  ],
+  "review": {
+    "result": "passed",
+    "findings": [
+      "Exact supplied Russian heading, body sentence and CTA are legible and correct.",
+      "Cream paper/linen illustration with restrained bookmark matches selected hero; no team, extra feature copy or forms.",
+      "Only decorative sheet text is Глава 1; no fabricated financial data."
+    ]
+  },
+  "dimensions": {
+    "width": 1832,
+    "height": 859,
+    "mode": "RGB"
+  },
+  "bytes": 1748343,
+  "sha256": "f4003bad1ed75d8bd3051b4b7253cde14d3645a6b4f2b5d1687c150661c096df"
+}

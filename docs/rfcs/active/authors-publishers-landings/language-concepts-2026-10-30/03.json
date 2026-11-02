@@ -1,0 +1,42 @@
+{
+  "id": "03",
+  "name": "Редакционный указатель",
+  "status": "generated-and-visually-reviewed",
+  "mode": "built-in image_gen.imagegen",
+  "scope": "Language layout proposal only; no implementation",
+  "specSource": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/spec.json",
+  "executedPrompt": "Use case: ui-mockup. Create ONE distinctive, beautiful, production-plausible DESKTOP LANGUAGES SECTION for the Globoox authors landing. Single flat full-width website section, landscape1536×1024. Not a whole site, not a collage or multiple alternatives. No header, hero, footer, team or browser/device chrome.\nReference1 is the selected live hero: use its contemporary editorial typography and refined book-design sensibility; ignore its comparison marker, content and logos. Reference2 is the newly APPROVED closing section: use its dark forest-green base, warm cream lettering/paper, terracotta accents and carefully restrained physical materials. These are STYLE references only. Do not copy their compositions. Design a new composition exactly as described below.\nKeep this shared design system: forest-green #2C3B2D edge-to-edge section, warm ivory/parchment #F4F0E8, terracotta #C05A3A or readable peach accents on green, thin rules, Lora-like Cyrillic serif display and Inter-like supporting typography. Natural soft shadows only for physical paper/books. No neon, glassmorphism, blue SaaS styling, decorative plants, flags, generic floating appcards, heavy borders, gratuitous gradients or shiny3Dglobes. Prioritize actual reading hierarchy. Do not add a button, form, language picker, testimonials, statistics, fake partner claims, translations of the language names or explanatory marketing paragraphs. No extra slogan or an isolated G monogram. Keep all13 language names easily readable and visibly grouped by status; upcoming languages must NOT look available.\nEXACT CONTENT, each item once (do not duplicate names in headings, books, captions or lists):\nMain heading: “Языки перевода”.\nAvailable group label: “Уже доступны”. Exactly FOUR available names: “English”, “Français”, “Español”, “Русский”.\nUpcoming group label: “Скоро”. Exactly NINE upcoming names: “Deutsch”, “Italiano”, “Português”, “Türkçe”, “中文”, “日本語”, “한국어”, “العربية”, “فارسی”.\nPreserve accents and all scripts correctly. Use at least roughly20px visual language-name size at1536px width. The layout should work as a coherent website section continuing the references, but be clearly different from other arrangements. No tiny scattered soon labels. The image is a design proposal, not a screenshot of current implementation.\n\nDISTINCT COMPOSITION 03:\nTHREE-COLUMN DIRECTORY. No illustrations or books. A pure editorial grid with two fine vertical dividers: left30% is the large stacked main heading with immense breathingroom, middle30% contains “Уже доступны” and the four available names in a tall spacious serif list with small terracotta circular markers, right40% contains “Скоро” and the nine future names in three rows × three columns, readable restrained cream type. Use vertical alignment and whitespace, not filled cards. Current names42–52px; future names24–28px. All elements belong to one deep-green plane. This is a quiet architectural grid, not the atlas arrangement.",
+  "referenced_image_paths": [
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/selected-authors-1536.png",
+    "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/06.png"
+  ],
+  "referencesInspected": true,
+  "transparent_background": false,
+  "sourceOutput": "/Users/user/.codex/generated_images/01a18db8-1541-7c90-b902-8e9e087e2678/exec-905a4200-35a5-4ae1-ad75-31927eb27486.png",
+  "asset": "docs/rfcs/active/authors-publishers-landings/language-concepts-2026-10-30/images/03.png",
+  "pixels": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB"
+  },
+  "bytes": 1348373,
+  "sha256": "057c907d1cd8fc4abe5921cc19d9064e6f09e531e75e12b22b6572833ab66067",
+  "review": {
+    "result": "accepted",
+    "method": "Visual inspection of actual generated output",
+    "observations": [
+      "Architectural three-column directory: stacked left heading, four central large current names with terracotta dots, right3×3 upcoming grid. No books or illustrations.",
+      "Heading Языки перевода and status labels Уже доступны / Скоро are present.",
+      "Available: English, Français, Español, Русский, each once and correctly grouped.",
+      "Upcoming: Deutsch, Italiano, Português, Türkçe, 中文, 日本語, 한국어, العربية, فارسی, each once and correctly grouped.",
+      "Forest-green section base, cream type/paper, restrained terracotta accents.",
+      "Names comfortably readable, no overlap/crowding or clipped labels.",
+      "No extra header, hero, footer, CTA, team, flags, claims or marketing prose."
+    ],
+    "remainingDefects": [],
+    "caveats": [
+      "Raster proposal; names must remain live canonical text in any later implementation."
+    ]
+  },
+  "corrections": []
+}

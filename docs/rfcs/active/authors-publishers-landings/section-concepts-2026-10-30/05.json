@@ -1,0 +1,43 @@
+{
+  "id": "05",
+  "name": "Путь книги к читателю",
+  "tool": "image_gen.imagegen (built-in)",
+  "status": "generated-reviewed",
+  "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-09c881a7-17e0-4f1a-8f05-d4e5ab6f26e8.png",
+  "output": "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/images/05.png",
+  "executed": [
+    {
+      "prompt": "Use case: ui-mockup. Create ONE polished desktop website SECTION concept for the existing Globoox landing for authors, naturally continuing its selected hero. This is one section design, not multiple alternatives and not an entire website. Flat, full-bleed website screenshot; no browser chrome, app-device frame, montage, option labels, header, hero, team, publisher claims or navigation. Target1536px wide; use the stated section-height naturally, without stretching typography or content.\nReference image1 is the SELECTED LIVE HERO: use its premium contemporary editorial art direction, Lora-like Cyrillic serif, Inter-like body, warm parchment #F4F0E8, dark forest #2C3B2D, terracotta #C05A3A, restrained sage/mist, hairline rules, generous calm spacing, subtle linen/paper materials. Ignore its small comparison label and do not repeat its hero. Subsequent reference images show CURRENT SECTION CONTENT and any retained interaction/illustration principle; redesign the layout coherently rather than copying their old appearance. Preserve the exact supplied Russian wording. No testimonials, statistics, promises, new features, forms, prices, badges, or invented paragraphs. No generic card grids, heavy shadows, gradients, glassmorphism or tech-network decoration. Prefer clear typographic hierarchy and fine dividers; realistic implementable web design with readable text. Do not add the removed footer mission, “КНИГИ БЕЗ ГРАНИЦ”, “Открыть приложение”, a standalone G monogram, contact email text, or a team block. Team is explicitly out of scope. The concepts are visual proposals only, no production changes.\n\nTARGET SECTION: Путь книги к читателю. Target image1536×920, natural full-width section.\n\nART DIRECTION:\nDeep forest-green publication process section, MUST remain green. Cream serif heading across top, no cramped line breaks. Below, one generous three-column editorial sequence separated by fine muted vertical lines, rather than individual cards. Large peach/terracotta numbers01,02,03; exact step titles and descriptions below, comfortable cream/mist text. At the lower part of each column show a small refined cream paper vignette, all same art direction:01 a carefully typeset ebook proof sheet with crop marks;02 the SAME book beside a spare abstract storefront shelf, no invented logos;03 a neat paper remittance statement with simple rules, no currency numbers, percentages or fabricated financial data. A single restrained fine line with tiny circular dots runs left-to-right below the three vignettes to express continuity. No arrow streaks, gradients, dashboards or additional feature copy. This is the service journey, not a carousel. Keep every text item verbatim and the green background edge-to-edge.\n\nEXACT CONTENT:\nМы берём на себя весь путь книги к читателю\n01\nПодготовка\n\nОформляем электронное издание по требованиям каждой площадки.\n\n02\nРазмещение\n\nОткрываем продажи в выбранных вами магазинах.\n\n03\nВыплаты\n\nСобираем выручку и перечисляем вам авторскую долю.",
+      "referenced_image_paths": [
+        "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/hero-concept-04-1536.png",
+        "/Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/references/publishing.png"
+      ],
+      "transparent_background": false,
+      "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-87928141-b04f-471c-ac94-9966726c9d95.png"
+    },
+    {
+      "prompt": "Use case: precise-object-edit / ui-mockup. Edit this exact generated Globoox publishing-process section. Preserve its entire layout, dimensions, green background, all main typography and exact Russian heading and three-step text, all01/02/03 numbers, book and paper material, three-column dividers, bottom thin connector and round dots. Make only these two changes: (1) remove both leafy botanical sprigs from the bottom-left first vignette and right edge of the third vignette, replacing them with the uninterrupted dark-green background and the already implied unobstructed paper/book edges; (2) remove the extra heading “Отчёт о выплатах” from the cream statement in the third vignette and replace it with a short unlettered fine horizontal rule consistent with the rest of that statement. Do not add text, objects, logos, claims, currency, numbers, controls, or new decoration. Keep every other pixel and all supplied main content as close as possible to the original. This is a targeted cleanup, not a redesign.",
+      "referenced_image_paths": [
+        "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-87928141-b04f-471c-ac94-9966726c9d95.png"
+      ],
+      "transparent_background": false,
+      "source_output": "/Users/user/.codex/generated_images/01a18e58-0dd0-7193-b951-70239cb683a3/exec-09c881a7-17e0-4f1a-8f05-d4e5ab6f26e8.png"
+    }
+  ],
+  "review": {
+    "result": "passed",
+    "findings": [
+      "Deep green background retained; all three numbered steps and supplied Russian copy legible and correct.",
+      "Three coordinated paper/book vignettes, restrained dividers and dots.",
+      "First output added botanical sprigs and an extra decorative statement title; one targeted edit removed both, preserving all requested main content.",
+      "No currency, percentages, fabricated payout figures or team."
+    ]
+  },
+  "dimensions": {
+    "width": 1620,
+    "height": 971,
+    "mode": "RGB"
+  },
+  "bytes": 1734039,
+  "sha256": "9ad238bad0f5aa5a54090f3b17eed2da4fc7ede194c7fb51b9366b936ecc6cc4"
+}

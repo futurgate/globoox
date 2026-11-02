@@ -1,0 +1,27 @@
+{
+  "id": "06",
+  "name": "Контакт и футер",
+  "status": "reviewed",
+  "prompt": "Use case: ui-mockup. Create ONE polished desktop website SECTION concept for the existing Globoox landing for authors, naturally continuing its selected hero. This is one section design, not multiple alternatives and not an entire website. Flat, full-bleed website screenshot; no browser chrome, app-device frame, montage, option labels, header, hero, team, publisher claims or navigation. Target1536px wide; use the stated section-height naturally, without stretching typography or content.\nReference image1 is the SELECTED LIVE HERO: use its premium contemporary editorial art direction, Lora-like Cyrillic serif, Inter-like body, warm parchment #F4F0E8, dark forest #2C3B2D, terracotta #C05A3A, restrained sage/mist, hairline rules, generous calm spacing, subtle linen/paper materials. Ignore its small comparison label and do not repeat its hero. Subsequent reference images show CURRENT SECTION CONTENT and any retained interaction/illustration principle; redesign the layout coherently rather than copying their old appearance. Preserve the exact supplied Russian wording. No testimonials, statistics, promises, new features, forms, prices, badges, or invented paragraphs. No generic card grids, heavy shadows, gradients, glassmorphism or tech-network decoration. Prefer clear typographic hierarchy and fine dividers; realistic implementable web design with readable text. Do not add the removed footer mission, “КНИГИ БЕЗ ГРАНИЦ”, “Открыть приложение”, a standalone G monogram, contact email text, or a team block. Team is explicitly out of scope. The concepts are visual proposals only, no production changes.\n\nTARGET SECTION: Контакт и футер. Target image1536×900, natural full-width section.\n\nART DIRECTION:\nOne cohesive dark forest-green closing composition including its compact footer. Main CTA region uses a large cream serif headline on the left, broken with calm editorial rhythm; one terracotta rounded-rectangle contact button below. To the right, a single upright cream linen book from the approvedhero, embossed fine arcs, cover title exactly “Ваша книга” in two tight lines and small “Globoox” at bottom. One delicate arc from its page edge can fade outward into open space, no marketplacelogos or network. Bottom compact footer is separated by a long fine inset horizontal rule: tiny typographic fleuron and exact copyright “Globoox © 2026”, restrained and beautifully aligned. Do NOT add a large footer wordmark, mission paragraph, legal links that are not present in the source footer, newsletter, email, social icons or team. Preserve the final CTA’s existing text, not theheroCTA wording. Strong confident ending with calm whitespace, not a second hero or a tall empty screen.\n\nEXACT CONTENT:\nОткройте свою книгу читателям всего мира\nСвязаться с Globoox\nFooter: Globoox © 2026. One small decorative fleuron.",
+  "references": [
+    "docs/rfcs/active/authors-publishers-landings/hero-concepts-2026-10-30/implementation/hero-concept-04-1536.png",
+    "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/references/contact.png",
+    "docs/rfcs/active/authors-publishers-landings/section-concepts-2026-10-30/references/footer.png"
+  ],
+  "originalOutput": "/Users/user/.codex/generated_images/01a18db4-8f7b-7162-a166-c46ddb7a7a34/exec-9dacb493-f441-4cde-8713-c6749c71620b.png",
+  "output": "images/06.png",
+  "transparent_background": false,
+  "tool": "built-in image_gen.imagegen",
+  "actual_dimensions": [
+    1639,
+    960
+  ],
+  "review": {
+    "main_copy": "verified Russian headline, exact body/CTA retained",
+    "composition": "coherent with selected editorial hero",
+    "team": "absent",
+    "status": "passed",
+    "finding": "Green contact composition, correct CTA, single book, compact copyright footer; no removed mission."
+  },
+  "sha256": "021b40fb0b4375972436f8824cd2e38ad62c759a0e891e06eceb26dcfe85e4a1"
+}
