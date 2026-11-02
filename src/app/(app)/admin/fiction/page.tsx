@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,8 @@ import {
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
+  applyRevision,
+  getRevisionCostRuns,
   getFictionCosts,
   startReaderCheck,
   getReaderCheckProgress,
@@ -44,6 +47,7 @@ import {
   type GlossaryProgressEvent,
   type RevisionProgressEvent,
   type RevisionDiffEntry,
+  type RevisionCostRun,
   type BookGlossary,
   type FictionCosts,
   type FictionStageCost,
@@ -247,6 +251,11 @@ export default function AdminFictionPage() {
   const [diffOpen, setDiffOpen] = useState(false);
   const [diffLoading, setDiffLoading] = useState(false);
   const [diffEntries, setDiffEntries] = useState<RevisionDiffEntry[] | null>(null);
+  const [revisionApplyBusyId, setRevisionApplyBusyId] = useState<string | null>(null);
+  const [revisionApprovingAll, setRevisionApprovingAll] = useState(false);
+  const [revisionCostRuns, setRevisionCostRuns] = useState<RevisionCostRun[] | null>(null);
+  const [revisionCostRunsOpen, setRevisionCostRunsOpen] = useState(false);
+  const [revisionCostRunsLoading, setRevisionCostRunsLoading] = useState(false);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -867,6 +876,8 @@ export default function AdminFictionPage() {
     if (!isAdmin || !bookId) return;
     setDiffOpen(false);
     setDiffEntries(null);
+    setRevisionCostRunsOpen(false);
+    setRevisionCostRuns(null);
     void loadRevisionProgress();
   }, [isAdmin, bookId, lang, loadRevisionProgress]);
 
@@ -894,6 +905,70 @@ export default function AdminFictionPage() {
       setDiffLoading(false);
     }
   }, [bookId, lang, diffOpen]);
+
+  // Review one revised block (auto-commit mode). approve accepts the applied text
+  // (or `editedText`); reject reverts the block to its Pass-1 draft. Updates the
+  // open diff entry in place so the panel reflects the new outcome without a reload.
+  const handleRevisionApply = useCallback(
+    async (blockId: string, action: 'approve' | 'reject', editedText?: string) => {
+      if (!bookId) return;
+      setRevisionApplyBusyId(blockId);
+      setRevisionError(null);
+      try {
+        const r = await applyRevision(bookId, lang, blockId, action, editedText);
+        setDiffEntries((prev) =>
+          prev
+            ? prev.map((e) =>
+                e.blockId === blockId
+                  ? {
+                      ...e,
+                      outcome: r.outcome,
+                      revised: r.after ?? e.revised,
+                      rejectReason: action === 'reject' ? 'human_rejected' : null,
+                    }
+                  : e,
+              )
+            : prev,
+        );
+      } catch (e) {
+        setRevisionError(e instanceof Error ? e.message : `Failed to ${action} revision`);
+      } finally {
+        setRevisionApplyBusyId(null);
+      }
+    },
+    [bookId, lang],
+  );
+
+  // Accept every still-unreviewed ('applied') block as-is. Items edited in a
+  // textarea but not individually approved are accepted with their current revised
+  // text — edit + approve those one by one to keep a manual edit.
+  const handleRevisionApproveAll = useCallback(async () => {
+    if (!bookId || revisionApprovingAll) return;
+    const targets = (diffEntries ?? []).filter((e) => e.outcome === 'applied');
+    if (targets.length === 0) return;
+    setRevisionApprovingAll(true);
+    setRevisionError(null);
+    try {
+      for (const e of targets) {
+        await handleRevisionApply(e.blockId, 'approve');
+      }
+    } finally {
+      setRevisionApprovingAll(false);
+    }
+  }, [bookId, revisionApprovingAll, diffEntries, handleRevisionApply]);
+
+  const loadRevisionCostRuns = useCallback(async () => {
+    if (!bookId) return;
+    setRevisionCostRunsLoading(true);
+    try {
+      const r = await getRevisionCostRuns(bookId, lang);
+      setRevisionCostRuns(r.runs);
+    } catch {
+      setRevisionCostRuns(null);
+    } finally {
+      setRevisionCostRunsLoading(false);
+    }
+  }, [bookId, lang]);
 
   const handleTranslate = useCallback(async () => {
     if (!bookId || running) return;
@@ -1522,7 +1597,7 @@ export default function AdminFictionPage() {
               server-side override that the next <em>real</em> run uses (for cached stages — translate/revision —
               re-run with <em>Overwrite</em> to regenerate). <strong>Reset to shipped</strong> removes the override.
               All editable prompts across directions are also on{' '}
-              <a href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</a>.
+              <Link href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</Link>.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setPromptsOpen((o) => !o)}>
@@ -1878,6 +1953,41 @@ export default function AdminFictionPage() {
             )}
             {diffOpen ? 'Hide changes' : 'View changes'}
           </Button>
+
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (revisionCostRunsOpen) { setRevisionCostRunsOpen(false); return; }
+              await loadRevisionCostRuns();
+              setRevisionCostRunsOpen(true);
+            }}
+            disabled={!bookId || revisionCostRunsLoading}
+            title="Cost of each revision run, newest first"
+          >
+            {revisionCostRunsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : revisionCostRunsOpen ? (
+              <ChevronDown className="mr-2 h-4 w-4" />
+            ) : (
+              <ChevronRight className="mr-2 h-4 w-4" />
+            )}
+            Cost per run
+          </Button>
+
+          {(() => {
+            const pending = (diffEntries ?? []).filter((e) => e.outcome === 'applied').length;
+            if (!diffOpen || pending === 0) return null;
+            return (
+              <Button onClick={handleRevisionApproveAll} disabled={!bookId || revisionApprovingAll}>
+                {revisionApprovingAll ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCheck className="mr-2 h-4 w-4" />
+                )}
+                Approve all ({pending})
+              </Button>
+            );
+          })()}
         </div>
 
         <label
@@ -1938,7 +2048,11 @@ export default function AdminFictionPage() {
 
         {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
 
-        {diffOpen && diffEntries && <RevisionDiffView entries={diffEntries} />}
+        {revisionCostRunsOpen && <RevisionCostRunsTable runs={revisionCostRuns} loading={revisionCostRunsLoading} />}
+
+        {diffOpen && diffEntries && (
+          <RevisionDiffView entries={diffEntries} onApply={handleRevisionApply} busyId={revisionApplyBusyId} />
+        )}
       </div>
 
       {/* ── Reader-check QA pass (calques / reader) ── */}
@@ -2479,7 +2593,28 @@ function ReaderCheckJournalView({
   );
 }
 
-function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
+const REVISION_OUTCOME_STYLE: Record<string, string> = {
+  applied: 'text-sky-600 dark:text-sky-400',
+  approved: 'text-emerald-600 dark:text-emerald-400',
+  rejected: 'text-amber-600 dark:text-amber-500',
+  unchanged: 'text-[var(--app-text-muted)]',
+};
+const REVISION_OUTCOME_LABEL: Record<string, string> = {
+  applied: 'applied — review',
+  approved: 'approved',
+  rejected: 'rejected (reverted)',
+  unchanged: 'unchanged',
+};
+
+function RevisionDiffView({
+  entries,
+  onApply,
+  busyId,
+}: {
+  entries: RevisionDiffEntry[];
+  onApply: (blockId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busyId: string | null;
+}) {
   // Group entries by chapter, preserving the (already chapter+position ordered) sequence.
   const groups: { key: string; title: string; items: RevisionDiffEntry[] }[] = [];
   for (const e of entries) {
@@ -2497,19 +2632,69 @@ function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
     );
   }
 
+  const applied = entries.filter((e) => e.outcome === 'applied').length;
+  const approved = entries.filter((e) => e.outcome === 'approved').length;
+  const rejected = entries.filter((e) => e.outcome === 'rejected').length;
+
   return (
     <div className="space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-4 text-sm">
-      <p className="text-xs text-[var(--app-text-muted)]">{entries.length} changed block{entries.length === 1 ? '' : 's'}</p>
+      <p className="text-xs text-[var(--app-text-muted)]">
+        {entries.length} changed block{entries.length === 1 ? '' : 's'} · {applied} to review · {approved} approved · {rejected} rejected
+      </p>
       {groups.map((g) => (
         <section key={g.key} className="space-y-2">
           <h4 className="text-xs font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">{g.title}</h4>
           <ul className="space-y-3">
             {g.items.map((e) => (
-              <RevisionDiffEntryRow key={e.blockId} entry={e} />
+              <RevisionDiffEntryRow key={e.blockId} entry={e} onApply={onApply} busy={busyId === e.blockId} />
             ))}
           </ul>
         </section>
       ))}
+    </div>
+  );
+}
+
+// Per-run Pass-2 revision cost history: one row per run (newest first). LLM time is
+// summed call time across the run's calls (not wall-clock).
+function RevisionCostRunsTable({ runs, loading }: { runs: RevisionCostRun[] | null; loading: boolean }) {
+  if (loading && !runs) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading cost history…
+      </div>
+    );
+  }
+  if (!runs || runs.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No runs recorded yet — run a revision pass.</p>;
+  }
+  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+  return (
+    <div className="overflow-x-auto rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-[var(--separator-opaque)] text-left text-xs text-[var(--app-text-muted)]">
+            <th className="p-2 font-medium">Run</th>
+            <th className="p-2 font-medium">Model</th>
+            <th className="p-2 text-right font-medium">Calls</th>
+            <th className="p-2 text-right font-medium">Tokens</th>
+            <th className="p-2 text-right font-medium">Cost</th>
+            <th className="p-2 text-right font-medium">LLM time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {runs.map((r) => (
+            <tr key={r.runId} className="border-b border-[var(--separator-opaque)] last:border-b-0">
+              <td className="p-2 tabular-nums">{when(r.startedAt)}</td>
+              <td className="p-2 text-[var(--app-text-muted)]">{r.model ?? '—'}</td>
+              <td className="p-2 text-right tabular-nums">{r.totals.calls}</td>
+              <td className="p-2 text-right tabular-nums">{fmtTokens(r.totals.tokensIn + r.totals.tokensOut)}</td>
+              <td className="p-2 text-right font-medium tabular-nums">{fmtUsd(r.totals.costUsd)}</td>
+              <td className="p-2 text-right tabular-nums text-[var(--app-text-muted)]">{fmtDuration(r.totals.durationMs)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -2638,10 +2823,30 @@ function StageCostRows({ row }: { row: FictionStageCost }) {
   );
 }
 
-function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
+function RevisionDiffEntryRow({
+  entry,
+  onApply,
+  busy,
+}: {
+  entry: RevisionDiffEntry;
+  onApply: (blockId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busy: boolean;
+}) {
   const [showSource, setShowSource] = useState(false);
+  // Seeded once from the revised text; the row is keyed by blockId so edits persist
+  // across outcome changes (same pattern as ReaderFixEditor).
+  const [text, setText] = useState(entry.revised);
+
+  const rejected = entry.outcome === 'rejected';
+  const approveLabel = entry.outcome === 'approved' ? 'Save & re-apply' : 'Approve';
   return (
     <li className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
+      <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
+        <span className={`font-semibold uppercase ${REVISION_OUTCOME_STYLE[entry.outcome] ?? ''}`}>
+          {REVISION_OUTCOME_LABEL[entry.outcome] ?? entry.outcome}
+        </span>
+        {rejected && <span className="text-[var(--app-text-muted)]">· showing the Pass-1 draft (revision not in the book)</span>}
+      </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">Draft (before)</div>
@@ -2649,17 +2854,34 @@ function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
         </div>
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
-          <p className="whitespace-pre-wrap">{entry.revised}</p>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={Math.min(10, Math.max(2, text.split('\n').length))}
+            disabled={busy}
+            className="w-full rounded-[var(--radius)] border border-sky-500/40 bg-[var(--app-surface-bg)] p-2 text-sm outline-none focus:border-[var(--app-accent)]"
+          />
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => setShowSource((s) => !s)}
-        className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
-      >
-        {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-        {showSource ? 'Hide source' : 'Show source'}
-      </button>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={() => onApply(entry.blockId, 'approve', text)} disabled={busy || !text.trim()}>
+          {busy ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Check className="mr-1 h-3 w-3" />}
+          {approveLabel}
+        </Button>
+        {!rejected && (
+          <Button size="sm" variant="outline" onClick={() => onApply(entry.blockId, 'reject')} disabled={busy}>
+            <X className="mr-1 h-3 w-3" /> Reject &amp; revert
+          </Button>
+        )}
+        <button
+          type="button"
+          onClick={() => setShowSource((s) => !s)}
+          className="ml-auto inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
+        >
+          {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+          {showSource ? 'Hide source' : 'Show source'}
+        </button>
+      </div>
       {showSource && <p className="mt-1 whitespace-pre-wrap text-xs text-[var(--app-text-muted)]">{entry.source}</p>}
     </li>
   );
