@@ -146,13 +146,14 @@ function RevisionStateBadge({ state, live, error }: { state: string; live: boole
       label: 'Interrupted',
       className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
       Icon: ShieldAlert,
-      title: 'The run stopped heartbeating (proxy/platform timeout, deploy, or crash). Click “Run revision” to resume the rest — finished blocks are skipped.',
+      // Prefer the server's note (e.g. a rate-limit summary) when present.
+      title: error || 'The run stopped heartbeating (proxy/platform timeout, deploy, or crash). Click “Run revision” to resume the rest — finished blocks are skipped.',
     },
     incomplete: {
       label: 'Stopped — incomplete',
       className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
       Icon: ShieldAlert,
-      title: 'The run finished but some blocks were left unrevised. Click “Run revision” to finish the rest.',
+      title: error || 'The run finished but some blocks were left unrevised. Click “Run revision” to finish the rest.',
     },
     error: {
       label: 'Failed',
@@ -1355,6 +1356,12 @@ export default function AdminFictionPage() {
     );
   }
 
+  // A run that stopped before completing (crashed/stalled, incomplete, or errored)
+  // while nothing is streaming now — its reason note (e.g. a rate-limit summary) is
+  // shown inside the progress panel rather than as a generic red error line.
+  const revisionStopped =
+    !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <div className="flex items-start justify-between gap-3">
@@ -2008,7 +2015,7 @@ export default function AdminFictionPage() {
         </label>
 
         {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (() => {
-          const stopped = !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
+          const stopped = revisionStopped;
           const label = revisionRunning
             ? 'Revising…'
             : revisionState === 'done'
@@ -2038,15 +2045,23 @@ export default function AdminFictionPage() {
                 />
               </div>
               {stopped && (
-                <p className="text-xs text-[var(--app-text-muted)]">
-                  Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
-                </p>
+                <div className="space-y-1">
+                  {/* Server-reported reason for the stop (e.g. a rate-limit summary). */}
+                  {revisionError && (
+                    <p className="text-xs font-medium text-amber-600 dark:text-amber-500">{revisionError}</p>
+                  )}
+                  <p className="text-xs text-[var(--app-text-muted)]">
+                    Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
+                  </p>
+                </div>
               )}
             </div>
           );
         })()}
 
-        {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
+        {/* Live-run errors (dropped stream / failed start / apply errors). The
+            stopped-state note is shown inside the panel above, so don't duplicate it. */}
+        {revisionError && !revisionStopped && <p className="text-sm text-red-500">{revisionError}</p>}
 
         {revisionCostRunsOpen && <RevisionCostRunsTable runs={revisionCostRuns} loading={revisionCostRunsLoading} />}
 
