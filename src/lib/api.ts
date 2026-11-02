@@ -462,10 +462,10 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 // ── Full-book fiction translation (admin) ──────────────────────────────────
 
 export type FictionProgressEvent = {
-  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'stopped'
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'stopped' | 'glossary_scope'
   chapterId?: string
   index?: number
-  title?: string
+  title?: string | null
   blocks?: number
   parsed?: number
   done?: number
@@ -478,6 +478,12 @@ export type FictionProgressEvent = {
   message?: string
   calls?: number
   callBudget?: number
+  // glossary_scope: which glossary entries were sent for this chapter (point 2
+  // principle 2), so a human can check that declined forms still pull their entry.
+  entriesIn?: number
+  entriesOut?: number
+  names?: string[]
+  terms?: string[]
 }
 
 export type FictionProgress = {
