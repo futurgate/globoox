@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
@@ -108,6 +109,68 @@ const STREAM_DROPPED_NOTE =
 function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'dropped' | 'failed' {
   if (e instanceof Error && e.name === 'AbortError') return 'aborted';
   return streamStarted ? 'dropped' : 'failed';
+}
+
+/**
+ * At-a-glance Pass-2 revision run state. Keyed off the backend run-state (GET
+ * /revise-full-book) so a run that stalled, stopped incomplete, failed, or
+ * finished in the background is obvious without reading the progress bar. States
+ * mirror the GET endpoint: running | stalled | incomplete | error | done | idle.
+ * A STOPPED run (stalled / incomplete / error) is highlighted so it's easy to
+ * spot that it needs a resume. `live` forces 'running' while THIS tab is streaming
+ * (before the first server heartbeat lands).
+ */
+function RevisionStateBadge({ state, live, error }: { state: string; live: boolean; error?: string | null }) {
+  const s = live ? 'running' : state;
+  const meta: Record<
+    string,
+    { label: string; className: string; Icon: React.ComponentType<{ className?: string }> | null; spin?: boolean; title: string }
+  > = {
+    running: {
+      label: 'In progress',
+      className: 'border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400',
+      Icon: Loader2, spin: true,
+      title: 'A revision run is in progress.',
+    },
+    done: {
+      label: 'Complete',
+      className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      Icon: Check,
+      title: 'All revisable blocks are revised.',
+    },
+    stalled: {
+      label: 'Interrupted',
+      className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
+      Icon: ShieldAlert,
+      title: 'The run stopped heartbeating (proxy/platform timeout, deploy, or crash). Click “Run revision” to resume the rest — finished blocks are skipped.',
+    },
+    incomplete: {
+      label: 'Stopped — incomplete',
+      className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
+      Icon: ShieldAlert,
+      title: 'The run finished but some blocks were left unrevised. Click “Run revision” to finish the rest.',
+    },
+    error: {
+      label: 'Failed',
+      className: 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
+      Icon: X,
+      title: error || 'The run failed — see the error below.',
+    },
+    idle: {
+      label: 'Not started',
+      className: 'border-transparent bg-[var(--separator-opaque)] text-[var(--app-text-muted)]',
+      Icon: null,
+      title: 'No revision has run for this book/language yet.',
+    },
+  };
+  const m = meta[s] ?? meta.idle;
+  const Icon = m.Icon;
+  return (
+    <Badge variant="outline" className={m.className} title={m.title}>
+      {Icon && <Icon className={m.spin ? 'animate-spin' : undefined} />}
+      {m.label}
+    </Badge>
+  );
 }
 
 // ── Per-stage prompt editor (server-backed) ──────────────────────────────────
@@ -1770,14 +1833,17 @@ export default function AdminFictionPage() {
 
       {/* ── Stylistic revision (Pass 2) ── */}
       <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
-        <div>
-          <h2 className="flex items-center gap-2 text-sm font-semibold">
-            <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
-          </h2>
-          <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-            Polishes the translated text block by block using neighboring context + the glossary. Runs on
-            the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
-          </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
+            </h2>
+            <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+              Polishes the translated text block by block using neighboring context + the glossary. Runs on
+              the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
+            </p>
+          </div>
+          {bookId && <RevisionStateBadge state={revisionState} live={revisionRunning} error={revisionError} />}
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
