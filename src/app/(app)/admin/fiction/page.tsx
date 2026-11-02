@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -161,6 +161,12 @@ export default function AdminFictionPage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  // Per-chapter glossary scope log (point 2 principle 2): which entries were sent
+  // for each chapter, so we can verify declined forms still pull their entry.
+  type ScopeEntry = { index: number; title: string | null; entriesIn: number; entriesOut: number; names: string[]; terms: string[] };
+  const [scopeLog, setScopeLog] = useState<ScopeEntry[]>([]);
+  const [scopeOpen, setScopeOpen] = useState(false);
+  const [scopeCopied, setScopeCopied] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
   const [overwriteTranslation, setOverwriteTranslation] = useState(false);
   const [runRevisionAfter, setRunRevisionAfter] = useState(false);
@@ -377,6 +383,28 @@ export default function AdminFictionPage() {
   // true after a reload (or when a build was started elsewhere). Drives the
   // loader/label so progress is visible even without an active stream here.
   const glossaryBuilding = glossaryRunning || glossaryState === 'building';
+
+  // Plain-text dump of the per-chapter glossary scope log, for one-click copy.
+  const scopeLogText = useMemo(() => {
+    if (scopeLog.length === 0) return '';
+    return scopeLog
+      .map((s) => {
+        const header = `## Chapter ${s.index + 1}${s.title ? ` — ${s.title}` : ''}  (${s.entriesOut}/${s.entriesIn} entries)`;
+        const names = s.names.length ? ['NAMES:', ...s.names.map((n) => `  ${n}`)].join('\n') : 'NAMES: (none)';
+        const terms = s.terms.length ? ['TERMS:', ...s.terms.map((t) => `  ${t}`)].join('\n') : 'TERMS: (none)';
+        return `${header}\n${names}\n${terms}`;
+      })
+      .join('\n\n');
+  }, [scopeLog]);
+
+  const copyScopeLog = useCallback(async () => {
+    if (!scopeLogText) return;
+    try {
+      await navigator.clipboard.writeText(scopeLogText);
+      setScopeCopied(true);
+      setTimeout(() => setScopeCopied(false), 1500);
+    } catch { /* clipboard blocked — ignore */ }
+  }, [scopeLogText]);
 
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
@@ -812,6 +840,8 @@ export default function AdminFictionPage() {
     setComplete(false);
     setDone(0);
     setCurrent(null);
+    setScopeLog([]);
+    setScopeCopied(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -839,6 +869,19 @@ export default function AdminFictionPage() {
           // just "freezes" silently — the colleague's original complaint.
           setError(ev.message || `Run stopped (${ev.reason ?? 'unknown'})`);
           setCurrent(null);
+          break;
+        case 'glossary_scope':
+          setScopeLog((log) => [
+            ...log,
+            {
+              index: ev.index ?? log.length,
+              title: ev.title ?? null,
+              entriesIn: ev.entriesIn ?? 0,
+              entriesOut: ev.entriesOut ?? 0,
+              names: ev.names ?? [],
+              terms: ev.terms ?? [],
+            },
+          ]);
           break;
         case 'book_done':
           if (typeof ev.done === 'number') setDone(ev.done);
@@ -1361,6 +1404,47 @@ export default function AdminFictionPage() {
         )}
 
         {error && <p className="text-sm text-red-500">{error}</p>}
+
+        {/* ── Per-chapter glossary scope log (point 2 principle 2) ── */}
+        {scopeLog.length > 0 && (
+          <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setScopeOpen((o) => !o)}
+                className="flex items-center gap-1 font-medium text-[var(--app-text)]"
+              >
+                {scopeOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                Glossary sent per chapter ({scopeLog.length} chapters)
+              </button>
+              <Button variant="outline" size="sm" onClick={copyScopeLog}>
+                {scopeCopied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
+                {scopeCopied ? 'Copied' : 'Copy log'}
+              </Button>
+            </div>
+            <p className="mt-1 text-[var(--app-text-muted)]">
+              Which glossary entries were sent to each chapter. Use it to check a declined form still pulls its entry
+              (e.g. a character in the chapter but missing from NAMES).
+            </p>
+            {scopeOpen && (
+              <div className="mt-2 max-h-96 overflow-auto rounded bg-[var(--app-surface-muted,rgba(0,0,0,0.03))] p-2">
+                {scopeLog.map((s) => (
+                  <div key={s.index} className="mb-3 last:mb-0">
+                    <p className="font-medium">
+                      Ch {s.index + 1}{s.title ? ` — ${s.title}` : ''}{' '}
+                      <span className="font-normal text-[var(--app-text-muted)]">({s.entriesOut}/{s.entriesIn})</span>
+                    </p>
+                    <p className="mt-0.5 whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-[var(--app-text-muted)]">
+                      {s.names.length ? `NAMES:\n  ${s.names.join('\n  ')}` : 'NAMES: (none)'}
+                      {'\n'}
+                      {s.terms.length ? `TERMS:\n  ${s.terms.join('\n  ')}` : 'TERMS: (none)'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Per-stage prompt editor (server-backed) ── */}
