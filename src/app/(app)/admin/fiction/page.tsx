@@ -509,6 +509,16 @@ export default function AdminFictionPage() {
       setComplete(p.state === 'complete');
       setTranslationState(p.state);
       setCurrent(null);
+      // Rebuild the per-chapter glossary scope log from persisted data so it is
+      // visible after a run / reload. Skip while a live run is streaming (abortRef
+      // set) — the live events own the log then, to avoid clobbering it.
+      if (!abortRef.current) {
+        const persisted = (p.chapters || [])
+          .map((c) => c.glossary_scope)
+          .filter((s): s is NonNullable<typeof s> => !!s)
+          .sort((a, b) => a.index - b.index);
+        if (persisted.length > 0) setScopeLog(persisted);
+      }
     } catch {
       // No progress yet — reset.
       setTotal(0);
@@ -522,6 +532,7 @@ export default function AdminFictionPage() {
     if (!isAdmin || !bookId) return;
     setErrors([]);
     setError(null);
+    setScopeLog([]); // clear stale log; loadProgress refills it from persisted scope
     void loadProgress();
   }, [isAdmin, bookId, lang, loadProgress]);
 
