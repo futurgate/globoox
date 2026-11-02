@@ -886,6 +886,8 @@ export type RevisionProgress = {
   error?: string | null
 }
 
+export type RevisionItemOutcome = 'unchanged' | 'applied' | 'approved' | 'rejected'
+
 export type RevisionDiffEntry = {
   chapterId: string
   chapterNumber: number
@@ -896,6 +898,8 @@ export type RevisionDiffEntry = {
   draft: string
   revised: string
   changed: boolean
+  outcome: RevisionItemOutcome
+  rejectReason: string | null
 }
 
 export type RevisionDiff = {
@@ -992,6 +996,76 @@ export async function getRevisionDiff(
     throw new Error(body.message || `Failed to fetch revision diff: ${res.status}`)
   }
   return res.json() as Promise<RevisionDiff>
+}
+
+export type RevisionApplyResult = {
+  ok: boolean
+  blockId: string
+  outcome: 'approved' | 'rejected'
+  after?: string
+}
+
+/**
+ * Review one revised block (auto-commit mode). approve accepts the applied text or
+ * writes `editedText` in its place; reject reverts the block to its Pass-1 draft.
+ * Admin only. Keyed by blockId. Returns the block's new outcome.
+ */
+export async function applyRevision(
+  bookId: string,
+  lang: string,
+  blockId: string,
+  action: 'approve' | 'reject',
+  editedText?: string,
+): Promise<RevisionApplyResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/revise-apply`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      blockId,
+      action,
+      ...(action === 'approve' && editedText != null ? { editedText } : {}),
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${action} revision: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionApplyResult>
+}
+
+export type RevisionCostRun = {
+  runId: string
+  model: string | null
+  startedAt: string | null
+  finishedAt: string | null
+  totals: { calls: number; tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
+}
+
+export type RevisionCostRuns = {
+  bookId: string
+  lang: string
+  count: number
+  runs: RevisionCostRun[]
+}
+
+/** Per-run Pass-2 revision cost history (newest first), for the admin cost panel. */
+export async function getRevisionCostRuns(bookId: string, lang: string): Promise<RevisionCostRuns> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revise-cost-runs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision cost runs: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionCostRuns>
 }
 
 // ── Reader-check QA pass (admin) ────────────────────────────────────────────────
