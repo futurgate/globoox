@@ -1288,6 +1288,62 @@ export async function getReaderCheckCostRuns(bookId: string, lang: string): Prom
   return res.json() as Promise<ReaderCheckCostRuns>
 }
 
+// ── Fiction per-run cost history (admin) ────────────────────────────────────────
+
+export type FictionCostRunStage = {
+  stage: 'revise' | 'reader-check' | 'correction'
+  calls: number
+  tokensIn: number
+  tokensOut: number
+  costUsd: number
+  durationMs: number
+}
+
+export type FictionCostRun = {
+  runId: string
+  kind: 'revision' | 'reader-check'
+  model: string | null
+  startedAt: string | null
+  finishedAt: string | null
+  /** Per-stage breakdown for this run (revision = 1 stage; reader-check = up to 2). */
+  stages: FictionCostRunStage[]
+  /** Total across all of this run's stages. */
+  total: {
+    calls: number
+    tokensIn: number
+    tokensOut: number
+    costUsd: number
+    durationMs: number
+  }
+}
+
+export type FictionCostRuns = {
+  bookId: string
+  lang: string
+  count: number
+  runs: FictionCostRun[]
+}
+
+/**
+ * Per-run cost history for the run-tracked fiction stages (revision +
+ * reader-check), newest first. Each run carries a per-stage breakdown and a
+ * total across its stages. Complements the lifetime per-stage `/fiction-costs`.
+ */
+export async function getFictionCostRuns(bookId: string, lang: string): Promise<FictionCostRuns> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/fiction-cost-runs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch fiction cost runs: ${res.status}`)
+  }
+  return res.json() as Promise<FictionCostRuns>
+}
+
 /**
  * Approve (apply) or reject one proposed reader-check correction. Admin only.
  * `editedText` (approve only) overrides the suggested text before it is written

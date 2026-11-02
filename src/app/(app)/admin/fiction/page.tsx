@@ -25,6 +25,7 @@ import {
   applyRevision,
   getRevisionCostRuns,
   getFictionCosts,
+  getFictionCostRuns,
   startReaderCheck,
   getReaderCheckProgress,
   getReaderCheckJournal,
@@ -51,6 +52,7 @@ import {
   type BookGlossary,
   type FictionCosts,
   type FictionStageCost,
+  type FictionCostRun,
 } from '@/lib/api';
 // (FictionCostStage not imported — stage labels use a string-keyed map.)
 
@@ -320,6 +322,11 @@ export default function AdminFictionPage() {
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
   const [costsLoading, setCostsLoading] = useState(false);
 
+  // Per-run cost history (revision + reader-check): per-stage + total per run.
+  const [costRuns, setCostRuns] = useState<FictionCostRun[] | null>(null);
+  const [costRunsOpen, setCostRunsOpen] = useState(false);
+  const [costRunsLoading, setCostRunsLoading] = useState(false);
+
   // Per-stage prompt editor (server-backed; edits the real pipeline prompts).
   const [promptsOpen, setPromptsOpen] = useState(false);
   const [promptStages, setPromptStages] = useState<BookStagePrompt[] | null>(null);
@@ -353,6 +360,18 @@ export default function AdminFictionPage() {
       setFictionCosts(null); // non-fatal — cost panel is best-effort
     } finally {
       setCostsLoading(false);
+    }
+  }, [bookId, lang]);
+
+  const loadFictionCostRuns = useCallback(async () => {
+    if (!bookId) { setCostRuns(null); return; }
+    setCostRunsLoading(true);
+    try {
+      setCostRuns((await getFictionCostRuns(bookId, lang)).runs);
+    } catch {
+      setCostRuns(null); // non-fatal — cost panel is best-effort
+    } finally {
+      setCostRunsLoading(false);
     }
   }, [bookId, lang]);
 
@@ -441,7 +460,9 @@ export default function AdminFictionPage() {
   useEffect(() => {
     if (!isAdmin || !bookId) return;
     void loadFictionCosts();
-  }, [isAdmin, bookId, lang, loadFictionCosts]);
+    // Keep the per-run view in sync with the selected book/lang while it's open.
+    if (costRunsOpen) void loadFictionCostRuns();
+  }, [isAdmin, bookId, lang, loadFictionCosts, costRunsOpen, loadFictionCostRuns]);
 
   // Prefill progress when book/lang changes (so a previously-finished book
   // shows as complete and the download button is enabled).
@@ -2242,10 +2263,32 @@ export default function AdminFictionPage() {
               cost tracking; time is only known for measured runs.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={loadFictionCosts} disabled={!bookId || costsLoading}>
-            <RefreshCw className={`mr-2 h-3.5 w-3.5 ${costsLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex shrink-0 items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                if (costRunsOpen) { setCostRunsOpen(false); return; }
+                await loadFictionCostRuns();
+                setCostRunsOpen(true);
+              }}
+              disabled={!bookId || costRunsLoading}
+              title="Cost of each revision / reader-check run (per stage + total per run), newest first"
+            >
+              {costRunsLoading ? (
+                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+              ) : costRunsOpen ? (
+                <ChevronDown className="mr-2 h-3.5 w-3.5" />
+              ) : (
+                <ChevronRight className="mr-2 h-3.5 w-3.5" />
+              )}
+              Per run
+            </Button>
+            <Button variant="outline" size="sm" onClick={loadFictionCosts} disabled={!bookId || costsLoading}>
+              <RefreshCw className={`mr-2 h-3.5 w-3.5 ${costsLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {!fictionCosts && costsLoading && (
@@ -2300,6 +2343,17 @@ export default function AdminFictionPage() {
               <span className="font-medium">estimate</span> = worst-case (empty-cache) projection from book structure ·
               <span className="font-medium"> measured</span> = real recorded spend. A stage shows <span className="italic">not run yet</span> until it has been executed under cost tracking.
             </p>
+          </div>
+        )}
+
+        {costRunsOpen && (
+          <div className="space-y-2 border-t border-[var(--separator-opaque)] pt-4">
+            <p className="text-xs text-[var(--app-text-muted)]">
+              Measured spend of each <span className="font-medium">run</span> (revision and reader-check), newest
+              first — per stage, then the run&rsquo;s total across its stages. Glossary and translation have no
+              per-run ledger, so they don&rsquo;t appear here.
+            </p>
+            <FictionCostRunsTable runs={costRuns} loading={costRunsLoading} />
           </div>
         )}
       </div>
@@ -2756,6 +2810,72 @@ function ReaderCostRunsTable({ runs, loading }: { runs: ReaderCheckCostRun[] | n
             </tr>
           ))}
         </tbody>
+      </table>
+    </div>
+  );
+}
+
+// Per-run cost: one tbody per run (its stage rows + a bold total row), newest
+// first. Mirrors the per-stage table above but scoped to a single run_id.
+function FictionCostRunsTable({ runs, loading }: { runs: FictionCostRun[] | null; loading: boolean }) {
+  if (loading && !runs) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading per-run cost…
+      </div>
+    );
+  }
+  if (!runs || runs.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No runs recorded yet — run a revision or reader-check pass.</p>;
+  }
+  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[620px] border-collapse text-sm">
+        <thead>
+          <tr className="text-left text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
+            <th className="py-1 pr-3 font-medium">Run</th>
+            <th className="py-1 pr-3 font-medium">Stage</th>
+            <th className="py-1 pr-3 text-right font-medium">Calls</th>
+            <th className="py-1 pr-3 text-right font-medium">Tokens in → out</th>
+            <th className="py-1 pr-3 text-right font-medium">Time</th>
+            <th className="py-1 text-right font-medium">Cost</th>
+          </tr>
+        </thead>
+        {runs.map((r) => {
+          const rows = r.stages.length + 1; // stage rows + total row
+          return (
+            <tbody key={r.runId} className="border-t-2 border-[var(--separator-opaque)]">
+              {r.stages.map((s, i) => (
+                <tr key={s.stage}>
+                  {i === 0 && (
+                    <td className="py-2 pr-3 align-top" rowSpan={rows}>
+                      <div className="tabular-nums">{when(r.startedAt)}</div>
+                      <div className="mt-0.5 flex items-center gap-1.5">
+                        <span className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-[var(--app-accent)]/15 text-[var(--app-accent)]">
+                          {r.kind === 'revision' ? 'revision' : 'reader-check'}
+                        </span>
+                      </div>
+                      {r.model && <div className="mt-0.5 text-[10px] text-[var(--app-text-muted)]">{r.model}</div>}
+                    </td>
+                  )}
+                  <td className="py-2 pr-3">{STAGE_LABEL[s.stage] ?? s.stage}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums">{s.calls.toLocaleString('en-US')}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums">{fmtTokens(s.tokensIn)} → {fmtTokens(s.tokensOut)}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums text-[var(--app-text-muted)]">{fmtDuration(s.durationMs)}</td>
+                  <td className="py-2 text-right tabular-nums">{fmtUsd(s.costUsd)}</td>
+                </tr>
+              ))}
+              <tr className="font-semibold">
+                <td className="py-2 pr-3">Total</td>
+                <td className="py-2 pr-3 text-right tabular-nums">{r.total.calls.toLocaleString('en-US')}</td>
+                <td className="py-2 pr-3 text-right tabular-nums">{fmtTokens(r.total.tokensIn)} → {fmtTokens(r.total.tokensOut)}</td>
+                <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(r.total.durationMs)}</td>
+                <td className="py-2 text-right tabular-nums">{fmtUsd(r.total.costUsd)}</td>
+              </tr>
+            </tbody>
+          );
+        })}
       </table>
     </div>
   );
