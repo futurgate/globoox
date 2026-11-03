@@ -493,7 +493,22 @@ export type FictionProgress = {
   totalChapters: number
   counts: { pending: number; translating: number; done: number; error: number }
   percent: number
-  chapters: Array<{ chapter_id: string; status: string; error: string | null; updated_at: string }>
+  chapters: Array<{
+    chapter_id: string
+    status: string
+    error: string | null
+    updated_at: string
+    // Persisted per-chapter glossary scope (point 2 principle 2), so the "glossary
+    // sent per chapter" log is reviewable after the run, not just live.
+    glossary_scope?: {
+      index: number
+      title: string | null
+      entriesIn: number
+      entriesOut: number
+      names: string[]
+      terms: string[]
+    } | null
+  }>
 }
 
 /**
