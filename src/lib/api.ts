@@ -670,7 +670,7 @@ export async function startGlossaryGeneration(
   bookId: string,
   lang: string,
   onEvent: (ev: GlossaryProgressEvent) => void,
-  opts: { restart?: boolean; seedFromBookId?: string; model?: string; signal?: AbortSignal } = {},
+  opts: { restart?: boolean; seedFromBookId?: string; seedGlossary?: string; model?: string; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -684,6 +684,8 @@ export async function startGlossaryGeneration(
       restart: opts.restart === true,
       // Seed a fresh build from another book's glossary (series continuity).
       ...(opts.seedFromBookId ? { seedFromBookId: opts.seedFromBookId } : {}),
+      // Seed a fresh build from hand-provided glossary JSON (exclusive of seedFromBookId).
+      ...(opts.seedGlossary ? { seedGlossary: opts.seedGlossary } : {}),
       // Optional per-stage model override (else the prod default).
       ...(opts.model ? { model: opts.model } : {}),
     }),
