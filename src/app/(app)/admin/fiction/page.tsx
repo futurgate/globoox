@@ -281,6 +281,9 @@ export default function AdminFictionPage() {
   // Optional: seed a fresh glossary build from another book's finished glossary
   // (same language) so a later book in a series inherits its names/terms/voice.
   const [seedFromBookId, setSeedFromBookId] = useState('');
+  // Optional hand-provided glossary JSON to seed a FRESH build (alternative to
+  // seedFromBookId). Applied only to a from-scratch build on the backend.
+  const [seedJson, setSeedJson] = useState('');
   // Reuse another book's finished glossary verbatim (copy, no LLM rebuild).
   const [glossaryCopying, setGlossaryCopying] = useState(false);
   // Paste a glossary JSON by hand (no LLM generation).
@@ -1251,9 +1254,12 @@ export default function AdminFictionPage() {
     };
 
     try {
+      const seedJsonTrimmed = seedJson.trim();
       await startGlossaryGeneration(bookId, lang, onEvent, {
         restart: rebuildGlossary,
-        seedFromBookId: seedFromBookId || undefined,
+        // JSON seed takes precedence over the book seed (backend rejects both).
+        seedGlossary: seedJsonTrimmed || undefined,
+        seedFromBookId: seedJsonTrimmed ? undefined : (seedFromBookId || undefined),
         model: glossaryModel || undefined,
         signal: controller.signal,
       });
@@ -1274,7 +1280,7 @@ export default function AdminFictionPage() {
       glossaryAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, glossaryModel, loadGlossary, loadFictionCosts]);
+  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, seedJson, glossaryModel, loadGlossary, loadFictionCosts]);
 
   // Reuse an existing glossary from another book verbatim — no generation.
   const handleCopyGlossary = useCallback(async () => {
@@ -1824,7 +1830,7 @@ export default function AdminFictionPage() {
             <span>Use another book</span>
             <select
               value={seedFromBookId}
-              disabled={glossaryRunning || glossaryCopying}
+              disabled={glossaryRunning || glossaryCopying || !!seedJson.trim()}
               onChange={(e) => setSeedFromBookId(e.target.value)}
               className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
             >
@@ -1860,6 +1866,32 @@ export default function AdminFictionPage() {
             verbatim (no LLM). The <strong>Generate/Rebuild</strong> button above instead seeds a fresh
             build from it (ignored on resume).
           </p>
+        </div>
+
+        {/* Alternative seed: a hand-provided glossary JSON. Feeds the Generate/
+            Rebuild button as a fresh-build seed (not saved verbatim — use "Paste
+            glossary JSON" below for that). Overrides "Use another book". */}
+        <div className="space-y-1">
+          <label className="block text-sm">
+            Seed from JSON
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">
+              (optional; fresh build only — alternative to “Use another book”)
+            </span>
+          </label>
+          <textarea
+            value={seedJson}
+            disabled={glossaryRunning}
+            onChange={(e) => setSeedJson(e.target.value)}
+            rows={4}
+            placeholder={'{ "terminology": [ … ], "named_entities": [ … ] }'}
+            className="w-full rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] p-2 font-mono text-xs outline-none focus:border-[var(--app-accent)]"
+          />
+          {seedJson.trim() && (
+            <p className="text-xs text-[var(--app-text-muted)]">
+              <strong>Generate / Rebuild</strong> will start from this JSON (overrides “Use another book”).
+              Check <strong>Rebuild from scratch</strong> above if a glossary already exists.
+            </p>
+          )}
         </div>
 
         {/* Paste a glossary JSON by hand — no LLM. Shape must match BookGlossary
