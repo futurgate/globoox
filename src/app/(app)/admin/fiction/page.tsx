@@ -59,8 +59,8 @@ import {
 const inputCls =
   'w-full rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-3 py-2 text-sm outline-none focus:border-[var(--app-accent)]';
 
-// v1 fiction pipeline supports EN/FR targets (Russian source).
-const FICTION_LANGS = ['EN', 'FR'] as const;
+// Fiction pipeline targets. EN/FR from a Russian source; RU from an English source.
+const FICTION_LANGS = ['EN', 'FR', 'RU'] as const;
 type FictionLang = (typeof FICTION_LANGS)[number];
 
 // Static fallback shown until GET /api/admin/models resolves (or if it fails) —
