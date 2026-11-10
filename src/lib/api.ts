@@ -1085,8 +1085,6 @@ export async function getRevisionCostRuns(bookId: string, lang: string): Promise
 
 // ── Reader-check QA pass (admin) ────────────────────────────────────────────────
 
-export type ReaderCheckVariant = 'reader' | 'calques'
-
 export type ReaderCheckProgressEvent = {
   type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'item' | 'anchored' | 'error'
   // Transient key tying an 'anchored' preview to its final 'item' (live stream only).
@@ -1184,7 +1182,6 @@ export type ReaderCheckApplyResult = {
 export async function startReaderCheck(
   bookId: string,
   lang: string,
-  variant: ReaderCheckVariant,
   onEvent: (ev: ReaderCheckProgressEvent) => void,
   opts: { model?: string; restart?: boolean; signal?: AbortSignal } = {},
 ): Promise<void> {
@@ -1197,7 +1194,6 @@ export async function startReaderCheck(
     headers,
     body: JSON.stringify({
       lang: lang.toUpperCase(),
-      variant,
       ...(opts.model ? { model: opts.model } : {}),
       ...(opts.restart ? { restart: true } : {}),
     }),
