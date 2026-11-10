@@ -2819,7 +2819,11 @@ export async function runFictionFlowPlaygroundStream(
 
 export interface FictionFlowPrompts {
   lang: string
+  sourceLang: string
   useGlossary: boolean
+  /** False when the (sourceLang → lang) direction has no built-in prompt set. */
+  supported: boolean
+  supportedDirections: string[]
   glossary: string
   translate: string
   revision: string
@@ -2827,9 +2831,17 @@ export interface FictionFlowPrompts {
   correction: string
 }
 
-/** Fetch all three production fiction-flow prompt templates to seed the editors. */
-export function fetchFictionFlowPrompts(lang: string, useGlossary = true): Promise<FictionFlowPrompts> {
-  const q = new URLSearchParams({ lang, glossary: useGlossary ? '1' : '0' })
+/**
+ * Seed the flow editors from the EXACT production prompts for a (sourceLang → lang)
+ * direction — the same files + DB overrides the live pipeline runs from. Read-only:
+ * editing a seeded prompt in the playground never writes back to prod.
+ */
+export function fetchFictionFlowPrompts(
+  lang: string,
+  sourceLang: string,
+  useGlossary = true,
+): Promise<FictionFlowPrompts> {
+  const q = new URLSearchParams({ lang, sourceLang, glossary: useGlossary ? '1' : '0' })
   return request<FictionFlowPrompts>(`/api/admin/fiction-flow-prompts?${q.toString()}`)
 }
 
