@@ -486,7 +486,7 @@ export default function TranslationPlaygroundPage() {
     setFlowLoadingPrompts(true);
     setPromptError(null);
     try {
-      const res = await fetchFictionFlowPrompts(targetLanguage, flowStages.glossary.enabled);
+      const res = await fetchFictionFlowPrompts(targetLanguage, sourceLanguage, flowStages.glossary.enabled);
       setFlowPrompts({
         glossary: res.glossary,
         translate: res.translate,

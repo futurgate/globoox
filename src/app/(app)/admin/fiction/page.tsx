@@ -39,7 +39,6 @@ import {
   type FictionStopStage,
   type BookStagePrompt,
   type ApiBook,
-  type ReaderCheckVariant,
   type ReaderCheckProgressEvent,
   type ReaderCheckJournalItem,
   type ReaderCheckCostRun,
@@ -289,8 +288,6 @@ export default function AdminFictionPage() {
   const [pasteSaving, setPasteSaving] = useState(false);
 
   // Reader-check QA pass (runs on an already-translated book; no re-translation).
-  // Only the general reader prompt is used from this page (calques removed).
-  const readerVariant: ReaderCheckVariant = 'reader';
   const [readerModel, setReaderModel] = useState('');
   const [readerRestart, setReaderRestart] = useState(false);
   const [readerRunning, setReaderRunning] = useState(false);
@@ -776,7 +773,7 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startReaderCheck(bookId, lang, readerVariant, onEvent, { model: readerModel || undefined, restart: readerRestart, signal: controller.signal });
+      await startReaderCheck(bookId, lang, onEvent, { model: readerModel || undefined, restart: readerRestart, signal: controller.signal });
       await loadReaderProgress();
       if (sawBookDone) {
         // Clean finish: swap the live journal for the persisted one (real row ids,
@@ -803,7 +800,7 @@ export default function AdminFictionPage() {
       readerAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, readerRunning, readerVariant, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
+  }, [bookId, lang, readerRunning, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
 
   // Load the per-run reader-check cost history (spend per run + dynamics).
   const loadReaderCostRuns = useCallback(async () => {
@@ -2102,7 +2099,7 @@ export default function AdminFictionPage() {
         )}
       </div>
 
-      {/* ── Reader-check QA pass (calques / reader) ── */}
+      {/* ── Reader-check QA pass ── */}
       <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
         <div>
           <h2 className="flex items-center gap-2 text-sm font-semibold">
