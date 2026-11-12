@@ -387,22 +387,6 @@ export function LandingHeader({
                   }}
                 />
               </button>
-              {desktopLanguageMenuOpen ? (
-                <div
-                  ref={languageMenuRef}
-                  className="landing-header-language-dropdown"
-                  style={{
-                    position: 'fixed',
-                    width: '224px',
-                    zIndex: 80,
-                    top: `${menuStyle.top}px`,
-                    left: `${menuStyle.left}px`,
-                    transformOrigin: menuStyle.transformOrigin,
-                  }}
-                >
-                  {renderLanguageMenu(false)}
-                </div>
-              ) : null}
             </div>}
           </nav>
 
@@ -583,6 +567,25 @@ export function LandingHeader({
             </div>
           </div>
         </div>
+
+        {/* Keep viewport-positioned menus outside the blurred shell: backdrop-filter
+            establishes a containing block and would offset fixed coordinates twice. */}
+        {showLanguageSelector && desktopLanguageMenuOpen && !shouldCollapse && (
+          <div
+            ref={languageMenuRef}
+            className="landing-header-language-dropdown"
+            style={{
+              position: 'fixed',
+              width: '224px',
+              zIndex: 80,
+              top: `${menuStyle.top}px`,
+              left: `${menuStyle.left}px`,
+              transformOrigin: menuStyle.transformOrigin,
+            }}
+          >
+            {renderLanguageMenu(false)}
+          </div>
+        )}
 
         {menuOpen && navItems.length > 0 && (
           <div
