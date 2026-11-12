@@ -14,6 +14,7 @@ interface LandingHeaderProps {
   showOpenApp?: boolean;
   languageLabel?: string;
   languages?: Array<{ value: LandingLocale; label: string }>;
+  languageHrefs?: Partial<Record<LandingLocale, string>>;
   showLanguageSelector?: boolean;
   logoHref?: string;
   menuLabel?: string;
@@ -32,6 +33,7 @@ export function LandingHeader({
   showOpenApp = true,
   languageLabel = 'Language',
   languages = DEFAULT_LANGUAGES,
+  languageHrefs,
   showLanguageSelector = true,
   logoHref = '#hero',
   menuLabel = 'Toggle navigation',
@@ -204,7 +206,8 @@ export function LandingHeader({
 
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
     const normalizedPath = pathname?.replace(/^\/(en|es|fr|ru)/, '') || '/';
-    router.push(`/${nextLocale}${normalizedPath}${hash}`);
+    const nextPath = languageHrefs?.[nextLocale] ?? `/${nextLocale}${normalizedPath}`;
+    router.push(`${nextPath}${hash}`);
     setMenuOpen(false);
     setDesktopLanguageMenuOpen(false);
     setMobileLanguageMenuOpen(false);

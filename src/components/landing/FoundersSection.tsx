@@ -15,6 +15,7 @@ interface FoundersSectionProps {
     initials: string;
     photoSrc?: string;
     linkedinUrl?: string;
+    linkedinAriaLabel?: string;
     description?: string;
   }>;
 }
@@ -160,7 +161,7 @@ export function FoundersSection({
                         href={founder.linkedinUrl}
                         target="_blank"
                         rel="noreferrer"
-                        aria-label={`${founder.name} on LinkedIn`}
+                        aria-label={founder.linkedinAriaLabel ?? `${founder.name} on LinkedIn`}
                         className="founders-card-link"
                         style={{
                           display: 'inline-flex',

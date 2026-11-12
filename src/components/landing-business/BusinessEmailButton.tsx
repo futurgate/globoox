@@ -6,9 +6,10 @@ interface BusinessEmailButtonProps {
   children: ReactNode;
   className?: string;
   intent?: 'contact' | 'trial';
+  locale?: 'ru' | 'fr';
 }
 
-export function BusinessEmailButton({ children, className, intent = 'contact' }: BusinessEmailButtonProps) {
+export function BusinessEmailButton({ children, className, intent = 'contact', locale = 'ru' }: BusinessEmailButtonProps) {
   const openEmail = (event: MouseEvent<HTMLButtonElement>) => {
     // Reject synthetic DOM clicks, while keeping native mouse, touch and keyboard activation.
     // This is not a human-verification boundary: browser automation can produce trusted events.
@@ -19,7 +20,9 @@ export function BusinessEmailButton({ children, className, intent = 'contact' }:
     const mailbox = 'lomovski';
     const domain = ['globoox', 'co'].join('.');
     const recipient = [mailbox, domain].join('@');
-    const subject = intent === 'trial'
+    const subject = locale === 'fr'
+      ? (intent === 'trial' ? 'Un chapitre offert — Globoox' : 'Traduction et publication de votre livre — Globoox')
+      : intent === 'trial'
       ? 'Бесплатный пробный перевод — Globoox'
       : 'Перевод и публикация книги — Globoox';
     const link = document.createElement('a');

@@ -1,0 +1,39 @@
+{
+  "status": "implemented and browser verified locally",
+  "scope": "French authors page and optical marketplace alignment",
+  "visualReview": {
+    "frenchSections": [
+      "hero",
+      "translation",
+      "languages",
+      "quality",
+      "trial",
+      "publishing",
+      "team",
+      "contact"
+    ],
+    "frenchWidths": [
+      1440,
+      390
+    ],
+    "logoWidths": [
+      1536,
+      1440,
+      1024,
+      768,
+      390,
+      320
+    ]
+  },
+  "focusedTests": 64,
+  "scopedLint": "pass for changed/new business, route, consent, test and FoundersSection files",
+  "preExistingBlockers": [
+    "Full TypeScript: seven errors in src/app/landing-backup/page.tsx and src/app/landing-backup-2/page.tsx. No other diagnostics.",
+    "LandingHeader.tsx: existing react-hooks/set-state-in-effect in untouched shouldCollapse effect."
+  ],
+  "qaCorrections": [
+    "Initial browser script looked for selector trigger by visible Русский instead of accessible Язык; corrected test locator, then both desktop/mobile full round trips passed.",
+    "Initial eager image wait stalled on lazy offscreen images; marked test images eager before decoding."
+  ],
+  "publication": "not performed"
+}
