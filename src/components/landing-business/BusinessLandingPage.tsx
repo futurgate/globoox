@@ -10,7 +10,8 @@ import { HeroConcept } from './HeroConcept';
 import { OriginalBusinessHero } from './OriginalBusinessHero';
 import { AuthorContactSection, AuthorTrialSection } from './AuthorConversionSections';
 import { AuthorLanguages } from './AuthorLanguages';
-import { businessLandingContent as copy } from './content';
+import { businessLandingContent } from './content';
+import { getAuthorLandingContent, type AuthorLocale } from './author-locales';
 import styles from './BusinessLandingPage.module.css';
 import '@/components/landing/landing.css';
 
@@ -22,25 +23,30 @@ const navItems = [
   { label: 'Команда', href: '#team' },
 ];
 
-export function BusinessLandingPage({ audience }: { audience: 'authors' | 'publishers' }) {
-  const messages = getLandingMessages('ru');
+export function BusinessLandingPage({ audience, locale: requestedLocale = 'ru' }: { audience: 'authors' | 'publishers'; locale?: AuthorLocale }) {
   const isAuthors = audience === 'authors';
-  const authorTeamDescription = messages.founders.description.split(' Вместе мы строим')[0];
+  const locale = isAuthors ? requestedLocale : 'ru';
+  const messages = getLandingMessages(locale);
+  const authorCopy = getAuthorLandingContent(locale);
+  const copy = isAuthors ? { ...authorCopy, team: businessLandingContent.team } : businessLandingContent;
 
   return (
-    <div className={`marketing-page ${styles.page}`} lang="ru">
-      <a className={styles.skipLink} href="#business-main">Перейти к содержанию</a>
+    <div className={`marketing-page ${styles.page}`} lang={locale}>
+      <a className={styles.skipLink} href="#business-main">{authorCopy.ui.skip}</a>
       <LandingHeader
-        navItems={navItems}
-        locale="ru"
-        showLanguageSelector={false}
+        navItems={isAuthors ? authorCopy.nav : navItems}
+        locale={locale}
+        showLanguageSelector={isAuthors}
+        languageLabel={messages.header.languageLabel}
+        languages={[{ value: 'ru', label: 'Русский' }, { value: 'fr', label: 'Français' }]}
+        languageHrefs={{ ru: '/authors', fr: '/fr/authors' }}
         showOpenApp={false}
-        logoHref="/ru"
-        menuLabel="Открыть или закрыть меню"
+        logoHref={`/${locale}`}
+        menuLabel={authorCopy.ui.menu}
       />
 
       <main id="business-main">
-        {isAuthors ? <HeroConcept concept="04" primary /> : <OriginalBusinessHero audience={audience} />}
+        {isAuthors ? <HeroConcept concept="04" primary locale={locale} /> : <OriginalBusinessHero audience={audience} />}
 
         <section id="translation" className={styles.translation} aria-labelledby="translation-title">
           <div className={`${styles.container} ${styles.translationGrid}`}>
@@ -49,7 +55,7 @@ export function BusinessLandingPage({ audience }: { audience: 'authors' | 'publi
           </div>
         </section>
 
-        {isAuthors ? <AuthorLanguages /> : <section id="languages" aria-label={copy.languages.title}>
+        {isAuthors ? <AuthorLanguages locale={locale} /> : <section id="languages" aria-label={copy.languages.title}>
           <SupportedLanguages
             label={copy.languages.currentLabel}
             heading={copy.languages.title}
@@ -63,15 +69,15 @@ export function BusinessLandingPage({ audience }: { audience: 'authors' | 'publi
 
         <section id="quality" aria-label={copy.example.title}>
           <QualityAssuranceV2
-            label="Оригинал и перевод"
+            label={isAuthors ? authorCopy.example.label : 'Оригинал и перевод'}
             heading={copy.example.title}
-            description="Сдвиньте разделитель, чтобы сравнить текст на английском и русском."
+            description={isAuthors ? authorCopy.example.description : 'Сдвиньте разделитель, чтобы сравнить текст на английском и русском.'}
             compare={messages.quality.compare}
-            sliderLabel="Сравнить оригинал и перевод"
+            sliderLabel={authorCopy.example.sliderLabel}
           />
         </section>
 
-        {isAuthors ? <AuthorTrialSection /> : <section id="trial" className={styles.trial} aria-labelledby="trial-title">
+        {isAuthors ? <AuthorTrialSection locale={locale} /> : <section id="trial" className={styles.trial} aria-labelledby="trial-title">
           <div className={`${styles.container} ${styles.trialInner}`}>
             <div>
               <h2 id="trial-title" className={styles.heading}>{copy.trial.title}</h2>
@@ -106,17 +112,17 @@ export function BusinessLandingPage({ audience }: { audience: 'authors' | 'publi
           </div>
         </section>}
 
-        <section id="team" className={isAuthors ? undefined : styles.team} aria-label={copy.team.title}>
+        <section id="team" className={isAuthors ? undefined : styles.team} aria-label={isAuthors ? authorCopy.team.title : copy.team.title}>
           <FoundersSection
-            label={isAuthors ? messages.founders.label : 'Globoox'}
-            heading={isAuthors ? messages.founders.heading : copy.team.title}
-            description={isAuthors ? authorTeamDescription : ''}
-            items={isAuthors ? messages.founders.items : copy.team.members.map((member) => ({ ...member, theme: 'light' as const }))}
+            label={isAuthors ? authorCopy.team.label : 'Globoox'}
+            heading={isAuthors ? authorCopy.team.title : copy.team.title}
+            description={isAuthors ? authorCopy.team.description : ''}
+            items={isAuthors ? authorCopy.team.items : copy.team.members.map((member) => ({ ...member, theme: 'light' as const }))}
           />
           {!isAuthors && <div className={`${styles.container} ${styles.advisors}`}><p>{copy.team.advisors}</p></div>}
         </section>
 
-        {isAuthors ? <AuthorContactSection /> : <section id="contact" className={styles.contact} aria-labelledby="contact-title">
+        {isAuthors ? <AuthorContactSection locale={locale} /> : <section id="contact" className={styles.contact} aria-labelledby="contact-title">
           <div className={styles.container}>
             <h2 id="contact-title" className={styles.heading}>{copy.contact.title}</h2>
             <BusinessEmailButton className={styles.button}>{copy.contact.button}</BusinessEmailButton>
@@ -132,7 +138,7 @@ export function BusinessLandingPage({ audience }: { audience: 'authors' | 'publi
         copyright={messages.footer.copyright}
         insetDivider={isAuthors}
       />
-      <CookieBanner messages={{ ...messages.cookies, description: 'Cookies для работы и аналитики.', necessary: 'Только нужные' }} />
+      <CookieBanner messages={authorCopy.ui.cookies} />
     </div>
   );
 }

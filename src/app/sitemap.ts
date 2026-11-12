@@ -13,11 +13,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const staticPages: MetadataRoute.Sitemap = [
-    ...['authors', 'publishers'].map((audience) => ({
-      url: `${SITE_URL}/${audience}`,
+    ...['/authors', '/fr/authors'].map((path) => ({
+      url: `${SITE_URL}${path}`,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
+      alternates: { languages: { ru: `${SITE_URL}/authors`, fr: `${SITE_URL}/fr/authors` } },
     })),
+    {
+      url: `${SITE_URL}/publishers`,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
     {
       url: `${SITE_URL}/store`,
       lastModified: new Date(),

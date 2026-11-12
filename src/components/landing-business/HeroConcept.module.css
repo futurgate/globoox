@@ -78,7 +78,7 @@
   font: 500 clamp(10px, 2.3cqw, 20px)/1.25 'Inter', sans-serif;
   mix-blend-mode: multiply;
 }
-.logo { width: 100%; height: auto; max-height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.logo { width: 100%; height: auto; max-height: 100%; object-fit: contain; object-position: left center; mix-blend-mode: multiply; }
 .logo[data-logo='amazon.png'] { width: 78%; }
 .logo[data-logo='kobo.png'] {
   height: 6cqw;
@@ -86,8 +86,17 @@
   /* Align the visible mark, compensating the PNG's 43px left inset in 360px. */
   transform: translateX(-11.944444%);
 }
-.logo[data-logo='thalia.png'] { width: 90%; }
+.logo[data-logo='thalia.png'] {
+  width: 90%;
+  /* Let the thin bird tail hang left so its solid silhouette aligns optically. */
+  transform: translateX(-6%);
+}
 .logo:is([data-logo='apple-books.png'], [data-logo='google-play-books.png'], [data-logo='bookshop.png']) { width: 5.7cqw; height: 5.7cqw; flex-shrink: 0; }
+/* Compensate each asset's transparent/viewBox inset, preserving the label column. */
+.logo[data-logo='apple-books.png'] { transform: translateX(-10%); }
+.logo[data-logo='google-play-books.png'] { transform: translateX(-17.916667%); }
+.logo[data-logo='barnes-noble.svg'] { transform: translateX(-3.48695%); }
+.logo[data-logo='bookshop.png'] { transform: translateX(-2%); }
 .logo[data-logo='bookshop.png'] + span { font-size: .92em; white-space: nowrap; }
 .nookLabel { display: none; }
 
@@ -95,6 +104,7 @@
 .ruled .copy { align-self: center; padding: 44px 28px 64px 0; }
 .ruled .heading { font-size: clamp(38px, 3.7vw, 57px); }
 .ruled .heading em { white-space: nowrap; }
+.ruled:lang(fr) .heading em { white-space: normal; }
 .ruled .diagram { aspect-ratio: 800 / 820; border-left: 1px solid var(--marketing-border); }
 .ruled .diagram::before { content: ''; position: absolute; left: 51%; top: 0; bottom: 0; border-left: 1px solid var(--marketing-border); }
 .ruled .book { left: -2%; top: 11%; width: 58%; height: 85%; }

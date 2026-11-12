@@ -1,5 +1,5 @@
 const ORIGINAL_LANDING_PATH = /^\/(?:landing|(?:en|es|fr|ru)(?:\/landing)?)\/?$/;
-const BUSINESS_LANDING_PATH = /^\/(?:authors(?:\/hero-archive)?|publishers)\/?$/;
+const BUSINESS_LANDING_PATH = /^\/(?:authors(?:\/hero-archive)?|fr\/authors|publishers)\/?$/;
 
 /** Editorial previews and their locale/legal pages share the landing consent gate. */
 export function isLandingConsentPath(pathname: string): boolean {

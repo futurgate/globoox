@@ -1,14 +1,18 @@
 import Image from 'next/image';
 import { BusinessEmailButton } from './BusinessEmailButton';
 import { distributionDestinations } from './BookDistribution';
-import { businessLandingContent as copy } from './content';
+import { getAuthorLandingContent, type AuthorLocale } from './author-locales';
 import shared from './BusinessLandingPage.module.css';
 import styles from './HeroConcept.module.css';
 
 /** Selected authors hero, with labeled comparison mode retained for archived concepts. */
-export function HeroConcept({ concept, primary = false }: { concept: '04' | '05'; primary?: boolean }) {
+export function HeroConcept({ concept, primary = false, locale = 'ru' }: { concept: '04' | '05'; primary?: boolean; locale?: AuthorLocale }) {
+  const copy = getAuthorLandingContent(locale);
+  const destinations = distributionDestinations.map(store => ({
+    ...store,
+    name: locale === 'fr' && store.image === 'google-play-books.png' ? 'Google Play Livres' : store.name,
+  }));
   const ruled = concept === '04';
-  const [opening, ending] = copy.hero.title.split('по всему миру');
   const sceneHeight = ruled ? 820 : 740;
   const titleId = primary ? 'business-title' : `hero-concept-${concept}-title`;
   const Heading = primary ? 'h1' : 'h2';
@@ -22,19 +26,19 @@ export function HeroConcept({ concept, primary = false }: { concept: '04' | '05'
       <div className={styles.layout}>
         <div className={styles.copy}>
           <div className={styles.headline}>
-            <p className={styles.eyebrow}>Для авторов</p>
+            <p className={styles.eyebrow}>{copy.hero.eyebrow}</p>
             <Heading id={titleId} className={styles.heading}>
-              {opening}<em>по всему миру</em>{' '}
-              <span className={styles.subtitle}>{ending.trimStart()}</span>
+              {copy.hero.opening}<em>{copy.hero.emphasis}</em>{' '}
+              <span className={styles.subtitle}>{copy.hero.subtitle}</span>
             </Heading>
           </div>
           <div className={styles.description}>
             <p>{copy.hero.description}</p>
-            <BusinessEmailButton className={shared.button}>{copy.hero.button}</BusinessEmailButton>
+            <BusinessEmailButton className={shared.button} locale={locale}>{copy.hero.button}</BusinessEmailButton>
           </div>
         </div>
 
-        <div className={styles.diagram} role="img" aria-label={`Ваша книга — в ${distributionDestinations.map(store => store.name).join(', ')}`}>
+        <div className={styles.diagram} role="img" aria-label={`${copy.hero.bookLabel} ${destinations.map(store => store.name).join(', ')}`}>
           <svg className={styles.threads} viewBox={`0 0 800 ${sceneHeight}`} fill="none" aria-hidden="true">
             {distributionDestinations.map(({ name }, index) => {
               const y = (ruled ? 100 : 65) + index * 100;
@@ -56,7 +60,7 @@ export function HeroConcept({ concept, primary = false }: { concept: '04' | '05'
             })}
           </svg>
           <Image
-            src={`/images/business-hero/book-concept-${concept}.png`}
+            src={`/images/business-hero/book-concept-${concept}${locale === 'fr' && ruled ? '-fr' : ''}.png`}
             alt=""
             width={ruled ? 1024 : 1145}
             height={ruled ? 1536 : 1374}
@@ -64,7 +68,7 @@ export function HeroConcept({ concept, primary = false }: { concept: '04' | '05'
             sizes="(max-width: 900px) 60vw, 36vw"
             priority={primary}
           />
-          {distributionDestinations.map(({ name, image, width, height }, index) => (
+          {destinations.map(({ name, image, width, height }, index) => (
             <div key={name} className={styles.marketplace} style={{ top: `${((ruled ? 100 : 65) + index * 100) / sceneHeight * 100}%` }} aria-hidden="true">
               <Image src={`/images/marketplaces/${image}`} alt="" width={width} height={height} className={styles.logo} data-logo={image} unoptimized />
               {['apple-books.png', 'google-play-books.png', 'bookshop.png'].includes(image) && <span>{name}</span>}

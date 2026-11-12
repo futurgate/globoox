@@ -1,0 +1,74 @@
+{
+  "scope": "Selected authors hero marketplace optical left alignment; shared HeroConcept CSS also applies to archived concept05 and FR authors hero.",
+  "sourceChanges": [
+    "src/components/landing-business/HeroConcept.module.css"
+  ],
+  "assetPixelsChanged": false,
+  "baselineFindings": [
+    "Mobile Amazon was centered within a height-limited image box, leaving an extra left gap.",
+    "Apple Books visible artwork begins at 16/160px; Google Play Books at 43/240px; Bookshop at 1/50px.",
+    "Barnes & Noble SVG artwork getBBox x=34.23 within viewBox width 981.66 creates a 3.48695% left inset.",
+    "Kobo existing 43/360px compensation was already geometrically correct.",
+    "Thalia thin bird tail reaches far left of its visually substantial silhouette; exact bounding-box alignment still looks right-shifted."
+  ],
+  "iterations": [
+    {
+      "stage": "baseline",
+      "reviewed": [
+        "baseline-1536-guide.png",
+        "baseline-390-guide.png"
+      ]
+    },
+    {
+      "stage": "bounds-candidate",
+      "changes": "left object-position; compensate exact intrinsic left insets for Apple, Google, B&N, Bookshop and Thalia.",
+      "finding": "Geometric alignment improved, but Thalia silhouette still appeared right-shifted.",
+      "reviewed": [
+        "bounds-candidate-1536-guide.png",
+        "bounds-candidate-390-guide.png"
+      ]
+    },
+    {
+      "stage": "optical-candidate",
+      "changes": "Thalia translation refined from -0.84507% to -6%; allow tail overhang to align substantial silhouette.",
+      "finding": "Accepted after direct visual review with and without guide. Labels retain their shared axis, images retain original proportions.",
+      "reviewed": [
+        "optical-candidate-1536-guide.png",
+        "optical-candidate-1024.png",
+        "optical-candidate-390.png"
+      ]
+    }
+  ],
+  "finalWidths": [
+    1536,
+    1440,
+    1024,
+    768,
+    390,
+    320
+  ],
+  "finalVisualReview": "All six widths visually reviewed. Logos align by visible artwork; Thalia tail intentionally overhangs. No clipped brand names or horizontal overflow.",
+  "overflowPixels": 0,
+  "preserved": [
+    "All seven destinations",
+    "Original logo asset pixels",
+    "Book layout",
+    "Dot motion styles and paths",
+    "Adjacent text label alignment"
+  ],
+  "extraRootRequestedChange": ".ruled:lang(fr) .heading em allows natural wrapping of the longer French emphasis.",
+  "transientFailure": "First attempt at optical-candidate capture encountered expected in-progress author-locales module absence; repeated after root completed locale wiring and all six final width checks passed.",
+  "screenshotsRetained": [
+    "baseline-1536-guide.png",
+    "baseline-390-guide.png",
+    "bounds-candidate-1536-guide.png",
+    "bounds-candidate-390-guide.png",
+    "final-boundaries-1440.png",
+    "final-boundaries-320.png",
+    "final-boundaries-768.png",
+    "optical-candidate-1024.png",
+    "optical-candidate-1536-guide.png",
+    "optical-candidate-1536.png",
+    "optical-candidate-390.png"
+  ]
+}
