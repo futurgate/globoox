@@ -6,12 +6,12 @@ type AuthorsPageProps = { params: Promise<{ locale: string }> };
 
 export async function generateMetadata({ params }: AuthorsPageProps) {
   const { locale } = await params;
-  if (locale !== 'fr') notFound();
+  if (locale !== 'fr' && locale !== 'en') notFound();
   return createBusinessLandingMetadata('authors', locale);
 }
 
 export default async function LocalizedAuthorsPage({ params }: AuthorsPageProps) {
   const { locale } = await params;
-  if (locale !== 'fr') notFound();
+  if (locale !== 'fr' && locale !== 'en') notFound();
   return <BusinessLandingPage audience="authors" locale={locale} />;
 }

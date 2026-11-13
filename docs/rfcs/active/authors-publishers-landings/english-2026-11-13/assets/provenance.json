@@ -1,0 +1,59 @@
+{
+  "mode": "built-in image_gen",
+  "createdAt": "2026-11-13T12:34:07.904Z",
+  "purpose": "English localization of existing author illustrations only",
+  "assets": [
+    {
+      "key": "hero",
+      "path": "public/images/business-hero/book-concept-04.png",
+      "prompt": "Use case: text-localization. Image 1 is the exact edit target, a transparent portrait book illustration. Change ONLY the Russian two-line title “Ваша книга” on the linen book cover to the English title “Your book”, rendered exactly as two centered lines: “Your” above “book”. Match the elegant dark forest-green serif typography, relative size, centered position, and tight natural line spacing of the original. Keep the “Globoox” wordmark unchanged. Preserve the exact 1024×1536 portrait composition, full book silhouette, position, proportions, linen texture, fine embossed arcs, lighting and shadows. The book must remain at the same scale with identical surrounding space. Preserve genuine transparent alpha outside the illustration. Do not add a backdrop, frame, decoration, subtitle, logo or other text. No Russian letters remain. This is a surgical localization, not a new composition.",
+      "generatedSource": "/Users/user/.codex/generated_images/01a1d18b-5e07-7b61-beba-4e4607f39ced/exec-9314539e-7b4a-4cbf-93d5-889e61fa05a5.png",
+      "destination": "public/images/business-hero/book-concept-04-en.png",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "alphaExtrema": [
+        0,
+        254
+      ],
+      "bytes": 2526086
+    },
+    {
+      "key": "trial",
+      "path": "public/images/business-sections/trial-book-chapter.png",
+      "prompt": "Use case: text-localization. Image 1 is the exact edit target, a square transparent illustration of a cream chapter sheet laid diagonally on a linen book with a terracotta ribbon. Change ONLY the Russian heading “Глава 1” on the paper to the English heading “Chapter 1”, exactly one line in the same dark forest-green serif typeface, at the same position and perspective. Match the original font size and baseline angle. Preserve the exact square composition, book and sheet positions, proportions, every fine paper rule, linen texture, embossed book arcs, ribbon, lighting and shadows. Preserve genuine transparent alpha outside the objects. Do not crop or enlarge the objects or introduce a background. Do not add a frame, logo or extra text. No Russian letters remain. This is a surgical localization, not a new composition.",
+      "generatedSource": "/Users/user/.codex/generated_images/01a1d18b-5e07-7b61-beba-4e4607f39ced/exec-cfc3e3c6-0525-47ef-b738-5cf023afe2a7.png",
+      "destination": "public/images/business-sections/trial-book-chapter-en.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1776916
+    },
+    {
+      "key": "contact",
+      "path": "public/images/business-sections/contact-book-arcs.png",
+      "prompt": "Use case: text-localization. Image 1 is the exact edit target, a square transparent illustration with an upright cream linen book on the left and fine pale arcs extending to the right. Change ONLY the Russian two-line title “Ваша книга” on the cover to the English title “Your book”, rendered exactly as two centered lines: “Your” above “book”. Match the original dark forest-green elegant serif typography, relative size, centered position, and tight natural line spacing. Keep the “Globoox” wordmark unchanged. Preserve the exact square composition: book placement on the left, identical scale/proportions, arc paths and extent, full silhouette, linen texture, embossed arcs, lighting and shadows. Preserve genuine transparent alpha around the book and between the delicate arcs. Do not center the book, crop the arcs, add a backdrop, frame, decoration, subtitle or other text. No Russian letters remain. This is a surgical localization, not a new composition.",
+      "generatedSource": "/Users/user/.codex/generated_images/01a1d18b-5e07-7b61-beba-4e4607f39ced/exec-d2a07a1e-8c3c-42bc-9ac3-93134a3f0bca.png",
+      "destination": "public/images/business-sections/contact-book-arcs-en.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1725164
+    }
+  ],
+  "review": "All three outputs visually inspected, both as transparent PNGs and composited against the intended cream/forest backgrounds. English spelling correct, Globoox preserved, matching source composition and native dimensions; true alpha retained. No resizing or other asset post-processing."
+}

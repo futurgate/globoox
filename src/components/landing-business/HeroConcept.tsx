@@ -60,7 +60,7 @@ export function HeroConcept({ concept, primary = false, locale = 'ru' }: { conce
             })}
           </svg>
           <Image
-            src={`/images/business-hero/book-concept-${concept}${locale === 'fr' && ruled ? '-fr' : ''}.png`}
+            src={`/images/business-hero/book-concept-${concept}${locale !== 'ru' && ruled ? `-${locale}` : ''}.png`}
             alt=""
             width={ruled ? 1024 : 1145}
             height={ruled ? 1536 : 1374}
