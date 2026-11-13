@@ -1,7 +1,7 @@
 import { getLandingMessages } from '@/lib/landing-i18n';
 import { authorLandingContent, businessLandingContent } from './content';
 
-export type AuthorLocale = 'ru' | 'fr';
+export type AuthorLocale = 'ru' | 'fr' | 'en';
 
 const ruMessages = getLandingMessages('ru');
 const russianAuthorContent = {
@@ -122,6 +122,82 @@ const frenchAuthorContent: typeof russianAuthorContent = {
   },
 };
 
+// English editorial source: english-2026-11-13/source-en.pdf in the landing record.
+// Slide 7 (Trusted by) stays omitted under the author's existing audience rule.
+const englishAuthorContent: typeof russianAuthorContent = {
+  ...russianAuthorContent,
+  hero: {
+    title: 'Sell your books worldwide in every language, on every platform',
+    eyebrow: 'For authors',
+    opening: 'Sell your books ',
+    emphasis: 'worldwide',
+    subtitle: 'in every language, on every platform',
+    description: 'We translate your work and publish it on Amazon, Kobo, and other major ebook stores.',
+    button: 'Get in touch',
+    bookLabel: 'Your book — on',
+  },
+  translation: {
+    title: 'Translation that opens your book to readers worldwide',
+    description: 'It runs on an AI-based translation system we built in-house with linguists, designed for literary and genre fiction, essays, popular science, and self-help.',
+  },
+  languages: {
+    ...russianAuthorContent.languages,
+    title: 'Languages',
+    headingLines: ['Languages'],
+    currentLabel: 'Available now',
+    futureLabel: 'Coming soon',
+  },
+  example: {
+    label: 'Translation quality',
+    title: 'Reads as naturally as the original',
+    description: 'We preserve your style, voice, and terminology, and the result is comparable to a professional translator’s work.',
+    sliderLabel: 'Compare original and translation',
+  },
+  trial: {
+    title: 'One chapter, on us',
+    description: 'Send us your book, and we’ll translate one chapter for free.',
+    button: 'Get my free chapter',
+  },
+  process: {
+    title: 'We take your book all the way to readers',
+    steps: [
+      { number: '01', title: 'Production', description: 'We format your files to meet each platform’s requirements.' },
+      { number: '02', title: 'Distribution', description: 'We list your title in the stores you choose.' },
+      { number: '03', title: 'Royalties', description: 'We collect the sales revenue and pay you your share.' },
+    ],
+  },
+  team: {
+    label: 'Who we are',
+    title: 'Meet the team',
+    description: 'Globoox brings together a designer specializing in ebook typography, a linguist, a multilingual translator, and a software engineer with a deep understanding of AI.',
+    items: getLandingMessages('en').founders.items.map((member, index) => ({
+      ...member,
+      name: ['Tatiana Melnikova', 'Anton Lomovski', 'Kondrat Kondratenko', 'Maxim Ilichev'][index],
+      role: ['CTO', 'CEO', 'Head of design', 'Linguist'][index],
+      linkedinText: 'LinkedIn',
+    })),
+  },
+  contact: {
+    title: 'Readers around the world are waiting for your book',
+    button: 'Contact Globoox',
+  },
+  nav: [
+    { label: 'Translation', href: '#translation' },
+    { label: 'Languages', href: '#languages' },
+    { label: 'Example', href: '#quality' },
+    { label: 'Publishing', href: '#publishing' },
+    { label: 'Team', href: '#team' },
+  ],
+  ui: {
+    skip: 'Skip to content',
+    menu: 'Open or close menu',
+    noScript: 'Enable JavaScript in your browser to contact us.',
+    cookies: { ...getLandingMessages('en').cookies, description: 'Cookies for site use and analytics.', necessary: 'Essential only' },
+  },
+};
+
+const authorLandingContentByLocale = { ru: russianAuthorContent, fr: frenchAuthorContent, en: englishAuthorContent };
+
 export function getAuthorLandingContent(locale: AuthorLocale = 'ru') {
-  return locale === 'fr' ? frenchAuthorContent : russianAuthorContent;
+  return authorLandingContentByLocale[locale];
 }

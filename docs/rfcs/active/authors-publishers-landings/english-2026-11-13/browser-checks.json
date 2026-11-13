@@ -1,0 +1,524 @@
+{
+  "startedAt": "2026-11-13T12:36:36.085Z",
+  "base": "http://localhost:3000",
+  "source": "source-en.pdf",
+  "previousAttempts": [
+    {
+      "startedAt": null,
+      "failure": {
+        "message": "/en/authors\n\n500 !== 200\n",
+        "stack": "AssertionError [ERR_ASSERTION]: /en/authors\n\n500 !== 200\n\n    at goto (file:///Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/english-2026-11-13/verify-english.mjs:50:10)\n    at async file:///Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/english-2026-11-13/verify-english.mjs:55:3"
+      },
+      "completedChecks": {
+        "copy": 0,
+        "layouts": 0
+      }
+    },
+    {
+      "startedAt": "2026-11-13T12:36:09.467Z",
+      "failure": {
+        "message": "Cannot read properties of null (reading 'status')",
+        "stack": "TypeError: Cannot read properties of null (reading 'status')\n    at goto (file:///Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/english-2026-11-13/verify-english.mjs:53:25)\n    at runNextTicks (node:internal/process/task_queues:64:5)\n    at process.processImmediate (node:internal/timers:452:9)\n    at process.callbackTrampoline (node:internal/async_hooks:130:17)\n    at async file:///Users/user/Documents/github/globoox_frontend/docs/rfcs/active/authors-publishers-landings/english-2026-11-13/verify-english.mjs:174:5"
+      },
+      "completedChecks": {
+        "copy": 8,
+        "layouts": 5
+      }
+    }
+  ],
+  "copy": [
+    {
+      "id": "hero",
+      "phrases": [
+        "For authors",
+        "Sell your books worldwide in every language, on every platform",
+        "We translate your work and publish it on Amazon, Kobo, and other major ebook stores.",
+        "Get in touch"
+      ]
+    },
+    {
+      "id": "translation",
+      "phrases": [
+        "Translation that opens your book to readers worldwide",
+        "It runs on an AI-based translation system we built in-house with linguists, designed for literary and genre fiction, essays, popular science, and self-help."
+      ]
+    },
+    {
+      "id": "languages",
+      "phrases": [
+        "Languages",
+        "Available now",
+        "Coming soon"
+      ]
+    },
+    {
+      "id": "quality",
+      "phrases": [
+        "Translation quality",
+        "Reads as naturally as the original",
+        "We preserve your style, voice, and terminology, and the result is comparable to a professional translator’s work."
+      ]
+    },
+    {
+      "id": "trial",
+      "phrases": [
+        "One chapter, on us",
+        "Send us your book, and we’ll translate one chapter for free.",
+        "Get my free chapter"
+      ]
+    },
+    {
+      "id": "publishing",
+      "phrases": [
+        "We take your book all the way to readers",
+        "Production",
+        "We format your files to meet each platform’s requirements.",
+        "Distribution",
+        "We list your title in the stores you choose.",
+        "Royalties",
+        "We collect the sales revenue and pay you your share."
+      ]
+    },
+    {
+      "id": "team",
+      "phrases": [
+        "Who we are",
+        "Meet the team",
+        "Globoox brings together a designer specializing in ebook typography, a linguist, a multilingual translator, and a software engineer with a deep understanding of AI."
+      ]
+    },
+    {
+      "id": "contact",
+      "phrases": [
+        "Readers around the world are waiting for your book",
+        "Contact Globoox"
+      ]
+    }
+  ],
+  "layouts": [
+    {
+      "width": 1440,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 1024,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 768,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 390,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 320,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    }
+  ],
+  "cookies": [
+    {
+      "width": 1440,
+      "elements": [
+        {
+          "text": "Cookies on Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies for site use and analytics.",
+          "lines": 1
+        },
+        {
+          "text": "Essential only",
+          "lines": 1
+        },
+        {
+          "text": "Accept all",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 1024,
+      "elements": [
+        {
+          "text": "Cookies on Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies for site use and analytics.",
+          "lines": 1
+        },
+        {
+          "text": "Essential only",
+          "lines": 1
+        },
+        {
+          "text": "Accept all",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 768,
+      "elements": [
+        {
+          "text": "Cookies on Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies for site use and analytics.",
+          "lines": 1
+        },
+        {
+          "text": "Essential only",
+          "lines": 1
+        },
+        {
+          "text": "Accept all",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "elements": [
+        {
+          "text": "Cookies on Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies for site use and analytics.",
+          "lines": 1
+        },
+        {
+          "text": "Essential only",
+          "lines": 1
+        },
+        {
+          "text": "Accept all",
+          "lines": 1
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "elements": [
+        {
+          "text": "Cookies on Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies for site use and analytics.",
+          "lines": 1
+        },
+        {
+          "text": "Essential only",
+          "lines": 1
+        },
+        {
+          "text": "Accept all",
+          "lines": 1
+        }
+      ]
+    }
+  ],
+  "dropdowns": [
+    {
+      "width": 1920,
+      "triggerRight": 1551,
+      "menuRight": 1551,
+      "menuLeft": 1327,
+      "delta": 0
+    },
+    {
+      "width": 2560,
+      "triggerRight": 1871,
+      "menuRight": 1871,
+      "menuLeft": 1647,
+      "delta": 0
+    }
+  ],
+  "motion": [
+    {
+      "reducedMotion": "no-preference",
+      "before": [
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 420.44824740171435,
+          "y": 199.55963246107103
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 449.28429826498035,
+          "y": 238.24629665374758
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 483.6521879196167,
+          "y": 298.2091184973717
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 521.7039831590653,
+          "y": 387.6658072280884
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 403.7691233611107,
+          "y": 459.6089490962029
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 440.50156540632247,
+          "y": 541.0988992547989
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 469.7424829244614,
+          "y": 650.1179804372788
+        }
+      ],
+      "after": [
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 433.7961773943901,
+          "y": 183.8902533590794
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 461.83286099910737,
+          "y": 224.96534729957582
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 499.378344039917,
+          "y": 293.8904916238785
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 382.7797007274628,
+          "y": 398.2289610624314
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 419.3292159318924,
+          "y": 462.05270874977117
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 453.82406756401065,
+          "y": 551.8176324558259
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 484.15929750680925,
+          "y": 662.7834048938752
+        }
+      ],
+      "movements": [
+        20.583893619315685,
+        18.271563765600263,
+        16.308357501370757,
+        139.32529012373757,
+        15.750823535793431,
+        17.09913170825949,
+        19.19003698192235
+      ]
+    },
+    {
+      "reducedMotion": "reduce",
+      "before": [
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 433.7961773943901,
+          "y": 183.8902533590794
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 461.83286099910737,
+          "y": 224.96534729957582
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 499.378344039917,
+          "y": 293.8904916238785
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 382.7797007274628,
+          "y": 398.2289610624314
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 419.3292159318924,
+          "y": 462.05270874977117
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 453.82406756401065,
+          "y": 551.8176324558259
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 484.15929750680925,
+          "y": 662.7834048938752
+        }
+      ],
+      "after": [
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 446.6231763982773,
+          "y": 164.93341844797138
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 477.10043010234835,
+          "y": 211.60814397335056
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 517.6215900278091,
+          "y": 291.3734017562867
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 399.9287228894234,
+          "y": 397.85466096878054
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 436.28600838661197,
+          "y": 466.4152805924416
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 469.0976613807678,
+          "y": 563.1798286867142
+        },
+        {
+          "tag": "circle",
+          "radius": "3.4",
+          "x": 502.8643495988846,
+          "y": 672.8935829639436
+        }
+      ],
+      "movements": [
+        22.888719782738537,
+        20.28579668192408,
+        18.416073565672885,
+        17.15310647292562,
+        17.508993215913218,
+        19.036338179085185,
+        21.262518062913994
+      ]
+    }
+  ],
+  "metadata": [
+    {
+      "path": "/authors",
+      "locale": "ru",
+      "canonical": "https://globoox.co/authors",
+      "alternates": {
+        "ru": "https://globoox.co/authors",
+        "fr": "https://globoox.co/fr/authors",
+        "en": "https://globoox.co/en/authors"
+      }
+    },
+    {
+      "path": "/fr/authors",
+      "locale": "fr",
+      "canonical": "https://globoox.co/fr/authors",
+      "alternates": {
+        "ru": "https://globoox.co/authors",
+        "fr": "https://globoox.co/fr/authors",
+        "en": "https://globoox.co/en/authors"
+      }
+    },
+    {
+      "path": "/en/authors",
+      "locale": "en",
+      "canonical": "https://globoox.co/en/authors",
+      "alternates": {
+        "ru": "https://globoox.co/authors",
+        "fr": "https://globoox.co/fr/authors",
+        "en": "https://globoox.co/en/authors"
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "hero",
+      "email": "mailto:lomovski@globoox.co?subject=Book%20translation%20and%20publishing%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "trial",
+      "email": "mailto:lomovski@globoox.co?subject=One%20chapter%2C%20on%20us%20%E2%80%94%20Globoox"
+    },
+    {
+      "id": "contact",
+      "email": "mailto:lomovski@globoox.co?subject=Book%20translation%20and%20publishing%20%E2%80%94%20Globoox"
+    },
+    "RU → EN → FR → RU with hash and locale cookie, 1440px",
+    "RU → EN → FR → RU with hash and locale cookie, 390px",
+    "Russian authors, French authors, and publishers retained their established copy and examples"
+  ],
+  "screenshots": [
+    "en-hero-1440.png",
+    "en-translation-1440.png",
+    "en-languages-1440.png",
+    "en-quality-1440.png",
+    "en-trial-1440.png",
+    "en-publishing-1440.png",
+    "en-team-1440.png",
+    "en-contact-1440.png",
+    "en-hero-390.png",
+    "en-translation-390.png",
+    "en-languages-390.png",
+    "en-quality-390.png",
+    "en-trial-390.png",
+    "en-publishing-390.png",
+    "en-team-390.png",
+    "en-contact-390.png"
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -9,7 +9,7 @@ export function AuthorLanguages({ locale = 'ru' }: { locale?: AuthorLocale }) {
   return (
     <section id="languages" className={styles.section} aria-labelledby="languages-title">
       <div className={styles.layout}>
-        <h2 id="languages-title" className={styles.title}>{copy.languages.headingLines[0]}<br />{copy.languages.headingLines[1]}</h2>
+        <h2 id="languages-title" className={styles.title}>{copy.languages.headingLines[0]}{copy.languages.headingLines[1] && <><br />{copy.languages.headingLines[1]}</>}</h2>
         <div className={styles.groups}>
           <div>
             <h3 className={styles.label}>{copy.languages.currentLabel}</h3>

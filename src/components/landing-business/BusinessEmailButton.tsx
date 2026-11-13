@@ -6,7 +6,7 @@ interface BusinessEmailButtonProps {
   children: ReactNode;
   className?: string;
   intent?: 'contact' | 'trial';
-  locale?: 'ru' | 'fr';
+  locale?: 'ru' | 'fr' | 'en';
 }
 
 export function BusinessEmailButton({ children, className, intent = 'contact', locale = 'ru' }: BusinessEmailButtonProps) {
@@ -20,7 +20,9 @@ export function BusinessEmailButton({ children, className, intent = 'contact', l
     const mailbox = 'lomovski';
     const domain = ['globoox', 'co'].join('.');
     const recipient = [mailbox, domain].join('@');
-    const subject = locale === 'fr'
+    const subject = locale === 'en'
+      ? (intent === 'trial' ? 'One chapter, on us — Globoox' : 'Book translation and publishing — Globoox')
+      : locale === 'fr'
       ? (intent === 'trial' ? 'Un chapitre offert — Globoox' : 'Traduction et publication de votre livre — Globoox')
       : intent === 'trial'
       ? 'Бесплатный пробный перевод — Globoox'

@@ -17,7 +17,7 @@ export function AuthorTrialSection({ locale = 'ru' }: { locale?: AuthorLocale })
           </BusinessEmailButton>
         </div>
         <Image
-          src={`/images/business-sections/trial-book-chapter${locale === 'fr' ? '-fr' : ''}.png`}
+          src={`/images/business-sections/trial-book-chapter${locale !== 'ru' ? `-${locale}` : ''}.png`}
           alt=""
           width={1254}
           height={1254}
@@ -42,7 +42,7 @@ export function AuthorContactSection({ locale = 'ru' }: { locale?: AuthorLocale 
           <noscript><p className={shared.contactNote}>{copy.ui.noScript}</p></noscript>
         </div>
         <Image
-          src={`/images/business-sections/contact-book-arcs${locale === 'fr' ? '-fr' : ''}.png`}
+          src={`/images/business-sections/contact-book-arcs${locale !== 'ru' ? `-${locale}` : ''}.png`}
           alt=""
           width={1254}
           height={1254}

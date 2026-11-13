@@ -22,7 +22,7 @@
 
 .groups { min-width: 0; }
 
-.section:lang(fr) .title { font-size: clamp(42px, 6.1vw, 100px); }
+.section:is(:lang(fr), :lang(en)) .title { font-size: clamp(42px, 6.1vw, 100px); }
 
 .label {
   margin: 0;
@@ -64,7 +64,7 @@
   .section { padding-block: 64px; }
   .layout { width: calc(100% - 40px); grid-template-columns: minmax(0, 1fr); gap: 40px; }
   .title { padding: 0; font-size: clamp(42px, 10vw, 64px); line-height: 1.08; }
-  .section:lang(fr) .title { font-size: clamp(38px, 9.2vw, 60px); }
+  .section:is(:lang(fr), :lang(en)) .title { font-size: clamp(38px, 9.2vw, 60px); }
   .label { font-size: 17px; }
   .available, .future { margin-top: 22px; }
   .available { gap: 16px 24px; font-size: clamp(28px, 6.8vw, 38px); }
