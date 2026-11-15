@@ -310,6 +310,10 @@
   margin-top: 56px;
 }
 
+.authorSteps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .steps li {
   border-top: 1px solid var(--bg-dark-border);
   padding-top: 24px;
@@ -390,6 +394,10 @@
   margin: 22px 0 0;
   color: var(--mist);
   font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+  .authorSteps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1023px) {

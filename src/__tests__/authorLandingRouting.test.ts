@@ -29,7 +29,7 @@ describe('author landing locale routes', () => {
       canonical: '/en/authors',
       languages: { ru: '/authors', fr: '/fr/authors', en: '/en/authors' },
     });
-    expect(metadata.description).toBe('We translate your work and publish it on Amazon, Kobo, and other major ebook stores.');
+    expect(metadata.description).toBe('We translate your book and publish it on Amazon, Kobo, Litres, and other major ebook stores.');
     expect(metadata.openGraph).toMatchObject({ url: '/en/authors', locale: 'en_US' });
     expect(metadata.twitter?.description).toBe(metadata.description);
   });

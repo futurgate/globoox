@@ -90,7 +90,7 @@ export function BusinessLandingPage({ audience, locale: requestedLocale = 'ru' }
         <section id="publishing" className={styles.publishing} aria-labelledby="publishing-title">
           <div className={styles.container}>
             <h2 id="publishing-title" className={styles.heading}>{copy.process.title}</h2>
-            <ol className={styles.steps}>
+            <ol className={`${styles.steps} ${isAuthors ? styles.authorSteps : ''}`}>
               {copy.process.steps.map((step) => (
                 <li key={step.number}>
                   <span className={styles.stepNumber} aria-hidden="true">{step.number}</span>

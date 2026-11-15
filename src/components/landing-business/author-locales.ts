@@ -28,6 +28,16 @@ const russianAuthorContent = {
     description: ruMessages.founders.description.split(' Вместе мы строим')[0],
     items: ruMessages.founders.items,
   },
+  process: {
+    ...businessLandingContent.process,
+    steps: [
+      { number: '01', title: 'Перевод', description: 'Переводим книгу на языки по вашему выбору.' },
+      ...businessLandingContent.process.steps.map((step, index) => ({
+        ...step,
+        number: String(index + 2).padStart(2, '0'),
+      })),
+    ],
+  },
   contact: { ...businessLandingContent.contact, ...authorLandingContent.contact },
   nav: [
     { label: 'Перевод', href: '#translation' },
@@ -45,7 +55,7 @@ const russianAuthorContent = {
 };
 
 // French editorial source: docs/rfcs/active/authors-publishers-landings/fr-and-logo-alignment-2026-11-13/source-fr.pdf (8 pages).
-// Its wording is authoritative for French, including deliberate differences from Russian.
+// Updated from temp/Globoox B2B (FR).pdf on 2026-11-14; French wording is authoritative.
 const frenchAuthorContent: typeof russianAuthorContent = {
   ...russianAuthorContent,
   hero: {
@@ -59,8 +69,8 @@ const frenchAuthorContent: typeof russianAuthorContent = {
     bookLabel: 'Votre livre — sur',
   },
   translation: {
-    title: 'Notre traduction, la clé des lecteurs du monde entier',
-    description: 'Notre traduction repose sur notre propre technologie basée sur l’IA, développée avec des linguistes pour la fiction comme pour la non-fiction, du roman de genre à l’essai.',
+    title: 'Notre traduction, votre clé pour conquérir les lecteurs du monde entier',
+    description: 'Notre propre technologie basée sur l’IA, développée avec des linguistes pour la fiction comme pour la non-fiction, du roman de genre à l’essai.',
   },
   languages: {
     ...russianAuthorContent.languages,
@@ -83,9 +93,10 @@ const frenchAuthorContent: typeof russianAuthorContent = {
   process: {
     title: 'Nous prenons en charge tout le parcours de votre livre jusqu’à ses lecteurs',
     steps: [
-      { number: '01', title: 'Préparation', description: 'Nous mettons en forme votre livre numérique selon les exigences de chaque plateforme.' },
-      { number: '02', title: 'Distribution', description: 'Nous mettons votre livre en vente dans les librairies numériques de votre choix.' },
-      { number: '03', title: 'Versements', description: 'Nous collectons les recettes et vous reversons votre part des ventes.' },
+      { number: '01', title: 'Traduction', description: 'Nous traduisons votre livre dans les langues de votre choix.' },
+      { number: '02', title: 'Préparation', description: 'Nous mettons en forme votre livre numérique selon les exigences de chaque plateforme.' },
+      { number: '03', title: 'Distribution', description: 'Nous mettons votre livre en vente dans les librairies numériques de votre choix.' },
+      { number: '04', title: 'Versements', description: 'Nous collectons les recettes et vous reversons votre part des ventes.' },
     ],
   },
   team: {
@@ -93,7 +104,7 @@ const frenchAuthorContent: typeof russianAuthorContent = {
     title: 'Notre force, c’est notre équipe',
     description: 'Notre équipe réunit un designer spécialiste de la typographie des livres numériques, un linguiste, un traducteur polyglotte et une ingénieure développeuse experte en intelligence artificielle.',
     items: getLandingMessages('fr').founders.items.map((member, index) => {
-      const name = ['Tatiana Melnikova', 'Anton Lomovski', 'Kondrat Kondratenko', 'Maxim Ilichev'][index];
+      const name = ['Tatiana Melnikova', 'Anton Lomovski', 'Kondrat Kondratenko', 'Maksim Ilichev'][index];
       return {
         ...member,
         name,
@@ -122,7 +133,7 @@ const frenchAuthorContent: typeof russianAuthorContent = {
   },
 };
 
-// English editorial source: english-2026-11-13/source-en.pdf in the landing record.
+// English editorial source: english-2026-11-13/source-en.pdf; updated from temp/Globoox B2B (EN).pdf on 2026-11-14.
 // Slide 7 (Trusted by) stays omitted under the author's existing audience rule.
 const englishAuthorContent: typeof russianAuthorContent = {
   ...russianAuthorContent,
@@ -132,7 +143,7 @@ const englishAuthorContent: typeof russianAuthorContent = {
     opening: 'Sell your books ',
     emphasis: 'worldwide',
     subtitle: 'in every language, on every platform',
-    description: 'We translate your work and publish it on Amazon, Kobo, and other major ebook stores.',
+    description: 'We translate your book and publish it on Amazon, Kobo, Litres, and other major ebook stores.',
     button: 'Get in touch',
     bookLabel: 'Your book — on',
   },
@@ -161,9 +172,10 @@ const englishAuthorContent: typeof russianAuthorContent = {
   process: {
     title: 'We take your book all the way to readers',
     steps: [
-      { number: '01', title: 'Production', description: 'We format your files to meet each platform’s requirements.' },
-      { number: '02', title: 'Distribution', description: 'We list your title in the stores you choose.' },
-      { number: '03', title: 'Royalties', description: 'We collect the sales revenue and pay you your share.' },
+      { number: '01', title: 'Translation', description: 'We translate your book into the languages of your choice.' },
+      { number: '02', title: 'Production', description: 'We format your files to meet each platform’s requirements.' },
+      { number: '03', title: 'Distribution', description: 'We list your title in the stores you choose.' },
+      { number: '04', title: 'Royalties', description: 'We collect the sales revenue and pay you your share.' },
     ],
   },
   team: {
