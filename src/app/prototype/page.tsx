@@ -1,0 +1,38 @@
+import Link from 'next/link';
+import { ArrowUpRight, BookOpenText, Layers3 } from 'lucide-react';
+
+export default function PrototypeIndex() {
+  return (
+    <main className="pt-index">
+      <div className="pt-wordmark">Globoox</div>
+      <h1>Перевод книг</h1>
+      <p className="pt-lead">
+        Выберите демо-кабинет. Все действия выполняются на демонстрационных
+        данных.
+      </p>
+      <div className="pt-role-cards">
+        <Link href="/prototype/admin" className="pt-role-card">
+          <BookOpenText size={28} strokeWidth={1.6} />
+          <h2>Кабинет администратора</h2>
+          <p>Настроить перевод книги, проверить правки и скачать EPUB.</p>
+          <span>
+            Открыть кабинет <ArrowUpRight size={17} />
+          </span>
+        </Link>
+        <Link href="/prototype/author" className="pt-role-card">
+          <Layers3 size={28} strokeWidth={1.6} />
+          <h2>Кабинет автора</h2>
+          <p>
+            Подготовить книгу или серию, согласовать перевод и получить издание.
+          </p>
+          <span>
+            Открыть кабинет <ArrowUpRight size={17} />
+          </span>
+        </Link>
+      </div>
+      <Link href="/prototype/author/editor" className="pt-editor-link">
+        Служебные настройки авторского кабинета <ArrowUpRight size={15} />
+      </Link>
+    </main>
+  );
+}
