@@ -494,7 +494,7 @@ export default function AdminPrototype() {
         )}
         {screen === 'overview' && (
           <div className="adm-stack">
-            <Card className="block adm-card adm-hero">
+            <Card className="flex-row adm-card adm-hero">
               <div>
                 <TranslationStatus phase={job.status} />
                 <h2>
