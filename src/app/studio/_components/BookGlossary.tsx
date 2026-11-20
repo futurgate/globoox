@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
-import { downloadText } from '../../_components/downloads';
+import { downloadText } from '@/app/prototype/_components/downloads';
 import { ActionFeedback, StageCard } from './BookStage';
 import { bookEndpoint, bookPost, useBookAction, useBookData } from './bookRequests';
 

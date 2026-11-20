@@ -4,13 +4,19 @@ import { hasFreshAnalyticsConsent } from '@/lib/cookieConsent'
 import { isLandingConsentPath } from '@/lib/landingConsentPath'
 import { isPrototypePath } from '@/lib/prototypePath'
 
-if (!isPrototypePath(window.location.pathname)) {
+import { workspaceBase } from '@/lib/translationWorkspacePath'
+
+function skipsAnalytics(path: string) {
+  return isPrototypePath(path) || path === workspaceBase || path.startsWith(workspaceBase + '/')
+}
+
+if (!skipsAnalytics(window.location.pathname)) {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     defaults: '2026-01-30',
     person_profiles: 'always',
     before_send: (event) => {
-      if (isPrototypePath(window.location.pathname)) return null
+      if (skipsAnalytics(window.location.pathname)) return null
       if (
         isLandingConsentPath(window.location.pathname)
         && !hasFreshAnalyticsConsent()

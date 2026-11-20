@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode, Ref } from 'react';
+import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { uiIconTriggerButton } from '@/components/ui/button-styles';
@@ -54,25 +55,28 @@ export default function IOSReaderHeader(props: IOSReaderHeaderProps) {
       {workspace && (
         <nav aria-label={props.navigationLabel} className="pt-2 sm:pt-3">
           <ol className="m-0 flex min-w-0 list-none items-center gap-x-2 p-0">
-            {props.ancestors.map(({ label, href }, index) => (
-              <li key={href} className="flex min-w-0 items-center gap-x-2">
-                {index > 0 && (
-                  <span
-                    aria-hidden="true"
-                    className="text-xs text-[var(--reader-muted-text)]"
+            {props.ancestors.map(({ label, href }, index) => {
+              const BreadcrumbLink = href.startsWith('#') ? 'a' : Link;
+              return (
+                <li key={href} className="flex min-w-0 items-center gap-x-2">
+                  {index > 0 && (
+                    <span
+                      aria-hidden="true"
+                      className="text-xs text-[var(--reader-muted-text)]"
+                    >
+                      /
+                    </span>
+                  )}
+                  <BreadcrumbLink
+                    href={href}
+                    title={label}
+                    className="inline-flex min-h-6 min-w-0 items-center text-xs font-medium text-[color:color-mix(in_srgb,var(--reader-text)_78%,transparent)] underline decoration-[var(--reader-border)] underline-offset-2 hover:text-[var(--reader-accent)] hover:decoration-current focus-visible:decoration-current"
                   >
-                    /
-                  </span>
-                )}
-                <a
-                  href={href}
-                  title={label}
-                  className="inline-flex min-h-6 min-w-0 items-center text-xs font-medium text-[color:color-mix(in_srgb,var(--reader-text)_78%,transparent)] underline decoration-[var(--reader-border)] underline-offset-2 hover:text-[var(--reader-accent)] hover:decoration-current focus-visible:decoration-current"
-                >
-                  <span className="truncate">{label}</span>
-                </a>
-              </li>
-            ))}
+                    <span className="truncate">{label}</span>
+                  </BreadcrumbLink>
+                </li>
+              );
+            })}
           </ol>
         </nav>
       )}

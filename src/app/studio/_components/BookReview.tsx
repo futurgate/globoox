@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import type { ReaderCheckJournal, RevisionDiffEntry } from '@/lib/api';
-import { downloadCsv } from '../../_components/downloads';
+import { readerCheckJournalRows } from '@/lib/readerCheckJournalCsv';
+import { downloadCsv } from '@/app/prototype/_components/downloads';
 import { ActionFeedback } from './BookStage';
 import { bookEndpoint, bookPost, useBookAction, useBookData } from './bookRequests';
 
@@ -89,7 +90,13 @@ export function BookReview({ bookId, lang }: { bookId: string; lang: string }) {
     {!current && <p role="status">Загрузка журнала…</p>}
     {current?.data && !rows.length && <p>В журнале этого перевода пока нет записей.</p>}
     {!!rows.length && <div className="flex flex-wrap gap-2">
-      <Button variant="outline" onClick={() => downloadCsv(`review-${bookId}-${lang}.csv`, [['Фрагмент','Статус','До','После'], ...rows.map(r => [r.label,r.outcome,r.before,r.after])])}>Скачать журнал CSV</Button>
+      <Button variant="outline" onClick={() => {
+        if (revision) {
+          downloadCsv(`review-${bookId}-${lang}.csv`, [['Фрагмент','Статус','До','После'], ...rows.map(r => [r.label,r.outcome,r.before,r.after])]);
+        } else if (journal?.data) {
+          downloadCsv(`reader-check-${bookId}-${lang}.csv`, readerCheckJournalRows(journal.data.items));
+        }
+      }}>Скачать журнал CSV</Button>
       {pending.length > 0 && <Button variant="outline" disabled={action.busy} onClick={() => {
         if (!window.confirm(`Записать в книгу все предложенные правки (${pending.length})?`)) return;
         void action.run(async signal => {

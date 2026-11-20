@@ -1,3 +1,4 @@
+import type { BookStagePrompt } from '@/lib/api'
 import { bodyObject, checkId, requireAdmin, requireOwnedBook, upstream, workspaceRoute, WorkspaceError } from '../../../access'
 import { requireOpenItem } from '../../../activity/feed'
 import { reviewBlock } from '../../../reviewBlock'
@@ -8,7 +9,7 @@ export const maxDuration = 300
 const reads = new Set([
   'translation-estimate', 'download', 'download-translated', 'translate-full-book', 'generate-glossary',
   'reader-check', 'reader-check-journal', 'reader-check-cost-runs', 'revise-full-book',
-  'revision-diff', 'revise-cost-runs', 'fiction-costs', 'fiction-cost-runs', 'review-block',
+  'revision-diff', 'revise-cost-runs', 'fiction-costs', 'fiction-cost-runs', 'review-block', 'stage-prompts',
 ])
 const writeFields = new Map<string, string[]>([
   ['generate-glossary', ['lang', 'restart', 'force', 'model', 'seedFromBookId', 'seedStarterGenre']],
@@ -34,6 +35,14 @@ export async function GET(request: Request, { params }: Context) {
     if (!authorReads.has(action)) requireAdmin(session)
     await requireOwnedBook(session, bookId)
     const query = new URL(request.url).searchParams
+    if (action === 'stage-prompts') {
+      const search = new URLSearchParams({ bookId, lang: query.get('lang') ?? '' })
+      const response = await upstream(request, session, '/api/admin/fiction-book-prompts?' + search)
+      if (!response.ok) return response
+      const { stages } = await response.json() as { stages: BookStagePrompt[] }
+      if (!Array.isArray(stages)) throw new WorkspaceError(502, 'Не удалось получить шаблоны этапов')
+      return Response.json(stages.map(({ stage, name, overridden }) => ({ stage, name, overridden })))
+    }
     if (action === 'review-block') return Response.json(await reviewBlock(session, bookId, query))
     const allowed = action === 'translation-estimate' ? ['model', 'input_price', 'output_price', 'chars_per_token']
       : action === 'revision-diff' ? ['lang', 'changedOnly'] : action === 'download' ? [] : ['lang']

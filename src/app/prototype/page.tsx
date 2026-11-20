@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
 import { Card } from '@/components/ui/card';
 import { ArrowUpRight, BookOpenText, Layers3 } from 'lucide-react';
 
@@ -8,7 +9,7 @@ export default function PrototypeIndex() {
       <div className="pt-wordmark">Globoox</div>
       <h1>Перевод книг</h1>
       <p className="pt-lead">
-        <Link href="/prototype/to-be" className="pt-editor-link">Открыть кабинет перевода своих книг <ArrowUpRight size={17} /></Link>
+        <Link href={workspaceBase} className="pt-editor-link">Открыть кабинет перевода своих книг <ArrowUpRight size={17} /></Link>
       </p>
       <div className="pt-role-cards">
         <Card>

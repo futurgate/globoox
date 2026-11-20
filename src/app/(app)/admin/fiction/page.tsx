@@ -1,11 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { downloadCsv } from '@/app/prototype/_components/downloads';
+import { readerCheckJournalRows } from '@/lib/readerCheckJournalCsv';
 import {
   fetchBooks,
   startFictionTranslation,
@@ -694,21 +697,7 @@ export default function AdminFictionPage() {
     }
     if (!items || items.length === 0) { setReaderError('No journal to export yet.'); return; }
 
-    const esc = (v: unknown) => `"${(v == null ? '' : String(v)).replace(/"/g, '""')}"`;
-    const header = ['Chapter #', 'Chapter', 'Variant', 'Severity', 'Outcome', 'Reason', 'Quote', 'Problem', 'Before', 'After', 'Change', 'Match', 'Score'];
-    const rows = items.map((it) => [
-      it.chapterNumber ?? '', it.chapterTitle ?? '', it.variant, it.severity, it.outcome, it.rejectReason ?? '',
-      it.quote, it.problem, it.before ?? '', it.after ?? '', it.changeNote ?? '', it.matchType ?? '', it.matchScore ?? '',
-    ]);
-    // Prepend a BOM so Excel reads the Cyrillic/UTF-8 correctly.
-    const csv = '﻿' + [header, ...rows].map((r) => r.map(esc).join(',')).join('\r\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `reader-check-${bookId}-${lang}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`reader-check-${bookId}-${lang}.csv`, readerCheckJournalRows(items));
   }, [bookId, lang, readerJournal]);
 
   // Approve (apply) or reject one proposed correction. Approve writes the (possibly
@@ -1345,7 +1334,7 @@ export default function AdminFictionPage() {
               server-side override that the next <em>real</em> run uses (for cached stages — translate/revision —
               re-run with <em>Overwrite</em> to regenerate). <strong>Reset to shipped</strong> removes the override.
               All editable prompts across directions are also on{' '}
-              <a href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</a>.
+              <Link href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</Link>.
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={() => setPromptsOpen((o) => !o)}>

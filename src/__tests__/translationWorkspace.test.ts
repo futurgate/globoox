@@ -71,11 +71,48 @@ describe('live translation workspace boundaries', () => {
     expect(data.role).toBe('admin')
   })
 
+  it.each(['author', 'admin'])('keeps reader-library membership separate from %s project ownership', async role => {
+    tables.profiles[0].is_admin = role === 'admin'
+    // The reader library includes a global title, an adopted foreign title, and a
+    // collection containing both the user's own upload and another user's book.
+    tables.books.push({ id: another, title: 'Public catalog', user_id: null })
+    tables.user_book_preferences = [{ user_id: owner, book_id: foreign }, { user_id: owner, book_id: another }]
+    tables.share_links = [{ id: item, active: true }]
+    tables.share_link_books = [{ share_link_id: item, book_id: book }, { share_link_id: item, book_id: foreign }]
+
+    const data = await (await catalog(get())).json()
+    expect(data.role).toBe(role)
+    expect(data.books.map((row: {id: string}) => row.id)).toEqual([book])
+    for (const id of [foreign, another]) {
+      expect((await bookGet(get(), context(id, 'download'))).status).toBe(404)
+      if (role === 'admin') expect((await bookPost(post({}), context(id, 'translate-full-book'))).status).toBe(404)
+    }
+    expect(proxy).not.toHaveBeenCalled()
+    expect((await bookGet(get(), context(book, 'download'))).status).toBe(200)
+  })
+
   it('rejects direct access to another book and glossary seeds even for admins', async () => {
     expect((await bookGet(get(), context(foreign, 'download-translated'))).status).toBe(404)
     expect((await bookPost(post({ sourceBookId: foreign }), context(book, 'copy-glossary'))).status).toBe(404)
     expect((await bookPost(post({ seedFromBookId: foreign }), context(book, 'generate-glossary'))).status).toBe(404)
     expect(proxy).not.toHaveBeenCalled()
+  })
+
+  it('links only the verified owner to the names of the current stage templates', async () => {
+    const req = new Request(base + '?lang=EN&bookId=' + foreign)
+    expect((await bookGet(req, context(foreign, 'stage-prompts'))).status).toBe(404)
+    tables.profiles[0].is_admin = false
+    expect((await bookGet(req, context(book, 'stage-prompts'))).status).toBe(403)
+    expect(proxy).not.toHaveBeenCalled()
+
+    tables.profiles[0].is_admin = true
+    const template = { name: 'generate_fiction_glossary_ru_en.txt', stage: 'glossary', overridden: true }
+    proxy.mockResolvedValueOnce(Response.json({ stages: [{ ...template, content: 'effective', shipped: 'original' }] }))
+    const result = await bookGet(req, context(book, 'stage-prompts'))
+    expect(await result.json()).toEqual([template])
+    const url = new URL(proxy.mock.calls[0][0].url)
+    expect(url.pathname).toBe('/api/admin/fiction-book-prompts')
+    expect(Object.fromEntries(url.searchParams)).toEqual({ bookId: book, lang: 'EN' })
   })
 
   it('forwards a supported author estimate while keeping admin operations restricted', async () => {

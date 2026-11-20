@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
 import IOSReaderHeader, {
   type HeaderAncestor,
 } from '@/components/ui/ios-reader-header';
@@ -29,7 +30,8 @@ type ShellProps = {
   role: keyof typeof roleNames;
   items: NavItem[];
   active: string;
-  onSelect: (id: string) => void;
+  itemHref?: (id: string) => string;
+  onSelect?: (id: string) => void;
   title: string;
   subtitle?: string;
   detail?: { ancestors: readonly HeaderAncestor[]; action?: ReactNode };
@@ -42,6 +44,7 @@ export function PrototypeShell({
   items,
   active,
   onSelect,
+  itemHref,
   title,
   subtitle,
   detail,
@@ -59,32 +62,38 @@ export function PrototypeShell({
   const roleName = roleNames[role];
   const nav = (
     <nav aria-label={roleName} className="pt-navigation">
-      {items.map(({ id, label, section, icon: Icon, count }, i) => (
-        <Fragment key={id}>
-          {section && section !== items[i - 1]?.section && (
-            <p className="pt-section-label">{section}</p>
-          )}
-          <Button
-            variant="ghost"
-            className={uiMenuItemButton}
-            type="button"
-            aria-current={id === active ? 'page' : undefined}
-            onClick={() => {
-              if (menu.current) menu.current.open = false;
-              onSelect(id);
-              requestAnimationFrame(() =>
-                heading.current?.focus({ preventScroll: true }),
-              );
-            }}
-          >
-            {Icon && <Icon size={19} strokeWidth={1.7} aria-hidden />}
-            <span>{label}</span>
-            {typeof count === 'number' && count > 0 && (
-              <Badge variant="secondary">{count}</Badge>
+      {items.map(({ id, label, section, icon: Icon, count }, i) => {
+        const content = <>
+          {Icon && <Icon size={19} strokeWidth={1.7} aria-hidden />}
+          <span>{label}</span>
+          {typeof count === 'number' && count > 0 && <Badge variant="secondary">{count}</Badge>}
+        </>;
+        const current = id === active ? 'page' : undefined;
+        return (
+          <Fragment key={id}>
+            {section && section !== items[i - 1]?.section && (
+              <p className="pt-section-label">{section}</p>
             )}
-          </Button>
-        </Fragment>
-      ))}
+            {itemHref ? (
+              <Button asChild variant="ghost" className={uiMenuItemButton}>
+                <Link href={itemHref(id)} aria-current={current}
+                  onNavigate={() => { if (menu.current) menu.current.open = false; }}>
+                  {content}
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="ghost" className={uiMenuItemButton} type="button" aria-current={current}
+                onClick={() => {
+                  if (menu.current) menu.current.open = false;
+                  onSelect?.(id);
+                  requestAnimationFrame(() => heading.current?.focus({ preventScroll: true }));
+                }}>
+                {content}
+              </Button>
+            )}
+          </Fragment>
+        );
+      })}
     </nav>
   );
   const switchRole = live ? (
@@ -99,7 +108,7 @@ export function PrototypeShell({
     <div className="pt-shell">
       <aside className="pt-sidebar">
         <div className="pt-brand">
-          <Link className="pt-wordmark" href={live ? '/prototype/to-be' : '/prototype'}>
+          <Link className="pt-wordmark" href={live ? workspaceBase : '/prototype'}>
             Globoox
           </Link>
           <span>{roleName}</span>

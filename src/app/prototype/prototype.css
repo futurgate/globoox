@@ -62,7 +62,7 @@
   flex-direction: column;
   gap: 3px;
 }
-.pt-navigation button,
+.pt-navigation [data-slot='button'],
 .pt-switch {
   display: flex;
   align-items: center;
@@ -75,11 +75,11 @@
   min-height: 44px;
   justify-content: flex-start;
 }
-.pt-navigation button:hover,
+.pt-navigation [data-slot='button']:hover,
 .pt-switch:hover {
   background: var(--fill-tertiary);
 }
-.pt-navigation button[aria-current='page'] {
+.pt-navigation [data-slot='button'][aria-current='page'] {
   background: var(--app-accent);
   color: var(--primary-foreground);
   font-weight: 600;

@@ -1,28 +1,35 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bell, Layers3, ListOrdered, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/client';
+import { workspaceBase as base } from '@/lib/translationWorkspacePath';
 import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
-import { PrototypeShell, type NavItem } from '../../_components/PrototypeShell';
+import { PrototypeShell, type NavItem } from '@/app/prototype/_components/PrototypeShell';
 import ProjectLibrary from './ProjectLibrary';
 import BookWorkspace from './BookWorkspace';
 import WorkspaceActivity from './WorkspaceActivity';
 import WorkspaceSettings from './WorkspaceSettings';
 
-const base = '/prototype/to-be';
 const projects = { label: 'Мои проекты', href: base + '/projects' };
 const bookTabs = new Set(['glossary', 'review', 'runs', 'editions']);
 const sectionNames: Record<string, string> = {
   projects: 'Мои проекты', decisions: 'Требуют решения', queue: 'Очередь', settings: 'Настройки перевода',
 };
 
-export default function LiveWorkspace() {
-  const router = useRouter();
+function WorkspaceLogin() {
   const path = usePathname();
+  const query = useSearchParams().toString();
+  const next = path + (query ? '?' + query : '');
+  return <Button asChild className="mt-5">
+    <Link href={'/auth?next=' + encodeURIComponent(next)}>Войти в Globoox</Link>
+  </Button>;
+}
+
+export default function LiveWorkspace() {
   const parts = useParams<{ path?: string[] }>().path ?? [];
   const [data, setData] = useState<WorkspaceData | null>(null);
   const [guest, setGuest] = useState(false);
@@ -37,7 +44,9 @@ export default function LiveWorkspace() {
     setError('');
     try {
       const response = await fetch('/api/translation-workspace', { cache: 'no-store', signal: controller.signal });
+      if (controller.signal.aborted) return;
       if (response.status === 401) {
+        account.current = null;
         setData(null);
         setGuest(true);
         return;
@@ -50,24 +59,28 @@ export default function LiveWorkspace() {
       setGuest(false);
     } catch (err) {
       if (controller.signal.aborted) return;
-      setData(null);
       setGuest(false);
       setError(err instanceof Error ? err.message : 'Не удалось загрузить кабинет.');
     }
   }, []);
 
   useEffect(() => {
-    void refresh();
     const client = createClient();
-    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+    let initialized = false;
+    const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
       const userId = session?.user.id ?? null;
-      if (account.current !== undefined && account.current !== userId) {
-        setData(null);
-        setError('');
-        setGuest(!userId);
-        void refresh();
-      }
+      const first = !initialized;
+      initialized = true;
+      if (!first && event !== 'SIGNED_OUT' && account.current === userId) return;
+
       account.current = userId;
+      request.current?.abort();
+      setData(null);
+      setError('');
+      // The API authenticates the initial request against the server session.
+      const loadWorkspace = event !== 'SIGNED_OUT' && (first || !!userId);
+      setGuest(!loadWorkspace);
+      if (loadWorkspace) void refresh();
     });
     return () => { request.current?.abort(); subscription.unsubscribe(); };
   }, [refresh]);
@@ -76,7 +89,7 @@ export default function LiveWorkspace() {
     return <main className="pt-index" aria-busy={!guest && !error}>
       <h1>Кабинет перевода</h1>
       {guest ? <><p className="pt-lead">Войдите, чтобы открыть свои книги и переводы.</p>
-        <Button asChild className="mt-5"><Link href={'/auth?next=' + encodeURIComponent(path)}>Войти в Globoox</Link></Button></>
+        <WorkspaceLogin /></>
         : error ? <><p className="pt-lead" role="alert">{error}</p><Button variant="outline" className="mt-5" onClick={refresh}>Попробовать снова</Button></>
         : <p className="pt-lead" role="status">Загружаем ваши проекты…</p>}
     </main>;
@@ -120,14 +133,16 @@ export default function LiveWorkspace() {
     ancestors = [];
     panel = <WorkspaceActivity key={data.userId + first} view={first} workspace={data} />;
   } else if (admin && first === 'settings' && (parts.length === 1 || (id === 'templates' && parts.length === 3))) {
-    title = sub || sectionNames.settings;
+    title = sub ? 'Шаблон этапа' : sectionNames.settings;
     active = first;
     ancestors = sub ? [{ label: sectionNames.settings, href: base + '/settings' }] : [];
-    panel = <WorkspaceSettings key={data.userId} name={sub} />;
+    panel = <WorkspaceSettings key={data.userId} ownerId={data.userId} name={sub} />;
   }
 
   return <PrototypeShell live role={data.role} items={items} active={active} title={title}
-    detail={ancestors.length ? { ancestors } : undefined} onSelect={page => router.push(base + '/' + page)}>
+    detail={ancestors.length ? { ancestors } : undefined} itemHref={page => base + '/' + page}>
+    {error && <div role="alert" className="mb-4 flex items-center gap-3">{error}
+      <Button variant="outline" onClick={refresh}>Попробовать снова</Button></div>}
     {panel}
   </PrototypeShell>;
 }

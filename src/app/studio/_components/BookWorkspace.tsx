@@ -9,12 +9,13 @@ import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import type { WorkspaceBook } from '@/lib/translationWorkspaceTypes';
 import type { BookTranslationEstimate, PlaygroundModels } from '@/lib/api';
 import { BookBrief } from './BookBrief';
+import { StageTemplateLinks } from './StageTemplateLinks';
 import { BookEdition, BookRuns, Estimate, Planned } from './BookEdition';
 import { BookGlossaryPanel } from './BookGlossary';
 import { BookReview } from './BookReview';
 import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
-import { bookPath, processingLabel } from './projectLinks';
+import { bookPath, processingLabel, projectsPath } from './projectLinks';
 
 const targets: Record<string, string[]> = { RU: ['EN','FR'], EN:['RU'], FR:['EN','RU'] };
 const languages: Record<string,string> = { RU:'Русский', EN:'Английский', FR:'Французский' };
@@ -74,7 +75,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
       )}>{original.busy ? 'Загрузка…' : 'Скачать оригинал'}</Button>
     </div>
     <ActionFeedback error={original.error}/>
-    {!ready && <Card className="p-5 gap-2"><h3>{status}</h3><p className="pt-muted">Перевод доступен после успешной обработки исходного файла.</p><Button asChild variant="outline"><Link href="/prototype/to-be/projects">К проектам</Link></Button></Card>}
+    {!ready && <Card className="p-5 gap-2"><h3>{status}</h3><p className="pt-muted">Перевод доступен после успешной обработки исходного файла.</p><Button asChild variant="outline"><Link href={projectsPath + '/projects'}>К проектам</Link></Button></Card>}
     {ready && <>
       {available.length > 0 && <IOSSettingsRow label="Язык перевода" value={target} onChange={v => router.push(route(v,section))}
         options={available.map(id => ({ id, label:languages[id] || id }))}/>}
@@ -86,6 +87,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         {section === '' && <BookBrief key={[ownerId,book.id,target].join('/')} ownerId={ownerId} bookId={book.id} lang={target} source={source} isAdmin={isAdmin} inSeries={Boolean(book.seriesId)}/>}
         {section === '' && (isAdmin ? <>
           <Estimate bookId={book.id} lang={target}/>
+          <StageTemplateLinks bookId={book.id} lang={target}/>
           <section className="pt-stack"><h2>Этапы перевода</h2>
             {(['glossary','translate','revise','reader-check'] as const).map(stage => <StageCard key={stage} stage={stage} models={models} bookId={book.id} lang={target}/>)}
           </section>
@@ -93,7 +95,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
           <AuthorProgress bookId={book.id} lang={target}/>
           <Planned title="Запустить перевод книги" description="Самостоятельный запуск по жанру и пожеланиям будет доступен после подключения авторского режима."/>
         </>)}
-        {section === 'glossary' && (isAdmin ? <BookGlossaryPanel bookId={book.id} lang={target} models={models} books={books}/> : <Planned title="Глоссарий тома" description="Авторский просмотр терминов и выбор вариантов ожидают подключения доступа к словарю своей книги."/>)}
+        {section === 'glossary' && (isAdmin ? <><StageTemplateLinks bookId={book.id} lang={target} glossaryOnly/><BookGlossaryPanel bookId={book.id} lang={target} models={models} books={books}/></> : <Planned title="Глоссарий тома" description="Авторский просмотр терминов и выбор вариантов ожидают подключения доступа к словарю своей книги."/>)}
         {section === 'review' && (isAdmin ? <BookReview bookId={book.id} lang={target}/> : <Planned title="Решения по тексту" description="Здесь автор сможет проверять предложения и выбирать формулировки в своей книге."/>)}
         {section === 'runs' && (isAdmin ? <BookRuns bookId={book.id} lang={target}/> : <p>Страница недоступна.</p>)}
         {section === 'editions' && <BookEdition bookId={book.id} title={book.title} lang={target} isAdmin={isAdmin}/>}

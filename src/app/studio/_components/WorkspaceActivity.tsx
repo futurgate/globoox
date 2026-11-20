@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { WorkspaceAttention as Attention, WorkspaceActivity as Activity, WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
+import { bookPath } from './projectLinks';
 import SeriesWorkspace from './SeriesWorkspace';
 
 function bookUrl(bookId: string, language?: string | null) {
-  const book = '/prototype/to-be/books/' + encodeURIComponent(bookId);
+  const book = bookPath(bookId);
   return language ? book + '/translations/' + encodeURIComponent(language) : book;
 }
 

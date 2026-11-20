@@ -2,6 +2,7 @@
 
 import { BookOpen, ChevronRight, Layers3, Plus, RefreshCw, Search } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -40,7 +41,7 @@ type Props = {
 };
 
 export default function ProjectLibrary({ data, view, seriesId, refresh }: Props) {
-  const [search, setSearch] = useState('');
+  const search = useSearchParams().get('q') ?? '';
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const pending = data.books.some((book) =>
@@ -86,6 +87,13 @@ export default function ProjectLibrary({ data, view, seriesId, refresh }: Props)
     : !book.seriesId || !availableSeries.has(book.seriesId));
   const noResults = series.length === 0 && books.length === 0;
 
+  function updateSearch(value: string) {
+    const url = new URL(window.location.href);
+    if (value) url.searchParams.set('q', value);
+    else url.searchParams.delete('q');
+    window.history.replaceState(null, '', url);
+  }
+
   const reload = async () => {
     setError('');
     setRefreshing(true);
@@ -95,10 +103,14 @@ export default function ProjectLibrary({ data, view, seriesId, refresh }: Props)
   };
   return (
     <div className="space-y-4">
+      <p className="text-sm text-[var(--app-text-muted)]">
+        Здесь ваши серии и книги, загруженные с этого аккаунта. Общедоступные и сохранённые книги можно читать в{' '}
+        <Link href="/my-books" className="underline underline-offset-2">библиотеке</Link>.
+      </p>
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-48 flex-1">
           <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--app-text-muted)]" />
-          <Input className="pl-9" type="search" aria-label="Поиск по названию и автору" placeholder="Название книги, серии или автор" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input className="pl-9" type="search" aria-label="Поиск по названию и автору" placeholder="Название книги, серии или автор" value={search} onChange={(e) => updateSearch(e.target.value)} />
         </div>
         <Button variant="outline" size="icon" onClick={reload} disabled={refreshing} aria-label="Обновить каталог" title="Обновить каталог"><RefreshCw className={refreshing ? 'animate-spin' : ''} /></Button>
         <Button asChild><Link href={projectsPath + '/projects/new'}><Plus />Загрузить</Link></Button>
