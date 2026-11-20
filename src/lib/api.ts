@@ -3141,22 +3141,28 @@ export async function getSeries(seriesId: string): Promise<SeriesDetail> {
   return res.json() as Promise<SeriesDetail>
 }
 
-/** Upload a ZIP archive of EPUB volumes as a new series (admin). */
+/**
+ * Upload a ZIP archive of EPUB volumes as a new series (admin).
+ *
+ * Uploads the ZIP directly to Supabase Storage via a signed URL (bypassing the
+ * serverless request-body cap — a series ZIP can be tens of MB), then calls
+ * POST /api/series/process with just the storage path.
+ */
 export async function uploadSeriesZip(
   file: File,
-  opts: { name?: string; genre?: string } = {}
+  opts: { name?: string; genre?: string } = {},
+  signal?: AbortSignal
 ): Promise<SeriesUploadResult> {
-  const headers = new Headers()
-  const token = await getBrowserAccessToken()
-  if (token) headers.set('Authorization', `Bearer ${token}`)
-  const form = new FormData()
-  form.set('zip', file)
-  if (opts.name) form.set('name', opts.name)
-  if (opts.genre) form.set('genre', opts.genre)
-  const res = await fetch(`${API_URL}/api/series/upload`, { method: 'POST', headers, body: form })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({} as { message?: string }))
-    throw new Error(body.message || `Series upload failed: ${res.status}`)
-  }
-  return res.json() as Promise<SeriesUploadResult>
+  const slug = (file.name.replace(/\.zip$/i, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'series').slice(0, 60)
+  const uniqueSuffix = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
+  const zipPath = `series-${slug}-${uniqueSuffix}.zip`
+
+  const { signedUrl } = await getSignedUploadUrl('books', zipPath, signal)
+  await uploadToStorage(signedUrl, file, 'application/zip', signal)
+
+  return request<SeriesUploadResult>('/api/series/process', {
+    method: 'POST',
+    body: JSON.stringify({ zip_path: zipPath, file_name: file.name, name: opts.name, genre: opts.genre }),
+    signal,
+  })
 }
