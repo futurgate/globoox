@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical } from 'lucide-react';
+import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
@@ -12,9 +12,12 @@ import {
   listSeries,
   getSeries,
   uploadSeriesZip,
+  runSeries,
+  restartSeriesStep,
   type SeriesListItem,
   type SeriesDetail,
   type SeriesVolume,
+  type SeriesLiveness,
 } from '@/lib/api';
 
 const inputCls =
@@ -45,24 +48,89 @@ function ProgressBar({ percent }: { percent: number }) {
   );
 }
 
-function VolumeRow({ vol }: { vol: SeriesVolume }) {
+const LIVENESS: Record<Exclude<SeriesLiveness, null>, { label: string; cls: string }> = {
+  moving: { label: 'moving', cls: 'text-emerald-600' },
+  waiting_quota: { label: 'waiting on quota', cls: 'text-amber-600' },
+  stalled: { label: 'stalled', cls: 'text-red-600' },
+};
+
+function LivenessBadge({ liveness }: { liveness: SeriesLiveness }) {
+  if (!liveness) return null;
+  const l = LIVENESS[liveness];
+  return (
+    <span className={`inline-flex items-center gap-1 text-xs font-medium ${l.cls}`}>
+      <Activity className="h-3 w-3" />
+      {l.label}
+    </span>
+  );
+}
+
+function WarningsChip({ w }: { w: NonNullable<SeriesVolume['warnings']> }) {
+  const parts: string[] = [];
+  if (w.retries) parts.push(`${w.retries} retries`);
+  if (w.splitRetries) parts.push(`${w.splitRetries} split`);
+  if (w.flaggedBlocks) parts.push(`${w.flaggedBlocks} flagged`);
+  if (parts.length === 0) return null;
+  return (
+    <span className="inline-flex items-center gap-1 text-xs text-amber-600" title="Recovered under load — not failures">
+      <AlertTriangle className="h-3 w-3" />
+      {parts.join(' · ')}
+    </span>
+  );
+}
+
+function VolumeRow({
+  vol,
+  onRestart,
+  restarting,
+}: {
+  vol: SeriesVolume;
+  onRestart?: (bookId: string, step: 'step0' | 'translate') => void;
+  restarting?: string | null;
+}) {
   const proc = PROCESSING_BADGE[vol.processingStatus] ?? PROCESSING_BADGE.ready;
+  const gloss = vol.glossary ?? [];
+  // Offer a restart when a step is stalled or a step-0/translation errored.
+  const glossErrored = gloss.some((g) => g.status === 'error');
+  const transErrored = vol.translations.some((t) => t.errorChapters > 0 && t.state !== 'complete');
+  const stalled = vol.liveness === 'stalled';
+  const canRestartStep0 = !!onRestart && (glossErrored || (stalled && gloss.some((g) => g.status === 'building')));
+  const canRestartTranslate = !!onRestart && (transErrored || (stalled && !gloss.some((g) => g.status === 'building')));
+  const busyStep0 = restarting === `${vol.bookId}:step0`;
+  const busyTranslate = restarting === `${vol.bookId}:translate`;
+
   return (
     <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-[var(--app-text-muted)]">
-              Vol {vol.volumeNumber ?? '—'}
-            </span>
+            <span className="text-xs text-[var(--app-text-muted)]">Vol {vol.volumeNumber ?? '—'}</span>
             <span className="truncate text-sm font-medium">{vol.title}</span>
+            <LivenessBadge liveness={vol.liveness ?? null} />
           </div>
-          {vol.author && (
-            <div className="truncate text-xs text-[var(--app-text-muted)]">{vol.author}</div>
-          )}
+          {vol.author && <div className="truncate text-xs text-[var(--app-text-muted)]">{vol.author}</div>}
         </div>
-        <span className={`shrink-0 text-xs font-medium ${proc.cls}`}>{proc.label}</span>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <span className={`text-xs font-medium ${proc.cls}`}>{proc.label}</span>
+          {vol.warnings && <WarningsChip w={vol.warnings} />}
+        </div>
       </div>
+
+      {/* Step 0 (glossary) status */}
+      {gloss.length > 0 && (
+        <div className="mt-2 space-y-1">
+          {gloss.map((g) => (
+            <div key={g.language} className="flex items-center justify-between text-xs">
+              <span className="font-medium">Step 0 · {g.language}</span>
+              <span className="text-[var(--app-text-muted)]">
+                {g.frozen ? '🔒 frozen' : g.status}
+                {g.chaptersTotal > 0 && ` · ${g.chaptersDone}/${g.chaptersTotal}`}
+                {g.status === 'error' && <span className="ml-1 text-red-600">error</span>}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="mt-2 space-y-2">
         {vol.translations.length === 0 ? (
@@ -74,9 +142,7 @@ function VolumeRow({ vol }: { vol: SeriesVolume }) {
                 <span className="font-medium">{t.language}</span>
                 <span className="text-[var(--app-text-muted)]">
                   {t.doneChapters}/{t.totalChapters} ch · {t.percent}%
-                  {t.errorChapters > 0 && (
-                    <span className="ml-1 text-red-600">({t.errorChapters} err)</span>
-                  )}
+                  {t.errorChapters > 0 && <span className="ml-1 text-red-600">({t.errorChapters} err)</span>}
                 </span>
               </div>
               <ProgressBar percent={t.percent} />
@@ -84,6 +150,23 @@ function VolumeRow({ vol }: { vol: SeriesVolume }) {
           ))
         )}
       </div>
+
+      {(canRestartStep0 || canRestartTranslate) && (
+        <div className="mt-2 flex items-center gap-2">
+          {canRestartStep0 && (
+            <Button variant="outline" size="sm" disabled={busyStep0} onClick={() => onRestart!(vol.bookId, 'step0')}>
+              <RotateCcw className={`mr-1 h-3 w-3 ${busyStep0 ? 'animate-spin' : ''}`} />
+              Restart step 0
+            </Button>
+          )}
+          {canRestartTranslate && (
+            <Button variant="outline" size="sm" disabled={busyTranslate} onClick={() => onRestart!(vol.bookId, 'translate')}>
+              <RotateCcw className={`mr-1 h-3 w-3 ${busyTranslate ? 'animate-spin' : ''}`} />
+              Restart translate
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -106,6 +189,11 @@ export default function FictionSeriesPage() {
   const [genre, setGenre] = useState('litrpg');
   const [uploading, setUploading] = useState(false);
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
+
+  // Full-flow run / restart
+  const [running, setRunning] = useState(false);
+  const [runMsg, setRunMsg] = useState<string | null>(null);
+  const [restarting, setRestarting] = useState<string | null>(null);
 
   const loadSeries = useCallback(async () => {
     setSeriesLoading(true);
@@ -135,6 +223,40 @@ export default function FictionSeriesPage() {
     }
   }, []);
 
+  const handleRun = useCallback(async () => {
+    if (!detail) return;
+    setRunning(true);
+    setRunMsg(null);
+    setError(null);
+    try {
+      const r = await runSeries(detail.id);
+      const warn = r.volumesNotReady.length ? ` (${r.volumesNotReady.length} vol still parsing)` : '';
+      setRunMsg(`Started: step 0 v${r.enqueued.volumeNumber} enqueued · ${r.lang} · ${r.model}${warn}`);
+      loadDetail(detail.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to start full-flow');
+    } finally {
+      setRunning(false);
+    }
+  }, [detail, loadDetail]);
+
+  const handleRestart = useCallback(
+    async (bookId: string, step: 'step0' | 'translate') => {
+      if (!detail) return;
+      setRestarting(`${bookId}:${step}`);
+      setError(null);
+      try {
+        await restartSeriesStep(detail.id, bookId, step);
+        loadDetail(detail.id);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Failed to restart step');
+      } finally {
+        setRestarting(null);
+      }
+    },
+    [detail, loadDetail],
+  );
+
   useEffect(() => {
     if (isAdmin) loadSeries();
   }, [isAdmin, loadSeries]);
@@ -148,7 +270,10 @@ export default function FictionSeriesPage() {
     if (!isAdmin || !selectedId || !detail) return;
     const busy =
       detail.volumes.some((v) => v.processingStatus === 'pending' || v.processingStatus === 'processing') ||
-      detail.volumes.some((v) => v.translations.some((t) => t.state !== 'complete' && t.doneChapters > 0));
+      detail.volumes.some((v) => v.translations.some((t) => t.state !== 'complete' && t.doneChapters > 0)) ||
+      // A step is live (orchestrator running) — keep polling to show progress.
+      detail.volumes.some((v) => !!v.liveness) ||
+      detail.volumes.some((v) => (v.glossary ?? []).some((g) => g.status === 'building'));
     if (!busy) return;
     const timer = setInterval(() => loadDetail(selectedId), 5000);
     return () => clearInterval(timer);
@@ -315,16 +440,36 @@ export default function FictionSeriesPage() {
                 </Badge>
               )}
             </h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => loadDetail(detail.id)}
-              disabled={detailLoading}
-            >
-              <RefreshCw className={`mr-1 h-3.5 w-3.5 ${detailLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={handleRun}
+                disabled={running || !detail.recipe}
+                title={detail.recipe ? 'Start the full-flow for this series' : 'No recipe for this genre'}
+              >
+                {running ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Play className="mr-1 h-3.5 w-3.5" />}
+                Run full-flow
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => loadDetail(detail.id)}
+                disabled={detailLoading}
+              >
+                <RefreshCw className={`mr-1 h-3.5 w-3.5 ${detailLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+            </div>
           </div>
+
+          {runMsg && <p className="mb-3 text-sm text-emerald-600">{runMsg}</p>}
+          {detail.gate && detail.gate.waiting > 0 && (
+            <div className="mb-3 flex items-center gap-2 rounded-[var(--radius)] border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+              <Activity className="h-3.5 w-3.5" />
+              Rate-gate is throttling: {detail.gate.waiting} call(s) waiting on quota
+              {detail.gate.rate429 > 0 && `, ${detail.gate.rate429} × 429 recovered`}. Running steps are healthy, just pacing.
+            </div>
+          )}
 
           {/* Recipe: the settings the full-flow uses for this genre (M1.2). */}
           {detail.recipe ? (
@@ -353,7 +498,7 @@ export default function FictionSeriesPage() {
           ) : (
             <div className="space-y-3">
               {detail.volumes.map((v) => (
-                <VolumeRow key={v.bookId} vol={v} />
+                <VolumeRow key={v.bookId} vol={v} onRestart={handleRestart} restarting={restarting} />
               ))}
             </div>
           )}

@@ -3086,6 +3086,24 @@ export type SeriesVolumeTranslation = {
   updatedAt: string
 }
 
+export type SeriesGlossaryStatus = {
+  language: string
+  status: 'pending' | 'building' | 'done' | 'error'
+  chaptersDone: number
+  chaptersTotal: number
+  frozen: boolean
+  updatedAt?: string
+}
+
+export type SeriesVolumeWarnings = {
+  retries: number
+  splitRetries: number
+  flaggedBlocks: number
+  llmCalls: number
+}
+
+export type SeriesLiveness = 'moving' | 'waiting_quota' | 'stalled' | null
+
 export type SeriesVolume = {
   bookId: string
   title: string
@@ -3095,6 +3113,11 @@ export type SeriesVolume = {
   sourceLanguage: string | null
   totalChapters: number
   translations: SeriesVolumeTranslation[]
+  // Present once the orchestrator (M1.3) + observability (M1.6) backends ship.
+  glossary?: SeriesGlossaryStatus[]
+  warnings?: SeriesVolumeWarnings
+  liveness?: SeriesLiveness
+  lastProgressAt?: string | null
 }
 
 export type SeriesRecipe = {
@@ -3108,6 +3131,8 @@ export type SeriesRecipe = {
   prompts: { step0: string; translate: string }
 }
 
+export type SeriesGate = { waiting: number; rate429: number; pausedBuckets: number }
+
 export type SeriesDetail = {
   id: string
   name: string
@@ -3115,6 +3140,7 @@ export type SeriesDetail = {
   direction: string | null
   createdAt: string
   recipe: SeriesRecipe | null
+  gate?: SeriesGate
   volumes: SeriesVolume[]
 }
 
@@ -3151,6 +3177,48 @@ export async function getSeries(seriesId: string): Promise<SeriesDetail> {
     throw new Error(body.message || `Failed to load series: ${res.status}`)
   }
   return res.json() as Promise<SeriesDetail>
+}
+
+export type SeriesRunResult = {
+  seriesId: string
+  recipe: string
+  lang: string
+  model: string
+  totalVolumes: number
+  volumesNotReady: number[]
+  enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number }
+}
+
+/** Start the full-flow for a series (admin): enqueues step 0 for volume 1. */
+export async function runSeries(seriesId: string, opts: { lang?: string; model?: string } = {}): Promise<SeriesRunResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/run`, {
+    method: 'POST', headers, body: JSON.stringify(opts),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to start series: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesRunResult>
+}
+
+/** Re-enqueue a stuck/stopped step for one volume (admin). */
+export async function restartSeriesStep(
+  seriesId: string, bookId: string, step: 'step0' | 'translate', opts: { lang?: string; model?: string } = {},
+): Promise<{ seriesId: string; enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number; lang: string } }> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/restart`, {
+    method: 'POST', headers, body: JSON.stringify({ bookId, step, ...opts }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to restart step: ${res.status}`)
+  }
+  return res.json()
 }
 
 /**
