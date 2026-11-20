@@ -6,9 +6,8 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 16px;
   line-height: 1.48;
-  --pt-radius: 12px;
   --pt-line: var(--separator-opaque);
-  --pt-secondary: #586355;
+  --pt-secondary: var(--app-text-muted);
 }
 .pt-root :is(a, button, input, select, textarea, summary):focus-visible {
   outline: 3px solid var(--app-accent);
@@ -73,7 +72,8 @@
   border-radius: 9px;
   text-align: left;
   font-size: 15px;
-  min-height: 42px;
+  min-height: 44px;
+  justify-content: flex-start;
 }
 .pt-navigation button:hover,
 .pt-switch:hover {
@@ -81,16 +81,11 @@
 }
 .pt-navigation button[aria-current='page'] {
   background: var(--app-accent);
-  color: white;
+  color: var(--primary-foreground);
   font-weight: 600;
 }
-.pt-navigation small {
+.pt-navigation [data-slot='badge'] {
   margin-left: auto;
-  font-size: 12px;
-  font-weight: 650;
-  border-radius: 999px;
-  padding: 1px 7px;
-  background: var(--fill-secondary);
 }
 .pt-section-label {
   margin: 23px 12px 5px;
@@ -141,17 +136,6 @@
   font-weight: 640;
   line-height: 1.35;
 }
-.pt-panel {
-  min-width: 0;
-  border-radius: var(--pt-radius);
-  padding: clamp(17px, 2.2vw, 30px);
-  background: var(--app-surface-bg);
-  border: 1px solid var(--app-border);
-}
-.pt-panel > h2:first-child,
-.pt-panel > h3:first-child {
-  margin: 0 0 14px;
-}
 .pt-stack {
   display: grid;
   gap: 16px;
@@ -175,80 +159,12 @@
 .pt-row + .pt-row {
   border-top: 1px solid var(--app-border);
 }
-.pt-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 8px 17px;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  color: white;
-  background: var(--app-accent);
-  font-weight: 600;
-  line-height: 1.3;
-  text-decoration: none;
-}
-.pt-btn:hover:not(:disabled) {
-  filter: brightness(0.94);
-}
-.pt-btn.secondary {
-  background: var(--app-surface-bg);
-  color: var(--app-text);
-  border-color: var(--pt-line);
-}
-.pt-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid var(--pt-line);
-}
-.pt-tabs button {
-  padding: 9px 12px;
-  border-bottom: 2px solid transparent;
-}
-.pt-tabs :is([aria-selected='true'], [aria-current='page'], .active) {
-  border-color: var(--app-accent);
-  color: var(--app-accent);
-  font-weight: 650;
-}
 .pt-field {
   display: grid;
   gap: 6px;
 }
-.pt-root
-  :is(
-    input:not([type='checkbox']):not([type='radio']):not([type='file']):not(
-        [type='range']
-      ),
-    select,
-    textarea
-  ) {
-  max-width: 100%;
-  color: var(--app-text);
-  border: 1px solid var(--pt-line);
-  padding: 9px 12px;
-  border-radius: 8px;
-  background: var(--app-input-bg);
-}
 .pt-root :is(input[type='checkbox'], input[type='radio'], progress) {
   accent-color: var(--app-accent);
-}
-.pt-root textarea {
-  resize: vertical;
-}
-.pt-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  background: var(--bg-secondary);
-  color: var(--app-text);
-  font-size: 13px;
-  font-weight: 590;
-  border-radius: 999px;
 }
 .pt-callout {
   padding: 15px 18px;
@@ -283,9 +199,9 @@
   align-items: flex-start;
   padding: clamp(24px, 3vw, 38px);
   border: 1px solid var(--app-border);
-  border-radius: 14px;
-  color: var(--app-text);
-  background: var(--app-surface-bg);
+  flex: 1;
+  border-radius: inherit;
+  color: inherit;
   text-decoration: none;
 }
 .pt-role-card > svg {
@@ -301,7 +217,7 @@
   gap: 8px;
   align-items: center;
   font-weight: 600;
-  color: #a34830;
+  color: var(--app-accent);
   margin-top: auto;
 }
 .pt-role-card:hover {
@@ -368,9 +284,6 @@
   .pt-role-card > svg {
     margin-bottom: 16px;
   }
-  .pt-tabs button {
-    padding: 8px 6px;
-  }
 }
 .pt-editor-link {
   display: inline-flex;
@@ -381,4 +294,43 @@
   font-size: 14px;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* Book workspaces share a compact, persistent header and section navigation. */
+.pt-main-detail {
+  padding-top: 0;
+}
+.pt-detail-header {
+  position: sticky;
+  z-index: 15;
+  top: 0;
+  padding-top: env(safe-area-inset-top);
+  margin-bottom: 12px;
+}
+.pt-detail-header h1:focus {
+  outline: none;
+}
+.pt-sections {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(4px, 1.2vw, 18px);
+  max-width: 100%;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--app-border);
+}
+.pt-sections [data-slot='button'] {
+  min-height: 44px;
+  height: auto;
+  padding-inline: 8px;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--app-text-muted);
+}
+.pt-sections [aria-current='page'] {
+  border-color: var(--app-accent);
+  color: var(--app-text);
+}
+.pt-sections button:focus-visible {
+  outline-offset: -3px;
 }

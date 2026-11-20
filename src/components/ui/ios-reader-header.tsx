@@ -1,16 +1,22 @@
 'use client';
 
+import type { ReactNode, Ref } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { uiIconTriggerButton } from '@/components/ui/button-styles';
 import IOSIcon from '@/components/ui/ios-icon';
 import { cn } from '@/lib/utils';
 
 interface IOSReaderHeaderProps {
-  title: React.ReactNode;
-  subtitle?: React.ReactNode;
-  trailingLeft?: React.ReactNode;
-  trailingRight?: React.ReactNode;
+  title: ReactNode;
+  subtitle?: ReactNode;
+  trailingLeft?: ReactNode;
+  trailingRight?: ReactNode;
   className?: string;
+  onBack?: () => void;
+  backLabel?: string;
+  headingRef?: Ref<HTMLHeadingElement>;
+  layout?: 'reader' | 'workspace';
 }
 
 export default function IOSReaderHeader({
@@ -19,45 +25,93 @@ export default function IOSReaderHeader({
   trailingLeft,
   trailingRight,
   className,
+  onBack,
+  backLabel = 'Back',
+  headingRef,
+  layout = 'reader',
 }: IOSReaderHeaderProps) {
+  const workspace = layout === 'workspace';
   return (
-    <div
-      className={cn(
-        'mobile-ui-no-select border-b backdrop-blur-xl',
-        className,
-      )}
-      style={{ backgroundColor: 'var(--reader-chrome-bg)', borderColor: 'var(--reader-border)', color: 'var(--reader-text)' }}
+    <header
+      className={cn('mobile-ui-no-select border-b backdrop-blur-xl', className)}
+      style={{
+        backgroundColor: 'var(--reader-chrome-bg)',
+        borderColor: 'var(--reader-border)',
+        color: 'var(--reader-text)',
+      }}
     >
-      <div className="px-4" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}>
-        <div className="flex h-11 items-center">
-          <div className="flex h-full items-center justify-start shrink-0">
-            <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              className="-ml-2 flex-shrink-0 relative after:absolute after:inset-y-[-10px] after:left-[-10px] after:right-[-4px] text-[var(--reader-accent)]"
+      <div
+        className={cn(
+          'flex min-h-11 items-center',
+          workspace
+            ? 'gap-x-1 py-1.5 sm:gap-x-2'
+            : 'px-4 pt-[calc(env(safe-area-inset-top)+16px)]',
+        )}
+      >
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          aria-label={backLabel}
+          title={backLabel}
+          className={cn(
+            uiIconTriggerButton,
+            'shrink-0 text-[var(--reader-accent)]',
+            workspace
+              ? 'lg:w-auto lg:max-w-44 lg:gap-1 lg:pr-3 lg:pl-2'
+              : '-ml-2',
+          )}
+        >
+          <IOSIcon
+            icon={ChevronLeft}
+            className="size-5"
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+          {workspace && (
+            <span className="hidden truncate lg:inline">{backLabel}</span>
+          )}
+        </Button>
+        <div className={workspace ? 'min-w-0 flex-1' : 'min-w-0 flex-1 px-2'}>
+          <h1
+            title={typeof title === 'string' ? title : undefined}
+            ref={headingRef}
+            tabIndex={headingRef ? -1 : undefined}
+            className={cn(
+              'max-w-full font-semibold text-[var(--reader-text)]',
+              workspace
+                ? 'line-clamp-2 text-base leading-tight break-words sm:text-lg'
+                : 'truncate text-sm',
+            )}
+          >
+            {title}
+          </h1>
+          {subtitle && (
+            <p
+              className={cn(
+                'text-[var(--reader-muted-text)]',
+                workspace
+                  ? 'mt-0.5 truncate text-xs leading-snug'
+                  : 'truncate text-[11px] leading-3',
+              )}
             >
-              <IOSIcon icon={ChevronLeft} className="text-[var(--reader-accent)]" strokeWidth={2} />
-            </Button>
-          </div>
-
-          <div className="min-w-0 flex-1 px-2">
-            <div className="flex max-w-full flex-col justify-center text-left">
-              <h1 className="max-w-full text-sm font-semibold truncate text-[var(--reader-text)]">{title}</h1>
-              {subtitle ? (
-                <p className="max-w-full text-[11px] leading-3 text-[var(--reader-muted-text)] truncate">
-                  {subtitle}
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="flex h-full items-center justify-end shrink-0 text-[var(--reader-accent)]">
+              {subtitle}
+            </p>
+          )}
+        </div>
+        {(trailingLeft || trailingRight) && (
+          <div
+            className={cn(
+              'flex items-center justify-end text-[var(--reader-accent)]',
+              workspace ? 'ml-auto max-w-full' : 'h-full shrink-0',
+            )}
+          >
             {trailingLeft}
             {trailingRight}
           </div>
-        </div>
+        )}
       </div>
-    </div>
+    </header>
   );
 }

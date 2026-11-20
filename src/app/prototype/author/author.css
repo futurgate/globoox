@@ -1,23 +1,5 @@
 .au {
-  --au-line: #d4cfc6;
-  --au-muted: #59645a;
-  --au-accent: #a5462c;
-  color: #2c3b2d;
-}
-.au button {
-  cursor: pointer;
-}
-.au button:disabled {
-  opacity: 0.48;
-  cursor: default;
-}
-.au button:focus-visible,
-.au input:focus-visible,
-.au select:focus-visible,
-.au textarea:focus-visible,
-.au summary:focus-visible {
-  outline: 3px solid #ad5336;
-  outline-offset: 3px;
+  color: var(--app-text);
 }
 .au h2,
 .au h3,
@@ -39,26 +21,17 @@
 .au svg {
   flex-shrink: 0;
 }
-.au .pt-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
 .au-heading,
 .au-estimate,
 .au-file,
 .au-actions,
-.au-back,
 .au-project,
 .au-rowlink,
 .au-attention,
 .au-steps,
 .au-check,
 .au-toggle,
-.au-text-button,
 .au-protection,
-.au-badge,
 .au-choice {
   display: flex;
   align-items: center;
@@ -73,23 +46,11 @@
 .au-project p,
 .au-process-note,
 .au small {
-  color: var(--au-muted);
+  color: var(--app-text-muted);
 }
 .au-heading p {
   margin-top: 5px;
   font-size: 15px;
-}
-.au-back,
-.au-text-button {
-  color: var(--au-accent);
-  font-weight: 600;
-  background: transparent;
-  border: 0;
-  padding: 6px 0;
-}
-.au-back {
-  font-size: 14px;
-  margin-bottom: 16px;
 }
 .au-projects {
   display: grid;
@@ -98,8 +59,6 @@
 }
 .au .au-project {
   padding: 24px;
-  text-align: left;
-  color: inherit;
   gap: 18px;
 }
 .au-project-summary {
@@ -134,80 +93,74 @@
 .au-project-spine {
   align-self: stretch;
   width: 54px;
-  background: #f0e7db;
+  background: var(--bg-secondary);
   border-radius: 8px;
-  color: #8c5d47;
+  color: var(--app-accent);
 }
-.au-badge {
-  display: inline-flex;
-  align-self: flex-start;
-  gap: 5px;
-  padding: 4px 9px;
-  border-radius: 7px;
-  font-weight: 600;
-  font-size: 12px;
-  background: #eeeae4;
+.au-warning {
+  background: color-mix(
+    in srgb,
+    var(--system-orange) 18%,
+    var(--app-surface-bg)
+  );
+  color: var(--app-text);
 }
-.au-badge.warning {
-  background: #fff0d8;
-  color: #775323;
+.au-success {
+  background: color-mix(
+    in srgb,
+    var(--system-green) 18%,
+    var(--app-surface-bg)
+  );
+  color: var(--app-text);
 }
-.au-badge.saved {
-  background: #e5eddf;
-  color: #38593a;
-}
-.au-tabs,
 .au-steps {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 8px;
   align-items: center;
   margin: 0 0 21px;
 }
-.au-tabs {
-  border-bottom: 1px solid var(--au-line);
-}
-.au-tabs button,
-.au-steps button {
-  background: none;
-  border: 0;
-  color: var(--au-muted);
-  padding: 8px 0;
-  font-weight: 600;
-}
-.au-tabs button[aria-current] {
-  color: var(--au-accent);
-  border-bottom: 3px solid var(--au-accent);
-}
 .au-steps button[aria-current] {
-  color: var(--au-accent);
+  color: var(--app-accent);
+}
+.au-choice {
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .au-attention {
   padding: 22px;
-  border: 1px solid #dbc2ab;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 26%, var(--app-border));
   border-radius: 12px;
-  background: #fbf5ec;
+  background: color-mix(
+    in srgb,
+    var(--system-orange) 8%,
+    var(--app-surface-bg)
+  );
   gap: 16px;
   margin-bottom: 12px;
 }
 .au-attention.done {
-  background: #edf2e9;
-  border-color: #c3cfbb;
+  background: color-mix(
+    in srgb,
+    var(--system-green) 12%,
+    var(--app-surface-bg)
+  );
+  border-color: color-mix(in srgb, var(--system-green) 26%, var(--app-border));
 }
 .au-attention p {
   font-size: 15px;
-  color: var(--au-muted);
+  color: var(--app-text-muted);
   margin-top: 6px;
 }
-.au-attention .pt-btn {
+.au-attention > [data-slot='button'] {
   margin-left: auto;
 }
 .au-signal {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: #f0e0cf;
-  color: var(--au-accent);
+  background: var(--bg-secondary);
+  color: var(--app-accent);
 }
 .au-process-note {
   font-size: 14px;
@@ -219,15 +172,13 @@
   display: grid;
   gap: 16px;
 }
-.au-form-panel > .pt-btn {
+.au-form-panel > [data-slot='button'] {
   justify-self: start;
 }
 .au-file,
 .au-rowlink {
   min-height: 54px;
-  border: 0;
-  border-top: 1px solid var(--au-line);
-  background: none;
+  border-top: 1px solid var(--app-divider);
   width: 100%;
   color: inherit;
   text-align: left;
@@ -241,23 +192,22 @@
 }
 .au-rowlink em {
   font-size: 13px;
-  color: var(--au-muted);
+  color: var(--app-text-muted);
   font-style: normal;
   text-align: right;
 }
 .au-number {
-  background: #f3f0eb;
+  background: var(--fill-tertiary);
   border-radius: 6px;
   height: 30px;
   min-width: 30px;
-  color: var(--au-muted);
+  color: var(--app-text-muted);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
 .au-form-area {
   max-width: 840px;
 }
-.au-fields,
 .au-map-pair,
 .au-metrics {
   display: grid;
@@ -270,58 +220,22 @@
   font-size: 14px;
   font-weight: 600;
 }
-.au input:not([type='checkbox']):not([type='file']):not([type='radio']),
-.au select,
-.au textarea {
-  width: 100%;
-  min-width: 0;
-  font: inherit;
-  font-weight: 400;
-  background: white;
-  border: 1px solid var(--au-line);
-  border-radius: 8px;
-  padding: 10px 12px;
-  color: #2c3b2d;
-}
 .au input[type='radio'],
 .au input[type='checkbox'] {
-  accent-color: #ac4d32;
+  accent-color: var(--app-accent);
   width: 17px;
   height: 17px;
-}
-.au-choice {
-  gap: 5px;
-  background: #f0ede7;
-  border-radius: 9px;
-  padding: 4px;
-  justify-self: start;
-}
-.au-choice button {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 0;
-  padding: 8px 13px;
-  border-radius: 7px;
-  color: #4d5a4e;
-  background: transparent;
-  font-weight: 550;
-}
-.au-choice button.selected {
-  background: white;
-  color: #913e27;
-  box-shadow: 0 1px 4px #0002;
 }
 .au-drop {
   display: grid;
   gap: 6px;
   justify-items: center;
   padding: 22px;
-  background: #f8f6f1;
-  border: 1px dashed #b6b2a8;
+  background: var(--fill-tertiary);
+  border: 1px dashed var(--app-divider);
   border-radius: 10px;
 }
-.au-drop .pt-btn {
+.au-drop > [data-slot='button'] {
   margin-top: 7px;
 }
 .au-mini-actions {
@@ -329,17 +243,11 @@
   gap: 3px;
   margin-left: auto;
 }
-.au-mini-actions button {
-  border: 1px solid var(--au-line);
-  background: white;
-  color: inherit;
-  border-radius: 6px;
-  padding: 6px;
-}
 .au-error {
-  color: #ad3026;
+  color: var(--danger-fg);
 }
 .au .au-estimate {
+  flex-direction: row;
   justify-content: space-between;
   padding: 16px 22px;
   margin: 16px 0;
@@ -352,7 +260,7 @@
 }
 .au-details {
   padding: 14px 16px;
-  border: 1px solid var(--au-line);
+  border: 1px solid var(--app-divider);
   border-radius: 9px;
   margin: 12px 0;
 }
@@ -367,8 +275,8 @@
 .au-form-panel blockquote,
 .au-quote {
   margin: 0;
-  background: #f6f3ee;
-  border-left: 3px solid #c8b395;
+  background: var(--fill-tertiary);
+  border-left: 3px solid var(--system-gray);
   padding: 12px 16px;
 }
 .au-quote small {
@@ -378,7 +286,7 @@
 .au-radio-group {
   display: grid;
   gap: 12px;
-  border: 1px solid var(--au-line);
+  border: 1px solid var(--app-divider);
   border-radius: 8px;
   padding: 12px 15px;
 }
@@ -410,12 +318,12 @@
 }
 .au-map-pair figcaption {
   font-size: 13px;
-  color: var(--au-muted);
+  color: var(--app-text-muted);
   margin-bottom: 6px;
 }
 .au-map {
   position: relative;
-  border: 1px solid var(--au-line);
+  border: 1px solid var(--app-divider);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -444,18 +352,25 @@
   gap: 8px;
 }
 .au-metrics > div {
-  border-top: 1px solid var(--au-line);
+  border-top: 1px solid var(--app-divider);
   padding-top: 10px;
 }
 .au-check,
 .au-protection {
-  color: #466343;
+  color: var(--app-text);
   font-size: 14px;
 }
 .au-check svg {
   width: 18px;
 }
 @media (max-width: 700px) {
+  .au-form-panel > [data-slot='button'],
+  .au-actions > [data-slot='button'] {
+    max-width: 100%;
+    min-height: 2.25rem;
+    height: auto;
+    white-space: normal;
+  }
   .au-projects {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -463,7 +378,7 @@
     align-items: flex-start;
     flex-wrap: wrap;
   }
-  .au-attention .pt-btn {
+  .au-attention > [data-slot='button'] {
     width: 100%;
   }
   .au .au-form-panel,
@@ -480,8 +395,7 @@
   .au-file {
     flex-wrap: wrap;
   }
-  .au-fields,
-  .au-map-pair {
+    .au-map-pair {
     grid-template-columns: minmax(0, 1fr);
   }
   .au-metrics {

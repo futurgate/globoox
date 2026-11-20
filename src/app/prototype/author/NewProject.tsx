@@ -1,5 +1,18 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+import {
+  uiFilterPillActive,
+  uiFilterPillBase,
+  uiFilterPillInactive,
+} from '@/components/ui/button-styles';
+import { Input } from '@/components/ui/input';
+import IOSItemsStack from '@/components/ui/ios-items-stack';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
+import { Textarea } from '@/components/ui/textarea';
+
 import {
   ArrowDown,
   ArrowUp,
@@ -10,7 +23,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { readAuthorRecipe, recipes } from './editor/config';
+import { readAuthorRecipe, recipes, unitOptions } from './editor/config';
 import {
   demoTitles,
   newVolume,
@@ -119,46 +132,62 @@ export function NewProject({
   return (
     <div className="au-form-area">
       <div className="au-steps" aria-label="Подготовка проекта">
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => openAuthor('import')}
           aria-current={step === 'import' ? 'step' : undefined}
         >
           1. Исходные файлы
-        </button>
+        </Button>
         <span aria-hidden="true">→</span>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           disabled={!draft.files.length}
           onClick={() => openAuthor('recipe')}
           aria-current={step === 'recipe' ? 'step' : undefined}
         >
           2. Параметры перевода
-        </button>
+        </Button>
       </div>
       {step === 'import' ? (
         <>
-          <section className="pt-panel au-form-panel">
+          <Card className="au-form-panel">
             <h2>Что переводим?</h2>
-            <div className="au-choice">
-              <button
-                className={!draft.series ? 'selected' : ''}
+            <div className="au-choice" role="group" aria-label="Тип проекта">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-pressed={!draft.series}
+                className={cn(
+                  uiFilterPillBase,
+                  !draft.series ? uiFilterPillActive : uiFilterPillInactive,
+                )}
                 onClick={() =>
                   change({ series: false, files: draft.files.slice(0, 1) })
                 }
               >
                 <BookOpen size={19} />
                 Одну книгу
-              </button>
-              <button
-                className={draft.series ? 'selected' : ''}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-pressed={draft.series}
+                className={cn(
+                  uiFilterPillBase,
+                  draft.series ? uiFilterPillActive : uiFilterPillInactive,
+                )}
                 onClick={() => change({ series: true })}
               >
                 <Files size={19} />
                 Серию
-              </button>
+              </Button>
             </div>
             <label className="au-label">
               {draft.series ? 'Название серии' : 'Название проекта'}
-              <input
+              <Input
                 placeholder={
                   draft.series ? 'Например, Хроники Севера' : 'Из имени файла'
                 }
@@ -188,16 +217,16 @@ export function NewProject({
               <Upload size={24} />
               <strong>Добавьте исходный EPUB</strong>
               <small>В демо сохраняется только имя файла.</small>
-              <button
+              <Button
                 type="button"
-                className="pt-btn secondary"
+                variant="outline"
                 onClick={() => input.current?.click()}
               >
                 Выбрать {draft.series ? 'файлы' : 'файл'}
-              </button>
+              </Button>
             </div>
-            <button
-              className="au-text-button"
+            <Button
+              variant="link"
               onClick={() =>
                 add(
                   (draft.series ? demoTitles : [demoTitles[0]]).map(
@@ -207,10 +236,10 @@ export function NewProject({
               }
             >
               <Plus size={15} /> Использовать демо-файлы
-            </button>
-          </section>
+            </Button>
+          </Card>
           {draft.files.length > 0 && (
-            <section className="pt-panel au-form-panel">
+            <Card className="au-form-panel">
               <h2>{draft.series ? 'Порядок томов' : 'Файл книги'}</h2>
               {draft.series && (
                 <p className="au-muted">
@@ -224,25 +253,31 @@ export function NewProject({
                   <div className="au-mini-actions">
                     {draft.series && (
                       <>
-                        <button
+                        <Button
+                          size="icon-sm"
+                          variant="outline"
                           title="Выше"
                           aria-label={'Поднять ' + name}
                           disabled={!i}
                           onClick={() => reorder(i, -1)}
                         >
                           <ArrowUp size={17} />
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          size="icon-sm"
+                          variant="outline"
                           title="Ниже"
                           aria-label={'Опустить ' + name}
                           disabled={i === draft.files.length - 1}
                           onClick={() => reorder(i, 1)}
                         >
                           <ArrowDown size={17} />
-                        </button>
+                        </Button>
                       </>
                     )}
-                    <button
+                    <Button
+                      size="icon-sm"
+                      variant="outline"
                       title="Удалить"
                       aria-label={'Удалить ' + name}
                       onClick={() =>
@@ -250,63 +285,57 @@ export function NewProject({
                       }
                     >
                       <Trash2 size={17} />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
-            </section>
+            </Card>
           )}
           {error && (
             <p role="alert" className="au-error">
               {error}
             </p>
           )}
-          <button
-            className="pt-btn"
+          <Button
             disabled={!draft.files.length}
             onClick={() => openAuthor('recipe')}
           >
             Настроить перевод →
-          </button>
+          </Button>
         </>
       ) : (
         <>
-          <section className="pt-panel au-form-panel">
+          <Card className="au-form-panel">
             <h2>{draft.title || baseName(draft.files[0] || 'Новая книга')}</h2>
-            <label className="au-label">
-              Направление и жанр
-              <select
+            <IOSItemsStack>
+              <IOSSettingsRow
+                label="Направление и жанр"
                 value={draft.genre}
-                onChange={(e) => chooseRecipe(e.target.value)}
-              >
-                {recipes.map((r) => (
-                  <option value={r.genre} key={r.id}>
-                    {r.genre} · {r.source} → {r.target}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="au-label">
-              Единицы измерения
-              <select
+                options={recipes.map((r) => ({
+                  id: r.genre,
+                  label: r.genre + ' · ' + r.source + ' → ' + r.target,
+                }))}
+                onChange={chooseRecipe}
+              />
+              <IOSSettingsRow
+                className="border-t border-[var(--app-border)]"
+                label="Единицы измерения"
                 value={draft.units}
-                onChange={(e) => change({ units: e.target.value })}
-              >
-                <option>Метрические</option>
-                <option>Оставить как в оригинале</option>
-              </select>
-            </label>
+                options={unitOptions}
+                onChange={(units) => change({ units })}
+              />
+            </IOSItemsStack>
             <label className="au-label">
               Ваши пожелания
-              <textarea
+              <Textarea
                 value={draft.wishes}
                 onChange={(e) => change({ wishes: e.target.value })}
                 placeholder="Например, сохранить короткие реплики и иронию рассказчика"
                 rows={3}
               />
             </label>
-          </section>
-          <div className="pt-panel au-estimate">
+          </Card>
+          <Card className="au-estimate">
             <div>
               <strong>Оценка для проекта</strong>
               <small>Демонстрационный расчёт · {draft.files.length} EPUB</small>
@@ -315,18 +344,8 @@ export function NewProject({
               ${(draft.files.length * 3.8).toFixed(2)}–
               {(draft.files.length * 4.6).toFixed(2)}
             </b>
-          </div>
-          <div className="au-actions">
-            <button className="pt-btn" onClick={create}>
-              Начать подготовку
-            </button>
-            <button
-              className="pt-btn secondary"
-              onClick={() => openAuthor('import')}
-            >
-              Назад к файлам
-            </button>
-          </div>
+          </Card>
+          <Button onClick={create}>Начать подготовку</Button>
         </>
       )}
     </div>

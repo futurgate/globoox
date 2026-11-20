@@ -1,5 +1,9 @@
 export type Entry = { source: string; target: string }
-export type Units = 'Метрические' | 'Оставить как в оригинале'
+export const unitOptions = [
+  { id: 'Метрические', label: 'Метрические' },
+  { id: 'Оставить как в оригинале', label: 'Оставить как в оригинале' },
+] as const
+export type Units = (typeof unitOptions)[number]['id']
 export type Recipe = {
   id: string
   genre: string

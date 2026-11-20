@@ -1,5 +1,19 @@
 'use client';
 
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import IOSItemsStack from '@/components/ui/ios-items-stack';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
+import { cn } from '@/lib/utils';
+import {
+  uiFilterPillActive,
+  uiFilterPillBase,
+  uiFilterPillInactive,
+} from '@/components/ui/button-styles';
+
 import { useState } from 'react';
 import Image from 'next/image';
 import {
@@ -95,8 +109,10 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
   };
   if (view === 'term')
     return (
-      <section className="pt-panel au-form-panel">
-        <span className="au-badge warning">Требует решения</span>
+      <Card className="au-form-panel">
+        <Badge variant="secondary" className="au-warning">
+          Требует решения
+        </Badge>
         <h2>{sourceTerm(p)}</h2>
         <p className="au-muted">
           Название пограничной области встретилось в тексте тома. Выберите
@@ -123,20 +139,19 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
         </fieldset>
         <label className="au-label">
           Свой вариант
-          <input value={term} onChange={(e) => setTerm(e.target.value)} />
+          <Input value={term} onChange={(e) => setTerm(e.target.value)} />
         </label>
-        <button
-          className="pt-btn"
+        <Button
           disabled={!term.trim()}
           onClick={() => next('card', { term: term.trim() })}
         >
           Утвердить для {p.volumes.length > 1 ? 'серии' : 'книги'}
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   if (view === 'card')
     return (
-      <section className="pt-panel au-form-panel">
+      <Card className="au-form-panel">
         <div className="au-card-fields">
           <Image
             src={cover}
@@ -144,17 +159,16 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
             className="au-cover"
           />
           <div>
-            <h2>Данные издания</h2>
             <label className="au-label">
               Название на языке перевода
-              <input
+              <Input
                 value={edit.edition}
                 onChange={(e) => setEdit({ ...edit, edition: e.target.value })}
               />
             </label>
             <label className="au-label">
               Автор
-              <input
+              <Input
                 value={edit.creator}
                 onChange={(e) => setEdit({ ...edit, creator: e.target.value })}
               />
@@ -163,25 +177,25 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
         </div>
         <label className="au-label">
           Аннотация
-          <textarea
+          <Textarea
             placeholder="Краткое описание издания"
             value={edit.description}
             rows={3}
             onChange={(e) => setEdit({ ...edit, description: e.target.value })}
           />
         </label>
-        <label className="au-label">
-          Порядок страниц
-          <select
+        <IOSItemsStack>
+          <IOSSettingsRow
+            label="Порядок страниц"
             value={edit.order}
-            onChange={(e) => setEdit({ ...edit, order: e.target.value })}
-          >
-            <option>Титул → Аннотация → Оглавление</option>
-            <option>Титул → Оглавление → Аннотация</option>
-          </select>
-        </label>
-        <button
-          className="pt-btn"
+            options={[
+              'Титул → Аннотация → Оглавление',
+              'Титул → Оглавление → Аннотация',
+            ].map((label) => ({ id: label, label }))}
+            onChange={(order) => setEdit({ ...edit, order })}
+          />
+        </IOSItemsStack>
+        <Button
           disabled={!edit.edition.trim() || !edit.creator.trim()}
           onClick={() =>
             next('queue', {
@@ -193,15 +207,15 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           }
         >
           Подтвердить карточку
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   if (view === 'review')
     return (
-      <section className="pt-panel au-form-panel">
-        <span className="au-badge warning">
+      <Card className="au-form-panel">
+        <Badge variant="secondary" className="au-warning">
           <CircleAlert size={15} /> Подготовка приостановлена
-        </span>
+        </Badge>
         <h2>Проверить единицы измерения</h2>
         <p className="au-muted">
           Глава 1 · Фрагмент 6. Выбранное правило — «{p.units}».
@@ -212,7 +226,7 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
         </div>
         <label className="au-label">
           Текст для издания
-          <textarea
+          <Textarea
             rows={3}
             value={correct}
             onChange={(e) => setCorrect(e.target.value)}
@@ -222,14 +236,14 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           <summary>Повторить перевод фрагмента</summary>
           <label className="au-label">
             Причина повтора
-            <input
+            <Input
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Согласовать единицы измерения"
             />
           </label>
-          <button
-            className="pt-btn secondary"
+          <Button
+            variant="outline"
             disabled={!note.trim() || v.retry}
             onClick={() => {
               save({ ...v, retry: true });
@@ -237,20 +251,19 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
             }}
           >
             {v.retry ? 'Повтор выполнен' : 'Повторить один раз'}
-          </button>
+          </Button>
         </details>
-        <button
-          className="pt-btn"
+        <Button
           disabled={!correct.trim()}
           onClick={() => next('materials', { correction: correct.trim() })}
         >
           Сохранить и продолжить
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   if (view === 'impact')
     return (
-      <section className="pt-panel au-form-panel">
+      <Card className="au-form-panel">
         <h2>Применение словарной правки</h2>
         <p className="au-muted">
           Обновите термин в выбранных томах. Фрагмент с ручной правкой останется
@@ -258,7 +271,7 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
         </p>
         <label className="au-label">
           Новое написание
-          <input value={term} onChange={(e) => setTerm(e.target.value)} />
+          <Input value={term} onChange={(e) => setTerm(e.target.value)} />
         </label>
         <fieldset className="au-radio-group">
           <legend>Тома с переведёнными вхождениями</legend>
@@ -284,8 +297,7 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
         <div className="au-protection">
           <LockKeyhole size={16} /> Ручная правка в главе 2 защищена
         </div>
-        <button
-          className="pt-btn"
+        <Button
           disabled={!term.trim() || !selected.length}
           onClick={() => {
             saveProject({
@@ -305,26 +317,37 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           }}
         >
           Обновить выбранные
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   if (view === 'materials')
     return (
-      <section className="pt-panel au-form-panel">
-        <h2>Материалы издания</h2>
-        <div className="au-choice">
-          <button
+      <Card className="au-form-panel">
+        <div className="au-choice" role="group" aria-label="Материалы издания">
+          <Button
             onClick={() => setArt('map')}
-            className={art === 'map' ? 'selected' : ''}
+            variant="outline"
+            size="sm"
+            aria-pressed={art === 'map'}
+            className={cn(
+              uiFilterPillBase,
+              art === 'map' ? uiFilterPillActive : uiFilterPillInactive,
+            )}
           >
             Иллюстрация
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setArt('cover')}
-            className={art === 'cover' ? 'selected' : ''}
+            variant="outline"
+            size="sm"
+            aria-pressed={art === 'cover'}
+            className={cn(
+              uiFilterPillBase,
+              art === 'cover' ? uiFilterPillActive : uiFilterPillInactive,
+            )}
           >
             Обложка
-          </button>
+          </Button>
         </div>
         {art === 'map' ? (
           <div className="au-map-pair">
@@ -354,24 +377,23 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
         )}
         <label className="au-label">
           Надпись на карте
-          <input value={caption} onChange={(e) => setCaption(e.target.value)} />
+          <Input value={caption} onChange={(e) => setCaption(e.target.value)} />
         </label>
         <p className="au-muted">В словаре издания: {v.term}.</p>
-        <button
-          className="pt-btn"
+        <Button
           disabled={!caption.trim()}
           onClick={() => next('preflight', { caption: caption.trim() })}
         >
           Подтвердить материалы и собрать EPUB
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   if (view === 'preflight')
     return (
-      <section className="pt-panel au-form-panel">
-        <span className="au-badge warning">
+      <Card className="au-form-panel">
+        <Badge variant="secondary" className="au-warning">
           <CircleAlert size={15} /> Сборка приостановлена
-        </span>
+        </Badge>
         <h2>Не найдена цель сноски</h2>
         <div className="au-check">
           <CheckCircle2 />
@@ -393,21 +415,17 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           />{' '}
           Связать с примечанием 3
         </label>
-        <button
-          className="pt-btn"
-          disabled={!fixed}
-          onClick={() => next('ready')}
-        >
+        <Button disabled={!fixed} onClick={() => next('ready')}>
           Исправить и пересобрать
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   if (view === 'ready')
     return (
-      <section className="pt-panel au-form-panel">
-        <span className="au-badge saved">
+      <Card className="au-form-panel">
+        <Badge variant="secondary" className="au-success">
           <CheckCircle2 size={15} /> Проверка EPUB пройдена
-        </span>
+        </Badge>
         <div className="au-card-fields">
           <Image
             src={cover}
@@ -436,8 +454,7 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           ))}
         </div>
         <div className="au-actions">
-          <button
-            className="pt-btn"
+          <Button
             onClick={async () => {
               try {
                 await downloadDemoEpub(
@@ -458,16 +475,16 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           >
             <ArrowDownToLine size={18} />
             Скачать EPUB
-          </button>
-          <button className="pt-btn secondary" onClick={() => report(p, v)}>
+          </Button>
+          <Button variant="outline" onClick={() => report(p, v)}>
             Скачать отчёт
-          </button>
+          </Button>
         </div>
         {downloadError && <p role="alert">{downloadError}</p>}
-        <button className="au-text-button" onClick={() => go('overview')}>
+        <Button variant="link" onClick={() => go('overview')}>
           <BookOpen size={16} /> Вернуться к проекту
-        </button>
-      </section>
+        </Button>
+      </Card>
     );
   return null;
 }

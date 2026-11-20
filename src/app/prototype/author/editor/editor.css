@@ -23,6 +23,3 @@
   align-items: baseline;
   gap: 8px;
 }
-.ed-actions button:disabled {
-  opacity: 0.5;
-}

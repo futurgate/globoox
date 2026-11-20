@@ -1,8 +1,17 @@
 'use client';
 
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
+
 import { useState } from 'react';
 import { Copy, LockKeyhole, Plus, Snowflake } from 'lucide-react';
 import {
+  modelOptions,
   books,
   quantity,
   terms,
@@ -100,13 +109,13 @@ export function Glossary({
     }
   }
   return (
-    <section className="adm-card">
+    <Card className="block adm-card">
       <div className="adm-section-title">
         <div>
           <h2>Глоссарий книги</h2>
           <p>Имена, термины и их написание для перевода на выбранный язык.</p>
         </div>
-        <span className="adm-pill">
+        <Badge variant="secondary">
           {run.frozen ? (
             <>
               <LockKeyhole size={13} /> Закреплён
@@ -114,7 +123,7 @@ export function Glossary({
           ) : (
             quantity(run.glossary.length, ['запись', 'записи', 'записей'])
           )}
-        </span>
+        </Badge>
       </div>
       {run.glossary.length > 0 && (
         <div className="adm-terms">
@@ -134,12 +143,11 @@ export function Glossary({
       {mode === 'list' && (
         <div className="adm-actions">
           {job.status === 'running' ? (
-            <button className="adm-btn light" onClick={stop}>
+            <Button variant="outline" onClick={stop}>
               Остановить сборку
-            </button>
+            </Button>
           ) : (
-            <button
-              className="adm-btn"
+            <Button
               disabled={blocked}
               onClick={() =>
                 job.status === 'done' ? setReset(true) : start(false)
@@ -150,10 +158,10 @@ export function Glossary({
                 : run.glossary.length
                   ? 'Пересобрать по главам'
                   : 'Сгенерировать глоссарий'}
-            </button>
+            </Button>
           )}
-          <button
-            className="adm-btn light"
+          <Button
+            variant="outline"
             disabled={blocked}
             onClick={() => {
               setMode('copy');
@@ -161,9 +169,9 @@ export function Glossary({
             }}
           >
             <Copy size={16} /> Из другой книги
-          </button>
-          <button
-            className="adm-btn light"
+          </Button>
+          <Button
+            variant="outline"
             disabled={blocked}
             onClick={() => {
               setMode('paste');
@@ -171,73 +179,58 @@ export function Glossary({
             }}
           >
             <Plus size={16} /> Вставить JSON
-          </button>
+          </Button>
           {run.glossary.length > 0 && (
-            <button
-              className="adm-link"
+            <Button
+              variant="link"
+              size="sm"
               disabled={job.status === 'running'}
               onClick={() => update((r) => ({ ...r, frozen: !r.frozen }))}
             >
               <Snowflake size={16} />
               {run.frozen ? 'Разморозить' : 'Заморозить'}
-            </button>
+            </Button>
           )}
         </div>
       )}
-      <label className="adm-inline">
-        Модель глоссария{' '}
-        <select
-          value={run.models.glossary}
-          disabled={blocked}
-          onChange={(e) =>
-            update((r) => ({
-              ...r,
-              models: { ...r.models, glossary: e.target.value },
-            }))
-          }
-        >
-          {['По умолчанию', 'Flash', 'Hydrogen'].map((m) => (
-            <option key={m}>{m}</option>
-          ))}
-        </select>
-      </label>
-      {reset && (
-        <div className="adm-warning">
-          <strong>Пересобрать глоссарий с первой главы?</strong>
-          <p>Текущий список будет заменён.</p>
-          <button
-            className="adm-btn"
-            disabled={blocked}
-            onClick={() => {
-              start(true);
-              setReset(false);
-            }}
-          >
-            Пересобрать
-          </button>{' '}
-          <button className="adm-btn light" onClick={() => setReset(false)}>
-            Отмена
-          </button>
-        </div>
-      )}
+      <IOSSettingsRow
+        label="Модель глоссария"
+        value={run.models.glossary}
+        options={modelOptions}
+        disabled={blocked}
+        onChange={(value) =>
+          update((r) => ({ ...r, models: { ...r.models, glossary: value } }))
+        }
+      />
+      <IOSAlertDialog
+        open={reset && !blocked}
+        onOpenChange={setReset}
+        title="Пересобрать глоссарий с первой главы?"
+        description="Текущий список будет заменён."
+        showCancel
+        destructive
+        cancelLabel="Отмена"
+        confirmLabel="Пересобрать"
+        onConfirm={() => {
+          start(true);
+          setReset(false);
+        }}
+      />
       {mode === 'copy' && (
         <div className="adm-inset">
-          <label className="adm-field">
-            Книга со словарём
-            <select value={donor} onChange={(e) => setDonor(e.target.value)}>
-              {!donors.length && (
-                <option value="">Нет готовых словарей для этого языка</option>
-              )}
-              {donors.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.title}
-                </option>
-              ))}
-            </select>
-          </label>
+          <IOSSettingsRow
+            label="Книга со словарём"
+            value={donor}
+            disabled={!donors.length || blocked}
+            options={
+              donors.length
+                ? donors.map((b) => ({ id: b.id, label: b.title }))
+                : [{ id: '', label: 'Нет готовых словарей для этого языка' }]
+            }
+            onChange={setDonor}
+          />
           <div className="adm-actions">
-            <button
-              className="adm-btn"
+            <Button
               disabled={!donor || blocked}
               onClick={() =>
                 load(
@@ -246,10 +239,10 @@ export function Glossary({
               }
             >
               Скопировать записи
-            </button>
-            <button className="adm-link" onClick={() => setMode('list')}>
+            </Button>
+            <Button variant="link" size="sm" onClick={() => setMode('list')}>
               Отмена
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -257,7 +250,7 @@ export function Glossary({
         <div className="adm-inset">
           <label className="adm-field">
             JSON глоссария
-            <textarea
+            <Textarea
               rows={4}
               placeholder={JSON.stringify(
                 {
@@ -278,16 +271,12 @@ export function Glossary({
           <p className="adm-note">Импорт заменит текущие записи.</p>
           {error && <p role="alert">{error}</p>}
           <div className="adm-actions">
-            <button
-              disabled={!raw.trim() || blocked}
-              className="adm-btn"
-              onClick={paste}
-            >
+            <Button disabled={!raw.trim() || blocked} onClick={paste}>
               Сохранить JSON
-            </button>
-            <button className="adm-link" onClick={() => setMode('list')}>
+            </Button>
+            <Button variant="link" size="sm" onClick={() => setMode('list')}>
               Отмена
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -300,10 +289,10 @@ export function Glossary({
         </div>
       )}
       <div className="adm-foot">
-        <button className="adm-link" onClick={next}>
+        <Button variant="link" size="sm" onClick={next}>
           К настройкам перевода →
-        </button>
+        </Button>
       </div>
-    </section>
+    </Card>
   );
 }

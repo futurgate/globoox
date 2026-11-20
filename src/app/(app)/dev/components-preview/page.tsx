@@ -25,6 +25,7 @@ import IOSFeatureDialog from '@/components/ui/ios-feature-dialog';
 import IOSFlowDialog from '@/components/ui/ios-flow-dialog';
 import IOSIconFeatureListItem from '@/components/ui/ios-icon-feature-list-item';
 import IOSReaderHeader from '@/components/ui/ios-reader-header';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import IOSBottomDrawer from '@/components/ui/ios-bottom-drawer';
 import IOSBottomDrawerHeader from '@/components/ui/ios-bottom-drawer-header';
 import IOSItemsStack from '@/components/ui/ios-items-stack';
@@ -191,6 +192,8 @@ function SchematicPlaceholder({
 
 export default function ComponentsPreviewPage() {
   const [activeOverlay, setActiveOverlay] = useState<OverlayKey>(null);
+  const [editionLanguage, setEditionLanguage] = useState('EN');
+  const [showEdition, setShowEdition] = useState(true);
   const [alertLoading, setAlertLoading] = useState(false);
   const [alertDestructive] = useState(false);
   const sheetTitleId = useId();
@@ -372,6 +375,21 @@ export default function ComponentsPreviewPage() {
   ];
 
   const patterns: CatalogItem[] = [
+    {
+      title: 'Book workspace header',
+      layer: 'Pattern',
+      builtOn: 'IOSReaderHeader + IOSSettingsRow',
+      useWhen: 'Opening an individual book, series, or translation task from a collection.',
+      avoidWhen: 'Top-level lists such as the library.',
+      inlinePreview: showEdition ? (
+        <IOSReaderHeader
+          layout="workspace" title="Northbound" subtitle="Northern Archive · Volume 1"
+          backLabel="Back to library" onBack={() => setShowEdition(false)}
+          trailingRight={<IOSSettingsRow label="Language" value={editionLanguage}
+            options={[{ id: 'EN', label: 'English' }, { id: 'FR', label: 'French' }]} onChange={setEditionLanguage} />}
+        />
+      ) : <Button variant="outline" onClick={() => setShowEdition(true)}>Open book</Button>,
+    },
     {
       title: 'IOSAlertDialog',
       layer: 'Pattern',

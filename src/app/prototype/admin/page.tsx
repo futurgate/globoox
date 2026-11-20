@@ -1,8 +1,22 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import IOSItemsStack from '@/components/ui/ios-items-stack';
+import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
+import {
+  uiFilterPillBase,
+  uiFilterPillActive,
+  uiFilterPillInactive,
+  uiMenuItemButton,
+} from '@/components/ui/button-styles';
+
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
+
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
   BookText,
@@ -17,16 +31,18 @@ import {
   ListTree,
   Pause,
   Play,
-  Search,
   Settings2,
   SlidersHorizontal,
 } from 'lucide-react';
+import { SectionNav } from '../_components/SectionNav';
 import { PrototypeShell, type NavItem } from '../_components/PrototypeShell';
 import { downloadDemoEpub } from '../_components/downloads';
 import {
   books,
   initialDatabase,
   languages,
+  languageOptions,
+  modelOptions,
   money,
   phaseLabels,
   quantity,
@@ -95,8 +111,12 @@ function statusText(s: Phase) {
       ? 'Готово к скачиванию'
       : phaseLabels[s];
 }
-function Badge({ phase }: { phase: Phase }) {
-  return <span className={'adm-pill ' + phase}>{statusText(phase)}</span>;
+function TranslationStatus({ phase }: { phase: Phase }) {
+  return (
+    <Badge variant="secondary" className={'adm-status ' + phase}>
+      {statusText(phase)}
+    </Badge>
+  );
 }
 function BookMark({ book }: { book: Book }) {
   return (
@@ -117,7 +137,7 @@ function Choice({
   onClick: () => void;
 }) {
   return (
-    <button className="adm-choice" onClick={onClick}>
+    <button className={`adm-choice ${uiMenuItemButton}`} onClick={onClick}>
       <Icon size={20} />
       <span>
         <strong>{title}</strong>
@@ -276,11 +296,12 @@ export default function AdminPrototype() {
           : 'progress',
     );
   const history = (
-    <div className="adm-list">
+    <IOSItemsStack className="adm-list">
       {entries.length ? (
         entries.map((e) => (
           <div className="adm-history" key={runKey(e.book, e.lang)}>
             <button
+              className={uiMenuItemButton}
               onClick={() =>
                 jump(
                   e.run.jobs.translate.status === 'done' ? 'file' : 'progress',
@@ -298,23 +319,24 @@ export default function AdminPrototype() {
                 </small>
               </span>
             </button>
-            <Badge phase={e.run.jobs.translate.status} />
+            <TranslationStatus phase={e.run.jobs.translate.status} />
             {e.run.jobs.translate.status === 'done' && (
-              <button
-                className="adm-icon"
+              <Button
+                variant="ghost"
+                size="icon"
                 title={'Скачать ' + e.book.title}
                 aria-label={'Скачать ' + e.book.title}
                 onClick={() => void download(e.book, e.lang)}
               >
                 <Download size={18} />
-              </button>
+              </Button>
             )}
           </div>
         ))
       ) : (
         <p>Здесь появятся выполненные и незавершённые запуски.</p>
       )}
-    </div>
+    </IOSItemsStack>
   );
   return (
     <PrototypeShell
@@ -325,52 +347,40 @@ export default function AdminPrototype() {
           ? 'Рабочее место администратора'
           : book.author + ' · ' + book.series
       }
+      detail={
+        across
+          ? undefined
+          : {
+              backLabel: 'К книгам',
+              onBack: () => jump('books'),
+              action: (
+                <IOSSettingsRow
+                  label="Русский →"
+                  aria-label="Целевой язык книги"
+                  compactLabels={{ label: 'RU →', value: lang }}
+                  value={lang}
+                  options={languageOptions}
+                  onChange={(value) => jump('overview', book, value as Lang)}
+                />
+              ),
+            }
+      }
       items={nav}
       active={active}
       onSelect={(id) => jump(id as Screen)}
     >
       <div className="adm">
         {!across && (
-          <>
-            <div className="adm-context">
-              <button className="adm-link" onClick={() => jump('books')}>
-                <ArrowLeft size={15} /> К книгам
-              </button>
-              <label className="adm-language">
-                Русский →{' '}
-                <select
-                  aria-label="Целевой язык книги"
-                  value={lang}
-                  onChange={(e) =>
-                    jump('overview', book, e.target.value as Lang)
-                  }
-                >
-                  {Object.entries(languages).map(([k, v]) => (
-                    <option key={k} value={k}>
-                      {v}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <nav aria-label="Разделы книги" className="adm-tabs">
-              {tabs.map((t) => (
-                <button
-                  key={t.id}
-                  aria-current={activeTab === t.id ? 'page' : undefined}
-                  onClick={() =>
-                    jump(
-                      t.id === 'setup' && job.status !== 'idle'
-                        ? 'progress'
-                        : t.id,
-                    )
-                  }
-                >
-                  {t.label}
-                </button>
-              ))}
-            </nav>
-          </>
+          <SectionNav
+            label="Разделы книги"
+            items={tabs}
+            active={activeTab}
+            onSelect={(view) =>
+              jump(
+                view === 'setup' && job.status !== 'idle' ? 'progress' : view,
+              )
+            }
+          />
         )}
         {error && (
           <div role="alert" className="adm-warning">
@@ -379,7 +389,7 @@ export default function AdminPrototype() {
         )}
         {screen === 'books' && (
           <div className="adm-stack">
-            <div className="adm-card">
+            <Card className="block adm-card">
               <div className="adm-section-title">
                 <div>
                   <h2>Библиотека переводов</h2>
@@ -388,27 +398,20 @@ export default function AdminPrototype() {
                 <LibraryBig size={25} />
               </div>
               <div className="adm-library-tools">
-                <label className="adm-search">
-                  <Search size={17} />
-                  <input
-                    placeholder="Поиск по названию или автору"
-                    aria-label="Поиск по книгам"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </label>
-                <label className="adm-inline">
-                  Перевести на{' '}
-                  <select
-                    value={lang}
-                    onChange={(e) =>
-                      jump('books', book, e.target.value as Lang)
-                    }
-                  >
-                    <option value="EN">Английский</option>
-                    <option value="FR">Французский</option>
-                  </select>
-                </label>
+                <Input
+                  type="search"
+                  className="adm-search"
+                  placeholder="Поиск по названию или автору"
+                  aria-label="Поиск по книгам"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <IOSSettingsRow
+                  label="Перевести на"
+                  value={lang}
+                  options={languageOptions}
+                  onChange={(value) => jump('books', book, value as Lang)}
+                />
               </div>
               <div className="adm-filter" aria-label="Фильтр статуса">
                 {[
@@ -416,16 +419,19 @@ export default function AdminPrototype() {
                   ['active', 'В работе'],
                   ['done', 'Готовые'],
                 ].map(([v, l]) => (
-                  <button
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`${uiFilterPillBase} ${filter === v ? uiFilterPillActive : uiFilterPillInactive}`}
                     key={v}
                     aria-pressed={filter === v}
                     onClick={() => setFilter(v)}
                   >
                     {l}
-                  </button>
+                  </Button>
                 ))}
               </div>
-              <div className="adm-list">
+              <IOSItemsStack className="adm-list">
                 {books
                   .filter((b) => {
                     const st = db.runs[runKey(b, lang)].jobs.translate.status;
@@ -442,7 +448,7 @@ export default function AdminPrototype() {
                   .map((b) => (
                     <button
                       key={b.id}
-                      className="adm-bookrow"
+                      className={`adm-bookrow ${uiMenuItemButton}`}
                       onClick={() => jump('overview', b)}
                     >
                       <BookMark book={b} />
@@ -453,40 +459,44 @@ export default function AdminPrototype() {
                           {quantity(b.chapters, ['глава', 'главы', 'глав'])}
                         </small>
                       </span>
-                      <Badge
+                      <TranslationStatus
                         phase={db.runs[runKey(b, lang)].jobs.translate.status}
                       />
                       <ChevronRight size={17} />
                     </button>
                   ))}
-              </div>
+              </IOSItemsStack>
               <p className="adm-no-results">
                 По этому запросу книг нет. Попробуйте другой фильтр.
               </p>
-            </div>
-            <div className="adm-card">
+            </Card>
+            <Card className="block adm-card">
               <div className="adm-section-title">
                 <h2>История переводов</h2>
-                <button className="adm-link" onClick={() => jump('history')}>
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => jump('history')}
+                >
                   Открыть историю <ArrowRight size={15} />
-                </button>
+                </Button>
               </div>
               {history}
-            </div>
+            </Card>
           </div>
         )}
         {screen === 'history' && (
-          <section className="adm-card">
+          <Card className="block adm-card">
             <h2>Книги и языковые пары</h2>
             <p>Продолжите начатый перевод или скачайте уже готовый файл.</p>
             {history}
-          </section>
+          </Card>
         )}
         {screen === 'overview' && (
           <div className="adm-stack">
-            <section className="adm-card adm-hero">
+            <Card className="block adm-card adm-hero">
               <div>
-                <Badge phase={job.status} />
+                <TranslationStatus phase={job.status} />
                 <h2>
                   {job.status === 'idle'
                     ? 'Книга готова к переводу'
@@ -501,44 +511,46 @@ export default function AdminPrototype() {
                   {languages[lang]}
                 </p>
               </div>
-              <button className="adm-btn" onClick={nextStep}>
+              <Button onClick={nextStep}>
                 {job.status === 'idle'
                   ? 'Настроить перевод'
                   : job.status === 'done'
                     ? 'Открыть EPUB'
                     : 'Открыть перевод'}
                 <ArrowRight size={16} />
-              </button>
-            </section>
-            <section className="adm-card">
+              </Button>
+            </Card>
+            <Card className="block adm-card">
               <h2>Работа с книгой</h2>
-              <Choice
-                title="Глоссарий"
-                detail={
-                  run.glossary.length
-                    ? quantity(run.glossary.length, [
-                        'запись',
-                        'записи',
-                        'записей',
-                      ])
-                    : 'Имена и термины · по желанию'
-                }
-                icon={ListTree}
-                onClick={() => jump('glossary')}
-              />
-              <Choice
-                title="Расходы и запуски"
-                detail={'Текущий расход ' + money(totalCost)}
-                icon={Coins}
-                onClick={() => jump('costs')}
-              />
-              <Choice
-                title="Проверка перевода"
-                detail="Редактура и читательские предложения"
-                icon={ClipboardCheck}
-                onClick={() => jump('revision')}
-              />
-            </section>
+              <IOSItemsStack className="adm-list">
+                <Choice
+                  title="Глоссарий"
+                  detail={
+                    run.glossary.length
+                      ? quantity(run.glossary.length, [
+                          'запись',
+                          'записи',
+                          'записей',
+                        ])
+                      : 'Имена и термины · по желанию'
+                  }
+                  icon={ListTree}
+                  onClick={() => jump('glossary')}
+                />
+                <Choice
+                  title="Расходы и запуски"
+                  detail={'Текущий расход ' + money(totalCost)}
+                  icon={Coins}
+                  onClick={() => jump('costs')}
+                />
+                <Choice
+                  title="Проверка перевода"
+                  detail="Редактура и читательские предложения"
+                  icon={ClipboardCheck}
+                  onClick={() => jump('revision')}
+                />
+              </IOSItemsStack>
+            </Card>
           </div>
         )}
         {screen === 'glossary' && (
@@ -555,28 +567,23 @@ export default function AdminPrototype() {
           />
         )}
         {screen === 'setup' && (
-          <section className="adm-card">
+          <Card className="block adm-card">
             <h2>Настройка перевода</h2>
             <p>
               {quantity(book.chapters, ['глава', 'главы', 'глав'])} · Русский →{' '}
               {languages[lang]}
             </p>
-            <label className="adm-field">
-              Модель перевода
-              <select
-                value={run.models.translate}
-                onChange={(e) =>
-                  update((r) => ({
-                    ...r,
-                    models: { ...r.models, translate: e.target.value },
-                  }))
-                }
-              >
-                {['По умолчанию', 'Flash', 'Hydrogen'].map((s) => (
-                  <option key={s}>{s}</option>
-                ))}
-              </select>
-            </label>
+            <IOSSettingsRow
+              label="Модель перевода"
+              value={run.models.translate}
+              options={modelOptions}
+              onChange={(value) =>
+                update((r) => ({
+                  ...r,
+                  models: { ...r.models, translate: value },
+                }))
+              }
+            />
             <label className="adm-toggle">
               <span>
                 <strong>Использовать глоссарий</strong>
@@ -599,9 +606,9 @@ export default function AdminPrototype() {
                 }
               />
             </label>
-            <button className="adm-link" onClick={() => jump('glossary')}>
+            <Button variant="link" size="sm" onClick={() => jump('glossary')}>
               Открыть глоссарий →
-            </button>
+            </Button>
             <label className="adm-toggle">
               <span>
                 <strong>Редактура после перевода</strong>
@@ -631,8 +638,7 @@ export default function AdminPrototype() {
               </label>
             )}
             <div className="adm-actions">
-              <button
-                className="adm-btn"
+              <Button
                 disabled={busy || (job.status === 'done' && !overwrite)}
                 onClick={() =>
                   overwrite ? setConfirm(true) : startTranslation(false)
@@ -644,19 +650,23 @@ export default function AdminPrototype() {
                   : job.done
                     ? 'Продолжить перевод'
                     : 'Начать перевод'}
-              </button>
-              <button className="adm-link" onClick={() => jump('templates')}>
+              </Button>
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => jump('templates')}
+              >
                 <Settings2 size={15} /> Шаблоны направления
-              </button>
+              </Button>
             </div>
-          </section>
+          </Card>
         )}
         {screen === 'progress' && (
           <div className="adm-stack">
-            <section className="adm-card">
+            <Card className="block adm-card">
               <div className="adm-section-title">
                 <h2>Ход перевода</h2>
-                <Badge phase={job.status} />
+                <TranslationStatus phase={job.status} />
               </div>
               <strong className="adm-big">
                 {job.done} <span>из {book.chapters} глав</span>
@@ -667,37 +677,30 @@ export default function AdminPrototype() {
               </div>
               <div className="adm-actions">
                 {job.status === 'running' ? (
-                  <button
-                    className="adm-btn light"
-                    onClick={() => stop('translate')}
-                  >
+                  <Button variant="outline" onClick={() => stop('translate')}>
                     <Pause size={16} /> Остановить
-                  </button>
+                  </Button>
                 ) : job.status === 'done' ? (
-                  <button className="adm-btn" onClick={() => jump('file')}>
+                  <Button onClick={() => jump('file')}>
                     Открыть файл <ArrowRight size={16} />
-                  </button>
+                  </Button>
                 ) : (
-                  <button
-                    className="adm-btn"
+                  <Button
                     disabled={busy}
                     onClick={() => startTranslation(false)}
                   >
                     <Play size={16} />
                     {job.done ? 'Продолжить с пропусков' : 'Начать перевод'}
-                  </button>
+                  </Button>
                 )}
                 {job.status !== 'running' && (
-                  <button
-                    className="adm-btn light"
-                    onClick={() => jump('setup')}
-                  >
+                  <Button variant="outline" onClick={() => jump('setup')}>
                     Настройки запуска
-                  </button>
+                  </Button>
                 )}
-                <button className="adm-link" onClick={() => jump('costs')}>
+                <Button variant="link" size="sm" onClick={() => jump('costs')}>
                   Расходы
-                </button>
+                </Button>
               </div>
               {job.status === 'paused' && (
                 <p className="adm-note">
@@ -705,25 +708,23 @@ export default function AdminPrototype() {
                   блоки.
                 </p>
               )}
-            </section>
-            <section className="adm-card">
+            </Card>
+            <Card className="block adm-card">
               <div className="adm-section-title">
                 <h2>Журнал глав</h2>
-                <label className="adm-inline">
-                  Глава{' '}
-                  <select
-                    aria-label="Глава журнала"
-                    value={chapter}
-                    onChange={(e) => {
-                      setChapter(Number(e.target.value));
-                      setCopied(false);
-                    }}
-                  >
-                    {Array.from({ length: book.chapters }, (_, i) => (
-                      <option key={i + 1}>{i + 1}</option>
-                    ))}
-                  </select>
-                </label>
+                <IOSSettingsRow
+                  label="Глава"
+                  aria-label="Глава журнала"
+                  value={String(chapter)}
+                  options={Array.from({ length: book.chapters }, (_, i) => ({
+                    id: String(i + 1),
+                    label: String(i + 1),
+                  }))}
+                  onChange={(value) => {
+                    setChapter(Number(value));
+                    setCopied(false);
+                  }}
+                />
               </div>
               <p>
                 Глава {chapter} ·{' '}
@@ -746,8 +747,9 @@ export default function AdminPrototype() {
                       </div>
                     ))}
                   </div>
-                  <button
-                    className="adm-link"
+                  <Button
+                    variant="link"
+                    size="sm"
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(
@@ -765,7 +767,7 @@ export default function AdminPrototype() {
                     }}
                   >
                     {copied ? 'Скопировано' : 'Скопировать список'}
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <p className="adm-note">
@@ -774,16 +776,16 @@ export default function AdminPrototype() {
                     : 'Для этого запуска глоссарий выключен.'}
                 </p>
               )}
-            </section>
+            </Card>
             {job.status === 'done' && (
-              <section className="adm-card">
+              <Card className="block adm-card">
                 <Choice
                   title="Проверить готовый перевод"
                   detail="Необязательная редактура и читательская проверка"
                   icon={ClipboardCheck}
                   onClick={() => jump('revision')}
                 />
-              </section>
+              </Card>
             )}
           </div>
         )}
@@ -801,7 +803,7 @@ export default function AdminPrototype() {
           />
         )}
         {screen === 'costs' && (
-          <section className="adm-card">
+          <Card className="block adm-card">
             <div className="adm-section-title">
               <div>
                 <h2>Расходы по этапам</h2>
@@ -832,28 +834,30 @@ export default function AdminPrototype() {
               </table>
             </div>
             <h3>Последние прогоны проверки</h3>
-            {(['revise', 'reader'] as const).map((s) => (
-              <Choice
-                key={s}
-                title={stageLabels[s]}
-                detail={
-                  run.jobs[s].starts
-                    ? phaseLabels[run.jobs[s].status] +
-                      ' · ' +
-                      run.jobs[s].charged * 120 +
-                      ' токенов · ' +
-                      run.jobs[s].charged * 2 +
-                      ' сек.'
-                    : 'Ещё не запускалась'
-                }
-                icon={History}
-                onClick={() => jump(s === 'reader' ? 'reader' : 'revision')}
-              />
-            ))}
-          </section>
+            <IOSItemsStack>
+              {(['revise', 'reader'] as const).map((s) => (
+                <Choice
+                  key={s}
+                  title={stageLabels[s]}
+                  detail={
+                    run.jobs[s].starts
+                      ? phaseLabels[run.jobs[s].status] +
+                        ' · ' +
+                        run.jobs[s].charged * 120 +
+                        ' токенов · ' +
+                        run.jobs[s].charged * 2 +
+                        ' сек.'
+                      : 'Ещё не запускалась'
+                  }
+                  icon={History}
+                  onClick={() => jump(s === 'reader' ? 'reader' : 'revision')}
+                />
+              ))}
+            </IOSItemsStack>
+          </Card>
         )}
         {screen === 'file' && (
-          <section className="adm-card">
+          <Card className="block adm-card">
             <div className="adm-section-title">
               <div>
                 <h2>Переведённая книга</h2>
@@ -877,24 +881,24 @@ export default function AdminPrototype() {
                 : 'Скачивание откроется после перевода всех глав.'}
             </p>
             <div className="adm-actions">
-              <button
-                className="adm-btn"
+              <Button
                 disabled={job.status !== 'done'}
                 onClick={() => void download()}
               >
                 <Download size={17} /> Скачать EPUB
-              </button>
-              <button
-                className="adm-link"
+              </Button>
+              <Button
+                variant="link"
+                size="sm"
                 onClick={() =>
                   jump(job.status === 'done' ? 'reader' : 'progress')
                 }
               >
                 {job.status === 'done' ? 'Проверить текст' : 'К ходу перевода'}{' '}
                 →
-              </button>
+              </Button>
             </div>
-          </section>
+          </Card>
         )}
         {screen === 'templates' && (
           <Templates
@@ -907,49 +911,17 @@ export default function AdminPrototype() {
             back={() => jump('setup')}
           />
         )}
-        {confirm && (
-          <div className="adm-overlay">
-            <section
-              role="alertdialog"
-              aria-modal="true"
-              aria-labelledby="adm-confirm-title"
-              className="adm-dialog"
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') setConfirm(false);
-                if (e.key === 'Tab') {
-                  e.preventDefault();
-                  const buttons = e.currentTarget.querySelectorAll('button');
-                  (document.activeElement === buttons[0]
-                    ? buttons[1]
-                    : buttons[0]
-                  ).focus();
-                }
-              }}
-            >
-              <h2 id="adm-confirm-title">Перезаписать перевод?</h2>
-              <p>
-                Сохранённый перевод «{book.title}» на выбранный язык и
-                результаты проверки будут очищены. Начнётся новый проход с
-                первой главы.
-              </p>
-              <div className="adm-actions">
-                <button
-                  autoFocus
-                  className="adm-btn light"
-                  onClick={() => setConfirm(false)}
-                >
-                  Отмена
-                </button>
-                <button
-                  className="adm-btn danger"
-                  onClick={() => startTranslation(true)}
-                >
-                  Перезаписать перевод
-                </button>
-              </div>
-            </section>
-          </div>
-        )}
+        <IOSAlertDialog
+          open={confirm}
+          onOpenChange={setConfirm}
+          title="Перезаписать перевод?"
+          description={`Сохранённый перевод «${book.title}» на выбранный язык и результаты проверки будут очищены. Начнётся новый проход с первой главы.`}
+          showCancel
+          destructive
+          cancelLabel="Отмена"
+          confirmLabel="Перезаписать перевод"
+          onConfirm={() => startTranslation(true)}
+        />
       </div>
     </PrototypeShell>
   );

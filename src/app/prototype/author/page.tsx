@@ -1,8 +1,12 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { uiMenuItemButton } from '@/components/ui/button-styles';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
 import { useState, useSyncExternalStore } from 'react';
 import {
-  ArrowLeft,
   ArrowRight,
   Bell,
   BookOpen,
@@ -13,6 +17,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { PrototypeShell, type NavItem } from '../_components/PrototypeShell';
+import { SectionNav } from '../_components/SectionNav';
 import { BookTask } from './BookTask';
 import { readAuthorRecipe } from './editor/config';
 import { NewProject, emptyDraft } from './NewProject';
@@ -44,9 +49,9 @@ const taskTitles: Record<string, string> = {
   ready: 'Издание готово',
 };
 const tabs = [
-  ['overview', 'Обзор'],
-  ['dictionary', 'Словарь'],
-  ['editions', 'Издания'],
+  { id: 'overview', label: 'Обзор' },
+  { id: 'dictionary', label: 'Словарь' },
+  { id: 'editions', label: 'Издания' },
 ];
 function status(p: Project, v: Volume, i: number) {
   return isUnlocked(p, i) ? phaseLabels[v.phase] : 'Ожидает словарь тома ' + i;
@@ -135,23 +140,27 @@ export default function AuthorPrototype() {
     p?.volumes[0];
   const isLocal =
     !!p && !!v && !['projects', 'decisions', 'import', 'recipe'].includes(view);
-  const projectBack = () => {
-    if (isLocal && view in taskTitles) openAuthor('overview', p?.id);
-    else openAuthor('projects');
-  };
+  const detail =
+    isLocal && view in taskTitles
+      ? { backLabel: p.title, onBack: () => openAuthor('overview', p.id) }
+      : view === 'recipe'
+        ? { backLabel: 'Исходные файлы', onBack: () => openAuthor('import') }
+        : isLocal || view === 'import'
+          ? { backLabel: 'Мои проекты', onBack: () => openAuthor('projects') }
+          : undefined;
   return (
     <PrototypeShell
       role="author"
       title={title}
+      detail={detail}
       subtitle={
         isLocal
-          ? view in taskTitles
-            ? p.title + ' · ' + v.title
-            : (p.volumes.length > 1 ? 'Серия' : 'Книга') +
-              ' · ' +
-              p.source +
-              ' → ' +
-              p.target
+          ? [
+              view in taskTitles && p.volumes.length > 1 ? v.title : undefined,
+              p.source + ' → ' + p.target,
+            ]
+              .filter(Boolean)
+              .join(' · ')
           : undefined
       }
       items={items}
@@ -159,12 +168,6 @@ export default function AuthorPrototype() {
       onSelect={(id) => openAuthor(id)}
     >
       <div className="au">
-        {view !== 'projects' && (
-          <button className="au-back" onClick={projectBack}>
-            <ArrowLeft size={15} />
-            {isLocal && view in taskTitles ? p.title : 'Мои проекты'}
-          </button>
-        )}
         {view === 'projects' && (
           <>
             <div className="au-heading">
@@ -172,60 +175,63 @@ export default function AuthorPrototype() {
                 <h2>Книги и серии</h2>
                 <p>Ваши переводы и готовые издания</p>
               </div>
-              <button className="pt-btn" onClick={newProject}>
+              <Button onClick={newProject}>
                 <Plus size={18} />
                 Новый проект
-              </button>
+              </Button>
             </div>
             <div className="au-projects">
               {projects.map((proj) => (
-                <button
-                  key={proj.id}
-                  className="pt-panel au-project"
-                  onClick={() => openAuthor('overview', proj.id)}
-                >
-                  <div className="au-project-spine">
-                    {proj.volumes.length > 1 ? <Layers3 /> : <BookOpen />}
-                  </div>
-                  <div className="au-project-summary">
-                    <small>
-                      {proj.volumes.length > 1
-                        ? 'Серия · ' + volumeCount(proj.volumes.length)
-                        : 'Книга'}
-                    </small>
-                    <h3>{proj.title}</h3>
-                    <p>
-                      {proj.source} → {proj.target}
-                    </p>
-                    <span
-                      className={
-                        'au-badge ' +
-                        (proj.volumes.every((b) => b.phase === 'ready')
-                          ? 'saved'
-                          : 'warning')
-                      }
-                    >
-                      {proj.volumes.every((b) => b.phase === 'ready')
-                        ? 'Издания готовы'
-                        : decisions.some((x) => x.p.id === proj.id)
-                          ? 'Требует решения'
-                          : 'Перевод'}
-                    </span>
-                  </div>
-                  <ChevronRight size={19} />
-                </button>
+                <Card key={proj.id} className="overflow-hidden">
+                  <button
+                    className={uiMenuItemButton + ' au-project'}
+                    onClick={() => openAuthor('overview', proj.id)}
+                  >
+                    <div className="au-project-spine">
+                      {proj.volumes.length > 1 ? <Layers3 /> : <BookOpen />}
+                    </div>
+                    <div className="au-project-summary">
+                      <small>
+                        {proj.volumes.length > 1
+                          ? 'Серия · ' + volumeCount(proj.volumes.length)
+                          : 'Книга'}
+                      </small>
+                      <h3>{proj.title}</h3>
+                      <p>
+                        {proj.source} → {proj.target}
+                      </p>
+                      <Badge
+                        variant="secondary"
+                        className={
+                          proj.volumes.every((b) => b.phase === 'ready')
+                            ? 'au-success'
+                            : decisions.some((x) => x.p.id === proj.id)
+                              ? 'au-warning'
+                              : undefined
+                        }
+                      >
+                        {proj.volumes.every((b) => b.phase === 'ready')
+                          ? 'Издания готовы'
+                          : decisions.some((x) => x.p.id === proj.id)
+                            ? 'Требует решения'
+                            : 'Перевод'}
+                      </Badge>
+                    </div>
+                    <ChevronRight size={19} />
+                  </button>
+                </Card>
               ))}
             </div>
           </>
         )}
         {view === 'decisions' && (
-          <section className="pt-panel au-form-panel">
+          <Card className="au-form-panel">
             <h2>Ожидают вашего участия</h2>
             {decisions.length ? (
               decisions.map(({ p: pr, v: vol }) => (
                 <button
                   key={pr.id + vol.id}
-                  className="au-rowlink"
+                  className={uiMenuItemButton + ' au-rowlink'}
                   onClick={() => flowFor(pr, vol)}
                 >
                   <CircleAlert size={18} />
@@ -241,25 +247,20 @@ export default function AuthorPrototype() {
             ) : (
               <p>Все решения приняты.</p>
             )}
-          </section>
+          </Card>
         )}
         {(view === 'import' || view === 'recipe') && (
           <NewProject draft={draft} setDraft={setDraft} step={view} />
         )}
         {isLocal && (
           <>
-            {tabs.some(([id]) => id === view) && (
-              <nav className="au-tabs" aria-label="Разделы проекта">
-                {tabs.map(([id, label]) => (
-                  <button
-                    key={id}
-                    aria-current={view === id ? 'page' : undefined}
-                    onClick={() => openAuthor(id, p.id)}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </nav>
+            {tabs.some(({ id }) => id === view) && (
+              <SectionNav
+                label="Разделы проекта"
+                items={tabs}
+                active={view}
+                onSelect={(id) => openAuthor(id, p.id)}
+              />
             )}
             {view === 'overview' && (
               <>
@@ -292,13 +293,10 @@ export default function AuthorPrototype() {
                         {actionable.title}
                       </p>
                     </div>
-                    <button
-                      className="pt-btn"
-                      onClick={() => flowFor(p, actionable)}
-                    >
+                    <Button onClick={() => flowFor(p, actionable)}>
                       {phaseActions[actionable.phase]}
                       <ArrowRight size={15} />
-                    </button>
+                    </Button>
                   </div>
                 )}
                 {actionable?.phase === 'glossary' && p.volumes.length > 1 && (
@@ -307,11 +305,11 @@ export default function AuthorPrototype() {
                     подготовку следующего.
                   </p>
                 )}
-                <section className="pt-panel au-form-panel">
+                <Card className="au-form-panel">
                   <h2>{p.volumes.length > 1 ? 'Тома серии' : 'Книга'}</h2>
                   {p.volumes.map((vol, i) => (
                     <button
-                      className="au-rowlink"
+                      className={uiMenuItemButton + ' au-rowlink'}
                       key={vol.id}
                       disabled={!isUnlocked(p, i)}
                       onClick={() => flowFor(p, vol)}
@@ -327,7 +325,7 @@ export default function AuthorPrototype() {
                       <ChevronRight size={16} />
                     </button>
                   ))}
-                </section>
+                </Card>
                 <details className="au-details">
                   <summary>Параметры проекта</summary>
                   <p>
@@ -341,7 +339,7 @@ export default function AuthorPrototype() {
               </>
             )}
             {view === 'dictionary' && (
-              <section className="pt-panel au-form-panel">
+              <Card className="au-form-panel">
                 <h2>Словарь проекта</h2>
                 {Boolean(p.seedEntries?.length) && (
                   <details className="au-details">
@@ -368,26 +366,26 @@ export default function AuthorPrototype() {
                           → {vol.term || 'ожидает выбора'}
                         </small>
                       </div>
-                      <button
-                        className="pt-btn secondary"
+                      <Button
+                        variant="outline"
                         onClick={() =>
                           openAuthor(vol.term ? 'impact' : 'term', p.id, vol.id)
                         }
                       >
                         {vol.term ? 'Изменить' : 'Выбрать'}
-                      </button>
+                      </Button>
                     </div>
                   ))}
-              </section>
+              </Card>
             )}
             {view === 'editions' && (
-              <section className="pt-panel au-form-panel">
+              <Card className="au-form-panel">
                 <h2>Издания проекта</h2>
                 {p.volumes.map((vol, i) => (
                   <button
                     key={vol.id}
                     disabled={!isUnlocked(p, i)}
-                    className="au-rowlink"
+                    className={uiMenuItemButton + ' au-rowlink'}
                     onClick={() => flowFor(p, vol)}
                   >
                     <BookOpen size={19} />
@@ -398,11 +396,11 @@ export default function AuthorPrototype() {
                     <ChevronRight size={18} />
                   </button>
                 ))}
-              </section>
+              </Card>
             )}
             {view === 'queue' && (
-              <section className="pt-panel au-form-panel">
-                <span className="au-badge">Демонстрационная очередь</span>
+              <Card className="au-form-panel">
+                <Badge variant="secondary">Демонстрационная очередь</Badge>
                 <h2>Подготовка томов</h2>
                 {p.volumes.map((vol, i) => (
                   <div key={vol.id} className="au-file">
@@ -421,16 +419,15 @@ export default function AuthorPrototype() {
                   До трёх задач одновременно. Для демо перейдите к результату
                   обработки этого тома.
                 </p>
-                <button
-                  className="pt-btn"
+                <Button
                   onClick={() => {
                     updateVol({ ...v, phase: 'review' });
                     openAuthor('review', p.id, v.id);
                   }}
                 >
                   Показать результат перевода
-                </button>
-              </section>
+                </Button>
+              </Card>
             )}
             {view in taskTitles && view !== 'queue' && (
               <BookTask

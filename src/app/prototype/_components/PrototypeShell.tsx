@@ -1,7 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Fragment, useRef, type ReactNode } from 'react';
+import IOSReaderHeader from '@/components/ui/ios-reader-header';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { uiMenuItemButton } from '@/components/ui/button-styles';
+import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 import { ArrowLeftRight, ChevronDown, type LucideIcon } from 'lucide-react';
 
 export type NavItem = {
@@ -25,6 +29,7 @@ type ShellProps = {
   onSelect: (id: string) => void;
   title: string;
   subtitle?: string;
+  detail?: { backLabel: string; onBack: () => void; action?: ReactNode };
   children: ReactNode;
 };
 
@@ -35,10 +40,18 @@ export function PrototypeShell({
   onSelect,
   title,
   subtitle,
+  detail,
   children,
 }: ShellProps) {
   const menu = useRef<HTMLDetailsElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
+  const previousTitle = useRef(title);
+  useEffect(() => {
+    if (title === previousTitle.current) return;
+    previousTitle.current = title;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    heading.current?.focus({ preventScroll: true });
+  }, [title]);
   const roleName = roleNames[role];
   const nav = (
     <nav aria-label={roleName} className="pt-navigation">
@@ -47,7 +60,9 @@ export function PrototypeShell({
           {section && section !== items[i - 1]?.section && (
             <p className="pt-section-label">{section}</p>
           )}
-          <button
+          <Button
+            variant="ghost"
+            className={uiMenuItemButton}
             type="button"
             aria-current={id === active ? 'page' : undefined}
             onClick={() => {
@@ -60,8 +75,10 @@ export function PrototypeShell({
           >
             {Icon && <Icon size={19} strokeWidth={1.7} aria-hidden />}
             <span>{label}</span>
-            {typeof count === 'number' && count > 0 && <small>{count}</small>}
-          </button>
+            {typeof count === 'number' && count > 0 && (
+              <Badge variant="secondary">{count}</Badge>
+            )}
+          </Button>
         </Fragment>
       ))}
     </nav>
@@ -93,13 +110,26 @@ export function PrototypeShell({
         {nav}
         {switchRole}
       </details>
-      <main className="pt-main">
-        <header className="pt-header">
-          <h1 ref={heading} tabIndex={-1}>
-            {title}
-          </h1>
-          {subtitle && <p>{subtitle}</p>}
-        </header>
+      <main className={detail ? 'pt-main pt-main-detail' : 'pt-main'}>
+        {detail ? (
+          <IOSReaderHeader
+            layout="workspace"
+            className="pt-detail-header"
+            title={title}
+            subtitle={subtitle}
+            headingRef={heading}
+            onBack={detail.onBack}
+            backLabel={detail.backLabel}
+            trailingRight={detail.action}
+          />
+        ) : (
+          <header className="pt-header">
+            <h1 ref={heading} tabIndex={-1}>
+              {title}
+            </h1>
+            {subtitle && <p>{subtitle}</p>}
+          </header>
+        )}
         {children}
       </main>
     </div>

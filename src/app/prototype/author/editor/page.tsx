@@ -1,11 +1,21 @@
 'use client'
 
+import { Card } from '@/components/ui/card'
+import IOSItemsStack from '@/components/ui/ios-items-stack'
+import IOSSettingsRow from '@/components/ui/ios-settings-row'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+
 import { useState, useSyncExternalStore } from 'react'
 import { BookOpen, SlidersHorizontal } from 'lucide-react'
 import { PrototypeShell, type NavItem } from '../../_components/PrototypeShell'
+import { SectionNav } from '../../_components/SectionNav'
 import { GlossaryImport } from './GlossaryImport'
-import { recipes, readRecipe, readGlossary, saveRecipe, type Recipe, type Units } from './config'
+import { recipes, readRecipe, readGlossary, saveRecipe, unitOptions, type Recipe, type Units } from './config'
 import './editor.css'
+
+const tabs = ['Основное', 'Модели и промпты', 'Проверки'].map((label) => ({ id: label, label }))
 
 const nav: NavItem[] = [
   { id: 'recipe', label: 'Рецепты перевода', icon: SlidersHorizontal },
@@ -50,14 +60,8 @@ function RecipeSettings({ initial }: { initial: Recipe }) {
     }
   }
   return (
-    <section className="pt-panel pt-stack">
-      <div className="pt-tabs" aria-label="Параметры рецепта">
-        {['Основное', 'Модели и промпты', 'Проверки'].map((t) => (
-          <button key={t} aria-current={tab === t ? 'page' : undefined} onClick={() => setTab(t)}>
-            {t}
-          </button>
-        ))}
-      </div>
+    <Card className="pt-stack p-5">
+      <SectionNav label="Параметры рецепта" items={tabs} active={tab} onSelect={setTab} />
       {tab === 'Основное' && (
         <>
           <div className="pt-row">
@@ -66,13 +70,14 @@ function RecipeSettings({ initial }: { initial: Recipe }) {
               {draft.source} → {draft.target}
             </strong>
           </div>
-          <label className="pt-field">
-            Единицы по умолчанию
-            <select value={draft.units} onChange={(e) => set({ units: e.target.value as Units })}>
-              <option>Метрические</option>
-              <option>Оставить как в оригинале</option>
-            </select>
-          </label>
+          <IOSItemsStack>
+            <IOSSettingsRow
+              label="Единицы по умолчанию"
+              value={draft.units}
+              options={unitOptions}
+              onChange={(units) => set({ units: units as Units })}
+            />
+          </IOSItemsStack>
           <p className="pt-muted">Автор может изменить единицы при настройке проекта.</p>
         </>
       )}
@@ -84,16 +89,17 @@ function RecipeSettings({ initial }: { initial: Recipe }) {
             return (
               <div className="pt-stack" key={stage}>
                 <h2>{stage === 'glossary' ? 'Подготовка словаря' : 'Перевод'}</h2>
-                <label className="pt-field">
-                  Модель
-                  <select value={draft[model]} onChange={(e) => set({ [model]: e.target.value })}>
-                    <option>Flash</option>
-                    <option>Hydrogen</option>
-                  </select>
-                </label>
+                <IOSItemsStack>
+                  <IOSSettingsRow
+                    label={stage === 'glossary' ? 'Модель словаря' : 'Модель перевода'}
+                    value={draft[model]}
+                    options={['Flash', 'Hydrogen'].map((label) => ({ id: label, label }))}
+                    onChange={(value) => set({ [model]: value })}
+                  />
+                </IOSItemsStack>
                 <label className="pt-field">
                   Шаблон этапа
-                  <textarea
+                  <Textarea
                     rows={5}
                     value={draft[prompt]}
                     onChange={(e) => set({ [prompt]: e.target.value })}
@@ -125,28 +131,28 @@ function RecipeSettings({ initial }: { initial: Recipe }) {
         </>
       )}
       <div className="ed-actions">
-        <button className="pt-btn" disabled={!canSave} onClick={save}>
+        <Button disabled={!canSave} onClick={save}>
           Сохранить версию
-        </button>
+        </Button>
         {dirty && (
-          <button
-            className="pt-btn secondary"
+          <Button
+            variant="outline"
             onClick={() => {
               setDraft(saved)
               setError('')
             }}
           >
             Отменить изменения
-          </button>
+          </Button>
         )}
-        <span className="pt-badge">Версия {saved.version}</span>
+        <Badge variant="secondary">Версия {saved.version}</Badge>
       </div>
       {status && <p role="status">{status}</p>}
       {error && (
         <p role="alert" className="pt-callout">
           {error}{' '}
-          <button
-            className="pt-btn secondary"
+          <Button
+            variant="outline"
             onClick={() => {
               const current = readRecipe(draft.id)
               setSaved(current)
@@ -155,10 +161,10 @@ function RecipeSettings({ initial }: { initial: Recipe }) {
             }}
           >
             Открыть актуальную версию
-          </button>
+          </Button>
         </p>
       )}
-    </section>
+    </Card>
   )
 }
 
@@ -191,16 +197,17 @@ export default function EditorPage() {
             <GlossaryImport initial={readGlossary()} />
           ) : (
             <>
-              <label className="pt-panel pt-field">
-                Рецепт
-                <select value={recipe} onChange={(e) => setRecipe(e.target.value)}>
-                  {recipes.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.genre} · {r.source} → {r.target}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <IOSItemsStack>
+                <IOSSettingsRow
+                  label="Рецепт"
+                  value={recipe}
+                  options={recipes.map((r) => ({
+                    id: r.id,
+                    label: r.genre + ' · ' + r.source + ' → ' + r.target,
+                  }))}
+                  onChange={setRecipe}
+                />
+              </IOSItemsStack>
               <RecipeSettings key={recipe} initial={readRecipe(recipe)} />
             </>
           ))}

@@ -1,5 +1,9 @@
 'use client'
 
+import { Card } from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+
 import { useMemo, useState } from 'react'
 import {
   demoImport,
@@ -38,9 +42,7 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
   })
   const additions = parsed.entries.filter((row) => !currentById.has(entryKey(row.source))).length
   const matches = parsed.entries.length - conflicts.length - additions
-  const removed = replace
-    ? current.entries.filter((row) => !incoming.has(entryKey(row.source))).length
-    : 0
+  const removed = replace ? current.entries.filter((row) => !incoming.has(entryKey(row.source))).length : 0
   const ready = parsed.entries.length > 0 && conflicts.every((row) => decisions[entryKey(row.source)])
   function edit(value: string) {
     setRaw(value)
@@ -72,14 +74,14 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
   }
   return (
     <div className="pt-stack">
-      <div className="pt-panel pt-stack">
+      <Card className="pt-stack p-5">
         <h2>{seriesName}</h2>
         <span className="pt-muted">
           Русский → Английский · Версия {current.version} · Записей {current.entries.length}
         </span>
         <label className="pt-field">
           Исходный список JSON
-          <textarea
+          <Textarea
             rows={5}
             spellCheck={false}
             value={raw}
@@ -88,13 +90,13 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
           />
         </label>
         <div className="ed-actions">
-          <button className="pt-btn secondary" onClick={() => edit(JSON.stringify(demoImport, null, 2))}>
+          <Button variant="outline" onClick={() => edit(JSON.stringify(demoImport, null, 2))}>
             Подставить демо-JSON
-          </button>
+          </Button>
           {raw && (
-            <button className="pt-btn secondary" onClick={() => edit('')}>
+            <Button variant="outline" onClick={() => edit('')}>
               Очистить
-            </button>
+            </Button>
           )}
         </div>
         {parsed.message && (
@@ -102,9 +104,9 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
             {parsed.message}
           </div>
         )}
-      </div>
+      </Card>
       {!!parsed.entries.length && (
-        <section className="pt-panel pt-stack">
+        <Card className="pt-stack p-5">
           <h2>Сверка записей</h2>
           <fieldset className="ed-choices">
             <legend>Способ импорта</legend>
@@ -113,8 +115,7 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
               Дописать
             </label>
             <label>
-              <input type="radio" name="mode" checked={replace} onChange={() => setReplace(true)} />{' '}
-              Заменить
+              <input type="radio" name="mode" checked={replace} onChange={() => setReplace(true)} /> Заменить
             </label>
           </fieldset>
           <div>
@@ -163,22 +164,22 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
             )
           })}
           <div className="ed-actions">
-            <button className="pt-btn" disabled={!ready} onClick={save}>
+            <Button disabled={!ready} onClick={save}>
               {replace ? 'Заменить словарь' : 'Дописать записи'}
-            </button>
+            </Button>
           </div>
-        </section>
+        </Card>
       )}
       {status && (
-        <p role="status" className="pt-panel">
+        <Card role="status" className="p-5">
           {status}
-        </p>
+        </Card>
       )}
       {error && (
         <p role="alert" className="pt-callout">
           {error}{' '}
-          <button
-            className="pt-btn secondary"
+          <Button
+            variant="outline"
             onClick={() => {
               setCurrent(readGlossary())
               setDecisions({})
@@ -186,18 +187,20 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
             }}
           >
             Обновить версию
-          </button>
+          </Button>
         </p>
       )}
-      <details className="pt-panel">
-        <summary>Сохранённые записи · {current.entries.length}</summary>
-        {current.entries.map((e) => (
-          <div className="pt-row" key={entryKey(e.source)}>
-            <strong>{e.source}</strong>
-            <span>{e.target}</span>
-          </div>
-        ))}
-      </details>
+      <Card className="p-5">
+        <details>
+          <summary>Сохранённые записи · {current.entries.length}</summary>
+          {current.entries.map((e) => (
+            <div className="pt-row" key={entryKey(e.source)}>
+              <strong>{e.source}</strong>
+              <span>{e.target}</span>
+            </div>
+          ))}
+        </details>
+      </Card>
     </div>
   )
 }

@@ -27,6 +27,14 @@ export const languages: Record<Lang, string> = {
   EN: 'Английский',
   FR: 'Французский',
 };
+export const languageOptions = Object.entries(languages).map(([id, label]) => ({
+  id,
+  label,
+}));
+export const modelOptions = ['По умолчанию', 'Flash', 'Hydrogen'].map((id) => ({
+  id,
+  label: id,
+}));
 export type Stage = 'glossary' | 'translate' | 'revise' | 'reader';
 export type Phase = 'idle' | 'running' | 'paused' | 'done';
 export type Job = {

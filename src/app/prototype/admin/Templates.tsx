@@ -1,5 +1,11 @@
 'use client';
 
+import { Textarea } from '@/components/ui/textarea';
+
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
+
 import { useState } from 'react';
 import { stageLabels, stages, templates, type Lang, type Stage } from './model';
 
@@ -17,25 +23,18 @@ export function Templates({
   const [stage, setStage] = useState<Stage>('translate');
   const key = lang + '/' + stage;
   return (
-    <section className="adm-card">
+    <Card className="block adm-card">
       <h2>Промпты направления RU → {lang}</h2>
       <p>
         Шаблон используется всеми книгами этого направления при следующем
         запуске.
       </p>
-      <label className="adm-field">
-        Этап
-        <select
-          value={stage}
-          onChange={(e) => setStage(e.target.value as Stage)}
-        >
-          {stages.map((s) => (
-            <option key={s} value={s}>
-              {stageLabels[s]}
-            </option>
-          ))}
-        </select>
-      </label>
+      <IOSSettingsRow
+        label="Этап"
+        value={stage}
+        options={stages.map((id) => ({ id, label: stageLabels[id] }))}
+        onChange={(value) => setStage(value as Stage)}
+      />
       <Editor
         key={key}
         original={templates[stage]}
@@ -43,11 +42,11 @@ export function Templates({
         save={(v) => save(key, v)}
       />
       <div className="adm-foot">
-        <button className="adm-link" onClick={back}>
+        <Button variant="link" size="sm" onClick={back}>
           К настройке перевода →
-        </button>
+        </Button>
       </div>
-    </section>
+    </Card>
   );
 }
 function Editor({
@@ -68,8 +67,8 @@ function Editor({
     <>
       <label className="adm-field">
         Текст шаблона
-        <textarea
-          className="adm-code"
+        <Textarea
+          className="font-mono"
           rows={7}
           value={value}
           onChange={(e) => {
@@ -84,8 +83,7 @@ function Editor({
         </p>
       )}
       <div className="adm-actions">
-        <button
-          className="adm-btn"
+        <Button
           disabled={missing.length > 0 || value === saved}
           onClick={() => {
             save(value);
@@ -93,9 +91,9 @@ function Editor({
           }}
         >
           Сохранить шаблон
-        </button>
-        <button
-          className="adm-btn light"
+        </Button>
+        <Button
+          variant="outline"
           disabled={value === saved}
           onClick={() => {
             setValue(saved);
@@ -103,9 +101,10 @@ function Editor({
           }}
         >
           Отменить правки
-        </button>
-        <button
-          className="adm-link"
+        </Button>
+        <Button
+          variant="link"
+          size="sm"
           onClick={() => {
             setValue(original);
             save(original);
@@ -113,7 +112,7 @@ function Editor({
           }}
         >
           Вернуть встроенный
-        </button>
+        </Button>
       </div>
       <p className="adm-note" role="status">
         {notice}

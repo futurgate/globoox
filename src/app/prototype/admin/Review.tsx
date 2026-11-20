@@ -1,5 +1,19 @@
 'use client';
 
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import {
+  uiFilterPillBase,
+  uiFilterPillActive,
+  uiFilterPillInactive,
+  uiMenuItemButton,
+} from '@/components/ui/button-styles';
+
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
+import IOSSettingsRow from '@/components/ui/ios-settings-row';
+
 import { useState } from 'react';
 import { CheckCheck, Download, Pause, Play, RotateCcw } from 'lucide-react';
 import { downloadCsv } from '../_components/downloads';
@@ -8,6 +22,7 @@ import {
   source,
   suggested,
   phaseLabels,
+  modelOptions,
   type Run,
   type Lang,
   type Stage,
@@ -115,14 +130,26 @@ export function Review({
   return (
     <div className="adm-stack">
       <div className="adm-segment" aria-label="Вид проверки">
-        <button aria-pressed={!reader} onClick={() => switchView('revision')}>
+        <Button
+          variant="outline"
+          size="sm"
+          className={`${uiFilterPillBase} ${!reader ? uiFilterPillActive : uiFilterPillInactive}`}
+          aria-pressed={!reader}
+          onClick={() => switchView('revision')}
+        >
           Стилистическая редактура
-        </button>
-        <button aria-pressed={reader} onClick={() => switchView('reader')}>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className={`${uiFilterPillBase} ${reader ? uiFilterPillActive : uiFilterPillInactive}`}
+          aria-pressed={reader}
+          onClick={() => switchView('reader')}
+        >
           Читательская проверка
-        </button>
+        </Button>
       </div>
-      <section className="adm-card">
+      <Card className="block adm-card">
         <div className="adm-section-title">
           <div>
             <h2>
@@ -134,16 +161,15 @@ export function Review({
                 : 'Редактура сразу обновляет книгу. Сверьте изменения и при необходимости верните черновик.'}
             </p>
           </div>
-          <span className="adm-pill">{phaseLabels[job.status]}</span>
+          <Badge variant="secondary">{phaseLabels[job.status]}</Badge>
         </div>
         <div className="adm-actions">
           {job.status === 'running' ? (
-            <button className="adm-btn light" onClick={() => stop(kind)}>
+            <Button variant="outline" onClick={() => stop(kind)}>
               <Pause size={16} /> Остановить
-            </button>
+            </Button>
           ) : (
-            <button
-              className="adm-btn"
+            <Button
               disabled={run.jobs.translate.status !== 'done' || otherActive}
               onClick={() =>
                 job.status === 'done' ? setConfirmRestart(true) : start(kind)
@@ -157,29 +183,21 @@ export function Review({
                   : reader
                     ? 'Запустить проверку'
                     : 'Запустить редактуру'}
-            </button>
+            </Button>
           )}
-          <label className="adm-inline">
-            Модель{' '}
-            <select
-              value={run.models[kind]}
-              disabled={job.status === 'running'}
-              onChange={(e) =>
-                update((r) => ({
-                  ...r,
-                  models: { ...r.models, [kind]: e.target.value },
-                }))
-              }
-            >
-              {['По умолчанию', 'Flash', 'Hydrogen'].map((m) => (
-                <option key={m}>{m}</option>
-              ))}
-            </select>
-          </label>
+          <IOSSettingsRow
+            label="Модель"
+            value={run.models[kind]}
+            options={modelOptions}
+            disabled={job.status === 'running'}
+            onChange={(value) =>
+              update((r) => ({ ...r, models: { ...r.models, [kind]: value } }))
+            }
+          />
           {reader && states.length > 0 && (
-            <button className="adm-btn light" onClick={exportJournal}>
+            <Button variant="outline" onClick={exportJournal}>
               <Download size={16} /> Журнал CSV
-            </button>
+            </Button>
           )}
         </div>
         {run.jobs.translate.status !== 'done' && (
@@ -193,60 +211,51 @@ export function Review({
             </small>
           </div>
         )}
-        {confirmRestart && (
-          <div
-            className="adm-warning"
-            role="group"
-            aria-label="Подтверждение повторного запуска"
-          >
-            <strong>
-              {reader
-                ? 'Очистить журнал и проверить заново?'
-                : 'Повторно проверить текущий текст?'}
-            </strong>
-            <p>
-              {reader
-                ? 'Решения в журнале будут заменены. Ранее принятые изменения останутся в тексте книги.'
-                : 'Новый проход заменит результаты сравнения.'}
-            </p>
-            <button
-              className="adm-btn"
-              onClick={() => {
-                start(kind, true);
-                setConfirmRestart(false);
-                edit(null);
-                select(0);
-              }}
-            >
-              Подтвердить запуск
-            </button>{' '}
-            <button
-              className="adm-btn light"
-              onClick={() => setConfirmRestart(false)}
-            >
-              Отмена
-            </button>
-          </div>
-        )}
-      </section>
+        <IOSAlertDialog
+          open={confirmRestart}
+          onOpenChange={setConfirmRestart}
+          title={
+            reader
+              ? 'Очистить журнал и проверить заново?'
+              : 'Повторно проверить текущий текст?'
+          }
+          description={
+            reader
+              ? 'Решения в журнале будут заменены. Ранее принятые изменения останутся в тексте книги.'
+              : 'Новый проход заменит результаты сравнения.'
+          }
+          showCancel
+          destructive
+          cancelLabel="Отмена"
+          confirmLabel="Подтвердить запуск"
+          onConfirm={() => {
+            start(kind, true);
+            setConfirmRestart(false);
+            edit(null);
+            select(0);
+          }}
+        />
+      </Card>
       {states.length > 0 && job.status === 'done' && (
-        <section className="adm-card">
+        <Card className="block adm-card">
           <div className="adm-section-title">
             <h2>{reader ? 'Журнал предложений' : 'Сравнение версий'}</h2>
             {pendingCount > 0 && (
-              <button
-                className="adm-link"
+              <Button
+                variant="link"
+                size="sm"
                 disabled={editing !== null && !editing.trim()}
                 onClick={() => apply(true)}
               >
                 <CheckCheck size={16} /> Подтвердить все ({pendingCount})
-              </button>
+              </Button>
             )}
           </div>
           <div className="adm-review">
             <div className="adm-fragments">
               {states.map((s, i) => (
                 <button
+                  className={uiMenuItemButton}
                   key={i}
                   onClick={() => pick(i)}
                   aria-pressed={selected === i}
@@ -257,7 +266,7 @@ export function Review({
               ))}
             </div>
             <div className="adm-detail">
-              <span className="adm-pill">{states[selected]}</span>
+              <Badge variant="secondary">{states[selected]}</Badge>
               <div>
                 <small>Оригинал</small>
                 <p>{source[selected]}</p>
@@ -272,7 +281,7 @@ export function Review({
               </div>
               <label className="adm-field">
                 {reader ? 'Предложение' : 'Текст в книге'}
-                <textarea
+                <Textarea
                   key={kind + selected}
                   readOnly={reader && states[selected] === 'Совпадает'}
                   value={displayed}
@@ -284,24 +293,23 @@ export function Review({
               )}
               {(!reader || states[selected] !== 'Совпадает') && (
                 <div className="adm-actions">
-                  <button
+                  <Button
                     disabled={!displayed.trim()}
-                    className="adm-btn"
                     onClick={() => apply(false)}
                   >
                     {reader
                       ? 'Применить и продолжить'
                       : 'Сохранить и продолжить'}
-                  </button>
-                  <button className="adm-btn light" onClick={reject}>
+                  </Button>
+                  <Button variant="outline" onClick={reject}>
                     {!reader && <RotateCcw size={15} />}{' '}
                     {reader ? 'Отклонить' : 'Вернуть черновик'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
           </div>
-        </section>
+        </Card>
       )}
     </div>
   );

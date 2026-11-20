@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Card } from '@/components/ui/card';
 import { ArrowUpRight, BookOpenText, Layers3 } from 'lucide-react';
 
 export default function PrototypeIndex() {
@@ -11,24 +12,29 @@ export default function PrototypeIndex() {
         данных.
       </p>
       <div className="pt-role-cards">
-        <Link href="/prototype/admin" className="pt-role-card">
-          <BookOpenText size={28} strokeWidth={1.6} />
-          <h2>Кабинет администратора</h2>
-          <p>Настроить перевод книги, проверить правки и скачать EPUB.</p>
-          <span>
-            Открыть кабинет <ArrowUpRight size={17} />
-          </span>
-        </Link>
-        <Link href="/prototype/author" className="pt-role-card">
-          <Layers3 size={28} strokeWidth={1.6} />
-          <h2>Кабинет автора</h2>
-          <p>
-            Подготовить книгу или серию, согласовать перевод и получить издание.
-          </p>
-          <span>
-            Открыть кабинет <ArrowUpRight size={17} />
-          </span>
-        </Link>
+        <Card>
+          <Link href="/prototype/admin" className="pt-role-card">
+            <BookOpenText size={28} strokeWidth={1.6} />
+            <h2>Кабинет администратора</h2>
+            <p>Настроить перевод книги, проверить правки и скачать EPUB.</p>
+            <span>
+              Открыть кабинет <ArrowUpRight size={17} />
+            </span>
+          </Link>
+        </Card>
+        <Card>
+          <Link href="/prototype/author" className="pt-role-card">
+            <Layers3 size={28} strokeWidth={1.6} />
+            <h2>Кабинет автора</h2>
+            <p>
+              Подготовить книгу или серию, согласовать перевод и получить
+              издание.
+            </p>
+            <span>
+              Открыть кабинет <ArrowUpRight size={17} />
+            </span>
+          </Link>
+        </Card>
       </div>
       <Link href="/prototype/author/editor" className="pt-editor-link">
         Служебные настройки авторского кабинета <ArrowUpRight size={15} />
