@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
 import { useRouter } from 'next/navigation';
 import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -1333,7 +1334,7 @@ export default function AdminFictionPage() {
               Edit the prompt for each stage of the selected book&apos;s direction. <strong>Save</strong> stores a
               server-side override that the next <em>real</em> run uses (for cached stages — translate/revision —
               re-run with <em>Overwrite</em> to regenerate). <strong>Reset to shipped</strong> removes the override.
-              All editable prompts across directions are also on{' '}
+              Changes here update the shared default. For your own translations use the <Link className="text-[var(--app-accent)] underline" href={workspaceBase + '/settings'}>translation studio</Link>. All shared prompts are on{' '}
               <Link href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</Link>.
             </p>
           </div>

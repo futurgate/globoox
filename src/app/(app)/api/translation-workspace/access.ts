@@ -31,7 +31,7 @@ export type WorkspaceSession = Awaited<ReturnType<typeof authenticate>>
 export async function workspaceRoute(request: Request, handler: (session: WorkspaceSession) => Promise<Response>) {
   let response: Response
   try {
-    if (request.method === 'POST') {
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
       const origin = request.headers.get('origin')
       if (origin && origin !== new URL(request.url).origin) throw new WorkspaceError(403, 'Недоступный источник запроса')
     }

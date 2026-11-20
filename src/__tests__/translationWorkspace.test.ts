@@ -3,6 +3,8 @@ import { GET as catalog } from '../app/(app)/api/translation-workspace/route'
 import { GET as bookGet, POST as bookPost } from '../app/(app)/api/translation-workspace/books/[bookId]/[action]/route'
 import { GET as activity } from '../app/(app)/api/translation-workspace/activity/route'
 import { POST as seriesPost } from '../app/(app)/api/translation-workspace/series/[seriesId]/[action]/route'
+import { GET as listPersonalPrompts } from '../app/(app)/api/admin/personal-prompts/route'
+import { PATCH as changePersonalPrompt } from '../app/(app)/api/admin/personal-prompts/[id]/route'
 import { POST as importSeries } from '../app/(app)/api/translation-workspace/series/import/route'
 
 const { createClient, reportingClient, proxy } = vi.hoisted(() => ({ createClient: vi.fn(), reportingClient: vi.fn(), proxy: vi.fn() }))
@@ -60,6 +62,27 @@ describe('live translation workspace boundaries', () => {
     expect(res.status).toBe(401)
     expect(res.headers.get('Cache-Control')).toContain('no-store')
     expect(proxy).not.toHaveBeenCalled()
+  })
+
+  it('binds personal template changes to the verified admin and never caches the catalog', async () => {
+    const url = 'https://dev.example/api/admin/personal-prompts'
+    const mutation = (origin: string) => new Request(url + '/' + item, {
+      method: 'PATCH', headers: { origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ deleted: true, revision: 1 }),
+    })
+    tables.profiles[0].is_admin = false
+    expect((await listPersonalPrompts(new Request(url))).status).toBe(403)
+    tables.profiles[0].is_admin = true
+    expect((await changePersonalPrompt(mutation('https://elsewhere.example'))).status).toBe(403)
+    const stale = mutation('https://dev.example')
+    stale.headers.set('X-Workspace-Account', foreign)
+    expect((await changePersonalPrompt(stale)).status).toBe(409)
+    expect(proxy).not.toHaveBeenCalled()
+    const op = mutation('https://dev.example')
+    op.headers.set('X-Workspace-Account', owner)
+    const response = await changePersonalPrompt(op)
+    expect(response.status).toBe(200)
+    expect(proxy).toHaveBeenCalledWith(op, owner)
+    expect(response.headers.get('Cache-Control')).toContain('private, no-store')
   })
 
   it('shows only owned books and series, including pages below the requested size', async () => {

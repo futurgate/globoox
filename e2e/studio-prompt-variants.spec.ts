@@ -1,115 +1,189 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type Route } from '@playwright/test';
 import type { ServerPrompt } from '../src/lib/api';
+import type { PersonalPrompt } from '../src/lib/translationPromptVariants';
 
 const settings = (process.env.E2E_BASE_URL ?? 'http://localhost:3000') + '/studio/settings';
 function template(name: string, group: ServerPrompt['group'], content: string): ServerPrompt {
   return { name, group, label: name, content, shipped: content, overridden: false, updatedAt: null };
 }
-async function interceptWorkspace(page: Page, owner: () => string) {
-  await page.route('**/api/translation-workspace', route => route.fulfill({ json: { userId: owner(), role: 'admin', series: [], books: [] } }));
-  await page.route('**/api/admin/models', route => route.fulfill({ json: { models: ['test-model'] } }));
+const glossary = template('generate_fiction_glossary_ru_en.txt', 'glossary', 'Terms from {SOURCE_TEXT}');
+const alice = 'admin-a', bob = 'admin-b';
+type Library = Record<string, PersonalPrompt[]>;
+
+async function intercept(page: Page, owner: string, library: Library, prompts: ServerPrompt[] = [glossary]) {
+  await page.route('**/api/translation-workspace', route => route.fulfill({ json: { userId: owner, role:'admin', series:[], books:[] } }));
+  await page.route('**/api/admin/models', route => route.fulfill({ json: { models:['test-model'] } }));
+  await page.route('**/api/admin/prompts*', route => {
+    expect(route.request().method()).toBe('GET'); // The studio cannot change the global default.
+    return route.fulfill({ json:{prompts} });
+  });
+  await page.route('**/api/admin/personal-prompts**', async route => {
+    const req = route.request(), method = req.method(), variants = library[owner] ??= [];
+    if (method === 'GET') return route.fulfill({ json:{variants} });
+    const body = req.postDataJSON();
+    expect(req.headers()['x-workspace-account']).toBe(owner);
+    expect(body.ownerId).toBeUndefined();
+    const id = method === 'POST' ? body.id : new URL(req.url()).pathname.split('/').pop();
+    let item = variants.find(v => v.id === id);
+    if (method === 'POST' && !item) {
+      item = {id, template:body.template, label:body.label, content:body.content, active:body.activate, revision:1, deletedAt:null};
+      variants.push(item!);
+    } else if (method === 'PATCH' && item) {
+      if (body.revision !== item.revision) return route.fulfill({ status:409,json:{message:'Конфликт версий'} });
+      if (body.label !== undefined) item.label = body.label;
+      if (body.content !== undefined) item.content = body.content;
+      if (body.active !== undefined) item.active = body.active;
+      if (body.deleted !== undefined) { item.deletedAt = body.deleted ? new Date().toISOString() : null; item.active = false; }
+      item.revision++;
+    }
+    expect(item).toBeTruthy();
+    if (item!.active) {
+      for (const other of variants.filter(v => v.id !== id && v.template === item!.template && v.active)) { other.active = false; other.revision++; }
+    }
+    return route.fulfill({json:{variant:item}});
+  });
 }
 
-test('a personal glossary variant survives reload, stays account-scoped and only publishes after confirmation', async ({ page }) => {
-  let owner = 'admin-a';
-  await interceptWorkspace(page, () => owner);
-  const prompt = template('generate_fiction_glossary_ru_en.txt', 'glossary', 'Terms from {SOURCE_TEXT}');
-  let persist = false;
-  const writes: string[] = [];
-  await page.route('**/api/admin/prompts*', async route => {
-    const request = route.request();
-    if (request.method() === 'GET') return route.fulfill({ json: { prompts: [prompt] } });
-    writes.push(request.method());
-    if (request.method() === 'PUT') {
-      expect(request.postDataJSON().name).toBe(prompt.name);
-      if (persist) { prompt.content = request.postDataJSON().content; prompt.overridden = true; }
-    } else if (persist) {
-      expect(new URL(request.url()).searchParams.get('name')).toBe(prompt.name);
-      prompt.content = prompt.shipped; prompt.overridden = false;
-    }
-    return route.fulfill({ json: { ok: true } });
-  });
-  let sampled = '';
-  await page.route('**/api/admin/fiction-flow-playground', async route => {
-    const payload = route.request().postDataJSON();
-    sampled = payload.prompts.glossary;
-    expect(payload.enabled.translate).toBe(false);
-    await route.fulfill({ contentType: 'application/x-ndjson', body: JSON.stringify({ type: 'done', results: [{ ok: true, glossary: { text: 'Sample result' } }] }) + '\n' });
-  });
+async function archive(page: Page) {
+  await page.getByRole('button', {name:'Удалить вариант'}).click();
+  await page.getByRole('dialog').getByRole('button', {name:'Удалить',exact:true}).click();
+  await expect(page).toHaveURL(settings);
+}
 
+test('an account prompt works on a second device, survives deletion and restores inactive', async ({ page, browser }) => {
+  const library: Library = {};
+  await intercept(page,alice,library);
   await page.goto(settings);
-  await page.getByRole('button', { name: 'Добавить вариант' }).click();
-  await page.getByRole('link', { name: 'Открыть редактор' }).click();
-  const draft = 'Names and places from {SOURCE_TEXT}';
+  await page.getByRole('link', {name:/Базовый шаблон/}).click();
+  await expect(page.getByLabel('Текст шаблона')).toHaveJSProperty('readOnly',true);
+  await page.getByRole('link',{name:'Изменить для себя'}).click();
   await page.getByLabel('Название варианта').fill('Имена и места');
-  await page.getByLabel('Текст шаблона').fill(draft);
-  await page.getByRole('button', { name: 'Сохранить вариант' }).click();
+  await page.getByLabel('Текст шаблона').fill('Names from {SOURCE_TEXT}');
+  await expect(page.getByLabel('Использовать в моих переводах')).toBeChecked();
+  await page.getByRole('button',{name:'Сохранить вариант'}).click();
   await expect(page).toHaveURL(/variant=[a-f\d-]{36}$/);
   const link = page.url();
-  expect(writes).toEqual([]);
-  await page.reload();
-  await expect(page.getByLabel('Название варианта')).toHaveValue('Имена и места');
-  await expect(page.getByLabel('Текст шаблона')).toHaveValue(draft);
-  await page.getByLabel('Фрагмент оригинала').fill('Один короткий фрагмент.');
-  await page.getByRole('button', { name: 'Запустить пробу' }).click();
-  await expect(page.getByText('Sample result')).toBeVisible();
-  expect(sampled).toBe(draft);
-  expect(writes).toEqual([]);
+  expect(library[alice][0]).toMatchObject({active:true, content:'Names from {SOURCE_TEXT}'});
 
-  await page.getByLabel('Название варианта').fill('Только имена');
-  await page.getByLabel('Текст шаблона').fill('Names from {SOURCE_TEXT}');
-  await page.getByRole('button', { name: 'Сохранить вариант' }).click();
-  await page.getByRole('button', { name: 'Сделать общим' }).click();
-  await page.getByRole('button', { name: 'Отмена' }).click();
-  expect(writes).toEqual([]);
-  await page.getByRole('button', { name: 'Сделать общим' }).click();
-  await page.getByRole('button', { name: 'Применить для всех' }).click();
-  await expect(page.getByRole('alert').filter({ hasText: 'Сервер вернул другой' })).toBeVisible();
-  persist = true;
-  await page.getByRole('button', { name: 'Сделать общим' }).click();
-  await page.getByRole('button', { name: 'Применить для всех' }).click();
-  await expect(page.getByText('Общий шаблон обновлён.')).toBeVisible();
-  expect(writes).toEqual(['PUT', 'PUT']);
-  expect(prompt.content).toBe('Names from {SOURCE_TEXT}');
+  const other = await browser.newContext();
+  const second = await other.newPage();
+  await intercept(second,alice,library);
+  await second.goto(link);
+  await expect(second.getByLabel('Название варианта')).toHaveValue('Имена и места');
+  await second.getByLabel('Текст шаблона').fill('People from {SOURCE_TEXT}');
+  await second.getByRole('button',{name:'Сохранить вариант'}).click();
+  await expect(second.getByRole('status')).toHaveText('Сохранено в аккаунте.');
+  await page.getByLabel('Текст шаблона').fill('Stale {SOURCE_TEXT}');
+  await page.getByRole('button',{name:'Сохранить вариант'}).click();
+  await expect(page.getByText('Конфликт версий')).toBeVisible();
+  await expect(page.getByLabel('Текст шаблона')).toHaveValue('Stale {SOURCE_TEXT}');
+  await page.getByRole('button',{name:'Загрузить сохранённый текст'}).click();
+  await expect(page.getByLabel('Текст шаблона')).toHaveValue('People from {SOURCE_TEXT}');
+  await archive(page);
+  await expect(page.getByRole('link',{name:/Имена и места/})).toHaveCount(0);
+  await expect(page.getByRole('link',{name:/Базовый шаблон/})).toContainText('Используется');
+  await page.getByLabel('Показать удалённые').check();
+  await page.getByRole('link',{name:/Имена и места.*Удалён/}).click();
+  await expect(page.getByLabel('Текст шаблона')).toHaveJSProperty('readOnly',true);
+  await page.getByRole('button',{name:'Восстановить вариант'}).click();
+  await expect(page.getByLabel('Использовать в моих переводах')).not.toBeChecked();
+  await page.getByLabel('Использовать в моих переводах').check();
+  await page.getByRole('button',{name:'Сохранить вариант'}).click();
+  await expect(page.getByRole('status')).toHaveText('Сохранено в аккаунте.');
+  await page.goto(settings + '/templates/' + glossary.name);
+  await page.getByRole('button',{name:'Использовать базовый в моих переводах'}).click();
+  await expect(page.getByRole('status')).toHaveText('Для ваших переводов выбран базовый шаблон.');
+  expect(library[alice][0].active).toBe(false);
 
-  owner = 'admin-b';
-  await page.goto(link);
-  await expect(page.getByText(/нет такого варианта/)).toBeVisible();
-  owner = 'admin-a';
-  await page.goto(settings);
-  await page.getByRole('link', { name: /Только имена/ }).click();
-  await page.getByRole('button', { name: 'Удалить вариант' }).click();
-  await page.getByRole('button', { name: 'Удалить', exact: true }).click();
-  await expect(page).toHaveURL(settings);
-  await expect(page.getByRole('link', { name: /Только имена/ })).toHaveCount(0);
-  expect(writes).toEqual(['PUT', 'PUT']);
-  await page.getByRole('link', { name: /Общий шаблон/ }).click();
-  await page.getByRole('button', { name: 'Вернуть исходный' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Вернуть исходный' }).click();
-  await expect(page.getByLabel('Текст шаблона')).toHaveValue(prompt.shipped);
-  expect(writes).toEqual(['PUT', 'PUT', 'DELETE']);
+  const third = await other.newPage();
+  await intercept(third,bob,library);
+  await third.goto(link);
+  await expect(third.getByText(/В этом аккаунте нет такого варианта/)).toBeVisible();
+  await other.close();
 });
 
-test('preview of an FR → RU revision uses the current translate prerequisite with the edited revision', async ({ page }) => {
-  await interceptWorkspace(page, () => 'admin-a');
-  const revision = template('revise_fiction_x_ru.txt', 'revise', 'Original {DRAFT_NUMBERED}');
-  const translate = template('translate_fiction_x_ru.txt', 'translate', 'Translate from EN or FR into RU [N] {SOURCE_TEXT}');
-  await page.route('**/api/admin/prompts*', route => route.fulfill({ json: { prompts: [translate, revision] } }));
+test('an FR → RU preview uses the account translation prompt and the unsaved revision', async ({ page }) => {
+  const revision = template('revise_fiction_x_ru.txt','revise','Original {DRAFT_NUMBERED}');
+  const translate = template('translate_fiction_x_ru.txt','translate','Translate [N] {SOURCE_TEXT}');
+  const personalText = 'Account translator [N] {SOURCE_TEXT}';
+  await intercept(page,alice,{[alice]:[{id:'account-translation',template:translate.name,label:'Мой перевод',content:personalText,active:true,deletedAt:null,revision:1}]},[translate,revision]);
   await page.route('**/api/admin/fiction-flow-playground', async route => {
-    const body = route.request().postDataJSON();
-    expect(body).toMatchObject({ sourceLanguage: 'FR', targetLanguage: 'RU', prompts: { translate: translate.content, revision: 'Edited {DRAFT_NUMBERED}' },
-      enabled: { glossary: false, translate: true, revision: true, readerCheck: false, correction: false } });
-    await route.fulfill({ contentType: 'application/x-ndjson', body: JSON.stringify({ type: 'done', results: [{ ok: true, revision: { finalText: 'Пример' } }] }) + '\n' });
+    expect(route.request().postDataJSON()).toMatchObject({sourceLanguage:'FR',targetLanguage:'RU',
+      prompts:{translate:personalText, revision:'Edited {DRAFT_NUMBERED}'},enabled:{glossary:false,translate:true,revision:true,readerCheck:false,correction:false}});
+    return route.fulfill({contentType:'application/x-ndjson',body:JSON.stringify({type:'done',results:[{ok:true,revision:{finalText:'Пример'}}]})+'\n'});
   });
-  await page.goto(settings);
-  await page.getByRole('button', { name: 'Добавить вариант' }).click();
-  await page.getByRole('button', { name: /Этап/ }).click();
-  await page.getByRole('option', { name: 'Стилистическая редактура' }).click();
-  await page.getByRole('link', { name: 'Открыть редактор' }).click();
+  await page.goto(settings + '/templates/' + revision.name + '?variant=new');
   await page.getByLabel('Текст шаблона').fill('Edited {DRAFT_NUMBERED}');
-  await page.getByRole('button', { name: /Направление/ }).click();
-  await page.getByRole('option', { name: 'FR → RU' }).click();
+  await page.getByRole('button',{name:/Направление/}).click();
+  await page.getByRole('option',{name:'FR → RU'}).click();
   await page.getByLabel('Фрагмент оригинала').fill('Quelques mots.');
-  await page.getByRole('button', { name: 'Запустить пробу' }).click();
+  await page.getByRole('button',{name:'Запустить пробу'}).click();
   await expect(page.getByText(/"finalText": "Пример"/)).toBeVisible();
+});
+
+test('a legacy draft is imported explicitly and keeps its account, link, and inactive state', async ({page}) => {
+  const library: Library = {};
+  await intercept(page,alice,library);
+  await page.goto(settings);
+  await expect(page.getByRole('link',{name:/Базовый шаблон/})).toBeVisible();
+  const id = '687e212c-9eda-48b7-a69e-49cbe32c6a1c';
+  await page.evaluate(async ({id, name, owner}) => {
+    const db = await new Promise<IDBDatabase>((resolve,reject) => {
+      const req = indexedDB.open('globoox-translation-prompt-variants',1);
+      req.onupgradeneeded = () => req.result.createObjectStore('variants',{keyPath:['ownerId','id']}).createIndex('owner','ownerId');
+      req.onerror = () => reject(req.error); req.onsuccess = () => resolve(req.result);
+    });
+    await new Promise<void>((resolve,reject) => {
+      const tx = db.transaction('variants','readwrite');
+      tx.objectStore('variants').put({id,ownerId:owner,label:'Старый черновик',template:name,content:'My terms {SOURCE_TEXT}',revision:1});
+      tx.oncomplete = () => resolve(); tx.onabort = () => reject(tx.error);
+    });
+    db.close();
+  },{id,name:glossary.name,owner:alice});
+  await page.reload();
+  await page.getByRole('link',{name:/Старый черновик/}).click();
+  expect(library[alice]).toHaveLength(0);
+  await expect(page.getByLabel('Использовать в моих переводах')).not.toBeChecked();
+  await page.getByRole('button',{name:'Сохранить в аккаунт'}).click();
+  await expect(page.getByRole('heading',{name:'Личный вариант'})).toBeVisible();
+  expect(library[alice]).toMatchObject([{id,active:false}]);
+  await archive(page);
+  await page.reload();
+  await expect(page.getByRole('link',{name:/Базовый шаблон/})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Черновики на этом устройстве'})).toHaveCount(0);
+  expect(library[alice]).toHaveLength(1);
+});
+
+test('the default remains readable if the personal prompt server is unavailable', async ({page}) => {
+  await intercept(page,alice,{});
+  await page.route('**/api/admin/personal-prompts**',(route:Route) => route.fulfill({status:503,json:{message:'temporarily unavailable'}}));
+  await page.goto(settings);
+  await expect(page.getByText('Сервер личных шаблонов сейчас недоступен.')).toBeVisible();
+  await expect(page.getByRole('button',{name:'Добавить вариант'})).toBeDisabled();
+  await page.getByRole('link',{name:/Базовый шаблон/}).click();
+  await expect(page.getByLabel('Текст шаблона')).toHaveValue(glossary.content);
+  await expect(page.getByLabel('Текст шаблона')).toHaveJSProperty('readOnly',true);
+  await expect(page.getByRole('link',{name:'Изменить для себя'})).toHaveCount(0);
+});
+
+test('the glossary of a book opens the selected account variant for its stage', async ({page}) => {
+  const active: PersonalPrompt = { id:'8a13b697-99db-4eae-ba67-a0491d1fbab8',template:glossary.name,label:'Перевод имён',content:'Names {SOURCE_TEXT}',active:true,revision:2,deletedAt:null };
+  await intercept(page,alice,{[alice]:[active]});
+  const id = '5c16d3d8-7ea0-4c1c-8b00-527bbc11f217';
+  await page.route('**/api/translation-workspace',route => route.fulfill({json:{userId:alice,role:'admin',series:[],books:[{id,title:'Моя книга',sourceLanguage:'RU',processingStatus:'ready',seriesId:null}]}}));
+  await page.route('**/api/translation-workspace/books/**',route => {
+    expect(route.request().method()).toBe('GET');
+    return route.fulfill({json:route.request().url().includes('/stage-prompts?')
+      ? [{stage:'glossary',name:glossary.name,overridden:false}]
+      : {state:'idle',frozen:false,glossary:null}});
+  });
+  await page.goto(settings.replace('/settings','/books/'+id+'/translations/EN/glossary'));
+  await page.getByText('Шаблон глоссария',{exact:true}).click();
+  const link = page.getByRole('link',{name:'Глоссарий',exact:true}).filter({hasNot:page.locator('svg')});
+  await expect(page.getByText('Перевод имён',{exact:true})).toBeVisible();
+  const selected = link.and(page.locator('[href*="variant="]'));
+  await expect(selected).toHaveAttribute('href', '/studio/settings/templates/' + glossary.name + '?variant=' + active.id);
+  await selected.click();
+  await expect(page.getByLabel('Название варианта')).toHaveValue(active.label);
+  await expect(page.getByLabel('Использовать в моих переводах')).toBeChecked();
 });
