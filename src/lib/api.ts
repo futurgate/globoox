@@ -3064,3 +3064,99 @@ export function fetchAuthorSheetRates(
     `/api/admin/cost-runs/author-sheet-rates${qs ? `?${qs}` : ''}`
   )
 }
+
+// ── Book series (admin, full-flow-automatization) ───────────────────────────
+
+export type SeriesListItem = {
+  id: string
+  name: string
+  genre: string | null
+  direction: string | null
+  bookCount: number
+  createdAt: string
+}
+
+export type SeriesVolumeTranslation = {
+  language: string
+  doneChapters: number
+  errorChapters: number
+  totalChapters: number
+  percent: number
+  state: 'complete' | 'partial' | 'pending'
+  updatedAt: string
+}
+
+export type SeriesVolume = {
+  bookId: string
+  title: string
+  author: string | null
+  volumeNumber: number | null
+  processingStatus: 'pending' | 'processing' | 'ready' | 'error'
+  sourceLanguage: string | null
+  totalChapters: number
+  translations: SeriesVolumeTranslation[]
+}
+
+export type SeriesDetail = {
+  id: string
+  name: string
+  genre: string | null
+  direction: string | null
+  createdAt: string
+  volumes: SeriesVolume[]
+}
+
+export type SeriesUploadResult = {
+  seriesId: string
+  name: string
+  genre: string | null
+  books: Array<{ bookId: string; jobId: string | null; volumeNumber: number; fileName: string }>
+  failures: Array<{ fileName: string; error: string }>
+}
+
+/** List all book series (admin). */
+export async function listSeries(): Promise<SeriesListItem[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load series: ${res.status}`)
+  }
+  const data = (await res.json()) as { series?: SeriesListItem[] }
+  return data.series ?? []
+}
+
+/** One series with volumes + per-volume translation progress (admin). */
+export async function getSeries(seriesId: string): Promise<SeriesDetail> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load series: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesDetail>
+}
+
+/** Upload a ZIP archive of EPUB volumes as a new series (admin). */
+export async function uploadSeriesZip(
+  file: File,
+  opts: { name?: string; genre?: string } = {}
+): Promise<SeriesUploadResult> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const form = new FormData()
+  form.set('zip', file)
+  if (opts.name) form.set('name', opts.name)
+  if (opts.genre) form.set('genre', opts.genre)
+  const res = await fetch(`${API_URL}/api/series/upload`, { method: 'POST', headers, body: form })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Series upload failed: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesUploadResult>
+}
