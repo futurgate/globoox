@@ -3246,3 +3246,47 @@ export async function uploadSeriesZip(
     signal,
   })
 }
+
+// ── Attention queue (admin, M1.6b) ──────────────────────────────────────────
+
+export type AttentionItem = {
+  id: string
+  bookId: string
+  bookTitle: string
+  seriesId: string | null
+  seriesName: string | null
+  language: string
+  blockId: string | null
+  step: string | null
+  kind: string | null
+  reason: string
+  createdAt: string
+}
+
+/** List open attention-queue items (admin). */
+export async function listAttention(limit = 100): Promise<AttentionItem[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/attention?limit=${limit}`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load attention queue: ${res.status}`)
+  }
+  const data = (await res.json()) as { items?: AttentionItem[] }
+  return data.items ?? []
+}
+
+/** Resolve one attention item (admin). */
+export async function resolveAttentionItem(id: string): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/attention/resolve`, {
+    method: 'POST', headers, body: JSON.stringify({ id }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to resolve item: ${res.status}`)
+  }
+}

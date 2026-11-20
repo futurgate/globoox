@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle } from 'lucide-react';
+import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
@@ -14,10 +14,13 @@ import {
   uploadSeriesZip,
   runSeries,
   restartSeriesStep,
+  listAttention,
+  resolveAttentionItem,
   type SeriesListItem,
   type SeriesDetail,
   type SeriesVolume,
   type SeriesLiveness,
+  type AttentionItem,
 } from '@/lib/api';
 
 const inputCls =
@@ -171,6 +174,54 @@ function VolumeRow({
   );
 }
 
+function AttentionPanel({
+  items,
+  onResolve,
+  resolvingId,
+  onSelectSeries,
+}: {
+  items: AttentionItem[];
+  onResolve: (id: string) => void;
+  resolvingId: string | null;
+  onSelectSeries?: (seriesId: string) => void;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <section className="mb-6 rounded-[var(--radius)] border border-amber-300 bg-amber-50 p-4">
+      <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-amber-800">
+        <BellRing className="h-4 w-4" />
+        Needs attention ({items.length})
+      </h2>
+      <div className="space-y-2">
+        {items.map((it) => (
+          <div key={it.id} className="flex items-start justify-between gap-3 rounded-[var(--radius)] bg-[var(--app-surface-bg)] p-2.5">
+            <div className="min-w-0 text-xs">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span className="font-medium">{it.seriesName ?? it.bookTitle}</span>
+                {it.seriesName && <span className="text-[var(--app-text-muted)]">· {it.bookTitle}</span>}
+                {it.step && <span className="text-[var(--app-text-muted)]">· {it.step}</span>}
+                <span className="text-[var(--app-text-muted)]">· {it.language}</span>
+                {it.kind && <Badge variant="secondary">{it.kind}</Badge>}
+              </div>
+              <div className="mt-0.5 text-[var(--app-text-muted)]">{it.reason}</div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              {it.seriesId && onSelectSeries && (
+                <Button variant="ghost" size="sm" onClick={() => onSelectSeries(it.seriesId!)}>
+                  Open
+                </Button>
+              )}
+              <Button variant="outline" size="sm" disabled={resolvingId === it.id} onClick={() => onResolve(it.id)}>
+                {resolvingId === it.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function FictionSeriesPage() {
   const router = useRouter();
   const { isAdmin, loading: authLoading, isAuthenticated } = useAuth();
@@ -194,6 +245,30 @@ export default function FictionSeriesPage() {
   const [running, setRunning] = useState(false);
   const [runMsg, setRunMsg] = useState<string | null>(null);
   const [restarting, setRestarting] = useState<string | null>(null);
+
+  // Attention queue (what needs a human)
+  const [attention, setAttention] = useState<AttentionItem[]>([]);
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
+
+  const loadAttention = useCallback(async () => {
+    try {
+      setAttention(await listAttention());
+    } catch {
+      /* non-fatal: the queue panel just stays empty */
+    }
+  }, []);
+
+  const handleResolve = useCallback(async (id: string) => {
+    setResolvingId(id);
+    try {
+      await resolveAttentionItem(id);
+      setAttention((prev) => prev.filter((i) => i.id !== id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to resolve item');
+    } finally {
+      setResolvingId(null);
+    }
+  }, []);
 
   const loadSeries = useCallback(async () => {
     setSeriesLoading(true);
@@ -248,18 +323,27 @@ export default function FictionSeriesPage() {
       try {
         await restartSeriesStep(detail.id, bookId, step);
         loadDetail(detail.id);
+        loadAttention();
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to restart step');
       } finally {
         setRestarting(null);
       }
     },
-    [detail, loadDetail],
+    [detail, loadDetail, loadAttention],
   );
 
   useEffect(() => {
     if (isAdmin) loadSeries();
   }, [isAdmin, loadSeries]);
+
+  // Keep the attention queue fresh (it's the "what needs me" surface).
+  useEffect(() => {
+    if (!isAdmin) return;
+    loadAttention();
+    const timer = setInterval(loadAttention, 15000);
+    return () => clearInterval(timer);
+  }, [isAdmin, loadAttention]);
 
   useEffect(() => {
     if (isAdmin) loadDetail(selectedId);
@@ -346,6 +430,14 @@ export default function FictionSeriesPage() {
           {error}
         </div>
       )}
+
+      {/* Attention queue — what needs a human (M1.6b). */}
+      <AttentionPanel
+        items={attention}
+        onResolve={handleResolve}
+        resolvingId={resolvingId}
+        onSelectSeries={(id) => setSelectedId(id)}
+      />
 
       {/* Upload */}
       <section className="mb-6 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
