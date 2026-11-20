@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft } from 'lucide-react';
+import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
@@ -325,6 +325,29 @@ export default function FictionSeriesPage() {
               Refresh
             </Button>
           </div>
+
+          {/* Recipe: the settings the full-flow uses for this genre (M1.2). */}
+          {detail.recipe ? (
+            <div className="mb-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3">
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                <FlaskConical className="h-4 w-4" />
+                Recipe: {detail.recipe.name}
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-[var(--app-text-muted)] sm:grid-cols-3">
+                <div><span className="font-medium text-[var(--app-text)]">Direction:</span> {detail.recipe.direction}</div>
+                <div><span className="font-medium text-[var(--app-text)]">Model:</span> {detail.recipe.model}</div>
+                <div><span className="font-medium text-[var(--app-text)]">Units:</span> {detail.recipe.units}</div>
+                <div><span className="font-medium text-[var(--app-text)]">Seed glossary:</span> {detail.recipe.seedGlossary}</div>
+                <div><span className="font-medium text-[var(--app-text)]">Step 0:</span> {detail.recipe.prompts.step0}</div>
+                <div><span className="font-medium text-[var(--app-text)]">Translate:</span> {detail.recipe.prompts.translate}</div>
+              </div>
+            </div>
+          ) : detail.genre ? (
+            <p className="mb-4 text-xs text-[var(--app-text-muted)]">
+              No recipe defined for genre &ldquo;{detail.genre}&rdquo; yet.
+            </p>
+          ) : null}
+
           {detail.volumes.length === 0 ? (
             <p className="text-sm text-[var(--app-text-muted)]">No volumes in this series yet.</p>
           ) : (

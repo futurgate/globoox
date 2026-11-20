@@ -3097,12 +3097,24 @@ export type SeriesVolume = {
   translations: SeriesVolumeTranslation[]
 }
 
+export type SeriesRecipe = {
+  id: string
+  name: string
+  genre: string
+  direction: string
+  model: string
+  units: 'us' | 'metric' | 'keep'
+  seedGlossary: string
+  prompts: { step0: string; translate: string }
+}
+
 export type SeriesDetail = {
   id: string
   name: string
   genre: string | null
   direction: string | null
   createdAt: string
+  recipe: SeriesRecipe | null
   volumes: SeriesVolume[]
 }
 
