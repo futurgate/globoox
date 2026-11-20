@@ -81,11 +81,15 @@ export function isUnlocked(p: Project, index: number) {
   return index === 0 || p.volumes[index - 1].phase !== 'glossary';
 }
 
-export function openAuthor(view: string, project = '', volume = '') {
+export function authorHref(view: string, project = '', volume = '') {
   const search = new URLSearchParams({ view });
   if (project) search.set('project', project);
   if (volume) search.set('volume', volume);
-  window.location.hash = search.toString();
+  return '#' + search.toString();
+}
+
+export function openAuthor(view: string, project = '', volume = '') {
+  window.location.hash = authorHref(view, project, volume);
 }
 export function subscribeHash(cb: () => void) {
   window.addEventListener('hashchange', cb);

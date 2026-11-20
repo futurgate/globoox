@@ -22,6 +22,7 @@ import { BookTask } from './BookTask';
 import { readAuthorRecipe } from './editor/config';
 import { NewProject, emptyDraft } from './NewProject';
 import {
+  authorHref,
   flowFor,
   initialProjects,
   volumeCount,
@@ -140,14 +141,16 @@ export default function AuthorPrototype() {
     p?.volumes[0];
   const isLocal =
     !!p && !!v && !['projects', 'decisions', 'import', 'recipe'].includes(view);
+  const ancestors = [{ label: 'Мои проекты', href: authorHref('projects') }];
+  if (isLocal && view in taskTitles) {
+    ancestors.push({ label: p.title, href: authorHref('overview', p.id) });
+  } else if (view === 'recipe') {
+    ancestors.push({ label: 'Новый проект', href: authorHref('import') });
+  }
   const detail =
-    isLocal && view in taskTitles
-      ? { backLabel: p.title, onBack: () => openAuthor('overview', p.id) }
-      : view === 'recipe'
-        ? { backLabel: 'Исходные файлы', onBack: () => openAuthor('import') }
-        : isLocal || view === 'import'
-          ? { backLabel: 'Мои проекты', onBack: () => openAuthor('projects') }
-          : undefined;
+    isLocal || view === 'import' || view === 'recipe'
+      ? { ancestors }
+      : undefined;
   return (
     <PrototypeShell
       role="author"

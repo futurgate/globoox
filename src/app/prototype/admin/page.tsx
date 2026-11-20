@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import {
   ArrowRight,
   BookOpen,
@@ -101,8 +101,8 @@ function listenHash(fn: () => void) {
   window.addEventListener('hashchange', fn);
   return () => window.removeEventListener('hashchange', fn);
 }
-function go(screen: Screen, book: Book, lang: Lang) {
-  window.location.hash = [screen, book.id, lang].join('/');
+function adminHref(screen: Screen, book: Book, lang: Lang) {
+  return '#' + [screen, book.id, lang].join('/');
 }
 function statusText(s: Phase) {
   return s === 'idle'
@@ -211,13 +211,18 @@ export default function AdminPrototype() {
   }, [running, ready]);
   const run = db.runs[key];
   const job = run.jobs.translate;
-  const jump = (s: Screen, nextBook = book, nextLang = lang) => {
+  const resetScreenControls = useCallback(() => {
     setConfirm(false);
     setOverwrite(false);
     setError('');
     setCopied(false);
     setChapter(1);
-    go(s, nextBook, nextLang);
+  }, [setConfirm, setOverwrite, setError, setCopied, setChapter]);
+  useEffect(() => listenHash(resetScreenControls), [resetScreenControls]);
+  const jump = (s: Screen, nextBook = book, nextLang = lang) => {
+    const href = adminHref(s, nextBook, nextLang);
+    if (window.location.hash === href) resetScreenControls();
+    else window.location.assign(href);
   };
   const update = (fn: (r: Run) => Run) =>
     setDb((d) => ({ ...d, runs: { ...d.runs, [key]: fn(d.runs[key]) } }));
@@ -351,8 +356,12 @@ export default function AdminPrototype() {
         across
           ? undefined
           : {
-              backLabel: 'К книгам',
-              onBack: () => jump('books'),
+              ancestors: [
+                {
+                  label: 'Переводы книг',
+                  href: adminHref('books', book, lang),
+                },
+              ],
               action: (
                 <IOSSettingsRow
                   label="Русский →"

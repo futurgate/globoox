@@ -193,7 +193,6 @@ function SchematicPlaceholder({
 export default function ComponentsPreviewPage() {
   const [activeOverlay, setActiveOverlay] = useState<OverlayKey>(null);
   const [editionLanguage, setEditionLanguage] = useState('EN');
-  const [showEdition, setShowEdition] = useState(true);
   const [alertLoading, setAlertLoading] = useState(false);
   const [alertDestructive] = useState(false);
   const sheetTitleId = useId();
@@ -381,14 +380,14 @@ export default function ComponentsPreviewPage() {
       builtOn: 'IOSReaderHeader + IOSSettingsRow',
       useWhen: 'Opening an individual book, series, or translation task from a collection.',
       avoidWhen: 'Top-level lists such as the library.',
-      inlinePreview: showEdition ? (
+      inlinePreview: (
         <IOSReaderHeader
           layout="workspace" title="Northbound" subtitle="Northern Archive · Volume 1"
-          backLabel="Back to library" onBack={() => setShowEdition(false)}
+          navigationLabel="Breadcrumbs" ancestors={[{ label: 'Book translations', href: '/prototype/admin' }]}
           trailingRight={<IOSSettingsRow label="Language" value={editionLanguage}
             options={[{ id: 'EN', label: 'English' }, { id: 'FR', label: 'French' }]} onChange={setEditionLanguage} />}
         />
-      ) : <Button variant="outline" onClick={() => setShowEdition(true)}>Open book</Button>,
+      ),
     },
     {
       title: 'IOSAlertDialog',

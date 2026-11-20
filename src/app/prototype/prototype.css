@@ -307,6 +307,9 @@
   padding-top: env(safe-area-inset-top);
   margin-bottom: 12px;
 }
+.pt-detail-header:has(+ :is(.adm, .au) > .pt-sections:first-child) {
+  margin-bottom: 0;
+}
 .pt-detail-header h1:focus {
   outline: none;
 }
@@ -326,6 +329,10 @@
   border-radius: 0;
   border-bottom: 2px solid transparent;
   color: var(--app-text-muted);
+}
+.pt-sections [data-slot='button']:first-child {
+  min-width: 44px;
+  padding-inline-start: 0;
 }
 .pt-sections [aria-current='page'] {
   border-color: var(--app-accent);

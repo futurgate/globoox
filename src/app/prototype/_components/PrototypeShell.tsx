@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import IOSReaderHeader from '@/components/ui/ios-reader-header';
+import IOSReaderHeader, {
+  type HeaderAncestor,
+} from '@/components/ui/ios-reader-header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { uiMenuItemButton } from '@/components/ui/button-styles';
@@ -29,7 +31,7 @@ type ShellProps = {
   onSelect: (id: string) => void;
   title: string;
   subtitle?: string;
-  detail?: { backLabel: string; onBack: () => void; action?: ReactNode };
+  detail?: { ancestors: readonly HeaderAncestor[]; action?: ReactNode };
   children: ReactNode;
 };
 
@@ -118,8 +120,8 @@ export function PrototypeShell({
             title={title}
             subtitle={subtitle}
             headingRef={heading}
-            onBack={detail.onBack}
-            backLabel={detail.backLabel}
+            navigationLabel="Путь навигации"
+            ancestors={detail.ancestors}
             trailingRight={detail.action}
           />
         ) : (
