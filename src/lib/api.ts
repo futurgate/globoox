@@ -3290,3 +3290,58 @@ export async function resolveAttentionItem(id: string): Promise<void> {
     throw new Error(body.message || `Failed to resolve item: ${res.status}`)
   }
 }
+
+// ── Smart series glossary (admin, M1.7) ─────────────────────────────────────
+
+export type GlossaryEdit = {
+  kind: 'named_entity' | 'terminology'
+  source: string
+  target: string
+  forms?: string[]
+  note?: string
+}
+
+export type GlossaryEditVolumeResult = {
+  bookId: string
+  volumeNumber: number | null
+  title: string
+  updated?: boolean
+  affectedBlocks?: number
+  redone?: number
+  applied?: number
+  unchanged?: number
+  failed?: number
+  skipped?: string
+}
+
+export type GlossaryEditResult = {
+  seriesId: string
+  lang: string
+  edits: number
+  reason: string
+  capped: boolean
+  volumes: GlossaryEditVolumeResult[]
+}
+
+/**
+ * Edit series glossary entries and re-translate the affected paragraphs across
+ * every volume (admin). One edit = re-translate just the paragraphs with that
+ * term; several edits apply together.
+ */
+export async function editSeriesGlossary(
+  seriesId: string,
+  edits: GlossaryEdit[],
+  opts: { lang?: string; model?: string } = {},
+): Promise<GlossaryEditResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/glossary-edit`, {
+    method: 'POST', headers, body: JSON.stringify({ edits, ...opts }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Glossary edit failed: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryEditResult>
+}
