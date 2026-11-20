@@ -25,6 +25,7 @@ const roleNames = {
 };
 
 type ShellProps = {
+  live?: boolean;
   role: keyof typeof roleNames;
   items: NavItem[];
   active: string;
@@ -36,6 +37,7 @@ type ShellProps = {
 };
 
 export function PrototypeShell({
+  live = false,
   role,
   items,
   active,
@@ -85,7 +87,9 @@ export function PrototypeShell({
       ))}
     </nav>
   );
-  const switchRole = (
+  const switchRole = live ? (
+    <Link className="pt-switch" href="/my-books">В библиотеку Globoox</Link>
+  ) : (
     <Link className="pt-switch" href="/prototype">
       <ArrowLeftRight size={16} />
       Сменить кабинет
@@ -95,7 +99,7 @@ export function PrototypeShell({
     <div className="pt-shell">
       <aside className="pt-sidebar">
         <div className="pt-brand">
-          <Link className="pt-wordmark" href="/prototype">
+          <Link className="pt-wordmark" href={live ? '/prototype/to-be' : '/prototype'}>
             Globoox
           </Link>
           <span>{roleName}</span>

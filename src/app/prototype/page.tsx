@@ -8,14 +8,13 @@ export default function PrototypeIndex() {
       <div className="pt-wordmark">Globoox</div>
       <h1>Перевод книг</h1>
       <p className="pt-lead">
-        Выберите демо-кабинет. Все действия выполняются на демонстрационных
-        данных.
+        <Link href="/prototype/to-be" className="pt-editor-link">Открыть кабинет перевода своих книг <ArrowUpRight size={17} /></Link>
       </p>
       <div className="pt-role-cards">
         <Card>
           <Link href="/prototype/admin" className="pt-role-card">
             <BookOpenText size={28} strokeWidth={1.6} />
-            <h2>Кабинет администратора</h2>
+            <h2>Демо кабинета администратора</h2>
             <p>Настроить перевод книги, проверить правки и скачать EPUB.</p>
             <span>
               Открыть кабинет <ArrowUpRight size={17} />
@@ -25,7 +24,7 @@ export default function PrototypeIndex() {
         <Card>
           <Link href="/prototype/author" className="pt-role-card">
             <Layers3 size={28} strokeWidth={1.6} />
-            <h2>Кабинет автора</h2>
+            <h2>Демо кабинета автора</h2>
             <p>
               Подготовить книгу или серию, согласовать перевод и получить
               издание.

@@ -1,0 +1,74 @@
+import { bodyObject, checkId, requireAdmin, requireOwnedBook, upstream, workspaceRoute, WorkspaceError } from '../../../access'
+import { requireOpenItem } from '../../../activity/feed'
+import { reviewBlock } from '../../../reviewBlock'
+
+export const dynamic = 'force-dynamic'
+export const maxDuration = 300
+
+const reads = new Set([
+  'translation-estimate', 'download', 'download-translated', 'translate-full-book', 'generate-glossary',
+  'reader-check', 'reader-check-journal', 'reader-check-cost-runs', 'revise-full-book',
+  'revision-diff', 'revise-cost-runs', 'fiction-costs', 'fiction-cost-runs', 'review-block',
+])
+const writeFields = new Map<string, string[]>([
+  ['generate-glossary', ['lang', 'restart', 'force', 'model', 'seedFromBookId', 'seedStarterGenre']],
+  ['set-glossary', ['lang', 'glossary', 'force']],
+  ['copy-glossary', ['lang', 'sourceBookId', 'force']],
+  ['glossary-freeze', ['lang', 'frozen']],
+  ['stop-stage', ['lang', 'stage']],
+  ['translate-full-book', ['lang', 'mode', 'useGlossary', 'overwrite', 'model']],
+  ['revise-full-book', ['lang', 'useGlossary', 'overwrite', 'model']],
+  ['revise-apply', ['lang', 'blockId', 'action', 'editedText']],
+  ['reader-check', ['lang', 'variant', 'model', 'restart']],
+  ['reader-check-apply', ['lang', 'itemId', 'action', 'editedText']],
+  ['translation-quality', ['targetLang', 'genre']],
+  ['resolve-attention', ['id']],
+])
+const authorReads = new Set(['translation-estimate', 'download'])
+type Context = { params: Promise<{ bookId: string; action: string }> }
+
+export async function GET(request: Request, { params }: Context) {
+  return workspaceRoute(request, async session => {
+    const { bookId, action } = await params
+    if (!reads.has(action)) throw new WorkspaceError(404, 'Действие не найдено')
+    if (!authorReads.has(action)) requireAdmin(session)
+    await requireOwnedBook(session, bookId)
+    const query = new URL(request.url).searchParams
+    if (action === 'review-block') return Response.json(await reviewBlock(session, bookId, query))
+    const allowed = action === 'translation-estimate' ? ['model', 'input_price', 'output_price', 'chars_per_token']
+      : action === 'revision-diff' ? ['lang', 'changedOnly'] : action === 'download' ? [] : ['lang']
+    const search = new URLSearchParams()
+    for (const field of allowed) {
+      const value = query.get(field)
+      if (value !== null) search.set(field, value)
+    }
+    return upstream(request, session, `/api/books/${bookId}/${action}${search.size ? `?${search}` : ''}`)
+  })
+}
+
+export async function POST(request: Request, { params }: Context) {
+  return workspaceRoute(request, async session => {
+    requireAdmin(session)
+    const { bookId, action } = await params
+    const fields = writeFields.get(action)
+    if (!fields) throw new WorkspaceError(404, 'Действие не найдено')
+    await requireOwnedBook(session, bookId)
+    const input = await bodyObject(request)
+    const body = Object.fromEntries(fields.filter(field => Object.hasOwn(input, field)).map(field => [field, input[field]]))
+    if (action === 'copy-glossary') await requireOwnedBook(session, checkId(body.sourceBookId, 'Книга-источник не найдена'))
+    if (action === 'generate-glossary' && body.seedFromBookId != null) {
+      await requireOwnedBook(session, checkId(body.seedFromBookId, 'Книга-источник не найдена'))
+    }
+    // The upstream handlers bind each revision or journal item to this exact
+    // book and language before either writes to the block.
+    if (action === 'revise-apply') checkId(body.blockId, 'Фрагмент не найден')
+    if (action === 'reader-check-apply') checkId(body.itemId, 'Предложение не найдено')
+    if (action === 'translation-quality') return upstream(request, session, '/api/admin/translation-quality', { ...body, bookId })
+    if (action === 'resolve-attention') {
+      const id = checkId(body.id, 'Открытый вопрос не найден')
+      await requireOpenItem(request, session, bookId, id)
+      return upstream(request, session, '/api/admin/attention/resolve', { id })
+    }
+    return upstream(request, session, `/api/books/${bookId}/${action}`, body)
+  })
+}

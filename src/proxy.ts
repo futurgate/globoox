@@ -4,7 +4,8 @@ import { updateSession } from '@/lib/supabase/middleware';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (isPrototypePath(pathname)) {
+  const liveWorkspace = pathname === '/prototype/to-be' || pathname.startsWith('/prototype/to-be/');
+  if (isPrototypePath(pathname) && !liveWorkspace) {
     return NextResponse.next();
   }
   return await updateSession(request);
