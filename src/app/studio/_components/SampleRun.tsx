@@ -55,7 +55,7 @@ export default function SampleRun({ template, catalog, draft, valid }: {
     <p className="pt-muted">Проба отправляет фрагмент и текущий текст шаблона в выбранную модель. Каждый вызов модели оплачивается.</p>
     {enabled.translate && stage !== 'translate' && <p className="pt-muted">{stage === 'correction'
       ? 'Сначала выполняются перевод и читательская проверка. Исправление запускается для найденных замечаний.'
-      : 'Сначала выполняется перевод фрагмента общим шаблоном выбранного направления.'}</p>}
+      : 'Сначала выполняется перевод фрагмента шаблоном, выбранным в вашем аккаунте для этого направления.'}</p>}
     {!available && valid && <p role="alert">Для пробы не найден действующий шаблон одного из этапов этого направления.</p>}
     <IOSSettingsRow label="Направление" value={direction} options={directions.map(id => ({id, label:id.replace('-', ' → ')}))} onChange={setDirection} disabled={running || directions.length < 2}/>
     <IOSSettingsRow label="Модель" value={model} options={models.map(id => ({id, label:id}))} onChange={setModel} disabled={running || !models.length}/>

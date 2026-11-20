@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
 import { Loader2, ShieldAlert, RefreshCw, Save, RotateCcw, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/ui/PageHeader';
@@ -125,8 +127,8 @@ export default function AdminPromptsPage() {
       </div>
 
       <p className="mt-1 text-sm text-[var(--app-text-muted)]">
-        These prompts are used by <strong>real</strong> pipeline runs (translation, glossary, revision, reader-check).
-        A saved edit is stored on the server and takes effect on the next run — for cached stages (translate/revise),
+        This editor manages <strong>shared defaults</strong> for all accounts. To change the prompts for your own translations, open the <Link className="underline" href={workspaceBase + '/settings'}>translation studio</Link>.
+        A saved edit is stored on the server and takes effect on future runs using the shared default. For cached stages (translate/revise),
         re-run with <em>Overwrite</em> to re-generate. Keep the template placeholders (e.g. <code>{'{SOURCE_TEXT}'}</code>,
         <code>{' {GLOSSARY}'}</code>, <code>{' {CHAPTER_TEXT}'}</code>) intact.
       </p>
