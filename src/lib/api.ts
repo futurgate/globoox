@@ -3190,7 +3190,7 @@ export type SeriesRunResult = {
 }
 
 /** Start the full-flow for a series (admin): enqueues step 0 for volume 1. */
-export async function runSeries(seriesId: string, opts: { lang?: string; model?: string } = {}): Promise<SeriesRunResult> {
+export async function runSeries(seriesId: string, opts: { lang?: string; model?: string; fresh?: boolean } = {}): Promise<SeriesRunResult> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
   if (token) headers.set('Authorization', `Bearer ${token}`)

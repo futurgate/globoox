@@ -247,6 +247,7 @@ export default function FictionSeriesPage() {
   const [running, setRunning] = useState(false);
   const [runMsg, setRunMsg] = useState<string | null>(null);
   const [restarting, setRestarting] = useState<string | null>(null);
+  const [fresh, setFresh] = useState(false);
 
   // Attention queue (what needs a human)
   const [attention, setAttention] = useState<AttentionItem[]>([]);
@@ -314,16 +315,16 @@ export default function FictionSeriesPage() {
     setRunMsg(null);
     setError(null);
     try {
-      const r = await runSeries(detail.id);
+      const r = await runSeries(detail.id, { fresh });
       const warn = r.volumesNotReady.length ? ` (${r.volumesNotReady.length} vol still parsing)` : '';
-      setRunMsg(`Started: step 0 v${r.enqueued.volumeNumber} enqueued · ${r.lang} · ${r.model}${warn}`);
+      setRunMsg(`Started${fresh ? ' FRESH' : ''}: step 0 v${r.enqueued.volumeNumber} enqueued · ${r.lang} · ${r.model}${warn}`);
       loadDetail(detail.id);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to start full-flow');
     } finally {
       setRunning(false);
     }
-  }, [detail, loadDetail]);
+  }, [detail, loadDetail, fresh]);
 
   const handleGlossaryEdit = useCallback(async () => {
     if (!detail || !geSource.trim() || !geTarget.trim()) return;
@@ -565,6 +566,10 @@ export default function FictionSeriesPage() {
               )}
             </h2>
             <div className="flex items-center gap-2">
+              <label className="flex items-center gap-1 text-xs text-[var(--app-text-muted)]" title="Rebuild the glossary + overwrite the translation, ignoring anything already generated">
+                <input type="checkbox" checked={fresh} onChange={(e) => setFresh(e.target.checked)} />
+                from scratch
+              </label>
               <Button
                 size="sm"
                 onClick={handleRun}
