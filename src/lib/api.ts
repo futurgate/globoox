@@ -3190,7 +3190,7 @@ export type SeriesRunResult = {
   enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number }
 }
 
-export type SeriesRunOpts = { lang?: string; model?: string; glossaryModel?: string; translateModel?: string }
+export type SeriesRunOpts = { lang?: string; model?: string; glossaryModel?: string; translateModel?: string; fresh?: boolean }
 
 /** Start the full-flow for a series (admin): enqueues step 0 for volume 1. */
 export async function runSeries(seriesId: string, opts: SeriesRunOpts = {}): Promise<SeriesRunResult> {
