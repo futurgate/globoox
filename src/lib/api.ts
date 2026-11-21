@@ -3183,14 +3183,17 @@ export type SeriesRunResult = {
   seriesId: string
   recipe: string
   lang: string
-  model: string
+  glossaryModel: string
+  translateModel: string
   totalVolumes: number
   volumesNotReady: number[]
   enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number }
 }
 
+export type SeriesRunOpts = { lang?: string; model?: string; glossaryModel?: string; translateModel?: string; fresh?: boolean }
+
 /** Start the full-flow for a series (admin): enqueues step 0 for volume 1. */
-export async function runSeries(seriesId: string, opts: { lang?: string; model?: string; fresh?: boolean } = {}): Promise<SeriesRunResult> {
+export async function runSeries(seriesId: string, opts: SeriesRunOpts = {}): Promise<SeriesRunResult> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
   if (token) headers.set('Authorization', `Bearer ${token}`)
@@ -3206,7 +3209,7 @@ export async function runSeries(seriesId: string, opts: { lang?: string; model?:
 
 /** Re-enqueue a stuck/stopped step for one volume (admin). */
 export async function restartSeriesStep(
-  seriesId: string, bookId: string, step: 'step0' | 'translate', opts: { lang?: string; model?: string } = {},
+  seriesId: string, bookId: string, step: 'step0' | 'translate', opts: SeriesRunOpts = {},
 ): Promise<{ seriesId: string; enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number; lang: string } }> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
