@@ -432,6 +432,33 @@ async function request<T>(path: string, options?: RequestInit, capturedShare?: s
  * wrapper because the response is binary. Throws with a readable message when
  * the book is not 100% translated (backend 409) or the request otherwise fails.
  */
+/** Download a ZIP of the whole series' translated EPUBs (admin). */
+export async function downloadSeriesTranslated(seriesId: string, lang: string): Promise<{ skipped: number[] }> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/download-translated?lang=${encodeURIComponent(lang)}`, { headers })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Download failed: ${res.status}`)
+  }
+  const blob = await res.blob()
+  const disposition = res.headers.get('content-disposition') || ''
+  const filename = disposition.match(/filename="?([^"]+)"?/i)?.[1] || `series-${lang}.zip`
+  const skippedHeader = res.headers.get('x-skipped-volumes') || ''
+  const skipped = skippedHeader ? skippedHeader.split(',').map(Number).filter((n) => Number.isFinite(n)) : []
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+  return { skipped }
+}
+
 export async function downloadTranslatedEpub(bookId: string, lang: string): Promise<void> {
   const path = `/api/books/${bookId}/download-translated?lang=${encodeURIComponent(lang)}`
   const headers = new Headers()

@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check, Wand2 } from 'lucide-react';
+import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check, Wand2, Download, Copy, ScrollText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
@@ -18,12 +18,16 @@ import {
   resolveAttentionItem,
   editSeriesGlossary,
   fetchPlaygroundModels,
+  downloadSeriesTranslated,
+  downloadTranslatedEpub,
+  getGlossary,
   type SeriesListItem,
   type SeriesDetail,
   type SeriesVolume,
   type SeriesLiveness,
   type AttentionItem,
   type GlossaryEditResult,
+  type GlossaryStatus,
 } from '@/lib/api';
 
 const inputCls =
@@ -96,15 +100,58 @@ function WarningsChip({ w }: { w: NonNullable<SeriesVolume['warnings']> }) {
 
 function VolumeRow({
   vol,
+  lang,
   onRestart,
   restarting,
 }: {
   vol: SeriesVolume;
+  lang: string;
   onRestart?: (bookId: string, step: 'step0' | 'translate') => void;
   restarting?: string | null;
 }) {
   const proc = PROCESSING_BADGE[vol.processingStatus] ?? PROCESSING_BADGE.ready;
   const gloss = vol.glossary ?? [];
+
+  // On-demand glossary view + copy + translated-EPUB download for this volume.
+  const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const [glossaryData, setGlossaryData] = useState<GlossaryStatus | null>(null);
+  const [glossaryLoading, setGlossaryLoading] = useState(false);
+  const [glossaryErr, setGlossaryErr] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [downloadingVol, setDownloadingVol] = useState(false);
+  const hasGlossary = gloss.length > 0;
+  const glossaryJson = glossaryData?.glossary ? JSON.stringify(glossaryData.glossary, null, 2) : '';
+
+  const toggleGlossary = async () => {
+    if (glossaryOpen) { setGlossaryOpen(false); return; }
+    setGlossaryOpen(true);
+    if (glossaryData) return;
+    setGlossaryLoading(true);
+    setGlossaryErr(null);
+    try {
+      setGlossaryData(await getGlossary(vol.bookId, lang));
+    } catch (e) {
+      setGlossaryErr(e instanceof Error ? e.message : 'Failed to load glossary');
+    } finally {
+      setGlossaryLoading(false);
+    }
+  };
+
+  const copyGlossary = async () => {
+    if (!glossaryJson) return;
+    try {
+      await navigator.clipboard.writeText(glossaryJson);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch { /* clipboard denied */ }
+  };
+
+  const downloadVol = async () => {
+    setDownloadingVol(true);
+    try { await downloadTranslatedEpub(vol.bookId, lang); }
+    catch { /* surfaced as a browser error; keep the row quiet */ }
+    finally { setDownloadingVol(false); }
+  };
   // Offer a restart when a step is stalled or a step-0/translation errored.
   const glossErrored = gloss.some((g) => g.status === 'error');
   const transErrored = vol.translations.some((t) => t.errorChapters > 0 && t.state !== 'complete');
@@ -165,6 +212,46 @@ function VolumeRow({
           ))
         )}
       </div>
+
+      {/* Glossary view/copy + translated-EPUB download for this volume. */}
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        {hasGlossary && (
+          <Button variant="outline" size="sm" onClick={toggleGlossary}>
+            <ScrollText className="mr-1 h-3 w-3" />
+            {glossaryOpen ? 'Hide glossary' : 'Glossary'}
+          </Button>
+        )}
+        <Button variant="outline" size="sm" disabled={downloadingVol} onClick={downloadVol} title={`Download the translated EPUB (${lang})`}>
+          <Download className={`mr-1 h-3 w-3 ${downloadingVol ? 'animate-pulse' : ''}`} />
+          EPUB
+        </Button>
+      </div>
+
+      {glossaryOpen && (
+        <div className="mt-2 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-bg)] p-2">
+          {glossaryLoading ? (
+            <div className="flex items-center gap-2 text-xs text-[var(--app-text-muted)]"><Loader2 className="h-3 w-3 animate-spin" /> Loading…</div>
+          ) : glossaryErr ? (
+            <p className="text-xs text-red-600">{glossaryErr}</p>
+          ) : glossaryJson ? (
+            <>
+              <div className="mb-1 flex items-center justify-between">
+                <span className="text-xs text-[var(--app-text-muted)]">
+                  {glossaryData?.frozen ? '🔒 frozen · ' : ''}
+                  {(glossaryData?.glossary?.named_entities?.length ?? 0)} names · {(glossaryData?.glossary?.terminology?.length ?? 0)} terms
+                </span>
+                <Button variant="ghost" size="sm" onClick={copyGlossary}>
+                  {copied ? <Check className="mr-1 h-3 w-3 text-emerald-600" /> : <Copy className="mr-1 h-3 w-3" />}
+                  {copied ? 'Copied' : 'Copy JSON'}
+                </Button>
+              </div>
+              <pre className="max-h-72 overflow-auto rounded bg-[var(--app-surface-bg)] p-2 text-[11px] leading-snug">{glossaryJson}</pre>
+            </>
+          ) : (
+            <p className="text-xs text-[var(--app-text-muted)]">No glossary content.</p>
+          )}
+        </div>
+      )}
 
       {(canRestartStep0 || canRestartTranslate) && (
         <div className="mt-2 flex items-center gap-2">
@@ -254,6 +341,8 @@ export default function FictionSeriesPage() {
   const [uploadMsg, setUploadMsg] = useState<string | null>(null);
 
   // Full-flow run / restart
+  const [downloadingSeries, setDownloadingSeries] = useState(false);
+  const [downloadMsg, setDownloadMsg] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
   const [runMsg, setRunMsg] = useState<string | null>(null);
   const [restarting, setRestarting] = useState<string | null>(null);
@@ -344,6 +433,34 @@ export default function FictionSeriesPage() {
       setRunning(false);
     }
   }, [detail, loadDetail, glossaryModel, translateModel, fresh]);
+
+  // Target language for downloads / glossary view — from the recipe direction
+  // (e.g. "RU->EN" → EN), else any volume's glossary/translation language.
+  const targetLang = useMemo(() => {
+    if (!detail) return 'EN';
+    const fromRecipe = detail.recipe?.direction?.split('->')?.[1];
+    if (fromRecipe) return fromRecipe.toUpperCase();
+    for (const v of detail.volumes) {
+      if (v.glossary?.length) return v.glossary[0].language.toUpperCase();
+      if (v.translations.length) return v.translations[0].language.toUpperCase();
+    }
+    return 'EN';
+  }, [detail]);
+
+  const handleDownloadSeries = useCallback(async () => {
+    if (!detail) return;
+    setDownloadingSeries(true);
+    setDownloadMsg(null);
+    setError(null);
+    try {
+      const { skipped } = await downloadSeriesTranslated(detail.id, targetLang);
+      setDownloadMsg(skipped.length ? `Downloaded. Skipped (not fully translated): vol ${skipped.join(', ')}` : 'Downloaded all translated volumes.');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Download failed');
+    } finally {
+      setDownloadingSeries(false);
+    }
+  }, [detail, targetLang]);
 
   const handleGlossaryEdit = useCallback(async () => {
     if (!detail || !geSource.trim() || !geTarget.trim()) return;
@@ -609,6 +726,16 @@ export default function FictionSeriesPage() {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={handleDownloadSeries}
+                disabled={downloadingSeries}
+                title={`Download a ZIP of the translated EPUBs (${targetLang})`}
+              >
+                {downloadingSeries ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Download className="mr-1 h-3.5 w-3.5" />}
+                Download {targetLang}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => loadDetail(detail.id)}
                 disabled={detailLoading}
               >
@@ -637,6 +764,7 @@ export default function FictionSeriesPage() {
           </div>
 
           {runMsg && <p className="mb-3 text-sm text-emerald-600">{runMsg}</p>}
+          {downloadMsg && <p className="mb-3 text-sm text-[var(--app-text-muted)]">{downloadMsg}</p>}
           {detail.gate && detail.gate.waiting > 0 && (
             <div className="mb-3 flex items-center gap-2 rounded-[var(--radius)] border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-700">
               <Activity className="h-3.5 w-3.5" />
@@ -712,7 +840,7 @@ export default function FictionSeriesPage() {
           ) : (
             <div className="space-y-3">
               {detail.volumes.map((v) => (
-                <VolumeRow key={v.bookId} vol={v} onRestart={handleRestart} restarting={restarting} />
+                <VolumeRow key={v.bookId} vol={v} lang={targetLang} onRestart={handleRestart} restarting={restarting} />
               ))}
             </div>
           )}
