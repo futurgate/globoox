@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check } from 'lucide-react';
+import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
@@ -16,11 +16,13 @@ import {
   restartSeriesStep,
   listAttention,
   resolveAttentionItem,
+  editSeriesGlossary,
   type SeriesListItem,
   type SeriesDetail,
   type SeriesVolume,
   type SeriesLiveness,
   type AttentionItem,
+  type GlossaryEditResult,
 } from '@/lib/api';
 
 const inputCls =
@@ -250,6 +252,14 @@ export default function FictionSeriesPage() {
   const [attention, setAttention] = useState<AttentionItem[]>([]);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
 
+  // Glossary edit (M1.7 §2.3/2.4)
+  const [geKind, setGeKind] = useState<'named_entity' | 'terminology'>('named_entity');
+  const [geSource, setGeSource] = useState('');
+  const [geTarget, setGeTarget] = useState('');
+  const [geForms, setGeForms] = useState('');
+  const [geBusy, setGeBusy] = useState(false);
+  const [geResult, setGeResult] = useState<GlossaryEditResult | null>(null);
+
   const loadAttention = useCallback(async () => {
     try {
       setAttention(await listAttention());
@@ -314,6 +324,28 @@ export default function FictionSeriesPage() {
       setRunning(false);
     }
   }, [detail, loadDetail]);
+
+  const handleGlossaryEdit = useCallback(async () => {
+    if (!detail || !geSource.trim() || !geTarget.trim()) return;
+    setGeBusy(true);
+    setGeResult(null);
+    setError(null);
+    try {
+      const forms = geForms.split(',').map((s) => s.trim()).filter(Boolean);
+      const r = await editSeriesGlossary(detail.id, [
+        { kind: geKind, source: geSource.trim(), target: geTarget.trim(), ...(forms.length ? { forms } : {}) },
+      ]);
+      setGeResult(r);
+      setGeSource('');
+      setGeTarget('');
+      setGeForms('');
+      loadDetail(detail.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Glossary edit failed');
+    } finally {
+      setGeBusy(false);
+    }
+  }, [detail, geKind, geSource, geTarget, geForms, loadDetail]);
 
   const handleRestart = useCallback(
     async (bookId: string, step: 'step0' | 'translate') => {
@@ -584,6 +616,46 @@ export default function FictionSeriesPage() {
               No recipe defined for genre &ldquo;{detail.genre}&rdquo; yet.
             </p>
           ) : null}
+
+          {/* Glossary edit (M1.7): change a name/term across the series and
+              re-translate only the paragraphs that use it. */}
+          <details className="mb-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-3">
+            <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold">
+              <Wand2 className="h-4 w-4" />
+              Edit glossary entry (re-translates affected paragraphs across all volumes)
+            </summary>
+            <div className="mt-3 space-y-2">
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <select className={inputCls} value={geKind} onChange={(e) => setGeKind(e.target.value as 'named_entity' | 'terminology')}>
+                  <option value="named_entity">Name / entity</option>
+                  <option value="terminology">Term</option>
+                </select>
+                <input className={inputCls} placeholder="Source (e.g. Крайт)" value={geSource} onChange={(e) => setGeSource(e.target.value)} />
+                <input className={inputCls} placeholder="New target (e.g. Krayt)" value={geTarget} onChange={(e) => setGeTarget(e.target.value)} />
+              </div>
+              <input className={inputCls} placeholder="Forms / aliases, comma-separated (optional)" value={geForms} onChange={(e) => setGeForms(e.target.value)} />
+              <div className="flex items-center gap-3">
+                <Button size="sm" onClick={handleGlossaryEdit} disabled={geBusy || !geSource.trim() || !geTarget.trim()}>
+                  {geBusy ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Wand2 className="mr-1 h-3.5 w-3.5" />}
+                  Apply + re-translate
+                </Button>
+                <span className="text-xs text-[var(--app-text-muted)]">Runs inline; capped at 300 blocks per call.</span>
+              </div>
+              {geResult && (
+                <div className="mt-1 rounded-[var(--radius)] bg-[var(--separator-opaque)] p-2 text-xs">
+                  <div className="font-medium">
+                    {geResult.reason}
+                    {geResult.capped && <span className="ml-1 text-amber-600">(capped — re-run for the rest)</span>}
+                  </div>
+                  {geResult.volumes.map((v) => (
+                    <div key={v.bookId} className="text-[var(--app-text-muted)]">
+                      Vol {v.volumeNumber ?? '—'}: {v.skipped ? v.skipped : `${v.affectedBlocks ?? 0} affected · ${v.applied ?? 0} re-translated`}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </details>
 
           {detail.volumes.length === 0 ? (
             <p className="text-sm text-[var(--app-text-muted)]">No volumes in this series yet.</p>
