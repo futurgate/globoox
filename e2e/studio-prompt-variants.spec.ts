@@ -177,6 +177,10 @@ test('the glossary of a book opens the selected account variant for its stage', 
       ? [{stage:'glossary',name:glossary.name,overridden:false}]
       : {state:'idle',frozen:false,glossary:null}});
   });
+  await page.route('**/api/studio/recipe-settings?**', route => {
+    expect(new URL(route.request().url()).searchParams.get('scopeId')).toBe(id);
+    return route.fulfill({ json: { effective: { glossaryPromptId: active.id } } });
+  });
   await page.goto(settings.replace('/settings','/books/'+id+'/translations/EN/glossary'));
   await page.getByText('Шаблон глоссария',{exact:true}).click();
   const link = page.getByRole('link',{name:'Глоссарий',exact:true}).filter({hasNot:page.locator('svg')});
