@@ -432,6 +432,19 @@ async function request<T>(path: string, options?: RequestInit, capturedShare?: s
  * wrapper because the response is binary. Throws with a readable message when
  * the book is not 100% translated (backend 409) or the request otherwise fails.
  */
+/**
+ * Parse the download filename from Content-Disposition. Prefers the RFC 5987
+ * `filename*=UTF-8''<percent-encoded>` form (carries non-ASCII, e.g. Cyrillic)
+ * over the ASCII `filename="…"` fallback.
+ */
+function filenameFromDisposition(disposition: string, fallback: string): string {
+  const star = disposition.match(/filename\*=UTF-8''([^;]+)/i)
+  if (star?.[1]) {
+    try { return decodeURIComponent(star[1].trim()) } catch { /* fall through */ }
+  }
+  return disposition.match(/filename="?([^";]+)"?/i)?.[1] || fallback
+}
+
 /** Download a ZIP of the whole series' translated EPUBs (admin). */
 export async function downloadSeriesTranslated(seriesId: string, lang: string): Promise<{ skipped: number[] }> {
   const headers = new Headers()
@@ -444,7 +457,7 @@ export async function downloadSeriesTranslated(seriesId: string, lang: string): 
   }
   const blob = await res.blob()
   const disposition = res.headers.get('content-disposition') || ''
-  const filename = disposition.match(/filename="?([^"]+)"?/i)?.[1] || `series-${lang}.zip`
+  const filename = filenameFromDisposition(disposition, `series-${lang}.zip`)
   const skippedHeader = res.headers.get('x-skipped-volumes') || ''
   const skipped = skippedHeader ? skippedHeader.split(',').map(Number).filter((n) => Number.isFinite(n)) : []
 
@@ -473,8 +486,7 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 
   const blob = await res.blob()
   const disposition = res.headers.get('content-disposition') || ''
-  const match = disposition.match(/filename="?([^"]+)"?/i)
-  const filename = match?.[1] || `book-${lang}.epub`
+  const filename = filenameFromDisposition(disposition, `book-${lang}.epub`)
 
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
