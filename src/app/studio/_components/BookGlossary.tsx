@@ -86,6 +86,6 @@ export function BookGlossaryPanel({ bookId, lang, books, models }: {
           }}>Импортировать</Button></div>
       </details>
     </Card>
-    <StageCard stage="glossary" bookId={bookId} lang={lang} sourceBookId={source} models={models} onChange={() => setReload(n => n + 1)} />
+    <StageCard stage="glossary" bookId={bookId} lang={lang} sourceBookId={source} books={books} models={models} onChange={() => setReload(n => n + 1)} />
   </div>;
 }

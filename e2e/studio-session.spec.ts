@@ -85,7 +85,9 @@ test('password login returns to the Studio deep link with the durable Supabase s
     activityToken = route.request().headers().authorization;
     return route.fulfill({ json: { attention: [], translations: [], attentionAvailable: true, attentionComplete: true, translationsAvailable: true } });
   });
-  await page.route('**/auth/v1/user', route => route.fulfill({ json: testUser }));
+  await page.route('**/auth/v1/user', route => route.request().headers().authorization === 'Bearer ' + token
+    ? route.fulfill({ json: testUser })
+    : route.fulfill({ status: 401, json: { message: 'Expired reader credential' } }));
   await page.route('**' + workspaceApi, route => {
     expect(route.request().headers().authorization).toBe('Bearer ' + token);
     expect(route.request().headers().cookie).toMatch(/sb-.*-auth-token/);
@@ -168,4 +170,17 @@ test('Studio does not renew a different saved account when the reader session is
   await page.goto(origin + '/studio');
   await expect(page.getByRole('link', { name: 'Войти в Globoox' })).toBeVisible();
   expect(renewed).toBe(false);
+});
+
+test('a bookmarked Studio login accepts the valid reader bearer before it has an SDK cookie', async ({ page }) => {
+  await isolateLogin(page);
+  await page.addInitScript(key => localStorage.setItem(key, 'active-legacy-reader'), readerKey);
+  await page.route('**/auth/v1/user', route => {
+    expect(route.request().headers().authorization).toBe('Bearer active-legacy-reader');
+    return route.fulfill({ json:{ id:firstId, aud:'authenticated', email:'reader@example.test', user_metadata:{}, app_metadata:{} } });
+  });
+  await page.route('**' + workspaceApi, route => route.fulfill({ json: data(firstId, false) }));
+  await page.goto(origin + '/auth?next=%2Fstudio');
+  await expect(page).toHaveURL(origin + '/studio');
+  await expect(page.getByRole('link', { name:/Проект автора/ })).toBeVisible();
 });

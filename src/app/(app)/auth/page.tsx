@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/client';
 import { trackUserLoggedIn } from '@/lib/posthog';
 import { safeLocalReturnPath } from '@/lib/authNavigation';
 import { workspaceBase } from '@/lib/translationWorkspacePath';
+import { getBrowserAccessToken, renewLegacyReaderSession } from '@/lib/api';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export default function AuthPage() {
@@ -50,14 +51,29 @@ function AuthForm() {
 
   useEffect(() => {
     if (!resumeStudio) return;
-    let active = true;
-    // The login URL can remain in bookmarks or browser history after a successful sign-in.
-    void getSupabase().auth.getSession().then(({ data }) => {
-      if (!active) return;
-      if (data.session) window.location.replace(nextUrl);
+    const controller = new AbortController();
+    async function resume() {
+      const auth = getSupabase().auth;
+      const { data } = await auth.getSession();
+      if (controller.signal.aborted) return;
+      let signedIn = Boolean(data.session);
+      if (!signedIn) {
+        const token = await getBrowserAccessToken();
+        if (token && !controller.signal.aborted) {
+          // Reader versions predating SSR can have a valid session only in local storage.
+          const verified = await auth.getUser(token);
+          signedIn = Boolean(verified.data.user);
+          if (!signedIn && !controller.signal.aborted && [401, 403].includes(verified.error?.status ?? 0)) {
+            signedIn = Boolean(await renewLegacyReaderSession(token, controller.signal));
+          }
+        }
+      }
+      if (controller.signal.aborted) return;
+      if (signedIn) window.location.replace(nextUrl);
       else setCheckingSession(false);
-    }).catch(() => { if (active) setCheckingSession(false); });
-    return () => { active = false; };
+    }
+    void resume().catch(() => { if (!controller.signal.aborted) setCheckingSession(false); });
+    return () => controller.abort();
   }, [resumeStudio, nextUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {

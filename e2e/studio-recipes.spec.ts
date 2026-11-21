@@ -108,3 +108,61 @@ test('one book can override its glossary model and revert to its recipe without 
   await expect(page.getByText(new RegExp('осталось блоков: 12 · модель ' + flash))).toBeVisible();
   expect(quotes.at(-1)).toEqual({ book: books[0].id, model: flash });
 });
+
+test('a continuation quotes and uses the frozen model and glossary; an explicit restart uses the current recipe', async ({ page }) => {
+  const { quotes } = await mockStudio(page);
+  const bookId = books[0].id;
+  const glossaryRun = 'e5f77533-29b4-48e0-b9a1-e1d595e6caf5';
+  const translationRun = '64c51a36-7d14-42c1-939f-f7bcb7387a69';
+  const detailRequested = Promise.withResolvers<void>();
+  const releaseDetail = Promise.withResolvers<void>();
+  const submissions: unknown[] = [];
+  await page.route('**/api/studio/recipe-runs?*', route => route.fulfill({ json: { runs: [
+    { id: translationRun, bookId, operation: 'translate', stages: { translate: { status: 'stopped', attempt: 1 } } },
+    { id: glossaryRun, bookId, operation: 'glossary', stages: { glossary: { status: 'error', attempt: 2 } } },
+  ] } }));
+  await page.route('**/api/studio/recipe-run?*', async route => {
+    const query = new URL(route.request().url()).searchParams;
+    const id = query.get('runId');
+    expect(query.get('bookId')).toBe(bookId);
+    if (id === translationRun) { detailRequested.resolve(); await releaseDetail.promise; }
+    const config = { translate: { model: alternate }, glossary: { model: flash },
+      options: { fresh: true, useGlossary: true, seedFromBookId: books[1].id } };
+    return route.fulfill({ json: { id, config } });
+  });
+  await page.route('**/translate-full-book?*', async route => {
+    if (route.request().method() !== 'POST') return route.fallback();
+    submissions.push(route.request().postDataJSON());
+    return route.fulfill({ contentType: 'application/x-ndjson', body: '{"type":"book_done"}\n' });
+  });
+
+  await page.goto(origin + '/studio/books/' + bookId + '/translations/EN');
+  const translation = page.locator('[data-slot=card]').filter({ has: page.getByRole('heading', { name: 'Перевод текста', exact: true }) });
+  const glossary = page.locator('[data-slot=card]').filter({ has: page.getByRole('heading', { name: 'Глоссарий', exact: true }) });
+  await translation.getByText('Параметры запуска', { exact: true }).click();
+  await detailRequested.promise;
+  const quote = page.getByRole('button', { name: 'Рассчитать', exact: true });
+  await expect(quote).toBeDisabled();
+  const resume = translation.getByRole('button', { name: 'Продолжить' });
+  await expect(resume).toBeDisabled();
+  releaseDetail.resolve();
+  await expect(translation.getByText('Остановлен', { exact: true })).toBeVisible();
+  await expect(translation.getByText('Модель запуска · ' + alternate)).toBeVisible();
+  await expect(translation.getByText('Глоссарий тома · используется')).toBeVisible();
+  await expect(translation.getByRole('checkbox', { name: 'Использовать готовый глоссарий тома' })).toHaveCount(0);
+  await glossary.getByText('Параметры запуска', { exact: true }).click();
+  await expect(glossary.getByText('Исходный словарь · ' + books[1].title)).toBeVisible();
+  await expect(glossary.getByText('Ошибка', { exact: true })).toBeVisible();
+  await quote.click();
+  await expect.poll(() => quotes.at(-1)?.model).toBe(alternate);
+
+  const restart = translation.getByRole('checkbox', { name: /Заменить переведённые блоки/ });
+  await restart.check();
+  await expect(translation.getByRole('button', { name: /Модель/ })).toContainText(hydrogen);
+  await expect(translation.getByRole('checkbox', { name: 'Использовать готовый глоссарий тома' })).toBeEnabled();
+  await expect.poll(() => quotes.at(-1)?.model).toBe(hydrogen);
+  await restart.uncheck();
+  await expect.poll(() => quotes.at(-1)?.model).toBe(alternate);
+  await resume.click();
+  await expect.poll(() => submissions).toEqual([{ lang: 'EN', studioRun: { runId: translationRun } }]);
+});

@@ -44,6 +44,18 @@ export function runsEndpoint(bookId: string, lang: string) {
   return '/api/studio/recipe-runs?' + new URLSearchParams({ bookId, targetLang: lang })
 }
 
+export interface FrozenRecipe {
+  units: string; wishes: string; recipeId: string;
+  glossary: { model: string; prompt: string; template: string };
+  translate: { model: string; prompt: string; template: string };
+  sources: Partial<Record<'translateModel' | 'glossaryModel', RecipeSource>>;
+  options?: { useGlossary?: boolean; fresh?: boolean; seedFromBookId?: string; seedStarterGenre?: string };
+}
+
+export function runEndpoint(bookId: string, lang: string, runId: string) {
+  return '/api/studio/recipe-run?' + new URLSearchParams({ bookId, targetLang: lang, runId })
+}
+
 // A newer series run may also have written the book. Only the most recent
 // applicable run can be resumed from a manual stage card.
 export function resumableStage(runs: readonly StudioRun[], stage: 'glossary' | 'translate') {
