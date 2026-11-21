@@ -17,6 +17,7 @@ import {
   listAttention,
   resolveAttentionItem,
   editSeriesGlossary,
+  fetchPlaygroundModels,
   type SeriesListItem,
   type SeriesDetail,
   type SeriesVolume,
@@ -33,6 +34,15 @@ const GENRES = [
   { value: 'litrpg', label: 'LitRPG' },
   { value: 'nonfiction', label: 'Non-fiction' },
   { value: 'other', label: 'Other' },
+];
+
+// Static fallback for the per-stage model pickers until /api/admin/models resolves.
+const FALLBACK_MODELS = [
+  'gemini-4-hydrogen',
+  'gemini-3.5-flash',
+  'gemini-3.1-pro-preview',
+  'gemini-2.5-pro',
+  'gemini-2.5-flash',
 ];
 
 const PROCESSING_BADGE: Record<SeriesVolume['processingStatus'], { label: string; cls: string }> = {
@@ -248,6 +258,11 @@ export default function FictionSeriesPage() {
   const [runMsg, setRunMsg] = useState<string | null>(null);
   const [restarting, setRestarting] = useState<string | null>(null);
 
+  // Per-stage model pickers ('' = use the recipe default for that stage).
+  const [availableModels, setAvailableModels] = useState<string[]>(FALLBACK_MODELS);
+  const [glossaryModel, setGlossaryModel] = useState('');
+  const [translateModel, setTranslateModel] = useState('');
+
   // Attention queue (what needs a human)
   const [attention, setAttention] = useState<AttentionItem[]>([]);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
@@ -314,16 +329,19 @@ export default function FictionSeriesPage() {
     setRunMsg(null);
     setError(null);
     try {
-      const r = await runSeries(detail.id);
+      const r = await runSeries(detail.id, {
+        glossaryModel: glossaryModel || undefined,
+        translateModel: translateModel || undefined,
+      });
       const warn = r.volumesNotReady.length ? ` (${r.volumesNotReady.length} vol still parsing)` : '';
-      setRunMsg(`Started: step 0 v${r.enqueued.volumeNumber} enqueued · ${r.lang} · ${r.model}${warn}`);
+      setRunMsg(`Started: step 0 v${r.enqueued.volumeNumber} · ${r.lang} · glossary ${r.glossaryModel} · translate ${r.translateModel}${warn}`);
       loadDetail(detail.id);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to start full-flow');
     } finally {
       setRunning(false);
     }
-  }, [detail, loadDetail]);
+  }, [detail, loadDetail, glossaryModel, translateModel]);
 
   const handleGlossaryEdit = useCallback(async () => {
     if (!detail || !geSource.trim() || !geTarget.trim()) return;
@@ -368,6 +386,14 @@ export default function FictionSeriesPage() {
   useEffect(() => {
     if (isAdmin) loadSeries();
   }, [isAdmin, loadSeries]);
+
+  // Discover the provider's models for the per-stage pickers (best-effort).
+  useEffect(() => {
+    if (!isAdmin) return;
+    fetchPlaygroundModels()
+      .then((res) => { if (res.models.length) setAvailableModels(res.models); })
+      .catch(() => { /* keep fallback */ });
+  }, [isAdmin]);
 
   // Keep the attention queue fresh (it's the "what needs me" surface).
   useEffect(() => {
@@ -584,6 +610,24 @@ export default function FictionSeriesPage() {
                 Refresh
               </Button>
             </div>
+          </div>
+
+          {/* Per-stage model pickers for the full-flow run (M). '' = recipe default. */}
+          <div className="mb-3 flex flex-col gap-2 text-xs sm:flex-row sm:items-center">
+            <label className="flex items-center gap-1.5">
+              <span className="text-[var(--app-text-muted)]">Glossary model:</span>
+              <select className="rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-2 py-1" value={glossaryModel} onChange={(e) => setGlossaryModel(e.target.value)}>
+                <option value="">Recipe default{detail.recipe ? ` (${detail.recipe.model})` : ''}</option>
+                {availableModels.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </label>
+            <label className="flex items-center gap-1.5">
+              <span className="text-[var(--app-text-muted)]">Translate model:</span>
+              <select className="rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-2 py-1" value={translateModel} onChange={(e) => setTranslateModel(e.target.value)}>
+                <option value="">Recipe default{detail.recipe ? ` (${detail.recipe.model})` : ''}</option>
+                {availableModels.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </label>
           </div>
 
           {runMsg && <p className="mb-3 text-sm text-emerald-600">{runMsg}</p>}
