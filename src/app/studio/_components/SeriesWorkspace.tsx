@@ -7,7 +7,9 @@ import Link from 'next/link';
 import { ChevronRight, Play, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { ModelChoice, RecipeEditor } from './RecipeSettings';
+import { recipeEndpoint, runsEndpoint, type StudioRun, type RecipeSettings } from '@/lib/studioRecipe';
+import { bookGet, useBookData } from './bookRequests';
 import type { WorkspaceBook, WorkspaceSeries } from '@/lib/translationWorkspaceTypes';
 import { bookPath, processingLabel } from './projectLinks';
 
@@ -33,16 +35,29 @@ async function readResponse(response: Response) {
   return payload;
 }
 
-export default function SeriesWorkspace({ series, role, books }: {
+function VolumePreview({ book, sourceLang, targetLang, glossaryModel, translateModel }: {
+  book: WorkspaceBook; sourceLang: string; targetLang: string; glossaryModel: string; translateModel: string;
+}) {
+  const result = useBookData<RecipeSettings>(recipeEndpoint({ scope: 'book', scopeId: book.id, sourceLang, targetLang }));
+  return <li className="border-t py-2"><strong>{book.title}</strong>
+    {result?.data ? <p>Глоссарий · {glossaryModel || result.data.effective.glossaryModel} · Перевод · {translateModel || result.data.effective.translateModel}</p> :
+      <p role="status">{result?.error || 'Загружаем параметры тома…'}</p>}</li>;
+}
+
+export default function SeriesWorkspace({ series, role, books, ownerId }: {
   series: WorkspaceSeries;
-  role: 'admin' | 'author';
+  ownerId: string; role: 'admin' | 'author';
   books: WorkspaceBook[];
 }) {
   const [detail, setDetail] = useState<SeriesDetail | null>(null);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [working, setWorking] = useState(false);
-  const [model, setModel] = useState('');
+  const [glossaryModel, setGlossaryModel] = useState('');
+  const [translateModel, setTranslateModel] = useState('');
+  const [savedRecipe, setSavedRecipe] = useState<RecipeSettings | null>(null);
+  const [previewBooks, setPreviewBooks] = useState(false);
+  const runRequest = useRef<{ signature: string; id: string } | null>(null);
   const [showRun, setShowRun] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [followUntil, setFollowUntil] = useState(0);
@@ -50,6 +65,7 @@ export default function SeriesWorkspace({ series, role, books }: {
   const mutation = useRef<AbortController | null>(null);
   const endpoint = '/api/translation-workspace/series/' + encodeURIComponent(series.id);
   const admin = role === 'admin' && series.ownerVerified;
+  const models = useBookData<{ models: string[] }>(admin && showRun ? '/api/admin/models' : null);
   const load = useCallback(async () => {
     if (!admin || inFlight.current) return;
     const request = new AbortController();
@@ -90,7 +106,17 @@ export default function SeriesWorkspace({ series, role, books }: {
     setError('');
     setMessage('');
     try {
-      const body = action === 'run' ? (model.trim() ? { model: model.trim() } : {}) : { bookId, step, lang };
+      const signature = JSON.stringify([series.id, glossaryModel, translateModel, savedRecipe?.revision]);
+      if (action === 'run' && signature !== runRequest.current?.signature) runRequest.current = { signature, id: crypto.randomUUID() };
+      let resumed: string | undefined;
+      if (action === 'restart' && bookId && lang) {
+        const { runs } = await bookGet<{ runs: StudioRun[] }>(runsEndpoint(bookId, lang), request.signal);
+        const existing = runs.find(run => run.operation === 'series' && run.seriesId === series.id);
+        resumed = existing?.id;
+      }
+      const body = action === 'run' ? {
+        lang: targetLang, studioRun: { requestId: runRequest.current!.id }, ...(glossaryModel && { glossaryModel }), ...(translateModel && { translateModel }),
+      } : { bookId, step, lang, ...(resumed && { studioRun: { runId: resumed } }) };
       const response = await studioFetch(endpoint + '/' + action, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: request.signal,
       });
@@ -98,7 +124,7 @@ export default function SeriesWorkspace({ series, role, books }: {
       if (!result?.enqueued || result.seriesId !== series.id) throw new Error('Сервер не подтвердил постановку в очередь. Обновите состояние серии.');
       if (!request.signal.aborted) {
         setMessage((action === 'run' ? 'Запуск серии принят. ' : 'Продолжение этапа принято. ') + 'Том ' + result.enqueued.volumeNumber + ' поставлен в очередь.');
-        setShowRun(false);
+        setShowRun(false); runRequest.current = null; setGlossaryModel(''); setTranslateModel('');
         setFollowUntil(Date.now() + 90000);
         void load();
       }
@@ -114,6 +140,10 @@ export default function SeriesWorkspace({ series, role, books }: {
   const hasGaps = sorted.some((book, index) => book.volumeNumber != null && book.volumeNumber !== index + 1);
   const volumes = new Map(detail?.volumes.map((v) => [v.bookId, v]) ?? []);
   const recipe = detail?.recipe;
+  const direction = (recipe?.direction || series.direction || '').toUpperCase().split(/\s*(?:->|→|-)\s*/);
+  const sourceLang = direction[0] || sorted[0]?.sourceLanguage?.toUpperCase() || 'RU';
+  const targetLang = direction[1] || (sourceLang === 'RU' ? 'EN' : 'RU');
+  const canRunRecipe = Boolean(savedRecipe && savedRecipe.effective.glossaryModel && savedRecipe.effective.translateModel);
   const allReady = sorted.length > 0 && sorted.every((book) => (volumes.get(book.id)?.processingStatus ?? book.processingStatus) === 'ready');
   return (
     <div className="space-y-4">
@@ -125,20 +155,28 @@ export default function SeriesWorkspace({ series, role, books }: {
           </div>
           <Button variant="outline" size="sm" onClick={load} disabled={fetching}><RefreshCw className={fetching ? 'animate-spin' : ''} />Обновить</Button>
         </div>
-        {recipe && <>
-          <details className="text-sm"><summary className="cursor-pointer font-medium">Параметры рецепта</summary>
+        {recipe && <details className="text-sm"><summary className="cursor-pointer font-medium">Базовый рецепт серии</summary>
             <dl className="mt-2 space-y-1 break-words">
               <div><dt className="inline text-[var(--app-text-muted)]">Направление · </dt><dd className="inline">{recipe.direction.replace('->', ' → ')}</dd></div>
-              <div><dt className="inline text-[var(--app-text-muted)]">Модель · </dt><dd className="inline">{recipe.model}</dd></div>
+
               <div><dt className="inline text-[var(--app-text-muted)]">Единицы · </dt><dd className="inline">{unitNames[recipe.units] || recipe.units}</dd></div>
               <div><dt className="inline text-[var(--app-text-muted)]">Стартовый словарь · </dt><dd className="inline">{recipe.seedGlossary}</dd></div>
               <div><dt className="inline text-[var(--app-text-muted)]">Шаблон словаря · </dt><dd className="inline">{recipe.prompts.step0}</dd></div>
               <div><dt className="inline text-[var(--app-text-muted)]">Шаблон перевода · </dt><dd className="inline">{recipe.prompts.translate}</dd></div>
             </dl>
-          </details>
+          </details>}
+          {canRunRecipe && <>
           {showRun ? (
             <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void operate('run'); }}>
-              <label className="block space-y-1 text-sm font-medium">Модель для этого запуска<Input value={model} disabled={working} placeholder={recipe.model} autoComplete="off" onChange={(event) => setModel(event.target.value)} /></label>
+              <ModelChoice label="Модель глоссария для запуска" value={glossaryModel} inherited={savedRecipe?.effective.glossaryModel}
+                models={models?.data?.models ?? []} disabled={working} onChange={setGlossaryModel}/>
+              <ModelChoice label="Модель перевода для запуска" value={translateModel} inherited={savedRecipe?.effective.translateModel}
+                models={models?.data?.models ?? []} disabled={working} onChange={setTranslateModel}/>
+              {models?.error && <p role="alert">{models.error}</p>}
+              <details onToggle={e => setPreviewBooks(e.currentTarget.open)}><summary>Параметры по томам ({sorted.length})</summary>
+                {previewBooks && <ul className="mt-2 text-sm">{sorted.map(book => <VolumePreview key={book.id} book={book}
+                  sourceLang={book.sourceLanguage || sourceLang} targetLang={targetLang} glossaryModel={glossaryModel} translateModel={translateModel}/>)}</ul>}
+              </details>
               <p className="text-sm text-[var(--app-text-muted)]">Сервер поставит первый том в очередь и начнёт обработку остальных томов по рецепту. Вызовы модели учитываются в расходах.</p>
               {hasGaps && <p role="status" className="text-sm">В нумерации есть пропуски. В запуск войдут только перечисленные тома, в указанном порядке.</p>}
               <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!allReady || working || running}><Play />Подтвердить запуск</Button>
@@ -147,10 +185,12 @@ export default function SeriesWorkspace({ series, role, books }: {
           ) : <Button className="self-start" disabled={!allReady || working || running || Boolean(followUntil)} onClick={() => setShowRun(true)}><Play />Запустить перевод серии</Button>}
           {!allReady && <p className="text-sm text-[var(--app-text-muted)]">Для запуска дождитесь импорта каждого тома.</p>}
         </>}
-        {detail && !recipe && <p className="text-sm text-[var(--app-text-muted)]">{detail.recipe === null ? 'Для жанра этой серии ещё нет рецепта.' : 'Автоматический запуск недоступен на подключённом сервере.'}</p>}
+        {detail && !canRunRecipe && <p className="text-sm text-[var(--app-text-muted)]">Для запуска нужны сохранённые параметры перевода серии.</p>}
         {message && <p role="status" className="text-sm">{message}</p>}
         {error && <p role="alert" className="break-words text-sm">{error}</p>}
       </Card>}
+      {series.ownerVerified && sourceLang && targetLang && <RecipeEditor ownerId={ownerId} admin={admin}
+        locator={{ scope:'series', scopeId:series.id, sourceLang, targetLang }} onResolved={setSavedRecipe}/>}
       {role === 'admin' && !series.ownerVerified && <p className="text-sm text-[var(--app-text-muted)]">Доступны ваши тома. Для управления всей серией требуется подтверждение её владельца.</p>}
       {role === 'author' && <Card className="items-start gap-2 p-4"><Button disabled><Play />Запустить перевод серии</Button><p className="text-sm font-semibold">Планируется</p><p className="text-sm text-[var(--app-text-muted)]">Для запуска от имени автора требуется доступ к обработке серии.</p></Card>}
       <Card className="overflow-hidden">

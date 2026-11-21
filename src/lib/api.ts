@@ -273,30 +273,26 @@ function buildGetCacheKey(path: string, options?: RequestInit): string | null {
   return `${path}::${body}`
 }
 
-function findAccessTokenDeep(value: unknown): string | null {
+function readerSessionStorageKey() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  return url ? 'sb-' + new URL(url).hostname.split('.')[0] + '-auth-token' : null
+}
+
+interface StoredReaderSession { access_token: string; refresh_token?: string }
+
+function findStoredReaderSession(value: unknown): StoredReaderSession | null {
   if (!value) return null
   if (typeof value === 'string') {
-    try {
-      return findAccessTokenDeep(JSON.parse(value))
-    } catch {
-      return null
-    }
+    try { return findStoredReaderSession(JSON.parse(value)) } catch { return null }
   }
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      const token = findAccessTokenDeep(item)
-      if (token) return token
-    }
-    return null
+  if (typeof value !== 'object') return null
+  const item = value as Record<string, unknown>
+  if (typeof item.access_token === 'string' && item.access_token) {
+    return { access_token: item.access_token, refresh_token: typeof item.refresh_token === 'string' ? item.refresh_token : undefined }
   }
-  if (typeof value === 'object') {
-    const obj = value as Record<string, unknown>
-    const direct = obj.access_token
-    if (typeof direct === 'string' && direct.length > 0) return direct
-    for (const nested of Object.values(obj)) {
-      const token = findAccessTokenDeep(nested)
-      if (token) return token
-    }
+  for (const nested of Object.values(item)) {
+    const session = findStoredReaderSession(nested)
+    if (session) return session
   }
   return null
 }
@@ -311,8 +307,8 @@ export function forgetLegacyBrowserSession() {
   if (typeof window === 'undefined') return
   try {
     window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-    if (url) window.localStorage.removeItem('sb-' + new URL(url).hostname.split('.')[0] + '-auth-token')
+    const key = readerSessionStorageKey()
+    if (key) window.localStorage.removeItem(key)
   } catch {
     // Storage can be disabled even when the signed-in cookie was available.
   }
@@ -335,12 +331,8 @@ export async function getBrowserAccessToken(): Promise<string | null> {
   if (!token) {
     try {
       token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-      for (let i = 0; !token && i < window.localStorage.length; i += 1) {
-        const key = window.localStorage.key(i)
-        if (!key || !key.includes('auth-token')) continue
-        const raw = window.localStorage.getItem(key)
-        if (raw) token = findAccessTokenDeep(raw)
-      }
+      const key = readerSessionStorageKey()
+      if (!token && key) token = findStoredReaderSession(window.localStorage.getItem(key))?.access_token ?? null
     } catch {
       // Cookie-only sessions can still be authenticated by the same-origin API.
     }
@@ -348,6 +340,37 @@ export async function getBrowserAccessToken(): Promise<string | null> {
   if (generation !== browserTokenGeneration) return getBrowserAccessToken()
   browserTokenCache = { token, expiresAt: now + 3000 }
   return token
+}
+
+/** An older reader stored a refreshable Supabase session on this origin in localStorage.
+ * Only claim that session when its access token is the credential Studio just tried. */
+export async function renewLegacyReaderSession(rejectedToken: string | null, signal: AbortSignal): Promise<string | null> {
+  const key = readerSessionStorageKey()
+  if (!key || !rejectedToken) return null
+  let raw: string | null
+  try { raw = window.localStorage.getItem(key) } catch { return null }
+  const stored = findStoredReaderSession(raw)
+  if (!stored?.refresh_token || stored.access_token !== rejectedToken) return null
+
+  const { createClient } = await import('@/lib/supabase/client')
+  const auth = createClient().auth
+  const current = await auth.getSession()
+  signal.throwIfAborted()
+  if (current.data.session) return current.data.session.access_token
+  const standalone = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+  if (window.localStorage.getItem(key) !== raw || (standalone && standalone !== rejectedToken)) return null
+
+  // GoTrue rotates the old credential and @supabase/ssr writes the current host's cookie.
+  const renewed = await auth.refreshSession({ refresh_token: stored.refresh_token })
+  if (renewed.error && (renewed.error.status === 0 || (renewed.error.status ?? 0) >= 500)) {
+    throw new Error('Сервис входа временно недоступен.')
+  }
+  const session = renewed.data.session
+  if (!session) return null
+  if (window.localStorage.getItem(key) === raw) window.localStorage.removeItem(key)
+  if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) === rejectedToken) window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+  clearBrowserAccessTokenCache()
+  return session.access_token
 }
 
 /** Retains HTTP status without changing existing Error/message consumers. */

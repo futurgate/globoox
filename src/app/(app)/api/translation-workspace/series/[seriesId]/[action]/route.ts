@@ -44,8 +44,8 @@ export async function POST(request: Request, { params }: Context) {
     const { own } = await seriesDetail(request, session, seriesId)
     const body = await bodyObject(request)
     if (action === 'restart' && !own.has(checkId(body.bookId))) throw new WorkspaceError(404, 'Том не найден')
-    const options = action === 'restart' ? { bookId: body.bookId, step: body.step, lang: body.lang, model: body.model }
-      : { lang: body.lang, model: body.model }
+    const options = action === 'restart' ? { bookId: body.bookId, step: body.step, lang: body.lang, model: body.model, studioRun: body.studioRun }
+      : { lang: body.lang, model: body.model, glossaryModel: body.glossaryModel, translateModel: body.translateModel, studioRun: body.studioRun }
     return upstream(request, session, `/api/series/${seriesId}/${action}`, options)
   })
 }

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { BookTranslationEstimate, FictionCosts, QaReportV2, ReaderCheckCostStageBreakdown } from '@/lib/api';
 import { downloadText } from '@/app/prototype/_components/downloads';
+import { RecipeRuns } from './RecipeRuns';
 import { ActionFeedback, stages } from './BookStage';
 import { bookEndpoint, bookPost, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 
@@ -13,13 +14,13 @@ export function Planned({ title, description }: { title: string; description: st
 }
 const dollars = (v: number | null) => v == null ? 'Тариф не указан' : new Intl.NumberFormat('ru', { style:'currency', currency:'USD', maximumFractionDigits:4 }).format(v);
 
-export function Estimate({ bookId, lang }: {bookId: string; lang: string}) {
+export function Estimate({ bookId, lang, model }: {bookId: string; lang: string; model?: string}) {
   const [show, setShow] = useState(false);
   const [version, setVersion] = useState(0);
-  const result = useBookData<BookTranslationEstimate>(show ? bookEndpoint(bookId, 'translation-estimate', lang) : null, version);
+  const result = useBookData<BookTranslationEstimate>(show ? bookEndpoint(bookId, 'translation-estimate', lang) + (model ? '&model=' + encodeURIComponent(model) : '') : null, version);
   const estimate = result?.data?.byLanguage.find(l => l.lang === lang);
   return <Card className="p-5 gap-3"><h3>Оценка перевода текста</h3>
-    <p className="pt-muted">По оставшимся блокам книги и тарифу модели по умолчанию. Расчёт не запускает перевод.</p>
+    <p className="pt-muted">По оставшимся блокам книги и тарифу модели{model ? ' ' + model : ' по умолчанию'}.</p>
     <Button variant="outline" disabled={show && !result} onClick={() => { setShow(true); setVersion(v => v + 1); }}>{show && !result ? 'Расчёт…' : 'Рассчитать'}</Button>
     <ActionFeedback error={result?.error}/>
     {result?.data && <p>{estimate ? `${dollars(estimate.cost.totalUsd)} · осталось блоков: ${estimate.blocksRemaining} · модель ${result.data.model}` : 'Для этого направления оценка отсутствует.'}</p>}
@@ -142,6 +143,7 @@ export function BookRuns({ bookId, lang }: { bookId: string; lang: string }) {
         })}>Скопировать статистику</Button>
       </>}
     </Card>
+    <RecipeRuns bookId={bookId} lang={lang} version={version}/>
     <Card className="p-5 gap-3">
       <h3>Запуски редактуры и читательской проверки</h3>
       <ActionFeedback error={runs?.error}/>

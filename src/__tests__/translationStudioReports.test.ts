@@ -33,15 +33,16 @@ describe('translation studio reports', () => {
     const correction = { stage: 'correction', calls: 4, tokensIn: 67, tokensOut: 75, costUsd: 0.10, durationMs: 520 }
     read.mockImplementation((action: string) => action === 'fiction-costs' ? {
       data: { hasMeasured: true, totals: { measured }, stages: [{ stage: 'reader-check', ran: true, estimate, measured }] },
-    } : {
+    } : action === 'fiction-cost-runs' ? {
       data: { runs: [{ runId: 'run', kind: 'reader-check', model: 'test-model', startedAt: null,
         total: { calls: 7, tokensIn: 99, tokensOut: 95, costUsd: 0.12, durationMs: 1020 }, stages: [search, correction] }] },
-    })
+    } : { data: { limit: 50, runs: [{ id:'studio-run', bookId:'book', operation:'translate', createdAt:'2026-11-01', stages:{translate:{status:'done'}},
+      costUsd:null, usageComplete:false, spend:[{stage:'translate',tokensIn:302,tokensOut:71}] }] } })
     const html = renderToStaticMarkup(React.createElement(BookRuns, { bookId: 'book', lang: 'EN' }))
     for (const text of ['Расчётно', 'Фактически', 'Входные токены', 'Выходные токены', 'Поиск замечаний',
-      'Исправление замечаний', 'Всего за запуск', 'test-model', '>67</td>', '>32</td>']) {
+      'Исправление замечаний', 'Всего за запуск', 'test-model', '>67</td>', '>32</td>', 'Данные неполные', '>302</td>', '>71</td>']) {
       expect(html).toContain(text)
     }
-    expect(read.mock.calls.map(call => call[0])).toEqual(['fiction-costs', 'fiction-cost-runs'])
+    expect(read.mock.calls.map(call => call[0])).toEqual(['fiction-costs', 'fiction-cost-runs', '/api/studio/recipe-runs?bookId=book&targetLang=EN'])
   })
 })

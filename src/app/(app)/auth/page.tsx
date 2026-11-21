@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/lib/supabase/client';
 import { trackUserLoggedIn } from '@/lib/posthog';
 import { safeLocalReturnPath } from '@/lib/authNavigation';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export default function AuthPage() {
@@ -42,6 +43,22 @@ function AuthForm() {
   );
   const [message, setMessage] = useState<string | null>(null);
   const nextUrl = safeLocalReturnPath(searchParams.get('next'));
+  const returnPath = nextUrl.split(/[?#]/, 1)[0];
+  const resumeStudio = (returnPath === workspaceBase || returnPath.startsWith(workspaceBase + '/')) &&
+    !searchParams.has('error') && !searchParams.has('reauth');
+  const [checkingSession, setCheckingSession] = useState(resumeStudio);
+
+  useEffect(() => {
+    if (!resumeStudio) return;
+    let active = true;
+    // The login URL can remain in bookmarks or browser history after a successful sign-in.
+    void getSupabase().auth.getSession().then(({ data }) => {
+      if (!active) return;
+      if (data.session) window.location.replace(nextUrl);
+      else setCheckingSession(false);
+    }).catch(() => { if (active) setCheckingSession(false); });
+    return () => { active = false; };
+  }, [resumeStudio, nextUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +97,10 @@ function AuthForm() {
       trackUserLoggedIn('google');
     }
   };
+
+  if (resumeStudio && checkingSession) {
+    return <main className="mx-auto max-w-md p-8" role="status">Проверяем ваш сеанс…</main>;
+  }
 
   return (
     <div className="min-h-screen bg-[var(--app-shell-bg)] text-[var(--app-text)]">

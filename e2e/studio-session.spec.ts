@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { loadEnvConfig } from '@next/env';
 
 const origin = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
 const workspaceApi = '/api/translation-workspace';
@@ -9,6 +10,12 @@ const data = (userId: string, admin: boolean) => ({
   userId, role: admin ? 'admin' : 'author', series: [], books: [],
   projects: [{ id: 'current-project', name: admin ? 'Проект редактора' : 'Проект автора' }],
 });
+
+function sdkStorageKey() {
+  const authUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || loadEnvConfig(process.cwd(), true).combinedEnv.NEXT_PUBLIC_SUPABASE_URL;
+  if (!authUrl) throw new Error('The test app needs its Supabase URL');
+  return 'sb-' + new URL(authUrl).hostname.split('.')[0] + '-auth-token';
+}
 
 async function isolateLogin(page: Page) {
   // The real login form and SDK run in the browser. Only the local Next app and
@@ -92,6 +99,9 @@ test('password login returns to the Studio deep link with the durable Supabase s
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
+  await page.goto(origin + '/auth?next=%2Fstudio%2Fprojects');
+  await expect(page).toHaveURL(origin + '/studio/projects');
+  await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
   const sidebar = page.locator('.pt-sidebar');
   await sidebar.getByRole('link', { name: 'Очередь' }).click();
   await expect.poll(() => activityToken).toBe('Bearer ' + token);
@@ -104,4 +114,58 @@ test('password login returns to the Studio deep link with the durable Supabase s
     peer.close();
   }, session);
   await expect(sidebar.getByRole('link', { name: 'Очередь' })).toHaveCount(0);
+});
+
+test('Studio renews an old reader session and keeps its account after a reload', async ({ page }) => {
+  await isolateLogin(page);
+  const storageKey = sdkStorageKey();
+  const now = Math.floor(Date.now() / 1000);
+  const encode = (part: object) => Buffer.from(JSON.stringify(part)).toString('base64url');
+  const jwt = (exp: number) => [encode({ alg: 'HS256', typ: 'JWT' }),
+    encode({ sub: firstId, exp, iat: now - 7200, aud: 'authenticated', role: 'authenticated' }), 'dGVzdA'].join('.');
+  const oldToken = jwt(now - 300);
+  const freshToken = jwt(now + 3600);
+  const user = { id: firstId, aud: 'authenticated', role: 'authenticated', email: 'studio@example.test',
+    created_at: '2020-01-01T00:00:00Z', app_metadata: {}, user_metadata: {} };
+  const session = { access_token: freshToken, refresh_token: 'rotated-test-refresh', token_type: 'bearer', expires_in: 3600, expires_at: now + 3600, user };
+  await page.addInitScript(({ storageKey, oldToken, user }) => {
+    if (sessionStorage.getItem('legacy-seeded')) return;
+    sessionStorage.setItem('legacy-seeded', '1');
+    localStorage.setItem(storageKey, JSON.stringify({ access_token: oldToken, refresh_token: 'old-test-refresh', user }));
+    localStorage.setItem('globoox:access_token', oldToken);
+  }, { storageKey, oldToken, user });
+  let refreshCount = 0;
+  await page.route('**/auth/v1/token?grant_type=refresh_token', route => {
+    expect(route.request().postDataJSON().refresh_token).toBe('old-test-refresh');
+    refreshCount++;
+    return route.fulfill({ json: session });
+  });
+  await page.route('**/auth/v1/user', route => route.fulfill({ json: user }));
+  await page.route('**' + workspaceApi, route => route.request().headers().authorization === 'Bearer ' + freshToken
+    ? route.fulfill({ json: data(firstId, false) })
+    : route.fulfill({ status: 401, json: { error: 'Expired session' } }));
+  await page.goto(origin + '/studio');
+  await expect(page.getByRole('link', { name: /Проект автора/ })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('link', { name: /Проект автора/ })).toBeVisible();
+  expect(refreshCount).toBe(1);
+  expect(await page.evaluate(key => localStorage.getItem(key), storageKey)).toBeNull();
+});
+
+test('Studio does not renew a different saved account when the reader session is rejected', async ({ page }) => {
+  await isolateLogin(page);
+  await page.addInitScript(key => {
+    localStorage.setItem('globoox:access_token', 'reader-account');
+    localStorage.setItem(key, JSON.stringify({ access_token: 'other-account', refresh_token: 'other-account-refresh' }));
+    localStorage.setItem('sb-another-project-auth-token', JSON.stringify({ access_token: 'different-project' }));
+  }, sdkStorageKey());
+  let renewed = false;
+  await page.route('**/auth/v1/token?grant_type=refresh_token', route => { renewed = true; return route.abort(); });
+  await page.route('**' + workspaceApi, route => {
+    expect(route.request().headers().authorization).toBe('Bearer reader-account');
+    return route.fulfill({ status: 401, json: { error: 'Expired session' } });
+  });
+  await page.goto(origin + '/studio');
+  await expect(page.getByRole('link', { name: 'Войти в Globoox' })).toBeVisible();
+  expect(renewed).toBe(false);
 });
