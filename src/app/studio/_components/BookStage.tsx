@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { resumableStage, runsEndpoint, type StudioRun } from '@/lib/studioRecipe';
+import { resumableStage, runEndpoint, runsEndpoint, type FrozenRecipe, type StudioRun } from '@/lib/studioRecipe';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -52,9 +52,10 @@ export function ActionFeedback({ error, notice }: { error?: string; notice?: str
   return notice ? <p className="pt-muted" role="status">{notice}</p> : null;
 }
 
-export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange, inheritedModel, onModelChange }: {
+export function StageCard({ stage, bookId, lang, models, sourceBookId, books, onChange, inheritedModel, onEstimateModel }: {
   stage: StageName; bookId: string; lang: string; models: readonly string[]; sourceBookId?: string;
-  onChange?: () => void; inheritedModel?: string; onModelChange?: (model: string) => void;
+  books?: readonly { id: string; title: string | null }[];
+  onChange?: () => void; inheritedModel?: string; onEstimateModel?: (model: string | null) => void;
 }) {
   const [model, setModel] = useState('');
   const [withGlossary, setWithGlossary] = useState(false);
@@ -66,6 +67,16 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange,
   const requestId = useRef<{ key: string; id: string } | null>(null);
   const runHistory = useBookData<{ runs: StudioRun[] }>(tracked ? runsEndpoint(bookId, lang) : null, start.version + tick);
   const resumeId = tracked && !restart && runHistory?.data ? resumableStage(runHistory.data.runs, stage) : undefined;
+  const detail = useBookData<{ id: string; config: FrozenRecipe }>(resumeId ? runEndpoint(bookId, lang, resumeId) : null, tick);
+  const frozen = tracked && resumeId && detail?.data?.id === resumeId && detail.data.config?.[stage]?.model
+    ? detail.data.config : undefined;
+  const frozenModel = tracked && frozen ? frozen[stage].model : undefined;
+  const frozenSeed = frozen?.options?.seedFromBookId;
+  const quoteModel = !runHistory?.data ? null : resumeId ? frozenModel || null : model || inheritedModel || null;
+  useEffect(() => {
+    onEstimateModel?.(quoteModel);
+    return () => onEstimateModel?.(null);
+  }, [onEstimateModel, quoteModel]);
   const version = tick + start.version + stop.version;
   const url = bookEndpoint(bookId, stages[stage].api, lang);
   const state = useBookData<Status>(url, version, start.busy || statusActive);
@@ -80,7 +91,7 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange,
     return () => report(stage, false);
   }, [report, stage, running]);
   const failed = data?.error || data?.chapters?.find(c => c.error)?.error;
-  const blocked = !data || (tracked && !runHistory?.data) || running || otherRunning || (stage === 'glossary' && data.frozen);
+  const blocked = !data || (tracked && !runHistory?.data) || (resumeId && !frozen) || running || otherRunning || (stage === 'glossary' && data.frozen);
   const overwriteNote = stage === 'translate' ? 'Заменить переведённые блоки и сбросить связанные правки'
     : stage === 'glossary' ? 'Пересобрать словарь с первой главы' : stage === 'revise' ? 'Пересчитать уже отредактированные блоки' : 'Заново проверить главы';
   const startStage = () => {
@@ -89,8 +100,8 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange,
     void start.run(async signal => {
       const key = JSON.stringify([bookId, lang, stage, model, restart, withGlossary, sourceBookId]);
       if (requestId.current?.key !== key) requestId.current = { key, id: crypto.randomUUID() };
-      const payload = {
-        ...(tracked ? { studioRun: resumeId ? { runId: resumeId } : { requestId: requestId.current.id } } : {}),
+      const payload = resumeId ? { lang, studioRun: { runId: resumeId } } : {
+        ...(tracked ? { studioRun: { requestId: requestId.current.id } } : {}),
         lang, ...(model ? { model } : {}),
         ...(stage === 'translate' ? { mode: 'fiction', useGlossary: withGlossary, overwrite: restart } : {}),
         ...(stage === 'glossary' ? { restart, ...(sourceBookId ? { seedFromBookId: sourceBookId } : {}) } : {}),
@@ -107,28 +118,42 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange,
       }
     });
   };
+  const interrupted = tracked && resumeId ? runHistory?.data?.runs.find(r => r.id === resumeId)?.stages[stage] : null;
+  const reportedState = interrupted?.status || data?.state;
+  let statusLabel = state?.error ? 'Статус недоступен' : 'Загрузка…';
+  if (running) statusLabel = names.running;
+  else if (reportedState === 'running' && stage === 'translate') statusLabel = names.incomplete;
+  else if (reportedState) statusLabel = names[reportedState] || reportedState;
   return <Card className="p-4 gap-3">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3>{stages[stage].title}</h3>
-      <span className="pt-muted">{data ? (stage === 'translate' && data.state === 'running' && !running ? 'Выполнен частично' : names[data.state] || data.state) : state?.error ? 'Статус недоступен' : 'Загрузка…'}</span>
+      <span className="pt-muted">{statusLabel}</span>
     </div>
     {total > 0 && <p className="pt-muted">{stage === 'revise' ? 'Блоков' : 'Глав'} {done} из {total}</p>}
     {otherRunning && <p className="pt-muted">Дождитесь завершения текущего этапа книги.</p>}
     {data?.frozen && <p>Словарь заморожен. Разморозьте его во вкладке «Глоссарий» для новой генерации.</p>}
     {failed && <p className="pt-callout">{failed}</p>}
-    <ActionFeedback error={state?.error || runHistory?.error || start.error || stop.error} notice={start.notice || stop.notice}/>
+    <ActionFeedback error={state?.error || runHistory?.error || detail?.error ||
+      (resumeId && detail?.data && !frozen ? 'Не удалось прочитать сохранённые параметры запуска.' : '') || start.error || stop.error} notice={start.notice || stop.notice}/>
     <details><summary className="text-sm">Параметры запуска</summary>
       <div className="grid gap-3 pt-3">
-        <IOSSettingsRow label="Модель" value={model} disabled={Boolean(running || resumeId)} onChange={v => { setModel(v); onModelChange?.(v); }}
-          options={[{ id: '', label: inheritedModel ? 'По рецепту · ' + inheritedModel : 'По рецепту' }, ...models.map(id => ({ id, label: id }))]} />
-        {resumeId && <p className="pt-muted">Продолжение использует параметры, сохранённые при старте.</p>}
-        {stage === 'translate' && <label><input type="checkbox" checked={withGlossary} disabled={Boolean(running)} onChange={e => setWithGlossary(e.target.checked)}/> Использовать готовый глоссарий тома</label>}
-        {stage === 'glossary' && sourceBookId && <p className="pt-muted">Для новой генерации будет использован словарь выбранной книги.</p>}
+        {resumeId ? frozen ? <div className="grid gap-1 text-sm">
+          <p>Модель запуска · {frozenModel}</p>
+          {stage === 'translate' && <p>Глоссарий тома · {frozen.options?.useGlossary ? 'используется' : 'выключен'}</p>}
+          {stage === 'glossary' && <p>Исходный словарь · {frozenSeed
+            ? books?.find(book => book.id === frozenSeed)?.title || frozenSeed : frozen.options?.seedStarterGenre || 'без исходной книги'}</p>}
+          <p className="pt-muted">При первом запуске · {frozen.options?.fresh ? 'перезапись с начала' : 'сохранение готового результата'}.</p>
+        </div> : !detail && <p role="status">Загружаем параметры остановленного запуска…</p> : <>
+          <IOSSettingsRow label="Модель" value={model} disabled={running} onChange={setModel}
+            options={[{ id: '', label: inheritedModel ? 'По рецепту · ' + inheritedModel : 'По рецепту' }, ...models.map(id => ({ id, label: id }))]} />
+          {stage === 'translate' && <label><input type="checkbox" checked={withGlossary} disabled={running} onChange={e => setWithGlossary(e.target.checked)}/> Использовать готовый глоссарий тома</label>}
+          {stage === 'glossary' && sourceBookId && <p className="pt-muted">Для новой генерации будет использован словарь выбранной книги.</p>}
+        </>}
         <label><input type="checkbox" checked={restart} disabled={Boolean(running)} onChange={e => setRestart(e.target.checked)}/> {overwriteNote}</label>
       </div>
     </details>
     <div className="flex flex-wrap gap-2">
-      <Button disabled={Boolean(blocked)} onClick={startStage}>{restart ? 'Перезапустить' : done > 0 && total > done ? 'Продолжить' : 'Запустить'}</Button>
+      <Button disabled={Boolean(blocked)} onClick={startStage}>{restart ? 'Перезапустить' : resumeId || (done > 0 && total > done) ? 'Продолжить' : 'Запустить'}</Button>
       {running && <Button variant="outline" disabled={stop.busy} onClick={() => void stop.run(async signal => {
         await bookPost(bookEndpoint(bookId, 'stop-stage', lang), { lang, stage }, signal);
         return 'Остановка запрошена. Текущие вызовы завершатся.';

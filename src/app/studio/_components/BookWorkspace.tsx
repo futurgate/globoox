@@ -50,7 +50,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
   const [modelError, setModelError] = useState('');
   const [modelRetry, setModelRetry] = useState(0);
   const [recipe, setRecipe] = useState<RecipeSettings | null>(null);
-  const [estimateModel, setEstimateModel] = useState('');
+  const [estimateModel, setEstimateModel] = useState<string | null>(null);
   const source = (book.sourceLanguage || 'RU').toUpperCase();
   const available = targets[source] || [];
   const target = lang || available[0] || '';
@@ -90,11 +90,11 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         {section === '' && <RecipeEditor key={[ownerId,book.id,target].join('/')} ownerId={ownerId} admin={isAdmin} models={models}
           locator={{ scope: 'book', scopeId: book.id, sourceLang: source, targetLang: target }} onResolved={setRecipe}/>}
         {section === '' && (isAdmin ? <>
-          <Estimate bookId={book.id} lang={target} model={estimateModel || recipe?.effective.translateModel}/>
+          <Estimate bookId={book.id} lang={target} model={estimateModel}/>
           <StageTemplateLinks bookId={book.id} lang={target} sourceLang={source}/>
           <section className="pt-stack"><h2>Этапы перевода</h2>
             {(['glossary','translate','revise','reader-check'] as const).map(stage => <StageCard key={stage} stage={stage} models={models} inheritedModel={stage === 'glossary' ? recipe?.effective.glossaryModel : stage === 'translate' ? recipe?.effective.translateModel : undefined}
-              onModelChange={stage === 'translate' ? setEstimateModel : undefined} bookId={book.id} lang={target}/>)}
+              books={books} onEstimateModel={stage === 'translate' ? setEstimateModel : undefined} bookId={book.id} lang={target}/>)}
           </section>
         </> : <>
           <AuthorProgress bookId={book.id} lang={target}/>

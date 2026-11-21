@@ -14,14 +14,14 @@ export function Planned({ title, description }: { title: string; description: st
 }
 const dollars = (v: number | null) => v == null ? 'Тариф не указан' : new Intl.NumberFormat('ru', { style:'currency', currency:'USD', maximumFractionDigits:4 }).format(v);
 
-export function Estimate({ bookId, lang, model }: {bookId: string; lang: string; model?: string}) {
+export function Estimate({ bookId, lang, model }: {bookId: string; lang: string; model: string | null}) {
   const [show, setShow] = useState(false);
   const [version, setVersion] = useState(0);
-  const result = useBookData<BookTranslationEstimate>(show ? bookEndpoint(bookId, 'translation-estimate', lang) + (model ? '&model=' + encodeURIComponent(model) : '') : null, version);
+  const result = useBookData<BookTranslationEstimate>(show && model ? bookEndpoint(bookId, 'translation-estimate', lang) + '&model=' + encodeURIComponent(model) : null, version);
   const estimate = result?.data?.byLanguage.find(l => l.lang === lang);
   return <Card className="p-5 gap-3"><h3>Оценка перевода текста</h3>
-    <p className="pt-muted">По оставшимся блокам книги и тарифу модели{model ? ' ' + model : ' по умолчанию'}.</p>
-    <Button variant="outline" disabled={show && !result} onClick={() => { setShow(true); setVersion(v => v + 1); }}>{show && !result ? 'Расчёт…' : 'Рассчитать'}</Button>
+    <p className="pt-muted">{model ? 'По оставшимся блокам книги и тарифу модели ' + model + '.' : 'Оценка доступна после загрузки параметров перевода.'}</p>
+    <Button variant="outline" disabled={!model || (show && !result)} onClick={() => { setShow(true); setVersion(v => v + 1); }}>{model && show && !result ? 'Расчёт…' : 'Рассчитать'}</Button>
     <ActionFeedback error={result?.error}/>
     {result?.data && <p>{estimate ? `${dollars(estimate.cost.totalUsd)} · осталось блоков: ${estimate.blocksRemaining} · модель ${result.data.model}` : 'Для этого направления оценка отсутствует.'}</p>}
   </Card>;

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { runsEndpoint, type RecipeSource, recipeSourceNames, type StudioRun } from '@/lib/studioRecipe';
+import { runEndpoint, runsEndpoint, type FrozenRecipe, recipeSourceNames, type StudioRun } from '@/lib/studioRecipe';
 import { useBookData } from './bookRequests';
 
 interface StageSpend {
@@ -12,11 +12,6 @@ interface StageSpend {
   complete: boolean; models: string[];
 }
 interface HistoryRow extends StudioRun { costUsd: number | null; spend?: StageSpend[]; usageComplete: boolean }
-interface FrozenConfig {
-  units: string; wishes: string; recipeId: string;
-  glossary: { model:string; prompt:string; template:string }; translate: { model:string; prompt:string; template:string };
-  sources: Partial<Record<'translateModel' | 'glossaryModel', RecipeSource>>;
-}
 const stageName = { glossary:'Глоссарий', translate:'Перевод текста', series:'Перевод в серии' };
 const stateName = { done:'Завершён', running:'Выполняется', error:'Ошибка', stopped:'Остановлен' };
 const formatCost = new Intl.NumberFormat('ru', { style:'currency', currency:'USD', maximumFractionDigits:5 });
@@ -31,8 +26,8 @@ function statusOf(run: StudioRun) {
 }
 
 function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
-  const url = '/api/studio/recipe-run?' + new URLSearchParams({ bookId:run.bookId, targetLang:lang, runId:run.id });
-  const result = useBookData<{ config: FrozenConfig }>(url);
+  const url = runEndpoint(run.bookId, lang, run.id);
+  const result = useBookData<{ config: FrozenRecipe }>(url);
   const config = result?.data?.config;
   return <div className="grid gap-2 rounded-md bg-[var(--app-elevated-bg)] p-3">
     {result?.error && <p role="alert">{result.error}</p>}
