@@ -1,0 +1,94 @@
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { runsEndpoint, type RecipeSource, recipeSourceNames, type StudioRun } from '@/lib/studioRecipe';
+import { useBookData } from './bookRequests';
+
+interface StageSpend {
+  stage: 'translate' | 'glossary'; attempts: number; calls: number; costUsd: number | null;
+  tokensIn: number | null; tokensOut: number | null; cachedTokens: number | null; reasoningTokens: number | null;
+  complete: boolean; models: string[];
+}
+interface HistoryRow extends StudioRun { costUsd: number | null; spend?: StageSpend[]; usageComplete: boolean }
+interface FrozenConfig {
+  units: string; wishes: string; recipeId: string;
+  glossary: { model:string; prompt:string; template:string }; translate: { model:string; prompt:string; template:string };
+  sources: Partial<Record<'translateModel' | 'glossaryModel', RecipeSource>>;
+}
+const stageName = { glossary:'Глоссарий', translate:'Перевод текста', series:'Перевод в серии' };
+const stateName = { done:'Завершён', running:'Выполняется', error:'Ошибка', stopped:'Остановлен' };
+const formatCost = new Intl.NumberFormat('ru', { style:'currency', currency:'USD', maximumFractionDigits:5 });
+const formatCount = new Intl.NumberFormat('ru');
+function count(value: number | null) { return value == null ? '—' : formatCount.format(value); }
+function statusOf(run: StudioRun) {
+  const stages = Object.values(run.stages);
+  if (!stages.length) return 'В очереди';
+  const unfinished = stages.find(s => s.status === 'running') ?? stages.find(s => s.status === 'error' || s.status === 'stopped');
+  if (unfinished) return stateName[unfinished.status];
+  return run.operation === 'series' && !run.stages.translate ? 'Ожидает перевода' : 'Завершён';
+}
+
+function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
+  const url = '/api/studio/recipe-run?' + new URLSearchParams({ bookId:run.bookId, targetLang:lang, runId:run.id });
+  const result = useBookData<{ config: FrozenConfig }>(url);
+  const config = result?.data?.config;
+  return <div className="grid gap-2 rounded-md bg-[var(--app-elevated-bg)] p-3">
+    {result?.error && <p role="alert">{result.error}</p>}
+    {!result && <p role="status">Загружаем параметры запуска…</p>}
+    {config && <>
+      <p><strong>Рецепт</strong> · {config.recipeId}</p>
+      {config.wishes && <p><strong>Пожелания</strong> · {config.wishes}</p>}
+      <p><strong>Единицы</strong> · {{ keep:'Как в оригинале', us:'Американские', metric:'Метрические' }[config.units] || config.units}</p>
+      {(['glossary','translate'] as const).filter(stage => run.operation === 'series' || run.operation === stage).map(stage => {
+        const frozen = config[stage];
+        const spent = run.spend?.find(row => row.stage === stage);
+        const source = config.sources[stage === 'glossary' ? 'glossaryModel' : 'translateModel'];
+        return <div className="grid gap-1 border-t py-2" key={stage}>
+          <h4 className="font-medium">{stageName[stage]}</h4>
+          <p>Выбрана модель {frozen.model}{source ? ' · ' + recipeSourceNames[source] : ''}</p>
+          {spent && <p>Попыток {spent.attempts} · учтено вызовов {spent.calls} · модели {spent.models.join(', ') || '—'} · вход из кэша {count(spent.cachedTokens)} · токены рассуждений {count(spent.reasoningTokens)}</p>}
+          <details><summary>Шаблон на момент старта · {frozen.template}</summary>
+            <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-words text-xs">{frozen.prompt}</pre>
+          </details>
+        </div>;
+      })}
+    </>}
+  </div>;
+}
+
+export function RecipeRuns({ bookId, lang, version }: { bookId: string; lang: string; version: number }) {
+  const [open, setOpen] = useState('');
+  const result = useBookData<{ runs: HistoryRow[]; limit: number }>(runsEndpoint(bookId, lang), version);
+  return <Card className="p-5 gap-3">
+    <h3>Запуски глоссария и перевода</h3>
+    {result?.error && <p role="alert">{result.error}</p>}
+    {!result && <p role="status">Загружаем историю…</p>}
+    {result?.data && !result.data.runs.length && <p>Для этого перевода ещё нет запусков с сохранёнными параметрами.</p>}
+    {!!result?.data?.runs.length && <div className="overflow-x-auto"><table className="w-full text-left text-sm tabular-nums [&_td]:p-2 [&_th]:p-2">
+      <caption className="text-left pt-muted">Последние {result.data.limit} запусков · {lang}</caption>
+      <thead><tr>{['Запуск','Состояние','Вход','Выход','Расход, USD',''].map((title,i) => <th key={i} scope="col">{title}</th>)}</tr></thead>
+      <tbody>{result.data.runs.map(run => {
+        const details = open === run.id;
+        const sum = (key: 'tokensIn' | 'tokensOut') => {
+          const measured = (run.spend ?? []).filter(s => s[key] !== null);
+          return measured.length ? measured.reduce((v,s) => v + s[key]!,0) : null;
+        };
+        return <RunRows key={run.id} run={run} lang={lang} details={details} tokensIn={sum('tokensIn')} tokensOut={sum('tokensOut')}
+          toggle={() => setOpen(details ? '' : run.id)}/>;
+      })}</tbody>
+    </table></div>}
+  </Card>;
+}
+
+function RunRows({ run, lang, details, toggle, tokensIn, tokensOut }: {
+  run: HistoryRow; lang: string; details: boolean; toggle: () => void; tokensIn: number | null; tokensOut: number | null;
+}) {
+  return <><tr className="border-t align-top"><td>{stageName[run.operation]}<small className="block pt-muted">{new Date(run.createdAt).toLocaleString('ru')}</small></td>
+    <td>{statusOf(run)}</td><td>{count(tokensIn)}</td><td>{count(tokensOut)}</td>
+    <td>{run.costUsd == null ? '—' : formatCost.format(run.costUsd)}
+      {!run.usageComplete && (run.spend?.length ?? 0) > 0 && <small className="block pt-muted">Данные неполные</small>}</td>
+    <td><Button size="sm" variant="ghost" onClick={toggle} aria-expanded={details}>{details ? 'Свернуть' : 'Подробнее'}</Button></td></tr>
+    {details && <tr><td colSpan={6}><RunDetails run={run} lang={lang}/></td></tr>}</>;
+}

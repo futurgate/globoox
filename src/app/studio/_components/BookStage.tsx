@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { resumableStage, runsEndpoint, type StudioRun } from '@/lib/studioRecipe';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -51,9 +52,9 @@ export function ActionFeedback({ error, notice }: { error?: string; notice?: str
   return notice ? <p className="pt-muted" role="status">{notice}</p> : null;
 }
 
-export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange }: {
+export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange, inheritedModel, onModelChange }: {
   stage: StageName; bookId: string; lang: string; models: readonly string[]; sourceBookId?: string;
-  onChange?: () => void;
+  onChange?: () => void; inheritedModel?: string; onModelChange?: (model: string) => void;
 }) {
   const [model, setModel] = useState('');
   const [withGlossary, setWithGlossary] = useState(false);
@@ -61,6 +62,10 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange 
   const [tick, setTick] = useState(0);
   const start = useBookAction(), stop = useBookAction();
   const {active, report} = useContext(ExecutionContext)!;
+  const tracked = stage === 'glossary' || stage === 'translate';
+  const requestId = useRef<{ key: string; id: string } | null>(null);
+  const runHistory = useBookData<{ runs: StudioRun[] }>(tracked ? runsEndpoint(bookId, lang) : null, start.version + tick);
+  const resumeId = tracked && !restart && runHistory?.data ? resumableStage(runHistory.data.runs, stage) : undefined;
   const version = tick + start.version + stop.version;
   const url = bookEndpoint(bookId, stages[stage].api, lang);
   const state = useBookData<Status>(url, version, start.busy || statusActive);
@@ -75,14 +80,17 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange 
     return () => report(stage, false);
   }, [report, stage, running]);
   const failed = data?.error || data?.chapters?.find(c => c.error)?.error;
-  const blocked = !data || running || otherRunning || (stage === 'glossary' && data.frozen);
+  const blocked = !data || (tracked && !runHistory?.data) || running || otherRunning || (stage === 'glossary' && data.frozen);
   const overwriteNote = stage === 'translate' ? 'Заменить переведённые блоки и сбросить связанные правки'
     : stage === 'glossary' ? 'Пересобрать словарь с первой главы' : stage === 'revise' ? 'Пересчитать уже отредактированные блоки' : 'Заново проверить главы';
   const startStage = () => {
     if (blocked) return;
     if (restart && !window.confirm(`${overwriteNote}? Это действие применяется к выбранному переводу.`)) return;
     void start.run(async signal => {
+      const key = JSON.stringify([bookId, lang, stage, model, restart, withGlossary, sourceBookId]);
+      if (requestId.current?.key !== key) requestId.current = { key, id: crypto.randomUUID() };
       const payload = {
+        ...(tracked ? { studioRun: resumeId ? { runId: resumeId } : { requestId: requestId.current.id } } : {}),
         lang, ...(model ? { model } : {}),
         ...(stage === 'translate' ? { mode: 'fiction', useGlossary: withGlossary, overwrite: restart } : {}),
         ...(stage === 'glossary' ? { restart, ...(sourceBookId ? { seedFromBookId: sourceBookId } : {}) } : {}),
@@ -91,7 +99,9 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange 
       };
       try {
         const response = await bookPost(url, payload, signal);
-        return await consumeStage(response);
+        const result = await consumeStage(response);
+        requestId.current = null;
+        return result;
       } finally {
         if (!signal.aborted) { setRestart(false); onChange?.(); }
       }
@@ -106,11 +116,12 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, onChange 
     {otherRunning && <p className="pt-muted">Дождитесь завершения текущего этапа книги.</p>}
     {data?.frozen && <p>Словарь заморожен. Разморозьте его во вкладке «Глоссарий» для новой генерации.</p>}
     {failed && <p className="pt-callout">{failed}</p>}
-    <ActionFeedback error={state?.error || start.error || stop.error} notice={start.notice || stop.notice}/>
+    <ActionFeedback error={state?.error || runHistory?.error || start.error || stop.error} notice={start.notice || stop.notice}/>
     <details><summary className="text-sm">Параметры запуска</summary>
       <div className="grid gap-3 pt-3">
-        <IOSSettingsRow label="Модель" value={model} disabled={Boolean(running)} onChange={setModel}
-          options={[{ id: '', label: 'По умолчанию' }, ...models.map(id => ({ id, label: id }))]} />
+        <IOSSettingsRow label="Модель" value={model} disabled={Boolean(running || resumeId)} onChange={v => { setModel(v); onModelChange?.(v); }}
+          options={[{ id: '', label: inheritedModel ? 'По рецепту · ' + inheritedModel : 'По рецепту' }, ...models.map(id => ({ id, label: id }))]} />
+        {resumeId && <p className="pt-muted">Продолжение использует параметры, сохранённые при старте.</p>}
         {stage === 'translate' && <label><input type="checkbox" checked={withGlossary} disabled={Boolean(running)} onChange={e => setWithGlossary(e.target.checked)}/> Использовать готовый глоссарий тома</label>}
         {stage === 'glossary' && sourceBookId && <p className="pt-muted">Для новой генерации будет использован словарь выбранной книги.</p>}
         <label><input type="checkbox" checked={restart} disabled={Boolean(running)} onChange={e => setRestart(e.target.checked)}/> {overwriteNote}</label>

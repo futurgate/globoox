@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import type { BookStagePrompt } from '@/lib/api';
 import { listPersonalPrompts, type PersonalPrompt } from '@/lib/translationPromptVariants';
+import { recipeEndpoint, type RecipeSettings } from '@/lib/studioRecipe';
 import { templateLink } from '@/lib/translationWorkspacePath';
 import { bookEndpoint, useBookData } from './bookRequests';
 
@@ -17,12 +18,13 @@ const stageLabels: Record<TemplateLink['stage'], string> = {
   correction: 'Исправление замечаний',
 };
 
-export function StageTemplateLinks({ bookId, lang, glossaryOnly = false }: {
-  bookId: string; lang: string; glossaryOnly?: boolean;
+export function StageTemplateLinks({ bookId, lang, sourceLang, glossaryOnly = false }: {
+  bookId: string; lang: string; sourceLang: string; glossaryOnly?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [version, setVersion] = useState(0);
   const result = useBookData<TemplateLink[]>(open ? bookEndpoint(bookId, 'stage-prompts', lang) : null, version);
+  const recipe = useBookData<RecipeSettings>(open ? recipeEndpoint({scope:'book', scopeId:bookId, sourceLang, targetLang:lang}) : null, version);
   const [personal, setPersonal] = useState<PersonalPrompt[] | null>(null);
   const [personalError, setPersonalError] = useState(false);
   useEffect(() => {
@@ -43,10 +45,13 @@ export function StageTemplateLinks({ bookId, lang, glossaryOnly = false }: {
       {result?.error && <div><p role="alert">{result.error}</p><Button variant="ghost" onClick={() => setVersion(n => n + 1)}>Повторить</Button></div>}
       {stages?.length === 0 && <p>У сервера нет шаблонов для этого направления.</p>}
       {stages?.map(({ stage, name }) => {
-        const active = personal?.find(item => item.template === name && item.active && !item.deletedAt);
+        const tracked = stage === 'glossary' || stage === 'translate';
+        const promptId = tracked ? recipe?.data?.effective[stage === 'glossary' ? 'glossaryPromptId' : 'translatePromptId'] : undefined;
+        const active = personal?.find(item => item.template === name && !item.deletedAt && (tracked ? item.id === promptId : item.active));
+        const waiting = tracked && !recipe?.data;
         return <div key={name} className="flex flex-wrap items-center justify-between gap-2 border-t py-2">
           <div><Link className="font-medium underline" href={templateLink(name,active?.id)}>{stageLabels[stage] || name}</Link>
-            <small className="block pt-muted">{personalError ? 'Открыть базовый шаблон' : !personal ? 'Проверяем личный вариант…' : active?.label || 'Базовый шаблон'}</small>
+            <small className="block pt-muted">{personalError || recipe?.error ? 'Открыть базовый шаблон' : !personal || waiting ? 'Проверяем выбор для книги…' : active?.label || 'Базовый шаблон'}</small>
           </div>
           {personal && <Button asChild size="sm" variant="outline"><Link href={templateLink(name, 'new')} aria-label={'Добавить вариант · ' + (stageLabels[stage] || name)}>Добавить вариант</Link></Button>}
         </div>;

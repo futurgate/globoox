@@ -14,6 +14,7 @@ import { listServerPrompts, type ServerPrompt } from '@/lib/api';
 import { createPersonalPrompt, listPersonalPrompts, PersonalPromptError, readLegacyPrompts, updatePersonalPrompt, type LegacyPrompt, type PersonalPrompt } from '@/lib/translationPromptVariants';
 import { templateLink, workspaceBase } from '@/lib/translationWorkspacePath';
 import SampleRun from './SampleRun';
+import { AccountRecipes } from './RecipeSettings';
 
 const labels = { glossary: 'Глоссарий', translate: 'Перевод', revise: 'Стилистическая редактура', 'reader-check': 'Читательская проверка' };
 type Group = keyof typeof labels;
@@ -82,6 +83,7 @@ export default function WorkspaceSettings({ name, ownerId }: { name?: string; ow
   return <div className="pt-stack">
     {(catalogError || personalError) && <div className="grid justify-items-start gap-2" role="alert"><p>{catalogError || personalError}</p>{retry}</div>}
     {!personalError && !variants && <p role="status">Загружаем личные варианты…</p>}
+    {!name && <AccountRecipes ownerId={ownerId} variants={variants ?? undefined}/>}
     {panel}
   </div>;
 }

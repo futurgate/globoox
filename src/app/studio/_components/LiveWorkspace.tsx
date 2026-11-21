@@ -1,7 +1,7 @@
 'use client';
 
 import { studioFetch } from '@/lib/studioFetch';
-import { clearBrowserAccessTokenCache, forgetLegacyBrowserSession } from '@/lib/api';
+import { clearBrowserAccessTokenCache, forgetLegacyBrowserSession, getBrowserAccessToken, renewLegacyReaderSession } from '@/lib/api';
 
 import Link from 'next/link';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
@@ -24,12 +24,12 @@ const sectionNames: Record<string, string> = {
   projects: 'Мои проекты', decisions: 'Требуют решения', queue: 'Очередь', settings: 'Настройки перевода',
 };
 
-function WorkspaceLogin() {
+function WorkspaceLogin({ reauth = false }: { reauth?: boolean }) {
   const path = usePathname();
   const query = useSearchParams().toString();
   const next = path + (query ? '?' + query : '');
   return <Button asChild className="mt-5">
-    <Link href={'/auth?next=' + encodeURIComponent(next)}>Войти в Globoox</Link>
+    <Link href={'/auth?next=' + encodeURIComponent(next) + (reauth ? '&reauth=1' : '')}>Войти в Globoox</Link>
   </Button>;
 }
 
@@ -50,7 +50,13 @@ export default function LiveWorkspace() {
     setError('');
     setReauth(false);
     try {
-      const response = await studioFetch('/api/translation-workspace', { cache: 'no-store', signal: controller.signal }, sessionToken);
+      const token = sessionToken || await getBrowserAccessToken();
+      const options = { cache: 'no-store', signal: controller.signal } as const;
+      let response = await studioFetch('/api/translation-workspace', options, token ?? undefined);
+      if (response.status === 401 && !sdkAccount.current && !controller.signal.aborted) {
+        const renewed = await renewLegacyReaderSession(token, controller.signal);
+        if (renewed && !controller.signal.aborted) response = await studioFetch('/api/translation-workspace', options, renewed);
+      }
       if (controller.signal.aborted) return;
       if (response.status === 401) {
         account.current = null;
@@ -122,9 +128,11 @@ export default function LiveWorkspace() {
   if (!data) {
     return <main className="pt-index" aria-busy={!guest && !error}>
       <h1>Кабинет перевода</h1>
-      {guest ? <><p className="pt-lead">Войдите, чтобы открыть свои книги и переводы.</p>
+      {guest ? <><p className="pt-lead">{window.location.hostname === 'dev.globoox.co'
+        ? 'Войдите в dev.globoox.co, чтобы открыть свои книги. У тестового кабинета отдельный сеанс входа.'
+        : 'Войдите, чтобы открыть свои книги и переводы.'}</p>
         <WorkspaceLogin /></>
-        : error ? <><p className="pt-lead" role="alert">{error}</p><Button variant="outline" className="mt-5" onClick={() => void refresh()}>Попробовать снова</Button>{reauth && <WorkspaceLogin />}</>
+        : error ? <><p className="pt-lead" role="alert">{error}</p><Button variant="outline" className="mt-5" onClick={() => void refresh()}>Попробовать снова</Button>{reauth && <WorkspaceLogin reauth />}</>
         : <p className="pt-lead" role="status">Загружаем ваши проекты…</p>}
     </main>;
   }

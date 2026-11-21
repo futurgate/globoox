@@ -66,7 +66,7 @@ export default function ProjectLibrary({ data, view, seriesId, projectId, refres
   if (view === 'series') {
     const series = data.series.find((entry) => entry.id === seriesId);
     if (!series) return <p role="status">Серия недоступна в вашем кабинете.</p>;
-    return <SeriesWorkspace key={data.userId + series.id} series={series} role={data.role} books={data.books.filter((book) => book.seriesId === series.id)} />;
+    return <SeriesWorkspace key={data.userId + series.id} series={series} ownerId={data.userId} role={data.role} books={data.books.filter((book) => book.seriesId === series.id)} />;
   }
   const query = search.trim().toLocaleLowerCase('ru');
   const matches = (value: string | null) => (value ?? '').toLocaleLowerCase('ru').includes(query);

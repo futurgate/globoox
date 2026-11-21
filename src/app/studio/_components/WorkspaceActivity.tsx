@@ -98,7 +98,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
       <IOSSettingsRow label="Серия" value={seriesId} onChange={setSeriesId} options={[
         {id: '', label: 'Выбрать серию'}, ...workspace.series.map(s => ({id: s.id, label: s.name || workspace.books.find(b => b.seriesId === s.id)?.title || 'Серия'})),
       ]} />
-      {series && <SeriesWorkspace key={series.id} series={series} role={workspace.role} books={workspace.books.filter(b => b.seriesId === series.id)} />}
+      {series && <SeriesWorkspace key={series.id} series={series} ownerId={workspace.userId} role={workspace.role} books={workspace.books.filter(b => b.seriesId === series.id)} />}
     </Card>}
   </div>;
 }

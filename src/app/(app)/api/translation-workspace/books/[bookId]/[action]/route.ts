@@ -12,12 +12,12 @@ const reads = new Set([
   'revision-diff', 'revise-cost-runs', 'fiction-costs', 'fiction-cost-runs', 'review-block', 'stage-prompts',
 ])
 const writeFields = new Map<string, string[]>([
-  ['generate-glossary', ['lang', 'restart', 'force', 'model', 'seedFromBookId', 'seedStarterGenre']],
+  ['generate-glossary', ['lang', 'restart', 'force', 'model', 'seedFromBookId', 'seedStarterGenre', 'studioRun']],
   ['set-glossary', ['lang', 'glossary', 'force']],
   ['copy-glossary', ['lang', 'sourceBookId', 'force']],
   ['glossary-freeze', ['lang', 'frozen']],
   ['stop-stage', ['lang', 'stage']],
-  ['translate-full-book', ['lang', 'mode', 'useGlossary', 'overwrite', 'model']],
+  ['translate-full-book', ['lang', 'mode', 'useGlossary', 'overwrite', 'model', 'studioRun']],
   ['revise-full-book', ['lang', 'useGlossary', 'overwrite', 'model']],
   ['revise-apply', ['lang', 'blockId', 'action', 'editedText']],
   ['reader-check', ['lang', 'variant', 'model', 'restart']],
