@@ -1,5 +1,7 @@
 'use client';
 
+import { studioFetch } from '@/lib/studioFetch';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ChevronRight, Play, RefreshCw } from 'lucide-react';
@@ -54,7 +56,7 @@ export default function SeriesWorkspace({ series, role, books }: {
     inFlight.current = request;
     setFetching(true);
     try {
-      const response = await fetch(endpoint + '/detail', { signal: request.signal, cache: 'no-store' });
+      const response = await studioFetch(endpoint + '/detail', { signal: request.signal, cache: 'no-store' });
       const value = await readResponse(response) as SeriesDetail;
       if (!value || value.id !== series.id || !Array.isArray(value.volumes)) throw new Error('Сервер не подтвердил данные серии.');
       if (!request.signal.aborted) { setDetail(value); setError(''); }
@@ -89,7 +91,7 @@ export default function SeriesWorkspace({ series, role, books }: {
     setMessage('');
     try {
       const body = action === 'run' ? (model.trim() ? { model: model.trim() } : {}) : { bookId, step, lang };
-      const response = await fetch(endpoint + '/' + action, {
+      const response = await studioFetch(endpoint + '/' + action, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: request.signal,
       });
       const result = await readResponse(response);
@@ -109,6 +111,7 @@ export default function SeriesWorkspace({ series, role, books }: {
   }
 
   const sorted = [...books].sort((a, b) => (a.volumeNumber ?? Infinity) - (b.volumeNumber ?? Infinity) || (a.title ?? '').localeCompare(b.title ?? '', 'ru'));
+  const hasGaps = sorted.some((book, index) => book.volumeNumber != null && book.volumeNumber !== index + 1);
   const volumes = new Map(detail?.volumes.map((v) => [v.bookId, v]) ?? []);
   const recipe = detail?.recipe;
   const allReady = sorted.length > 0 && sorted.every((book) => (volumes.get(book.id)?.processingStatus ?? book.processingStatus) === 'ready');
@@ -137,6 +140,7 @@ export default function SeriesWorkspace({ series, role, books }: {
             <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void operate('run'); }}>
               <label className="block space-y-1 text-sm font-medium">Модель для этого запуска<Input value={model} disabled={working} placeholder={recipe.model} autoComplete="off" onChange={(event) => setModel(event.target.value)} /></label>
               <p className="text-sm text-[var(--app-text-muted)]">Сервер поставит первый том в очередь и начнёт обработку остальных томов по рецепту. Вызовы модели учитываются в расходах.</p>
+              {hasGaps && <p role="status" className="text-sm">В нумерации есть пропуски. В запуск войдут только перечисленные тома, в указанном порядке.</p>}
               <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!allReady || working || running}><Play />Подтвердить запуск</Button>
                 <Button type="button" variant="outline" disabled={working} onClick={() => setShowRun(false)}>Отмена</Button></div>
             </form>

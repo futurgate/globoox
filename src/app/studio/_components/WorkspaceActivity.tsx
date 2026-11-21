@@ -1,5 +1,7 @@
 'use client';
 
+import { studioFetch } from '@/lib/studioFetch';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -35,7 +37,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
     const next = new AbortController();
     controller.current = next;
     try {
-      const response = await fetch('/api/translation-workspace/activity', { cache: 'no-store', signal: next.signal });
+      const response = await studioFetch('/api/translation-workspace/activity', { cache: 'no-store', signal: next.signal });
       if (!response.ok) throw new Error('Не удалось загрузить события (' + response.status + ').');
       const activity: Activity = await response.json();
       if (!next.signal.aborted) { setData(activity); setError(''); }
@@ -53,7 +55,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
     setBusy(item.id);
     setError('');
     try {
-      const response = await fetch('/api/translation-workspace/books/' + encodeURIComponent(item.bookId) + '/resolve-attention', {
+      const response = await studioFetch('/api/translation-workspace/books/' + encodeURIComponent(item.bookId) + '/resolve-attention', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: item.id }),
       });
       if (!response.ok) throw new Error('Не удалось закрыть вопрос (' + response.status + ').');

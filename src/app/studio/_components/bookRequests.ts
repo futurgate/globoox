@@ -1,5 +1,7 @@
 'use client';
 
+import { studioFetch } from '@/lib/studioFetch';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function bookEndpoint(bookId: string, action: string, lang: string) {
@@ -14,12 +16,12 @@ async function checkedResponse(response: Response) {
 }
 
 export async function bookGet<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const r = await checkedResponse(await fetch(url, { cache: 'no-store', signal }));
+  const r = await checkedResponse(await studioFetch(url, { cache: 'no-store', signal }));
   return r.json();
 }
 
 export async function downloadBookFile(url: string, filename: string, signal: AbortSignal) {
-  const response = await checkedResponse(await fetch(url, { cache: 'no-store', signal }));
+  const response = await checkedResponse(await studioFetch(url, { cache: 'no-store', signal }));
   const mime = response.headers.get('content-type') || '';
   if (!mime.includes('application/epub+zip') && !mime.includes('application/octet-stream')) {
     throw new Error('Сервер не вернул файл EPUB.');
@@ -37,7 +39,7 @@ export async function downloadBookFile(url: string, filename: string, signal: Ab
 }
 
 export async function bookPost(url: string, body: object, signal?: AbortSignal) {
-  return checkedResponse(await fetch(url, {
+  return checkedResponse(await studioFetch(url, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body), cache: 'no-store', signal,
   }));

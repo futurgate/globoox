@@ -6,6 +6,8 @@ export interface WorkspaceBook {
   processingStatus: string | null
   seriesId: string | null
   volumeNumber: number | null
+  projectId?: string | null
+  projectArchived?: boolean
 }
 
 export interface WorkspaceSeries {
@@ -16,11 +18,20 @@ export interface WorkspaceSeries {
   ownerVerified: boolean
 }
 
+export interface WorkspaceProject {
+  id: string
+  name: string
+  sourceBookId?: string | null
+  sourceSeriesId?: string | null
+}
+
 export interface WorkspaceData {
   userId: string
   role: 'admin' | 'author'
   books: WorkspaceBook[]
   series: WorkspaceSeries[]
+  /** Missing if the database has not received the Studio projects migration yet. */
+  projects?: WorkspaceProject[]
 }
 
 export interface WorkspaceAttention {

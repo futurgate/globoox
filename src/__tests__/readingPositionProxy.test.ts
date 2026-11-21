@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-const { getSession } = vi.hoisted(() => ({ getSession: vi.fn() }))
-vi.mock('@/lib/supabase/server', () => ({ createClient: async () => ({ auth: { getSession } }) }))
+const { getSession, getUser } = vi.hoisted(() => ({ getSession: vi.fn(), getUser: vi.fn() }))
+vi.mock('@/lib/supabase/server', () => ({ createClient: async () => ({ auth: { getSession, getUser } }) }))
 vi.mock('@sentry/nextjs', () => ({ addBreadcrumb: vi.fn(), captureException: vi.fn() }))
+import { requireBackendProxy } from '../app/(app)/api/_proxy'
 import { GET, PUT } from '../app/(app)/api/books/[id]/reading-position/route'
 
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); vi.clearAllMocks() })
@@ -41,6 +42,26 @@ describe('reading position account binding', () => {
     expect(getSession).toHaveBeenCalledTimes(1)
     expect(fetcher.mock.calls[0][1].headers.Authorization).toBe('Bearer session-token')
     expect(fetcher.mock.calls[0][1].body).toBe('{"block_position":5}')
+  })
+
+  it('verifies browser-only auth for an API call and forwards the credential that passed verification', async () => {
+    const f = setup(null)
+    const req = new Request('https://app.example/api/books/process', { headers: { Authorization: 'Bearer fixture-token' } })
+    getUser.mockResolvedValue({ data: { user: null }, error: { status: 401 } })
+    expect((await requireBackendProxy(req)).status).toBe(401)
+    expect(f).not.toHaveBeenCalled()
+    getUser.mockResolvedValue({ data: { user: { id: 'account' } }, error: null })
+    expect((await requireBackendProxy(req)).status).toBe(200)
+    expect(getUser).toHaveBeenCalledWith('fixture-token')
+    expect(f.mock.calls[0][1].headers.Authorization).toBe('Bearer fixture-token')
+  })
+
+  it('pins an already verified workspace identity while continuing to reject stale reading intents', async () => {
+    const f = setup(null)
+    expect((await requireBackendProxy(request('GET'), 'expected', { userId: 'wrong', token: 'fixture-token' })).status).toBe(401)
+    expect(f).not.toHaveBeenCalled()
+    expect((await requireBackendProxy(request('GET'), 'expected', { userId: 'expected', token: 'fixture-token' })).status).toBe(200)
+    expect(f.mock.calls[0][1].headers.Authorization).toBe('Bearer fixture-token')
   })
 
   it('preserves existing requests without the optional scope header', async () => {

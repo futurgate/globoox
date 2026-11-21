@@ -16,7 +16,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useSubscription } from '@/lib/hooks/useSubscription';
 import { getSubscriptionView } from '@/lib/subscription';
-import { getBillingPortal, getTranslationUsage, type TranslationLimitResponse } from '@/lib/api';
+import { forgetLegacyBrowserSession, getBillingPortal, getTranslationUsage, type TranslationLimitResponse } from '@/lib/api';
 import { trackUpgradeClicked } from '@/lib/posthog';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { APP_THEME_MODE_OPTIONS, APP_THEME_PALETTE_OPTIONS } from '@/lib/theme-options';
@@ -76,6 +76,7 @@ export default function SettingsPage() {
         if (!supabaseRef.current) return;
         setSigningOut(true);
         await supabaseRef.current.auth.signOut();
+        forgetLegacyBrowserSession();
         router.push('/auth');
     };
 

@@ -220,6 +220,7 @@ const GET_CACHE_TTL_MS = 2000
 const inflightGetRequests = new Map<string, Promise<unknown>>()
 const recentGetResponses = new Map<string, { expiresAt: number; value: unknown }>()
 const inflightChromeTranslationRequests = new Map<string, Promise<unknown>>()
+let browserTokenGeneration = 0
 let browserTokenCache: { token: string | null; expiresAt: number } | null = null
 const ACCESS_TOKEN_STORAGE_KEY = 'globoox:access_token'
 let lastBooksAuthWarnAt = 0
@@ -300,39 +301,51 @@ function findAccessTokenDeep(value: unknown): string | null {
   return null
 }
 
-async function getBrowserAccessToken(): Promise<string | null> {
+export function clearBrowserAccessTokenCache() {
+  browserTokenGeneration++
+  browserTokenCache = null
+}
+
+export function forgetLegacyBrowserSession() {
+  clearBrowserAccessTokenCache()
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    if (url) window.localStorage.removeItem('sb-' + new URL(url).hostname.split('.')[0] + '-auth-token')
+  } catch {
+    // Storage can be disabled even when the signed-in cookie was available.
+  }
+}
+
+export async function getBrowserAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   const now = Date.now()
   if (browserTokenCache && browserTokenCache.expiresAt > now) return browserTokenCache.token
 
+  const generation = browserTokenGeneration
   let token: string | null = null
   try {
-    token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-    if (token) {
-      browserTokenCache = { token, expiresAt: now + 3000 }
-      return token
-    }
-
     const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { session } } = await createClient().auth.getSession()
     token = session?.access_token ?? null
-
-    // Fallback for environments where session storage shape differs.
-    if (!token) {
-      for (let i = 0; i < window.localStorage.length; i += 1) {
+  } catch {
+    // A legacy reader session can exist without a Supabase browser session.
+  }
+  if (!token) {
+    try {
+      token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+      for (let i = 0; !token && i < window.localStorage.length; i += 1) {
         const key = window.localStorage.key(i)
         if (!key || !key.includes('auth-token')) continue
         const raw = window.localStorage.getItem(key)
-        if (!raw) continue
-        token = findAccessTokenDeep(raw)
-        if (token) break
+        if (raw) token = findAccessTokenDeep(raw)
       }
+    } catch {
+      // Cookie-only sessions can still be authenticated by the same-origin API.
     }
-  } catch {
-    token = null
   }
-
+  if (generation !== browserTokenGeneration) return getBrowserAccessToken()
   browserTokenCache = { token, expiresAt: now + 3000 }
   return token
 }
@@ -1856,10 +1869,10 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
 }
 
 /** Process an already-uploaded EPUB file */
-export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string): Promise<ProcessBookResponse> {
+export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string, studioOptions?: { projectId?: string; studio?: boolean }): Promise<ProcessBookResponse> {
   return request<ProcessBookResponse>('/api/books/process', {
     method: 'POST',
-    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}) }),
+    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}), ...(studioOptions?.studio && { studio: true }), ...(studioOptions?.projectId && { project_id: studioOptions.projectId }) }),
     signal,
   })
 }
