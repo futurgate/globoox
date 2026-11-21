@@ -1,5 +1,8 @@
 'use client';
 
+import { studioFetch } from '@/lib/studioFetch';
+import { clearBrowserAccessTokenCache, forgetLegacyBrowserSession } from '@/lib/api';
+
 import Link from 'next/link';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,6 +14,7 @@ import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import { PrototypeShell, type NavItem } from '@/app/prototype/_components/PrototypeShell';
 import ProjectLibrary from './ProjectLibrary';
 import BookWorkspace from './BookWorkspace';
+import { projectPath } from './projectLinks';
 import WorkspaceActivity from './WorkspaceActivity';
 import WorkspaceSettings from './WorkspaceSettings';
 
@@ -34,26 +38,37 @@ export default function LiveWorkspace() {
   const [data, setData] = useState<WorkspaceData | null>(null);
   const [guest, setGuest] = useState(false);
   const [error, setError] = useState('');
+  const [reauth, setReauth] = useState(false);
+  const sdkAccount = useRef<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const account = useRef<string | null | undefined>(undefined);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (sessionToken?: string) => {
     request.current?.abort();
     const controller = new AbortController();
     request.current = controller;
     setError('');
+    setReauth(false);
     try {
-      const response = await fetch('/api/translation-workspace', { cache: 'no-store', signal: controller.signal });
+      const response = await studioFetch('/api/translation-workspace', { cache: 'no-store', signal: controller.signal }, sessionToken);
       if (controller.signal.aborted) return;
       if (response.status === 401) {
         account.current = null;
         setData(null);
-        setGuest(true);
+        if (sdkAccount.current) {
+          setGuest(false);
+          setReauth(true);
+          setError('Кабинету не удалось подтвердить текущий сеанс.');
+        } else setGuest(true);
         return;
       }
       if (!response.ok) throw new Error('Не удалось загрузить книги (' + response.status + ').');
       const current: WorkspaceData = await response.json();
       if (controller.signal.aborted) return;
+      if (sdkAccount.current && current.userId !== sdkAccount.current) {
+        setData(null); setReauth(true);
+        throw new Error('Аккаунт в кабинете изменился. Обновите сеанс.');
+      }
       account.current = current.userId;
       setData(current);
       setGuest(false);
@@ -69,9 +84,15 @@ export default function LiveWorkspace() {
     let initialized = false;
     const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
       const userId = session?.user.id ?? null;
+      sdkAccount.current = userId;
       const first = !initialized;
       initialized = true;
-      if (!first && event !== 'SIGNED_OUT' && account.current === userId) return;
+      if (event === 'SIGNED_OUT') forgetLegacyBrowserSession();
+      else clearBrowserAccessTokenCache();
+      if (!first && event !== 'SIGNED_OUT' && account.current === userId) {
+        if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') void refresh(session?.access_token);
+        return;
+      }
 
       account.current = userId;
       request.current?.abort();
@@ -80,9 +101,22 @@ export default function LiveWorkspace() {
       // The API authenticates the initial request against the server session.
       const loadWorkspace = event !== 'SIGNED_OUT' && (first || !!userId);
       setGuest(!loadWorkspace);
-      if (loadWorkspace) void refresh();
+      if (loadWorkspace) void refresh(session?.access_token);
     });
-    return () => { request.current?.abort(); subscription.unsubscribe(); };
+    // Reader sessions from an earlier release can change in another tab without
+    // emitting an SDK auth event. Clear the previous owner's view before revalidation.
+    const storageChanged = (event: StorageEvent) => {
+      if (event.key && event.key !== 'globoox:access_token' && !/^sb-.+-auth-token$/.test(event.key)) return;
+      clearBrowserAccessTokenCache();
+      request.current?.abort();
+      setData(null); setGuest(false); setError('');
+      void refresh();
+    };
+    window.addEventListener('storage', storageChanged);
+    return () => {
+      request.current?.abort(); subscription.unsubscribe();
+      window.removeEventListener('storage', storageChanged);
+    };
   }, [refresh]);
 
   if (!data) {
@@ -90,7 +124,7 @@ export default function LiveWorkspace() {
       <h1>Кабинет перевода</h1>
       {guest ? <><p className="pt-lead">Войдите, чтобы открыть свои книги и переводы.</p>
         <WorkspaceLogin /></>
-        : error ? <><p className="pt-lead" role="alert">{error}</p><Button variant="outline" className="mt-5" onClick={refresh}>Попробовать снова</Button></>
+        : error ? <><p className="pt-lead" role="alert">{error}</p><Button variant="outline" className="mt-5" onClick={() => void refresh()}>Попробовать снова</Button>{reauth && <WorkspaceLogin />}</>
         : <p className="pt-lead" role="status">Загружаем ваши проекты…</p>}
     </main>;
   }
@@ -112,10 +146,20 @@ export default function LiveWorkspace() {
     title = isNew ? 'Загрузка книги или серии' : projects.label;
     ancestors = isNew ? [projects] : [];
     panel = <ProjectLibrary data={data} view={isNew ? 'new' : 'projects'} refresh={refresh} />;
+  } else if (first === 'projects' && id && (parts.length === 2 || (parts.length === 3 && sub === 'upload'))) {
+    const project = data.projects?.find(item => item.id === id);
+    if (project) {
+      const upload = sub === 'upload';
+      title = upload ? 'Добавить книгу' : project.name;
+      if (upload) ancestors.push({ label: project.name, href: projectPath(id) });
+      panel = <ProjectLibrary key={id} data={data} view={upload ? 'new' : 'project'} projectId={id} refresh={refresh} />;
+    }
   } else if (first === 'series' && id && parts.length === 2) {
     const series = data.series.find(item => item.id === id);
     if (series || data.books.some(book => book.seriesId === id)) {
       title = series?.name || 'Серия';
+      const sourceProject = data.projects?.find(item => item.sourceSeriesId === id);
+      if (sourceProject) ancestors.push({ label: sourceProject.name, href: projectPath(sourceProject.id) });
       panel = <ProjectLibrary key={id} data={data} view="series" seriesId={id} refresh={refresh} />;
     }
   } else if (first === 'books' && id && (parts.length === 2 ||
@@ -124,7 +168,9 @@ export default function LiveWorkspace() {
     if (book) {
       title = book.title || 'Книга без названия';
       const series = data.series.find(item => book.seriesId === item.id);
-      if (book.seriesId) ancestors.push({ label: series?.name || 'Серия', href: base + '/series/' + book.seriesId });
+      const project = data.projects?.find(item => item.id === book.projectId);
+      if (project) ancestors.push({ label: project.name, href: projectPath(project.id) });
+      else if (book.seriesId) ancestors.push({ label: series?.name || 'Серия', href: base + '/series/' + book.seriesId });
       panel = <BookWorkspace key={[data.userId, id, lang].join('/')} ownerId={data.userId} book={book} books={data.books} isAdmin={admin} lang={lang?.toUpperCase()} section={tab} />;
     }
   } else if ((first === 'decisions' || (admin && first === 'queue')) && parts.length === 1) {
@@ -142,7 +188,7 @@ export default function LiveWorkspace() {
   return <PrototypeShell live role={data.role} items={items} active={active} title={title}
     detail={ancestors.length ? { ancestors } : undefined} itemHref={page => base + '/' + page}>
     {error && <div role="alert" className="mb-4 flex items-center gap-3">{error}
-      <Button variant="outline" onClick={refresh}>Попробовать снова</Button></div>}
+      <Button variant="outline" onClick={() => void refresh()}>Попробовать снова</Button></div>}
     {panel}
   </PrototypeShell>;
 }

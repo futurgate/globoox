@@ -1,3 +1,4 @@
+import { studioFetch } from './studioFetch';
 export interface PersonalPrompt {
   id: string;
   template: string;
@@ -25,7 +26,7 @@ export class PersonalPromptError extends Error {
 }
 
 async function send(path: string, options?: RequestInit) {
-  const response = await fetch(path, { ...options, cache: 'no-store', credentials: 'same-origin' });
+  const response = await studioFetch(path, { ...options, cache: 'no-store', credentials: 'same-origin' });
   const data = await response.json().catch(() => null);
   if (!response.ok) {
     const message = data?.message ?? data?.statusMessage ?? data?.error?.message;

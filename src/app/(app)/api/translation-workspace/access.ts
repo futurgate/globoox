@@ -1,6 +1,7 @@
 import { createClient as createDatabaseClient } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
-import { requireBackendProxy } from '../_proxy'
+import { requireBackendProxy, type ProxyIdentity } from '../_proxy'
+import { requestBearer } from '@/lib/supabase/requestBearer'
 import type { WorkspaceBook, WorkspaceSeries } from '@/lib/translationWorkspaceTypes'
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -15,16 +16,30 @@ export function checkId(value: unknown, message = 'Объект не найде�
   return value
 }
 
-async function authenticate() {
-  const db = await createClient()
-  const { data: { user }, error: authError } = await db.auth.getUser()
+async function authenticate(request: Request) {
+  let db = await createClient()
+  let auth = await db.auth.getUser()
+  let verifiedBearer: ProxyIdentity | undefined
+  const token = requestBearer(request)
+  if (!auth.data.user && token) {
+    auth = await db.auth.getUser(token)
+    if (auth.data.user) {
+      verifiedBearer = { userId: auth.data.user.id, token }
+      // RLS and auth.uid() in project RPCs must use the same verified user.
+      db = createDatabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+        auth: { persistSession: false, autoRefreshToken: false },
+        global: { headers: { Authorization: 'Bearer ' + token } },
+      })
+    }
+  }
+  const user = auth.data.user
   if (!user) {
-    if (authError && (authError.status ?? 0) >= 500) throw new WorkspaceError(503, 'Сервис входа временно недоступен')
+    if ((auth.error?.status ?? 0) >= 500) throw new WorkspaceError(503, 'Сервис входа временно недоступен')
     throw new WorkspaceError(401, 'Требуется вход')
   }
   const { data, error } = await db.from('profiles').select('is_admin').eq('id', user.id).maybeSingle()
   if (error) throw new WorkspaceError(503, 'Не удалось проверить права')
-  return { db, userId: user.id, role: data?.is_admin === true ? 'admin' as const : 'author' as const }
+  return { db, userId: user.id, verifiedBearer, role: data?.is_admin === true ? 'admin' as const : 'author' as const }
 }
 export type WorkspaceSession = Awaited<ReturnType<typeof authenticate>>
 
@@ -35,14 +50,14 @@ export async function workspaceRoute(request: Request, handler: (session: Worksp
       const origin = request.headers.get('origin')
       if (origin && origin !== new URL(request.url).origin) throw new WorkspaceError(403, 'Недоступный источник запроса')
     }
-    response = await handler(await authenticate())
+    response = await handler(await authenticate(request))
   } catch (error) {
     response = Response.json({ error: error instanceof WorkspaceError ? error.message : 'Данные кабинета временно недоступны' }, {
       status: error instanceof WorkspaceError ? error.status : 503,
     })
   }
   response.headers.set('Cache-Control', 'private, no-store')
-  response.headers.set('Vary', 'Cookie')
+  response.headers.set('Vary', 'Cookie, Authorization')
   return response
 }
 
@@ -60,9 +75,16 @@ export async function bodyObject(request: Request): Promise<Record<string, unkno
 
 export async function upstream(request: Request, session: WorkspaceSession, path: string, body?: Record<string, unknown>) {
   const url = new URL(path, request.url)
-  return requireBackendProxy(new Request(url, body === undefined
+  const outgoing = new Request(url, body === undefined
     ? { method: 'GET' }
-    : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }), session.userId)
+    : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+  return forwardWorkspaceRequest(outgoing, session)
+}
+
+export function forwardWorkspaceRequest(request: Request, session: WorkspaceSession) {
+  return session.verifiedBearer
+    ? requireBackendProxy(request, session.userId, session.verifiedBearer)
+    : requireBackendProxy(request, session.userId)
 }
 
 // Page by a unique key. PostgREST installations can enforce a smaller response
@@ -104,7 +126,7 @@ export async function ownedBooks(session: WorkspaceSession): Promise<WorkspaceBo
   }))
 }
 
-function isSchemaMissing(error: unknown) {
+export function isSchemaMissing(error: unknown) {
   const code = (error as { code?: string } | null)?.code
   return code === '42703' || code === '42P01' || code === 'PGRST204' || code === 'PGRST205'
 }
@@ -127,18 +149,27 @@ export function reportingDatabase() {
     : null
 }
 
+async function readOwnedSeries<T>(session: WorkspaceSession, read: (db: WorkspaceSession['db'], relation: string) => Promise<T>) {
+  const reporting = reportingDatabase()
+  if (reporting) return read(reporting, 'book_series')
+  try { return await read(session.db, 'studio_owned_series') } catch (error) {
+    if (!isSchemaMissing(error)) throw error
+    return read(session.db, 'book_series')
+  }
+}
+
 export async function ownedSeries(session: WorkspaceSession, books: WorkspaceBook[]): Promise<WorkspaceSeries[]> {
   const mapped = new Map<string, WorkspaceSeries>()
   for (const { seriesId } of books) {
     if (seriesId) mapped.set(seriesId, { id: seriesId, name: null, genre: null, direction: null, ownerVerified: false })
   }
-  const db = reportingDatabase() ?? session.db
+  type SeriesRow = Pick<WorkspaceSeries, 'id' | 'name' | 'genre' | 'direction'>
   try {
-    const rows = await readPages<{ id: string; name: string | null; genre: string | null; direction: string | null }>((after) => {
-      let q = db.from('book_series').select('id,name,genre,direction').eq('user_id', session.userId).order('id').limit(pageSize)
+    const rows = await readOwnedSeries(session, (db, relation) => readPages<SeriesRow>(after => {
+      let q = db.from(relation).select('id,name,genre,direction').eq('user_id', session.userId).order('id').limit(pageSize)
       if (after) q = q.gt('id', after)
       return q
-    })
+    }))
     for (const row of rows) mapped.set(row.id, { ...row, ownerVerified: true })
   } catch (error) {
     if (!isSchemaMissing(error) && (error as { code?: string }).code !== '42501') throw error
@@ -148,8 +179,17 @@ export async function ownedSeries(session: WorkspaceSession, books: WorkspaceBoo
 
 export async function requireOwnedSeries(session: WorkspaceSession, seriesId: string) {
   checkId(seriesId)
-  const db = reportingDatabase() ?? session.db
-  const { data, error } = await db.from('book_series').select('id').eq('id', seriesId).eq('user_id', session.userId).maybeSingle()
-  if (error && error.code !== '42501' && !isSchemaMissing(error)) throw new WorkspaceError(503, 'Не удалось проверить владельца серии')
-  if (!data) throw new WorkspaceError(404, 'Серия недоступна для управления')
+  let row
+  try {
+    row = await readOwnedSeries(session, async (db, relation) => {
+      const { data, error } = await db.from(relation).select('id').eq('id', seriesId).eq('user_id', session.userId).maybeSingle()
+      if (error) throw error
+      return data
+    })
+  } catch (error) {
+    if (!isSchemaMissing(error) && (error as { code?: string }).code !== '42501') {
+      throw new WorkspaceError(503, 'Не удалось проверить владельца серии')
+    }
+  }
+  if (!row) throw new WorkspaceError(404, 'Серия недоступна для управления')
 }

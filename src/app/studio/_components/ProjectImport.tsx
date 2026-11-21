@@ -1,28 +1,29 @@
 'use client';
 
+import { studioFetch } from '@/lib/studioFetch';
+
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { FileArchive, Upload } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import { ApiRequestError, BookJobError, getSignedUploadUrl, processBook, uploadToStorage, waitForBookJob } from '@/lib/api';
 import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
-import { bookPath, projectsPath, seriesPath } from './projectLinks';
+import { bookPath, projectsPath, projectPath, seriesPath } from './projectLinks';
 
-const genres = [
-  { id: 'litrpg', label: 'ЛитРПГ · Русский → Английский' },
-  { id: 'nonfiction', label: 'Нон-фикшн · Английский → Русский' },
-  { id: 'other', label: 'Другой жанр' },
-];
+import { seriesGenres } from './seriesGenres';
+
 type SeriesUpload = {
   seriesId: string;
   books: { bookId: string; fileName: string; volumeNumber: number }[];
   failures: { fileName: string; error: string }[];
 };
 type Uploaded = { bookId: string } | { series: SeriesUpload };
-export default function ProjectImport({ data, refresh }: { data: WorkspaceData; refresh: () => Promise<void> }) {
+export default function ProjectImport({ data, refresh, projectId }: { data: WorkspaceData; refresh: () => Promise<void>; projectId?: string }) {
+  const router = useRouter();
   const [mode, setMode] = useState<'epub' | 'zip'>('epub');
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState('');
@@ -36,12 +37,16 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
   const reset = () => { setFile(null); setResult(null); setError(''); setJob(null); setCheckCatalog(false); setRetryBookId(undefined); };
+  const openImported = async (bookId: string, signal: AbortSignal) => {
+    setResult({ bookId });
+    await refresh();
+    if (!signal.aborted) router.replace(bookPath(bookId));
+  };
   const poll = async (jobId: string, signal: AbortSignal) => {
     const ready = await waitForBookJob(jobId, signal, (progress) => setPhase('Обработка книги · ' + progress + '%'));
     if (signal.aborted) return;
-    setResult({ bookId: ready.bookId });
     setJob(null);
-    void refresh().catch(() => {});
+    await openImported(ready.bookId, signal);
   };
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -63,14 +68,15 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
       const bytes = new Uint8Array(await file.slice(0, 4).arrayBuffer());
       if (bytes[0] !== 0x50 || bytes[1] !== 0x4b || bytes[2] !== 3 || bytes[3] !== 4) throw new Error('Не удалось прочитать архив. Проверьте файл и выберите его ещё раз.');
       const suffix = crypto.randomUUID();
-      const key = mode === 'zip' ? 'series-' + data.userId + '-' + suffix + '.zip' : suffix + '.epub';
+      const prefix = mode === 'zip' ? 'series-' + data.userId + '-' : data.projects ? 'studio-' + data.userId + '-' : '';
+      const key = prefix + suffix + '.' + mode;
       setPhase('Загружаем файл…');
       const { signedUrl } = await getSignedUploadUrl('books', key, signal);
       await uploadToStorage(signedUrl, file, mode === 'zip' ? 'application/zip' : 'application/epub+zip', signal);
       setPhase(mode === 'zip' ? 'Регистрируем тома серии…' : 'Обрабатываем EPUB…');
       sentForProcessing = true;
       if (mode === 'zip') {
-        const response = await fetch('/api/translation-workspace/series/import', {
+        const response = await studioFetch('/api/translation-workspace/series/import', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
           body: JSON.stringify({ zip_path: key, file_name: file.name, name: name.trim() || undefined, genre }),
         });
@@ -83,7 +89,7 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
         if (!payload?.seriesId || !Array.isArray(payload.books) || !Array.isArray(payload.failures)) throw new Error('Сервер не подтвердил результат импорта.');
         setResult({ series: payload });
       } else {
-        const response = await processBook(key, file.name, file.size, signal, retryBookId);
+        const response = await processBook(key, file.name, file.size, signal, retryBookId, data.projects ? { studio: true, projectId } : undefined);
         if ('jobId' in response && response.jobId && response.bookId) {
           acceptedBookId = response.bookId;
           setJob({ bookId: response.bookId, jobId: response.jobId });
@@ -92,7 +98,8 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
           return;
         }
         if (!('id' in response) || !response.id) throw new Error('Сервер не подтвердил результат импорта.');
-        setResult({ bookId: response.id });
+        await openImported(response.id, signal);
+        return;
       }
       void refresh().catch(() => {});
     } catch (cause) {
@@ -109,12 +116,13 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
       controller.current = null;
     }
   };
+  const zipProject = result && 'series' in result ? data.projects?.find(project => project.sourceSeriesId === result.series.seriesId) : undefined;
   if (result) return (
     <Card className="items-start gap-4 p-5 sm:p-6">
       {'series' in result ? <>
         <p className="font-medium">Импорт серии завершён. Принято томов: {result.series.books.length}.</p>
         {result.series.failures.length > 0 && <div role="status"><p>Не удалось импортировать:</p><ul className="list-disc break-words pl-5">{result.series.failures.map((f, i) => <li key={i}>{f.fileName} — {f.error}</li>)}</ul></div>}
-        <Button asChild><Link href={seriesPath(result.series.seriesId)}>Открыть серию</Link></Button>
+        <Button asChild><Link href={zipProject ? projectPath(zipProject.id) : seriesPath(result.series.seriesId)}>{zipProject ? 'Открыть проект' : 'Открыть серию'}</Link></Button>
       </> : <>
         <p className="font-medium">Книга готова к работе.</p>
         <Button asChild><Link href={bookPath(result.bookId)}>Открыть книгу</Link></Button>
@@ -126,9 +134,9 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
   return (
     <Card className="max-w-2xl p-5 sm:p-6">
       <form onSubmit={submit} className="space-y-5" aria-busy={Boolean(phase)}>
-        <IOSSettingsRow label="Что загрузить" value={mode} disabled={locked} options={[
+        {!projectId && <IOSSettingsRow label="Что загрузить" value={mode} disabled={locked} options={[
           { id: 'epub', label: 'Книгу в EPUB' }, { id: 'zip', label: 'Серию в ZIP' },
-        ]} onChange={(value) => { reset(); setMode(value === 'zip' ? 'zip' : 'epub'); }} />
+        ]} onChange={(value) => { reset(); setMode(value === 'zip' ? 'zip' : 'epub'); }} />}
         {mode === 'zip' && data.role !== 'admin' ? (
           <div className="space-y-2">
             <Button type="button" disabled><Upload />Загрузить ZIP</Button>
@@ -140,7 +148,7 @@ export default function ProjectImport({ data, refresh }: { data: WorkspaceData; 
             <label className="block space-y-1 text-sm font-medium">Название серии
               <Input disabled={locked} value={name} onChange={(e) => setName(e.target.value)} placeholder="По умолчанию — имя архива" />
             </label>
-            <IOSSettingsRow label="Жанр серии" value={genre} options={genres} onChange={setGenre} disabled={locked} />
+            <IOSSettingsRow label="Жанр серии" value={genre} options={seriesGenres} onChange={setGenre} disabled={locked} />
           </>}
           <label className="block space-y-2 text-sm font-medium" key={mode}>
             <span className="flex items-center gap-2"><FileArchive size={17} />{mode === 'zip' ? 'ZIP с томами серии' : 'Файл EPUB'}</span>
