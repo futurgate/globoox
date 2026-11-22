@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -54,6 +55,7 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
   const [conflict, setConflict] = useState(false);
   const [old, setOld] = useState<ReturnType<typeof previousBrief>>(null);
   const [ownPrompts, setOwnPrompts] = useState<PersonalPrompt[]>([]);
+  const [promptsLoading, setPromptsLoading] = useState(false);
   const [promptError, setPromptError] = useState('');
   const saveController = useRef<AbortController | null>(null);
   const [promptReload, retryPrompts] = useState(0);
@@ -75,10 +77,13 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
   useEffect(() => {
     if (!getOptions || variants) return;
     const c = new AbortController();
+    setPromptsLoading(true);
     listPersonalPrompts(c.signal).then(items => { if (!c.signal.aborted) { setOwnPrompts(items); setPromptError(''); } })
-      .catch(() => { if (!c.signal.aborted) setPromptError('Не удалось загрузить личные шаблоны.'); });
+      .catch(() => { if (!c.signal.aborted) setPromptError('Не удалось загрузить личные шаблоны.'); })
+      .finally(() => { if (!c.signal.aborted) setPromptsLoading(false); });
     return () => c.abort();
   }, [getOptions, variants, promptReload]);
+  const optionsLoading = (!variants && promptsLoading) || (!models && (!modelList || modelList.refreshing));
   function change(field: keyof RecipeValues, value: string) {
     setNotice(''); setError(''); setValues(current => omitEmptyValues({ ...current, [field]: value }));
   }
@@ -132,7 +137,8 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
       {admin && <details open={technical} onToggle={e => setTechnical(e.currentTarget.open)}>
         <summary className="cursor-pointer font-medium">Модели и шаблоны этапов</summary>
         {technical && <div className="grid gap-4 pt-3">
-          {(promptError || modelList?.error) && <p role="alert">{promptError || modelList?.error} <Button variant="ghost" onClick={() => retryPrompts(n => n+1)}>Повторить</Button></p>}
+          {optionsLoading && <PendingText>Загружаем модели и шаблоны этапов…</PendingText>}
+          {!optionsLoading && (promptError || modelList?.error) && <p role="alert">{promptError || modelList?.error} <Button variant="ghost" onClick={() => retryPrompts(n => n+1)}>Повторить</Button></p>}
           {(['glossary','translate'] as const).map(stage => {
             const modelField = stage === 'glossary' ? 'glossaryModel' : 'translateModel';
             const promptField = stage === 'glossary' ? 'glossaryPromptId' : 'translatePromptId';

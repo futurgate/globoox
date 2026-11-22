@@ -34,15 +34,19 @@ export function StageTemplateLinks({ bookId, lang, sourceLang, glossaryOnly = fa
       .catch(() => { if (!controller.signal.aborted) { setPersonal(null); setPersonalError(true); } });
     return () => controller.abort();
   }, [open, version]);
+  function retry() {
+    setPersonalError(false);
+    setVersion(n => n + 1);
+  }
   const stages = result?.data?.filter(item => !glossaryOnly || item.stage === 'glossary');
 
   return <details className="rounded-lg border p-4" onToggle={event => { setOpen(event.currentTarget.open); if (!event.currentTarget.open) { setPersonal(null); setPersonalError(false); } }}>
     <summary className="cursor-pointer font-medium">{glossaryOnly ? 'Шаблон глоссария' : 'Шаблоны для этого направления'}</summary>
     {open && <div className="grid gap-2 pt-3">
       <p className="pt-muted">Для каждого этапа можно открыть шаблон, выбранный для переводов ваших книг.</p>
-      {personalError && <div role="alert">Не удалось загрузить выбор вашего аккаунта. <Button variant="ghost" onClick={() => setVersion(n => n + 1)}>Повторить загрузку</Button></div>}
-      {!result && <p role="status">Загружаем шаблоны…</p>}
-      {result?.error && <div><p role="alert">{result.error}</p><Button variant="ghost" onClick={() => setVersion(n => n + 1)}>Повторить</Button></div>}
+      {personalError && <div role="alert">Не удалось загрузить выбор вашего аккаунта. <Button variant="ghost" onClick={retry}>Повторить загрузку</Button></div>}
+      {(!result || (!personal && !personalError)) && <p role="status">Загружаем шаблоны…</p>}
+      {result?.error && <div><p role="alert">{result.error}</p><Button variant="ghost" onClick={retry}>Повторить</Button></div>}
       {stages?.length === 0 && <p>У сервера нет шаблонов для этого направления.</p>}
       {stages?.map(({ stage, name }) => {
         const tracked = stage === 'glossary' || stage === 'translate';

@@ -4,6 +4,7 @@ import { studioErrorMessage, studioFetch } from '@/lib/studioFetch';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { WorkspaceAttention as Attention, WorkspaceActivity as Activity, WorkspaceData } from '@/lib/translationWorkspaceTypes';
@@ -31,11 +32,13 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
   const [data, setData] = useState<Activity | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
+  const [loading, setLoading] = useState(false);
   const controller = useRef<AbortController | null>(null);
   const load = useCallback(async () => {
     controller.current?.abort();
     const next = new AbortController();
     controller.current = next;
+    setLoading(true);
     try {
       const response = await studioFetch('/api/translation-workspace/activity', { cache: 'no-store', signal: next.signal });
       if (!response.ok) throw new Error('Не удалось загрузить события (' + response.status + ').');
@@ -43,7 +46,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
       if (!next.signal.aborted) { setData(activity); setError(''); }
     } catch (err) {
       if (!next.signal.aborted) setError(studioErrorMessage(err, 'Не удалось загрузить события.'));
-    }
+    } finally { if (!next.signal.aborted) setLoading(false); }
   }, []);
   useEffect(() => {
     if (!admin) return;
@@ -67,7 +70,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
   if (!admin) return <Card className="p-5"><h2>Решения по вашим книгам</h2>
     <p className="pt-muted">Планируется · Для просмотра автором нужен доступ к вопросам по своей книге.</p></Card>;
   return <div className="pt-stack">
-    <div><Button size="sm" variant="outline" onClick={load}>Обновить</Button></div>
+    <div><RefreshButton size="sm" variant="outline" pending={loading} onClick={load}/></div>
     {error && <p role="alert">{error}</p>}
     {!data && !error && <p role="status">Загружаем…</p>}
     {data && (decisions ? <Card className="gap-2 p-5">

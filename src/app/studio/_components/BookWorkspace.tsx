@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { PendingText, RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -18,7 +19,7 @@ import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
 import { RecipeRuns } from './RecipeRuns';
 import { BookReview } from './BookReview';
 import { ActionFeedback, BookExecution, StageCard } from './BookStage';
-import { bookEndpoint, bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
+import { bookEndpoint, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 import { bookTranslationPath, processingLabel, projectsPath } from './projectLinks';
 
 const targets: Record<string, string[]> = { RU: ['EN','FR'], EN:['RU'], FR:['EN','RU'] };
@@ -37,7 +38,7 @@ function AuthorProgress({ bookId, lang }: { bookId: string; lang: string }) {
   const state = useBookData<BookTranslationEstimate>(bookEndpoint(bookId,'translation-estimate',lang),version);
   const info = state?.data?.byLanguage.find(l => l.lang === lang);
   return <Card className="p-5 gap-3">
-    <div className="flex flex-wrap justify-between gap-2"><h3>Перевод на {languages[lang]?.toLowerCase() || lang}</h3><Button variant="ghost" onClick={() => setVersion(v => v+1)}>Обновить</Button></div>
+    <div className="flex flex-wrap justify-between gap-2"><h3>Перевод на {languages[lang]?.toLowerCase() || lang}</h3><RefreshButton pending={!state || state.refreshing} onClick={() => setVersion(v => v+1)}/></div>
     <ActionFeedback error={state?.error}/>
     {!state && <p role="status">Загрузка состояния книги…</p>}
     {info && <><p>Переведено блоков: {info.blocksTranslated} из {info.blocksTranslated + info.blocksRemaining}.</p>
@@ -49,8 +50,6 @@ function AuthorProgress({ bookId, lang }: { bookId: string; lang: string }) {
 export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, section = '' }: Props) {
   const router = useRouter();
   const original = useBookAction();
-  const [models, setModels] = useState<string[]>([]);
-  const [modelError, setModelError] = useState('');
   const [modelRetry, setModelRetry] = useState(0);
   const [recipe, setRecipe] = useState<RecipeSettings | null>(null);
   const [settingsReady, setSettingsReady] = useState(false);
@@ -61,16 +60,8 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
   const validDirection = available.includes(target);
   const access = useLaunchAccess(!isAdmin && !section && !book.seriesId && validDirection);
   const showModels = isAdmin && validDirection && (!section || section === 'glossary');
-  useEffect(() => {
-    if (!showModels) return;
-    const controller = new AbortController();
-    bookGet<PlaygroundModels>('/api/admin/models',controller.signal).then(response => {
-      if (!controller.signal.aborted) { setModels(response.models); setModelError(''); }
-    }).catch(() => {
-      if (!controller.signal.aborted) setModelError('Не удалось загрузить список моделей. Можно запустить этап с моделью по умолчанию.');
-    });
-    return () => controller.abort();
-  }, [showModels, modelRetry]);
+  const modelList = useBookData<PlaygroundModels>(showModels ? '/api/admin/models' : null, modelRetry);
+  const models = modelList?.data?.models ?? [];
   const route = (targetLang: string, tab: string) => bookTranslationPath(book.id, targetLang, tab);
   const ready = !book.processingStatus || book.processingStatus === 'ready';
   const status = book.processingStatus ? processingLabel[book.processingStatus] || book.processingStatus : '';
@@ -90,7 +81,8 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         <nav className="pt-sections flex-wrap" aria-label="Разделы перевода">
           {bookSections.map(t => <Button key={t.id} variant="ghost" asChild><Link aria-current={section === t.id ? 'page' : undefined} href={route(target,t.id)}>{t.label}</Link></Button>)}
         </nav>
-        {showModels && modelError && <div className="pt-callout">{modelError} <Button variant="ghost" onClick={() => setModelRetry(v => v+1)}>Повторить</Button></div>}
+        {showModels && !modelList && <PendingText>Загружаем список моделей…</PendingText>}
+        {showModels && modelList?.error && <div className="pt-callout">Не удалось загрузить список моделей. Можно запустить этап с моделью по умолчанию. <Button variant="ghost" onClick={() => setModelRetry(v => v+1)}>Повторить</Button></div>}
         {section === '' && <RecipeEditor key={[ownerId,book.id,target].join('/')} ownerId={ownerId} admin={isAdmin} models={models}
           locator={{ scope: 'book', scopeId: book.id, sourceLang: source, targetLang: target }} onResolved={setRecipe} onReadyToRun={setSettingsReady}/>}
         {section === '' && !book.seriesId && (access.allowed

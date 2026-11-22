@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { bookRunPath } from './projectLinks';
 import { CopyableText } from '@/components/ui/copy-text';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { runEndpoint, runsEndpoint, type FrozenRecipe, recipeSourceNames, type StudioRun } from '@/lib/studioRecipe';
@@ -62,7 +63,7 @@ export function RecipeRuns({ bookId, lang, version, admin = true }: { bookId: st
   const result = useBookData<{ runs: HistoryRow[]; limit: number }>(runsEndpoint(bookId, lang), version + reload);
   return <Card className="p-5 gap-3">
     <div className="flex flex-wrap items-center justify-between gap-2"><h3>Запуски глоссария и перевода</h3>
-      <Button size="sm" variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить историю</Button></div>
+      <RefreshButton pending={!result || result.refreshing} size="sm" variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить историю</RefreshButton></div>
     {result?.error && <p role="alert">{result.error}</p>}
     {!result && <p role="status">Загружаем историю…</p>}
     {result?.data && !result.data.runs.length && <p>Для этого перевода ещё нет запусков с сохранёнными параметрами.</p>}

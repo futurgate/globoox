@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { CopyableText, CopyableTextarea } from '@/components/ui/copy-text';
@@ -82,11 +83,11 @@ export function BookReview({ bookId, lang }: { bookId: string; lang: string }) {
     { lang, ...(revision ? { blockId: id } : { itemId: id }), action: choice, ...(text !== undefined ? { editedText: text } : {}) }, signal,
   );
   return <div className="pt-stack"><Suspense fallback={null}><FocusedBlock bookId={bookId} lang={lang}/></Suspense><Card className="p-5 gap-3">
-    <div className="flex flex-wrap justify-between gap-2"><h2>Решения по тексту</h2><Button variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</Button></div>
+    <div className="flex flex-wrap justify-between gap-2"><h2>Решения по тексту</h2><RefreshButton pending={!current || current.refreshing} variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</RefreshButton></div>
     <div className="flex flex-wrap gap-2"><Button variant={revision ? 'outline' : 'default'} disabled={action.busy} onClick={() => setRevision(false)}>Читательская проверка</Button>
       <Button variant={revision ? 'default' : 'outline'} disabled={action.busy} onClick={() => setRevision(true)}>Стилистическая редактура</Button></div>
     <p className="pt-muted">{revision ? 'Стилистические правки уже записаны в перевод. Для каждого блока можно вернуть черновик.' : 'Предложения читательской проверки попадают в книгу после подтверждения.'}</p>
-    <ActionFeedback error={current?.error || action.error} notice={action.notice}/>
+    <ActionFeedback pending={action.pending} error={current?.error || action.error} notice={action.notice}/>
     {!current && <p role="status">Загрузка журнала…</p>}
     {current?.data && !rows.length && <p>В журнале этого перевода пока нет записей.</p>}
     {!!rows.length && <div className="flex flex-wrap gap-2">

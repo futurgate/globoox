@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { BookGlossary, GlossaryStatus } from '@/lib/api';
 import { Card } from '@/components/ui/card';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
 import { Input } from '@/components/ui/input';
@@ -53,7 +54,7 @@ export function BookGlossaryPanel({ bookId, lang, books, models }: {
   }
   return <div className="pt-stack">
     <Card className="p-5 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2"><h2>Глоссарий тома</h2><Button variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</Button></div>
+      <div className="flex flex-wrap items-center justify-between gap-2"><h2>Глоссарий тома</h2><RefreshButton pending={!current || current.refreshing} variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</RefreshButton></div>
       {current?.error ? <ActionFeedback error={current.error}/> : !data ? <p role="status">Загрузка глоссария…</p> : !glossary ? <p>Для этого языка глоссарий ещё не создан.</p> : <>
         <p className="pt-muted">{entries.length} записей · {data.frozen ? 'Заморожен' : 'Открыт для изменений'}</p>
         {data.lastBuild && <p>Последняя генерация добавила имён: {data.lastBuild.addedNamed?.length ?? 0}, терминов: {data.lastBuild.addedTerms?.length ?? 0}.</p>}
@@ -67,7 +68,7 @@ export function BookGlossaryPanel({ bookId, lang, books, models }: {
           <Button variant="ghost" disabled={action.busy || data.state === 'building'} onClick={() => void change('glossary-freeze', { frozen: !data.frozen }, data.frozen ? 'Глоссарий разморожен.' : 'Глоссарий заморожен.')}>{data.frozen ? 'Разморозить' : 'Заморозить'}</Button>
         </div>
       </>}
-      <ActionFeedback error={action.error} notice={action.notice}/>
+      <ActionFeedback pending={action.pending} error={action.error} notice={action.notice}/>
     </Card>
     <Card className="p-5 gap-3">
       <h3>Источник словаря</h3>

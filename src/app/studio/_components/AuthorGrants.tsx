@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { PendingText, RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -59,11 +60,12 @@ export function AuthorGrants({ ownerId }: { ownerId: string }) {
       </label>
       <Button type="submit" disabled={action.busy || !email.trim()}>Выдать доступ</Button>
     </form>
+    {action.busy && <PendingText>Сохраняем права доступа…</PendingText>}
     {action.error && <p role="alert">{action.error}</p>}
     {action.notice && <p role="status" className="pt-muted">{action.notice}</p>}
     <div className="flex flex-wrap items-center justify-between border-t pt-3">
       <h3>Авторы с доступом</h3>
-      <Button size="sm" variant="ghost" disabled={action.busy} onClick={() => setRefresh(n => n + 1)}>Обновить список</Button>
+      <RefreshButton pending={!result || result.refreshing} size="sm" variant="ghost" disabled={action.busy} onClick={() => setRefresh(n => n + 1)}>Обновить список</RefreshButton>
     </div>
     {!result && <p role="status">Загружаем список…</p>}
     {result?.error && <p role="alert">{result.error}</p>}

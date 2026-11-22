@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { bookRunPath } from './projectLinks';
@@ -56,11 +57,11 @@ export function BookFlow({ bookId, lang, settingsReady, editionsUrl }: {
       {runId && <Button asChild variant="outline"><Link href={bookRunPath(bookId,lang,runId)}>Ход запуска</Link></Button>}
       {run?.status === 'done' ? <Button asChild><Link href={editionsUrl}>Обложка и EPUB</Link></Button>
         : <Button disabled={!history?.data || Boolean(runId && !current?.data && !accepted) || running || anotherStage || (!retry && !settingsReady)}
-            onClick={() => void action.run(start)}>{retry ? 'Продолжить с места остановки' : 'Запустить перевод книги'}</Button>}
-      {(history?.error || current?.error || action.error || running || retry) && <Button variant="outline" onClick={() => setRefresh(n => n + 1)}>Обновить состояние</Button>}
+            onClick={() => void action.run(start, 'Отправляем команду на запуск перевода…')}>{retry ? 'Продолжить с места остановки' : 'Запустить перевод книги'}</Button>}
+      {(history?.error || current?.error || action.error || running || retry) && <RefreshButton variant="outline" pending={!history || history.refreshing || Boolean(runId && (!current || current.refreshing))} onClick={() => setRefresh(n => n + 1)}>Обновить состояние</RefreshButton>}
     </div>
     {!run && !settingsReady && <p className="pt-muted text-sm">Для запуска нужны сохранённые параметры книги.</p>}
     {retry && <p className="pt-muted text-sm">При продолжении используются параметры исходного запуска.</p>}
-    <ActionFeedback error={action.error || current?.error || history?.error}/>
+    <ActionFeedback pending={action.pending} error={action.error || current?.error || history?.error}/>
   </Card>;
 }
