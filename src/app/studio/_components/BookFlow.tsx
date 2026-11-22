@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { bookRunPath } from './projectLinks';
 import { runsEndpoint, type StudioRun } from '@/lib/studioRecipe';
 import { ActionFeedback, useBookExecution } from './BookStage';
 import { bookEndpoint, bookPost, useBookAction, useBookData } from './bookRequests';
@@ -52,6 +53,7 @@ export function BookFlow({ bookId, lang, settingsReady, editionsUrl }: {
     <p className="pt-muted">Сервер подготовит глоссарий и переведёт текст с сохранёнными параметрами. После запуска вкладку можно закрыть.</p>
     {run && <p role="status">{statusNames[run.status]}{run.status !== 'done' && ' · ' + (run.stage === 'glossary' ? 'глоссарий' : 'перевод текста')}</p>}
     <div className="flex flex-wrap gap-2">
+      {runId && <Button asChild variant="outline"><Link href={bookRunPath(bookId,lang,runId)}>Ход запуска</Link></Button>}
       {run?.status === 'done' ? <Button asChild><Link href={editionsUrl}>Обложка и EPUB</Link></Button>
         : <Button disabled={!history?.data || Boolean(runId && !current?.data && !accepted) || running || anotherStage || (!retry && !settingsReady)}
             onClick={() => void action.run(start)}>{retry ? 'Продолжить с места остановки' : 'Запустить перевод книги'}</Button>}

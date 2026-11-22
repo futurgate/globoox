@@ -14,6 +14,7 @@ import { StageTemplateLinks } from './StageTemplateLinks';
 import { BookEdition, BookRuns, Estimate, Planned } from './BookEdition';
 import { BookGlossaryPanel } from './BookGlossary';
 import { BookFlow } from './BookFlow';
+import { RecipeRuns } from './RecipeRuns';
 import { BookReview } from './BookReview';
 import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
@@ -86,7 +87,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         options={available.map(id => ({ id, label:languages[id] || id }))}/>}
       {!validDirection ? <p className="pt-callout">Для этого направления нет доступного перевода.{available.length > 0 ? ' Выберите поддерживаемый язык.' : ''}</p> : <>
         <nav className="pt-sections flex-wrap" aria-label="Разделы перевода">
-          {tabs.filter(t => t.id !== 'runs' || isAdmin).map(t => <Button key={t.id} variant="ghost" asChild><Link aria-current={section === t.id ? 'page' : undefined} href={route(target,t.id)}>{t.label}</Link></Button>)}
+          {tabs.map(t => <Button key={t.id} variant="ghost" asChild><Link aria-current={section === t.id ? 'page' : undefined} href={route(target,t.id)}>{t.label}</Link></Button>)}
         </nav>
         {showModels && modelError && <div className="pt-callout">{modelError} <Button variant="ghost" onClick={() => setModelRetry(v => v+1)}>Повторить</Button></div>}
         {section === '' && <RecipeEditor key={[ownerId,book.id,target].join('/')} ownerId={ownerId} admin={isAdmin} models={models}
@@ -106,7 +107,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         </>)}
         {section === 'glossary' && (isAdmin ? <><StageTemplateLinks bookId={book.id} lang={target} sourceLang={source} glossaryOnly/><BookGlossaryPanel bookId={book.id} lang={target} models={models} books={books}/></> : <Planned title="Глоссарий тома" description="Авторский просмотр терминов и выбор вариантов ожидают подключения доступа к словарю своей книги."/>)}
         {section === 'review' && (isAdmin ? <BookReview bookId={book.id} lang={target}/> : <Planned title="Решения по тексту" description="Здесь автор сможет проверять предложения и выбирать формулировки в своей книге."/>)}
-        {section === 'runs' && (isAdmin ? <BookRuns bookId={book.id} lang={target}/> : <p>Страница недоступна.</p>)}
+        {section === 'runs' && (isAdmin ? <BookRuns bookId={book.id} lang={target}/> : <RecipeRuns bookId={book.id} lang={target} version={0} admin={false}/>)}
         {section === 'editions' && <BookEdition key={book.id + '/' + target} bookId={book.id} title={book.title} lang={target} isAdmin={isAdmin}/>}
       </>}
     </>}
