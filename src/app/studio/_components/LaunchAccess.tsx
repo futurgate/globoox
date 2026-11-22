@@ -4,16 +4,16 @@ import { useCallback, useEffect, useState } from 'react';
 import { RefreshButton } from './RequestFeedback';
 import { useBookData } from './bookRequests';
 
-export function useLaunchAccess(author: boolean) {
+export function useLaunchAccess(verifyAccess = true) {
   const [version, setVersion] = useState(0);
   const refresh = useCallback(() => setVersion(v => v + 1), []);
-  const result = useBookData<{ canStartTranslation: boolean }>(author ? '/api/studio/translation-access' : null, version);
+  const result = useBookData<{ canStartTranslation: boolean }>(verifyAccess ? '/api/studio/translation-access' : null, version);
   useEffect(() => {
-    if (!author) return;
+    if (!verifyAccess) return;
     window.addEventListener('focus',refresh);
     return () => window.removeEventListener('focus',refresh);
-  }, [author,refresh]);
-  return { allowed: !author || result?.data?.canStartTranslation === true, loading: author && !result,
+  }, [verifyAccess,refresh]);
+  return { allowed: !verifyAccess || result?.data?.canStartTranslation === true, loading: verifyAccess && !result,
     error: result?.error, refreshing: result?.refreshing === true, refresh };
 }
 
