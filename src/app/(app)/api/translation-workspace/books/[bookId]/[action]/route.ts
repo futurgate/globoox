@@ -59,13 +59,14 @@ export async function GET(request: Request, { params }: Context) {
       }
       return Response.json(await reviewBlock(session, bookId, query))
     }
-    const allowed = action === 'run' ? ['lang', 'runId'] : action === 'translation-estimate' ? ['model', 'input_price', 'output_price', 'chars_per_token']
+    const allowed = action === 'run' ? ['lang', 'runId'] : action === 'translation-estimate' ? ['studioTargetLang', 'model', 'input_price', 'output_price', 'chars_per_token']
       : action === 'revision-diff' ? ['lang', 'changedOnly'] : action === 'download' ? [] : ['lang']
     const search = new URLSearchParams()
     for (const field of allowed) {
       const value = query.get(field)
       if (value !== null) search.set(field, value)
     }
+    if (action === 'download') search.set('studio', '1')
     const backendAction = action === 'download-translated' && session.role === 'author' ? 'download-owned-translation' : action
     return upstream(request, session, `/api/books/${bookId}/${backendAction}${search.size ? `?${search}` : ''}`)
   })

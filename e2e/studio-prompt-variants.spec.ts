@@ -226,7 +226,8 @@ test('the glossary of a book opens the selected account variant for its stage', 
     return route.fulfill({ json: { effective: { glossaryPromptId: active.id } } });
   });
   await page.goto(settings.replace('/settings','/books/'+id+'/translations/EN/glossary'));
-  await page.getByText('Шаблон глоссария',{exact:true}).click();
+  await page.getByRole('button', { name: 'Действия с глоссарием' }).click();
+  await page.getByRole('button', { name: 'Шаблон глоссария', exact: true }).click();
   const link = page.getByRole('link',{name:'Глоссарий',exact:true}).filter({hasNot:page.locator('svg')});
   await expect(page.getByText('Перевод имён',{exact:true})).toBeVisible();
   const selected = link.and(page.locator('[href*="variant="]'));

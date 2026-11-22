@@ -26,6 +26,7 @@ type IOSReaderHeaderProps = SharedHeaderProps &
         layout: 'workspace';
         parent: HeaderParentLink;
         navigationLabel: string;
+        navigationAction?: ReactNode;
       }
   );
 
@@ -54,15 +55,18 @@ export default function IOSReaderHeader(props: IOSReaderHeaderProps) {
       }}
     >
       {workspace && (
-        <nav aria-label={props.navigationLabel} className="pt-1">
-          <Button asChild size="sm" variant="ghost"
-            className="-ml-2 min-h-11 max-w-full gap-1 text-[var(--reader-accent)]">
-            <ParentLink href={props.parent.href} title={props.parent.label}>
-              <IOSIcon icon={ChevronLeft} className="size-4" aria-hidden="true" />
-              <span className="truncate">{props.parent.label}</span>
-            </ParentLink>
-          </Button>
-        </nav>
+        <div className={cn('pt-1', props.navigationAction && 'flex items-center justify-between gap-2')}>
+          <nav aria-label={props.navigationLabel} className="min-w-0">
+            <Button asChild size="sm" variant="ghost"
+              className="-ml-2 min-h-11 max-w-full gap-1 text-[var(--reader-accent)]">
+              <ParentLink href={props.parent.href} title={props.parent.label}>
+                <IOSIcon icon={ChevronLeft} className="size-4" aria-hidden="true" />
+                <span className="truncate">{props.parent.label}</span>
+              </ParentLink>
+            </Button>
+          </nav>
+          {props.navigationAction}
+        </div>
       )}
       <div
         className={cn(

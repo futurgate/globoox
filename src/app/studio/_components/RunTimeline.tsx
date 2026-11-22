@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { CopyTextButton } from '@/components/ui/copy-text';
 import type { RunStageState, StudioRun } from '@/lib/studioRecipe';
 import { bookPath } from './projectLinks';
 import { activeStatus, operationNames, runCost, runDate, runStatusNames, stageNames, type RunStatus } from './runDisplay';
@@ -63,6 +64,15 @@ export function RunTimeline({ bookId, lang, runId, title }: {
   const older = useBookData<Timeline>(cursor ? url + '&before=' + encodeURIComponent(cursor) : null, version);
   const data = first?.data;
   const page = cursor ? older?.data : data;
+  const events = (page?.events ?? []).map(event => ({
+    id: event.id,
+    at: event.at,
+    time: runDate(event.at),
+    title: (eventNames[event.kind] || 'Событие этапа') + (event.chapterNumber != null ? ' · глава ' + event.chapterNumber : ''),
+    detail: [event.stage && stageNames[event.stage], event.attempt && 'попытка ' + event.attempt,
+      event.done != null && event.total != null && 'глав ' + event.done + ' из ' + event.total].filter(Boolean).join(' · '),
+    reason: event.reason,
+  }));
   if (data && (data.bookId !== bookId || data.lang !== lang || data.runId !== runId)) return <p role="alert">Этот запуск не относится к выбранному переводу книги.</p>;
   const error = first?.error || older?.error;
   const lastEventAt = data?.events[0]?.at;
@@ -96,14 +106,16 @@ export function RunTimeline({ bookId, lang, runId, title }: {
     </Card>
     {data?.stages.translate?.status === 'done' && <RunResult bookId={bookId} lang={lang} runId={runId} title={title} version={version}/>}
     {data && <Card className="gap-3 p-4 sm:p-5">
-      <h2>Журнал запуска</h2>
+      <div className="flex items-center justify-between gap-2"><h2>Журнал запуска</h2>
+        <CopyTextButton subject="Текущая страница журнала запуска" text={events.map(event =>
+          [event.time, event.title, event.detail, event.reason].filter(Boolean).join(' · ')
+        ).join('\n')}/></div>
       {!data.hasChapterEvents && !activeStatus(data.status) && <p className="pt-muted text-sm">Для этого запуска доступны отметки этапов. Событий по главам в журнале нет.</p>}
       {cursor && !older && <p role="status">Загружаем события…</p>}
-      <ol className="divide-y">{page?.events.map(event => <li key={event.id} className="py-2 text-sm">
-        <div className="flex flex-wrap items-baseline gap-x-3"><time className="pt-muted" dateTime={event.at}>{runDate(event.at)}</time>
-          <strong>{eventNames[event.kind] || 'Событие этапа'}{event.chapterNumber != null && ' · глава ' + event.chapterNumber}</strong></div>
-        <p className="pt-muted">{[event.stage && stageNames[event.stage], event.attempt && 'попытка ' + event.attempt,
-          event.done != null && event.total != null && 'глав ' + event.done + ' из ' + event.total].filter(Boolean).join(' · ')}</p>
+      <ol className="divide-y">{events.map(event => <li key={event.id} className="py-2 text-sm">
+        <div className="flex flex-wrap items-baseline gap-x-3"><time className="pt-muted" dateTime={event.at}>{event.time}</time>
+          <strong>{event.title}</strong></div>
+        {event.detail && <p className="pt-muted">{event.detail}</p>}
         {event.reason && <p>{event.reason}</p>}
       </li>)}</ol>
       {(cursor || page?.nextCursor) && <div className="flex gap-2">

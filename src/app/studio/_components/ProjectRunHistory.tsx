@@ -20,7 +20,9 @@ type Group = {
   costUsd: number | null; usageComplete: boolean; volumes: Volume[];
 };
 type Page = { groups: Group[]; nextCursor: string | null };
-const hasActive = (page: Page) => page.groups.some(group => activeStatus(group.status));
+const hasActive = (page: Page) => page.groups.some(group =>
+  activeStatus(group.status) || group.volumes.some(volume => activeStatus(volume.status))
+);
 
 export function ProjectTabs({ projectId, active }: { projectId: string; active?: string }) {
   const url = projectPath(projectId);

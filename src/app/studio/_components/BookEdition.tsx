@@ -6,11 +6,12 @@ import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { BookTranslationEstimate, FictionCosts, QaReportV2, ReaderCheckCostStageBreakdown } from '@/lib/api';
+import { recipeEndpoint, type RecipeSettings } from '@/lib/studioRecipe';
 import { downloadText } from '@/app/prototype/_components/downloads';
 import { BookExportCover } from './BookExportCover';
 import { RecipeRuns } from './RecipeRuns';
 import { ActionFeedback, stages } from './BookStage';
-import { bookEndpoint, bookPost, downloadBookFile, useBookAction, useBookData } from './bookRequests';
+import { bookEndpoint, bookGet, bookPost, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 
 export function Planned({ title, description }: { title: string; description: string }) {
   return <Card className="p-5 gap-2"><div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="opacity-60">{title}</h3><span className="pt-muted text-sm">Планируется</span></div><p className="pt-muted">{description}</p></Card>;
@@ -31,7 +32,13 @@ export function Estimate({ bookId, lang, model }: {bookId: string; lang: string;
   </Card>;
 }
 
-export function BookEdition({ bookId, title, lang, isAdmin }: { bookId: string; title: string; lang: string; isAdmin: boolean }) {
+export function epubCheckSummary(epub: QaReportV2['epub']) {
+  if (epub.status === 'unavailable') return 'Файл EPUB не проверен. Повторите проверку, чтобы получить результат по файлу.';
+  if (!epub.status && !epub.blocking.length && !epub.warnings.length) return 'В отчёте нет статуса проверки файла EPUB.';
+  return `Структура EPUB · ошибок: ${epub.blocking.length}, предупреждений: ${epub.warnings.length}.`;
+}
+
+export function BookEdition({ bookId, title, sourceLang, lang, isAdmin }: { bookId: string; title: string; sourceLang: string; lang: string; isAdmin: boolean }) {
   const [report, setReport] = useState<QaReportV2>();
   const [reload, setReload] = useState(0);
   const action = useBookAction();
@@ -40,6 +47,8 @@ export function BookEdition({ bookId, title, lang, isAdmin }: { bookId: string; 
   const target = coverage?.data?.byLanguage.find(l => l.lang === lang);
   const covered = target && target.blocksRemaining === 0 && target.blocksTranslated > 0;
   const download = bookEndpoint(bookId, 'download-translated', lang);
+  const textSummary = report && `Проверка текста · ошибок: ${report.summary.errors}, замечаний: ${report.summary.review}.`;
+  const fileSummary = report && epubCheckSummary(report.epub);
   return <div className="pt-stack">
     <BookExportCover bookId={bookId} lang={lang} action={coverAction} disabled={action.busy}/>
     <Card className="p-5 gap-3">
@@ -50,14 +59,20 @@ export function BookEdition({ bookId, title, lang, isAdmin }: { bookId: string; 
           ? <Button disabled={action.busy || coverAction.busy} onClick={() => void action.run(signal => downloadBookFile(download, (title || bookId) + ' (' + lang + ')', signal), 'Готовим EPUB к скачиванию…')}>Скачать EPUB</Button>
           : <Button disabled>Скачать EPUB после перевода</Button>}
         {isAdmin && <Button variant="outline" disabled={action.busy || coverAction.busy || (!!target && !covered)} onClick={() => void action.run(async signal => {
-          const r = await bookPost(bookEndpoint(bookId,'translation-quality',lang),{ targetLang:lang, genre:'fiction' },signal);
+          const settings = await bookGet<RecipeSettings>(recipeEndpoint({ scope: 'book', scopeId: bookId, sourceLang, targetLang: lang }), signal);
+          if (!settings.genre) throw new Error('Не удалось определить жанр книги для проверки.');
+          const genre = settings.genre === 'nonfiction' ? 'nonfiction' : 'fiction';
+          const r = await bookPost(bookEndpoint(bookId,'translation-quality',lang),{ targetLang:lang, genre },signal);
           const next: QaReportV2 = await r.json();
           if (!signal.aborted) setReport(next);
         }, 'Проверяем текст и структуру EPUB…')}>Проверить качество EPUB</Button>}
       </div>
       <ActionFeedback error={action.error} notice={action.notice} pending={action.pending}/>
-      {isAdmin && report && <div className="grid gap-2"><h3>Результат проверки</h3>
-        <p>Ошибок текста: {report.summary.errors} · замечаний: {report.summary.review} · ошибок структуры EPUB: {report.epub.blocking.length}.</p>
+      {isAdmin && report && <div className="grid gap-2">
+        <div className="flex items-center justify-between gap-2"><h3>Результат проверки</h3>
+          <CopyTextButton subject="Отчёт о проверке" text={[title, textSummary, fileSummary, ...report.epub.blocking, ...report.epub.warnings, ...report.issues.map(issue => issue.message)].join('\n')}/></div>
+        <p>{textSummary}</p>
+        <p>{fileSummary}</p>
         {[...report.epub.blocking, ...report.epub.warnings].map((s,i) => <p key={i}>{s}</p>)}
         {report.issues.length > 0 && <details><summary>Замечания по тексту</summary>{report.issues.map((issue, i) => <p key={i} className="py-1">{issue.message}</p>)}</details>}
         <Button variant="outline" onClick={() => downloadText(`quality-${bookId}-${lang}.json`,JSON.stringify(report,null,2),'application/json')}>Скачать результат проверки</Button></div>}
