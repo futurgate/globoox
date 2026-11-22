@@ -7,11 +7,13 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 300
 
 const reads = new Set([
+  'run',
   'translation-estimate', 'download', 'download-translated', 'translate-full-book', 'generate-glossary',
   'reader-check', 'reader-check-journal', 'reader-check-cost-runs', 'revise-full-book',
   'revision-diff', 'revise-cost-runs', 'fiction-costs', 'fiction-cost-runs', 'review-block', 'stage-prompts',
 ])
 const writeFields = new Map<string, string[]>([
+  ['run', ['lang', 'studioRun']],
   ['generate-glossary', ['lang', 'restart', 'force', 'model', 'seedFromBookId', 'seedStarterGenre', 'studioRun']],
   ['set-glossary', ['lang', 'glossary', 'force']],
   ['copy-glossary', ['lang', 'sourceBookId', 'force']],
@@ -25,7 +27,7 @@ const writeFields = new Map<string, string[]>([
   ['translation-quality', ['targetLang', 'genre']],
   ['resolve-attention', ['id']],
 ])
-const authorReads = new Set(['translation-estimate', 'download'])
+const authorReads = new Set(['translation-estimate', 'download', 'download-translated'])
 type Context = { params: Promise<{ bookId: string; action: string }> }
 
 export async function GET(request: Request, { params }: Context) {
@@ -44,14 +46,15 @@ export async function GET(request: Request, { params }: Context) {
       return Response.json(stages.map(({ stage, name, overridden }) => ({ stage, name, overridden })))
     }
     if (action === 'review-block') return Response.json(await reviewBlock(session, bookId, query))
-    const allowed = action === 'translation-estimate' ? ['model', 'input_price', 'output_price', 'chars_per_token']
+    const allowed = action === 'run' ? ['lang', 'runId'] : action === 'translation-estimate' ? ['model', 'input_price', 'output_price', 'chars_per_token']
       : action === 'revision-diff' ? ['lang', 'changedOnly'] : action === 'download' ? [] : ['lang']
     const search = new URLSearchParams()
     for (const field of allowed) {
       const value = query.get(field)
       if (value !== null) search.set(field, value)
     }
-    return upstream(request, session, `/api/books/${bookId}/${action}${search.size ? `?${search}` : ''}`)
+    const backendAction = action === 'download-translated' && session.role === 'author' ? 'download-owned-translation' : action
+    return upstream(request, session, `/api/books/${bookId}/${backendAction}${search.size ? `?${search}` : ''}`)
   })
 }
 

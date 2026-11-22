@@ -18,6 +18,7 @@ interface EditorProps {
   models?: readonly string[];
   variants?: readonly PersonalPrompt[];
   onResolved?: (settings: RecipeSettings) => void;
+  onReadyToRun?: (ready: boolean) => void;
 }
 
 function previousBrief(owner: string, book: string, lang: string) {
@@ -40,7 +41,7 @@ export function ModelChoice({ label, value, inherited, models, onChange, disable
     options={[{ id: '', label: inherited ? 'По рецепту · ' + inherited : 'По рецепту' }, ...ids.map(id => ({ id, label: id }))]} />;
 }
 
-export function RecipeEditor({ locator, ownerId, admin, models, variants, onResolved }: EditorProps) {
+export function RecipeEditor({ locator, ownerId, admin, models, variants, onResolved, onReadyToRun }: EditorProps) {
   const url = recipeEndpoint(locator);
   const [reload, setReload] = useState(0);
   const [settings, setSettings] = useState<RecipeSettings | null>(null);
@@ -106,6 +107,10 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
   const changed = settings && (genre !== settings.genre ||
     (Object.keys({ ...settings.values, ...values }) as (keyof RecipeValues)[]).some(key => values[key] !== settings.values[key]));
   const unitName = recipeUnits.find(item => item.id === settings?.inherited?.units)?.label;
+  useEffect(() => {
+    onReadyToRun?.(Boolean(settings && !changed && !working && !conflict && !error));
+    return () => onReadyToRun?.(false);
+  }, [onReadyToRun, settings, changed, working, conflict, error]);
   return <Card className="p-5 gap-3">
     <h3>{title}</h3>
     {error && <p role="alert" className="pt-callout">{error}</p>}

@@ -13,6 +13,7 @@ import type { RecipeSettings } from '@/lib/studioRecipe';
 import { StageTemplateLinks } from './StageTemplateLinks';
 import { BookEdition, BookRuns, Estimate, Planned } from './BookEdition';
 import { BookGlossaryPanel } from './BookGlossary';
+import { BookFlow } from './BookFlow';
 import { BookReview } from './BookReview';
 import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
@@ -50,6 +51,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
   const [modelError, setModelError] = useState('');
   const [modelRetry, setModelRetry] = useState(0);
   const [recipe, setRecipe] = useState<RecipeSettings | null>(null);
+  const [settingsReady, setSettingsReady] = useState(false);
   const [estimateModel, setEstimateModel] = useState<string | null>(null);
   const source = (book.sourceLanguage || 'RU').toUpperCase();
   const available = targets[source] || [];
@@ -88,8 +90,10 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         </nav>
         {showModels && modelError && <div className="pt-callout">{modelError} <Button variant="ghost" onClick={() => setModelRetry(v => v+1)}>Повторить</Button></div>}
         {section === '' && <RecipeEditor key={[ownerId,book.id,target].join('/')} ownerId={ownerId} admin={isAdmin} models={models}
-          locator={{ scope: 'book', scopeId: book.id, sourceLang: source, targetLang: target }} onResolved={setRecipe}/>}
+          locator={{ scope: 'book', scopeId: book.id, sourceLang: source, targetLang: target }} onResolved={setRecipe} onReadyToRun={setSettingsReady}/>}
         {section === '' && (isAdmin ? <>
+          {!book.seriesId && <BookFlow key={book.id + target} bookId={book.id} lang={target} settingsReady={settingsReady}
+            editionsUrl={route(target,'editions')}/>}
           <Estimate bookId={book.id} lang={target} model={estimateModel}/>
           <StageTemplateLinks bookId={book.id} lang={target} sourceLang={source}/>
           <section className="pt-stack"><h2>Этапы перевода</h2>
@@ -103,7 +107,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         {section === 'glossary' && (isAdmin ? <><StageTemplateLinks bookId={book.id} lang={target} sourceLang={source} glossaryOnly/><BookGlossaryPanel bookId={book.id} lang={target} models={models} books={books}/></> : <Planned title="Глоссарий тома" description="Авторский просмотр терминов и выбор вариантов ожидают подключения доступа к словарю своей книги."/>)}
         {section === 'review' && (isAdmin ? <BookReview bookId={book.id} lang={target}/> : <Planned title="Решения по тексту" description="Здесь автор сможет проверять предложения и выбирать формулировки в своей книге."/>)}
         {section === 'runs' && (isAdmin ? <BookRuns bookId={book.id} lang={target}/> : <p>Страница недоступна.</p>)}
-        {section === 'editions' && <BookEdition bookId={book.id} title={book.title} lang={target} isAdmin={isAdmin}/>}
+        {section === 'editions' && <BookEdition key={book.id + '/' + target} bookId={book.id} title={book.title} lang={target} isAdmin={isAdmin}/>}
       </>}
     </>}
   </div></BookExecution>;

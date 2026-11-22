@@ -31,8 +31,12 @@ export async function GET(request: Request, { params }: Context) {
   return workspaceRoute(request, async session => {
     requireAdmin(session)
     const { seriesId, action } = await params
-    if (action !== 'detail') throw new WorkspaceError(404, 'Действие не найдено')
-    return Response.json((await seriesDetail(request, session, seriesId)).detail)
+    if (action === 'detail') return Response.json((await seriesDetail(request, session, seriesId)).detail)
+    if (action !== 'download-translated') throw new WorkspaceError(404, 'Действие не найдено')
+    await requireOwnedSeries(session, seriesId)
+    const lang = new URL(request.url).searchParams.get('lang') || ''
+    if (!/^(EN|RU|FR|ES)$/.test(lang)) throw new WorkspaceError(400, 'Выберите язык перевода')
+    return upstream(request, session, `/api/series/${seriesId}/download-translated?lang=${lang}`)
   })
 }
 

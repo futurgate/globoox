@@ -35,16 +35,20 @@ function statusActive(data: Status) {
 }
 
 const ExecutionContext = createContext<{
-  active: Partial<Record<StageName, boolean>>;
-  report: (stage: StageName, running: boolean) => void;
+  active: Partial<Record<StageName | 'flow', boolean>>;
+  report: (stage: StageName | 'flow', running: boolean) => void;
 } | null>(null);
 
 export function BookExecution({children}: {children: ReactNode}) {
-  const [active,setActive] = useState<Partial<Record<StageName,boolean>>>({});
-  const report = useCallback((stage: StageName, running: boolean) => {
+  const [active,setActive] = useState<Partial<Record<StageName | 'flow',boolean>>>({});
+  const report = useCallback((stage: StageName | 'flow', running: boolean) => {
     setActive(prev => Boolean(prev[stage]) === running ? prev : {...prev,[stage]:running});
   }, []);
   return <ExecutionContext.Provider value={{ active, report }}>{children}</ExecutionContext.Provider>;
+}
+
+export function useBookExecution() {
+  return useContext(ExecutionContext)!;
 }
 
 export function ActionFeedback({ error, notice }: { error?: string; notice?: string }) {
