@@ -480,6 +480,46 @@ async function request<T>(path: string, options?: RequestInit, capturedShare?: s
  * wrapper because the response is binary. Throws with a readable message when
  * the book is not 100% translated (backend 409) or the request otherwise fails.
  */
+/**
+ * Parse the download filename from Content-Disposition. Prefers the RFC 5987
+ * `filename*=UTF-8''<percent-encoded>` form (carries non-ASCII, e.g. Cyrillic)
+ * over the ASCII `filename="…"` fallback.
+ */
+function filenameFromDisposition(disposition: string, fallback: string): string {
+  const star = disposition.match(/filename\*=UTF-8''([^;]+)/i)
+  if (star?.[1]) {
+    try { return decodeURIComponent(star[1].trim()) } catch { /* fall through */ }
+  }
+  return disposition.match(/filename="?([^";]+)"?/i)?.[1] || fallback
+}
+
+/** Download a ZIP of the whole series' translated EPUBs (admin). */
+export async function downloadSeriesTranslated(seriesId: string, lang: string): Promise<{ skipped: number[] }> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/download-translated?lang=${encodeURIComponent(lang)}`, { headers })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Download failed: ${res.status}`)
+  }
+  const blob = await res.blob()
+  const disposition = res.headers.get('content-disposition') || ''
+  const filename = filenameFromDisposition(disposition, `series-${lang}.zip`)
+  const skippedHeader = res.headers.get('x-skipped-volumes') || ''
+  const skipped = skippedHeader ? skippedHeader.split(',').map(Number).filter((n) => Number.isFinite(n)) : []
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+  return { skipped }
+}
+
 export async function downloadTranslatedEpub(bookId: string, lang: string): Promise<void> {
   const path = `/api/books/${bookId}/download-translated?lang=${encodeURIComponent(lang)}`
   const headers = new Headers()
@@ -494,8 +534,7 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 
   const blob = await res.blob()
   const disposition = res.headers.get('content-disposition') || ''
-  const match = disposition.match(/filename="?([^"]+)"?/i)
-  const filename = match?.[1] || `book-${lang}.epub`
+  const filename = filenameFromDisposition(disposition, `book-${lang}.epub`)
 
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -510,15 +549,28 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 // ── Full-book fiction translation (admin) ──────────────────────────────────
 
 export type FictionProgressEvent = {
-  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done'
+  type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'stopped' | 'glossary_scope'
   chapterId?: string
   index?: number
-  title?: string
+  title?: string | null
   blocks?: number
   parsed?: number
   done?: number
   totalChapters?: number
   error?: string
+  // 'stopped' events (user Stop or the backend call-budget guard): the run halted
+  // early. `reason` says which; `message` is the human explanation to surface;
+  // `calls`/`callBudget` report how far the run got against its ceiling.
+  reason?: 'user' | 'budget'
+  message?: string
+  calls?: number
+  callBudget?: number
+  // glossary_scope: which glossary entries were sent for this chapter (point 2
+  // principle 2), so a human can check that declined forms still pull their entry.
+  entriesIn?: number
+  entriesOut?: number
+  names?: string[]
+  terms?: string[]
 }
 
 export type FictionProgress = {
@@ -528,7 +580,22 @@ export type FictionProgress = {
   totalChapters: number
   counts: { pending: number; translating: number; done: number; error: number }
   percent: number
-  chapters: Array<{ chapter_id: string; status: string; error: string | null; updated_at: string }>
+  chapters: Array<{
+    chapter_id: string
+    status: string
+    error: string | null
+    updated_at: string
+    // Persisted per-chapter glossary scope (point 2 principle 2), so the "glossary
+    // sent per chapter" log is reviewable after the run, not just live.
+    glossary_scope?: {
+      index: number
+      title: string | null
+      entriesIn: number
+      entriesOut: number
+      names: string[]
+      terms: string[]
+    } | null
+  }>
 }
 
 /**
@@ -676,6 +743,8 @@ export type GlossaryStatus = {
   percent: number
   error: string | null
   updatedAt?: string
+  /** True when generation/overwrite is frozen for this glossary (point 2 principle 3). */
+  frozen?: boolean
   glossary: BookGlossary | null
 }
 
@@ -779,6 +848,31 @@ export async function setGlossaryJson(
     throw new Error(body.message || `Failed to save glossary: ${res.status}`)
   }
   return res.json() as Promise<GlossaryStatus>
+}
+
+/**
+ * Freeze or unfreeze the book-wide fiction glossary (point 2, principle 3). A frozen
+ * glossary cannot be modified by generation / set / copy (they 409) so volumes can
+ * translate against a stable object. Admin only.
+ */
+export async function freezeGlossary(
+  bookId: string,
+  lang: string,
+  frozen: boolean,
+): Promise<{ bookId: string; lang: string; frozen: boolean }> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/glossary-freeze`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ lang: lang.toUpperCase(), frozen }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${frozen ? 'freeze' : 'unfreeze'} glossary: ${res.status}`)
+  }
+  return res.json() as Promise<{ bookId: string; lang: string; frozen: boolean }>
 }
 
 /** Fetch the current fiction glossary + build progress (bypasses cache). */
@@ -894,6 +988,8 @@ export type RevisionProgress = {
   error?: string | null
 }
 
+export type RevisionItemOutcome = 'unchanged' | 'applied' | 'approved' | 'rejected'
+
 export type RevisionDiffEntry = {
   chapterId: string
   chapterNumber: number
@@ -904,6 +1000,8 @@ export type RevisionDiffEntry = {
   draft: string
   revised: string
   changed: boolean
+  outcome: RevisionItemOutcome
+  rejectReason: string | null
 }
 
 export type RevisionDiff = {
@@ -1000,6 +1098,76 @@ export async function getRevisionDiff(
     throw new Error(body.message || `Failed to fetch revision diff: ${res.status}`)
   }
   return res.json() as Promise<RevisionDiff>
+}
+
+export type RevisionApplyResult = {
+  ok: boolean
+  blockId: string
+  outcome: 'approved' | 'rejected'
+  after?: string
+}
+
+/**
+ * Review one revised block (auto-commit mode). approve accepts the applied text or
+ * writes `editedText` in its place; reject reverts the block to its Pass-1 draft.
+ * Admin only. Keyed by blockId. Returns the block's new outcome.
+ */
+export async function applyRevision(
+  bookId: string,
+  lang: string,
+  blockId: string,
+  action: 'approve' | 'reject',
+  editedText?: string,
+): Promise<RevisionApplyResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/books/${bookId}/revise-apply`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      lang: lang.toUpperCase(),
+      blockId,
+      action,
+      ...(action === 'approve' && editedText != null ? { editedText } : {}),
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to ${action} revision: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionApplyResult>
+}
+
+export type RevisionCostRun = {
+  runId: string
+  model: string | null
+  startedAt: string | null
+  finishedAt: string | null
+  totals: { calls: number; tokensIn: number; tokensOut: number; costUsd: number; durationMs: number }
+}
+
+export type RevisionCostRuns = {
+  bookId: string
+  lang: string
+  count: number
+  runs: RevisionCostRun[]
+}
+
+/** Per-run Pass-2 revision cost history (newest first), for the admin cost panel. */
+export async function getRevisionCostRuns(bookId: string, lang: string): Promise<RevisionCostRuns> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/revise-cost-runs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch revision cost runs: ${res.status}`)
+  }
+  return res.json() as Promise<RevisionCostRuns>
 }
 
 // ── Reader-check QA pass (admin) ────────────────────────────────────────────────
@@ -1220,6 +1388,62 @@ export async function getReaderCheckCostRuns(bookId: string, lang: string): Prom
     throw new Error(body.message || `Failed to fetch reader-check cost runs: ${res.status}`)
   }
   return res.json() as Promise<ReaderCheckCostRuns>
+}
+
+// ── Fiction per-run cost history (admin) ────────────────────────────────────────
+
+export type FictionCostRunStage = {
+  stage: 'revise' | 'reader-check' | 'correction'
+  calls: number
+  tokensIn: number
+  tokensOut: number
+  costUsd: number
+  durationMs: number
+}
+
+export type FictionCostRun = {
+  runId: string
+  kind: 'revision' | 'reader-check'
+  model: string | null
+  startedAt: string | null
+  finishedAt: string | null
+  /** Per-stage breakdown for this run (revision = 1 stage; reader-check = up to 2). */
+  stages: FictionCostRunStage[]
+  /** Total across all of this run's stages. */
+  total: {
+    calls: number
+    tokensIn: number
+    tokensOut: number
+    costUsd: number
+    durationMs: number
+  }
+}
+
+export type FictionCostRuns = {
+  bookId: string
+  lang: string
+  count: number
+  runs: FictionCostRun[]
+}
+
+/**
+ * Per-run cost history for the run-tracked fiction stages (revision +
+ * reader-check), newest first. Each run carries a per-stage breakdown and a
+ * total across its stages. Complements the lifetime per-stage `/fiction-costs`.
+ */
+export async function getFictionCostRuns(bookId: string, lang: string): Promise<FictionCostRuns> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(
+    `${API_URL}/api/books/${bookId}/fiction-cost-runs?lang=${encodeURIComponent(lang.toUpperCase())}`,
+    { headers, cache: 'no-store' },
+  )
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to fetch fiction cost runs: ${res.status}`)
+  }
+  return res.json() as Promise<FictionCostRuns>
 }
 
 /**
@@ -2926,4 +3150,288 @@ export function fetchAuthorSheetRates(
   return request<{ rates: AuthorSheetRate[] }>(
     `/api/admin/cost-runs/author-sheet-rates${qs ? `?${qs}` : ''}`
   )
+}
+
+// ── Book series (admin, full-flow-automatization) ───────────────────────────
+
+export type SeriesListItem = {
+  id: string
+  name: string
+  genre: string | null
+  direction: string | null
+  bookCount: number
+  createdAt: string
+}
+
+export type SeriesVolumeTranslation = {
+  language: string
+  doneChapters: number
+  errorChapters: number
+  totalChapters: number
+  percent: number
+  state: 'complete' | 'partial' | 'pending'
+  updatedAt: string
+}
+
+export type SeriesGlossaryStatus = {
+  language: string
+  status: 'pending' | 'building' | 'done' | 'error'
+  chaptersDone: number
+  chaptersTotal: number
+  frozen: boolean
+  updatedAt?: string
+}
+
+export type SeriesVolumeWarnings = {
+  retries: number
+  splitRetries: number
+  flaggedBlocks: number
+  llmCalls: number
+}
+
+export type SeriesLiveness = 'moving' | 'waiting_quota' | 'stalled' | null
+
+export type SeriesVolume = {
+  bookId: string
+  title: string
+  author: string | null
+  volumeNumber: number | null
+  processingStatus: 'pending' | 'processing' | 'ready' | 'error'
+  sourceLanguage: string | null
+  totalChapters: number
+  translations: SeriesVolumeTranslation[]
+  // Present once the orchestrator (M1.3) + observability (M1.6) backends ship.
+  glossary?: SeriesGlossaryStatus[]
+  warnings?: SeriesVolumeWarnings
+  liveness?: SeriesLiveness
+  lastProgressAt?: string | null
+}
+
+export type SeriesRecipe = {
+  id: string
+  name: string
+  genre: string
+  direction: string
+  model: string
+  units: 'us' | 'metric' | 'keep'
+  seedGlossary: string
+  prompts: { step0: string; translate: string }
+}
+
+export type SeriesGate = { waiting: number; rate429: number; pausedBuckets: number }
+
+export type SeriesDetail = {
+  id: string
+  name: string
+  genre: string | null
+  direction: string | null
+  createdAt: string
+  recipe: SeriesRecipe | null
+  gate?: SeriesGate
+  volumes: SeriesVolume[]
+}
+
+export type SeriesUploadResult = {
+  seriesId: string
+  name: string
+  genre: string | null
+  books: Array<{ bookId: string; jobId: string | null; volumeNumber: number; fileName: string }>
+  failures: Array<{ fileName: string; error: string }>
+}
+
+/** List all book series (admin). */
+export async function listSeries(): Promise<SeriesListItem[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load series: ${res.status}`)
+  }
+  const data = (await res.json()) as { series?: SeriesListItem[] }
+  return data.series ?? []
+}
+
+/** One series with volumes + per-volume translation progress (admin). */
+export async function getSeries(seriesId: string): Promise<SeriesDetail> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load series: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesDetail>
+}
+
+export type SeriesRunResult = {
+  seriesId: string
+  recipe: string
+  lang: string
+  glossaryModel: string
+  translateModel: string
+  totalVolumes: number
+  volumesNotReady: number[]
+  enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number }
+}
+
+export type SeriesRunOpts = { lang?: string; model?: string; glossaryModel?: string; translateModel?: string; fresh?: boolean }
+
+/** Start the full-flow for a series (admin): enqueues step 0 for volume 1. */
+export async function runSeries(seriesId: string, opts: SeriesRunOpts = {}): Promise<SeriesRunResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/run`, {
+    method: 'POST', headers, body: JSON.stringify(opts),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to start series: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesRunResult>
+}
+
+/** Re-enqueue a stuck/stopped step for one volume (admin). */
+export async function restartSeriesStep(
+  seriesId: string, bookId: string, step: 'step0' | 'translate', opts: SeriesRunOpts = {},
+): Promise<{ seriesId: string; enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number; lang: string } }> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/restart`, {
+    method: 'POST', headers, body: JSON.stringify({ bookId, step, ...opts }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to restart step: ${res.status}`)
+  }
+  return res.json()
+}
+
+/**
+ * Upload a ZIP archive of EPUB volumes as a new series (admin).
+ *
+ * Uploads the ZIP directly to Supabase Storage via a signed URL (bypassing the
+ * serverless request-body cap — a series ZIP can be tens of MB), then calls
+ * POST /api/series/process with just the storage path.
+ */
+export async function uploadSeriesZip(
+  file: File,
+  opts: { name?: string; genre?: string } = {},
+  signal?: AbortSignal
+): Promise<SeriesUploadResult> {
+  const slug = (file.name.replace(/\.zip$/i, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'series').slice(0, 60)
+  const uniqueSuffix = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
+  const zipPath = `series-${slug}-${uniqueSuffix}.zip`
+
+  const { signedUrl } = await getSignedUploadUrl('books', zipPath, signal)
+  await uploadToStorage(signedUrl, file, 'application/zip', signal)
+
+  return request<SeriesUploadResult>('/api/series/process', {
+    method: 'POST',
+    body: JSON.stringify({ zip_path: zipPath, file_name: file.name, name: opts.name, genre: opts.genre }),
+    signal,
+  })
+}
+
+// ── Attention queue (admin, M1.6b) ──────────────────────────────────────────
+
+export type AttentionItem = {
+  id: string
+  bookId: string
+  bookTitle: string
+  seriesId: string | null
+  seriesName: string | null
+  language: string
+  blockId: string | null
+  step: string | null
+  kind: string | null
+  reason: string
+  createdAt: string
+}
+
+/** List open attention-queue items (admin). */
+export async function listAttention(limit = 100): Promise<AttentionItem[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/attention?limit=${limit}`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load attention queue: ${res.status}`)
+  }
+  const data = (await res.json()) as { items?: AttentionItem[] }
+  return data.items ?? []
+}
+
+/** Resolve one attention item (admin). */
+export async function resolveAttentionItem(id: string): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/attention/resolve`, {
+    method: 'POST', headers, body: JSON.stringify({ id }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to resolve item: ${res.status}`)
+  }
+}
+
+// ── Smart series glossary (admin, M1.7) ─────────────────────────────────────
+
+export type GlossaryEdit = {
+  kind: 'named_entity' | 'terminology'
+  source: string
+  target: string
+  forms?: string[]
+  note?: string
+}
+
+export type GlossaryEditVolumeResult = {
+  bookId: string
+  volumeNumber: number | null
+  title: string
+  updated?: boolean
+  affectedBlocks?: number
+  redone?: number
+  applied?: number
+  unchanged?: number
+  failed?: number
+  skipped?: string
+}
+
+export type GlossaryEditResult = {
+  seriesId: string
+  lang: string
+  edits: number
+  reason: string
+  capped: boolean
+  volumes: GlossaryEditVolumeResult[]
+}
+
+/**
+ * Edit series glossary entries and re-translate the affected paragraphs across
+ * every volume (admin). One edit = re-translate just the paragraphs with that
+ * term; several edits apply together.
+ */
+export async function editSeriesGlossary(
+  seriesId: string,
+  edits: GlossaryEdit[],
+  opts: { lang?: string; model?: string } = {},
+): Promise<GlossaryEditResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/glossary-edit`, {
+    method: 'POST', headers, body: JSON.stringify({ edits, ...opts }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Glossary edit failed: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryEditResult>
 }

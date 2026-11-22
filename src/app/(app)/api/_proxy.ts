@@ -80,8 +80,9 @@ export async function proxyToBackend(request: Request, expectedReadingUser?: str
 
     if (
       contentType.startsWith('image/') ||
-      contentType.startsWith('application/octet-stream') || contentType.startsWith('application/zip') ||
-      contentType.startsWith('application/epub+zip')
+      contentType.startsWith('application/octet-stream') ||
+      contentType.startsWith('application/epub+zip') ||
+      contentType.startsWith('application/zip')
     ) {
       const response = new NextResponse(res.body, { status: res.status })
       response.headers.set('Content-Type', contentType)
@@ -90,6 +91,7 @@ export async function proxyToBackend(request: Request, expectedReadingUser?: str
       // Preserve the download filename for binary attachments (e.g. EPUB export)
       const contentDisposition = res.headers.get('content-disposition')
       if (contentDisposition) response.headers.set('Content-Disposition', contentDisposition)
+      // Forward the series-download "skipped volumes" hint.
       const skipped = res.headers.get('x-skipped-volumes')
       if (skipped) response.headers.set('X-Skipped-Volumes', skipped)
       return response
