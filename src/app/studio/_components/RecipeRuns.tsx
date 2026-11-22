@@ -87,7 +87,7 @@ function RunRows({ run, lang, admin, details, toggle, tokensIn, tokensOut }: {
   return <><tr className="border-t align-top"><td><Link className="underline" href={bookRunPath(run.bookId,lang,run.id)}>{stageName[run.operation]}</Link><small className="block pt-muted">{new Date(run.createdAt).toLocaleString('ru')}</small></td>
     <td>{statusOf(run)}</td>{admin && <><td>{count(tokensIn)}</td><td>{count(tokensOut)}</td></>}
     <td>{run.costUsd == null ? '—' : formatCost.format(run.costUsd)}
-      {!run.usageComplete && run.costUsd != null && <small className="block pt-muted">Данные неполные</small>}</td>
+      {!run.usageComplete && (run.costUsd != null || tokensIn != null || tokensOut != null) && <small className="block pt-muted">Данные неполные</small>}</td>
     {admin && <td><Button size="sm" variant="ghost" onClick={toggle} aria-expanded={details}>{details ? 'Свернуть' : 'Подробнее'}</Button></td>}</tr>
     {admin && details && <tr><td colSpan={6}><RunDetails run={run} lang={lang}/></td></tr>}</>;
 }

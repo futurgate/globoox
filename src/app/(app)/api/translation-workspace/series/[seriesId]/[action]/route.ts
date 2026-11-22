@@ -42,8 +42,12 @@ export async function GET(request: Request, { params }: Context) {
 
 export async function POST(request: Request, { params }: Context) {
   return workspaceRoute(request, async session => {
-    requireAdmin(session)
     const { seriesId, action } = await params
+    if (action === 'run' && session.role === 'author') {
+      await requireOwnedSeries(session, seriesId)
+      return upstream(request, session, `/api/series/${seriesId}/run`, await bodyObject(request))
+    }
+    requireAdmin(session)
     if (action !== 'run' && action !== 'restart') throw new WorkspaceError(404, 'Действие не найдено')
     const { own } = await seriesDetail(request, session, seriesId)
     const body = await bodyObject(request)

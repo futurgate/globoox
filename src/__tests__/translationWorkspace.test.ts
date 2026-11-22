@@ -282,11 +282,15 @@ describe('live translation workspace boundaries', () => {
 
   it('forwards a supported author estimate while keeping admin operations restricted', async () => {
     tables.profiles[0].is_admin = false
-    expect((await bookGet(get(), context(book, 'download-translated'))).status).toBe(403)
+    expect((await bookGet(get(), context(foreign, 'download-translated'))).status).toBe(404)
     expect((await bookPost(post({}), context(book, 'translate-full-book'))).status).toBe(403)
+    expect(proxy).not.toHaveBeenCalled()
+    expect((await bookGet(get(), context(book, 'download-translated'))).status).toBe(200)
     expect((await bookGet(get(), context(book, 'translation-estimate'))).status).toBe(200)
-    expect(proxy).toHaveBeenCalledTimes(1)
-    expect(proxy.mock.calls[0][1]).toBe(owner)
+    expect(proxy.mock.calls.map(([req, userId]) => [new URL(req.url).pathname, userId])).toEqual([
+      [`/api/books/${book}/download-owned-translation`, owner],
+      [`/api/books/${book}/translation-estimate`, owner],
+    ])
   })
 
   it('uses the verified book for a QA action', async () => {

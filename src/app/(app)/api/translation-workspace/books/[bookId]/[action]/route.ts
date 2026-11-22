@@ -27,7 +27,7 @@ const writeFields = new Map<string, string[]>([
   ['translation-quality', ['targetLang', 'genre']],
   ['resolve-attention', ['id']],
 ])
-const authorReads = new Set(['translation-estimate', 'download', 'download-translated'])
+const authorReads = new Set(['run', 'translation-estimate', 'download', 'download-translated'])
 type Context = { params: Promise<{ bookId: string; action: string }> }
 
 export async function GET(request: Request, { params }: Context) {
@@ -60,12 +60,14 @@ export async function GET(request: Request, { params }: Context) {
 
 export async function POST(request: Request, { params }: Context) {
   return workspaceRoute(request, async session => {
-    requireAdmin(session)
     const { bookId, action } = await params
+    if (action !== 'run') requireAdmin(session)
     const fields = writeFields.get(action)
     if (!fields) throw new WorkspaceError(404, 'Действие не найдено')
     await requireOwnedBook(session, bookId)
     const input = await bodyObject(request)
+    // The backend verifies the live grant and strictly validates the author command.
+    if (action === 'run' && session.role === 'author') return upstream(request, session, `/api/books/${bookId}/run`, input)
     const body = Object.fromEntries(fields.filter(field => Object.hasOwn(input, field)).map(field => [field, input[field]]))
     if (action === 'copy-glossary') await requireOwnedBook(session, checkId(body.sourceBookId, 'Книга-источник не найдена'))
     if (action === 'generate-glossary' && body.seedFromBookId != null) {
