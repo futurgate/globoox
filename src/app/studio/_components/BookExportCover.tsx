@@ -56,12 +56,12 @@ export function BookExportCover({ bookId, lang, action, disabled }: {
       <ActionFeedback error={loaded.error}/>
       <Button variant="outline" onClick={() => setReload(n => n + 1)}>Повторить загрузку</Button>
     </div>}
-    {current && <div className="flex flex-wrap items-start gap-4">
-      {current.preview && <Image unoptimized src={current.preview} width={112} height={160}
+    {(current || loaded?.error) && <div className="flex flex-wrap items-start gap-4">
+      {current?.preview && <Image unoptimized src={current.preview} width={112} height={160}
         className="h-auto max-h-40 w-auto max-w-28 rounded object-contain" alt="Обложка для экспорта перевода"/>}
       <div className="grid min-w-0 flex-1 basis-56 gap-2">
-        <p>{sourceLabels[current.source]}</p>
-        <p className="pt-muted text-sm">JPEG или PNG до 3 МБ. Обложка войдёт в EPUB на выбранном языке.</p>
+        {current && <p>{sourceLabels[current.source]}</p>}
+        <p className="pt-muted text-sm">JPEG или PNG до 3 МБ и 16 мегапикселей. Обложка войдёт в EPUB на выбранном языке.</p>
         <input ref={input} type="file" hidden accept="image/jpeg,image/png,.jpg,.jpeg,.png" onChange={event => {
           const file = event.currentTarget.files?.[0];
           event.currentTarget.value = '';
@@ -69,9 +69,9 @@ export function BookExportCover({ bookId, lang, action, disabled }: {
         }}/>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" disabled={locked} onClick={() => input.current?.click()}>
-            {current.source === 'none' ? 'Добавить обложку' : 'Заменить обложку'}
+            {current ? (current.source === 'none' ? 'Добавить обложку' : 'Заменить обложку') : 'Выбрать обложку'}
           </Button>
-          {current.source === 'custom' && <Button variant="ghost" disabled={locked} onClick={() => change()}>
+          {current?.source === 'custom' && <Button variant="ghost" disabled={locked} onClick={() => change()}>
             Убрать свою обложку
           </Button>}
         </div>
