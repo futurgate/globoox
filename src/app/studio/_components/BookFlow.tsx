@@ -50,7 +50,7 @@ export function BookFlow({ bookId, lang, settingsReady, editionsUrl }: {
 
   return <Card className="gap-3 p-5">
     <h2>Перевод книги</h2>
-    <p className="pt-muted">Сервер подготовит глоссарий и переведёт текст с сохранёнными параметрами. После запуска вкладку можно закрыть.</p>
+    <p className="pt-muted">Сервер подготовит глоссарий и переведёт текст с сохранёнными параметрами. Запуск расходует токены. Вкладку можно закрыть.</p>
     {run && <p role="status">{statusNames[run.status]}{run.status !== 'done' && ' · ' + (run.stage === 'glossary' ? 'глоссарий' : 'перевод текста')}</p>}
     <div className="flex flex-wrap gap-2">
       {runId && <Button asChild variant="outline"><Link href={bookRunPath(bookId,lang,runId)}>Ход запуска</Link></Button>}

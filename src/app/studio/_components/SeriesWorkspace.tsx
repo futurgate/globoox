@@ -11,7 +11,8 @@ import { ModelChoice, RecipeEditor } from './RecipeSettings';
 import { recipeEndpoint, runsEndpoint, type StudioRun, type RecipeSettings } from '@/lib/studioRecipe';
 import { bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 import type { WorkspaceBook, WorkspaceSeries } from '@/lib/translationWorkspaceTypes';
-import { bookPath, processingLabel } from './projectLinks';
+import { bookPath, bookRunPath, processingLabel } from './projectLinks';
+import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
 
 type Glossary = { language: string; status: string; chaptersDone: number; chaptersTotal: number; frozen: boolean };
 type Translation = { language: string; state: string; doneChapters: number; totalChapters: number; errorChapters: number };
@@ -56,6 +57,8 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
   const [glossaryModel, setGlossaryModel] = useState('');
   const [translateModel, setTranslateModel] = useState('');
   const [savedRecipe, setSavedRecipe] = useState<RecipeSettings | null>(null);
+  const [settingsReady, setSettingsReady] = useState(false);
+  const [firstRunUrl, setFirstRunUrl] = useState('');
   const [previewBooks, setPreviewBooks] = useState(false);
   const runRequest = useRef<{ signature: string; id: string } | null>(null);
   const [showRun, setShowRun] = useState(false);
@@ -66,6 +69,8 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
   const mutation = useRef<AbortController | null>(null);
   const endpoint = '/api/translation-workspace/series/' + encodeURIComponent(series.id);
   const admin = role === 'admin' && series.ownerVerified;
+  const access = useLaunchAccess(role === 'author' && series.ownerVerified);
+  const canStart = series.ownerVerified && access.allowed;
   const models = useBookData<{ models: string[] }>(admin && showRun ? '/api/admin/models' : null);
   const load = useCallback(async () => {
     if (!admin || inFlight.current) return;
@@ -100,7 +105,7 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
   }, [running, admin, followUntil, load]);
 
   async function operate(action: 'run' | 'restart', bookId?: string, step?: 'translate' | 'step0', lang?: string) {
-    if (!admin || mutation.current) return;
+    if (!canStart || (action === 'restart' && !admin) || mutation.current) return;
     const request = new AbortController();
     mutation.current = request;
     setWorking(true);
@@ -116,7 +121,7 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
         resumed = existing?.id;
       }
       const body = action === 'run' ? {
-        lang: targetLang, studioRun: { requestId: runRequest.current!.id }, ...(glossaryModel && { glossaryModel }), ...(translateModel && { translateModel }),
+        lang: targetLang, studioRun: { requestId: runRequest.current!.id }, ...(admin && glossaryModel && { glossaryModel }), ...(admin && translateModel && { translateModel }),
       } : { bookId, step, lang, ...(resumed && { studioRun: { runId: resumed } }) };
       const response = await studioFetch(endpoint + '/' + action, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: request.signal,
@@ -124,9 +129,12 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
       const result = await readResponse(response);
       if (!result?.enqueued || result.seriesId !== series.id) throw new Error('Сервер не подтвердил постановку в очередь. Обновите состояние серии.');
       if (!request.signal.aborted) {
-        setMessage((action === 'run' ? 'Запуск серии принят. ' : 'Продолжение этапа принято. ') + 'Том ' + result.enqueued.volumeNumber + ' поставлен в очередь.');
+        setMessage(admin ? (action === 'run' ? 'Запуск серии принят. ' : 'Продолжение этапа принято. ') + 'Том ' + result.enqueued.volumeNumber + ' поставлен в очередь.'
+          : 'Перевод серии принят. Ход работы доступен в истории запусков проекта.');
+        const first = result.runs?.find((item: { bookId: string }) => item.bookId === result.enqueued.bookId);
+        if (first?.runId) setFirstRunUrl(bookRunPath(first.bookId, targetLang, first.runId));
         setShowRun(false); runRequest.current = null; setGlossaryModel(''); setTranslateModel('');
-        setFollowUntil(Date.now() + 90000);
+        if (admin) setFollowUntil(Date.now() + 90000);
         void load();
       }
     } catch (cause) {
@@ -144,17 +152,17 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
   const direction = (recipe?.direction || series.direction || '').toUpperCase().split(/\s*(?:->|→|-)\s*/);
   const sourceLang = direction[0] || sorted[0]?.sourceLanguage?.toUpperCase() || 'RU';
   const targetLang = direction[1] || (sourceLang === 'RU' ? 'EN' : 'RU');
-  const canRunRecipe = Boolean(savedRecipe && savedRecipe.effective.glossaryModel && savedRecipe.effective.translateModel);
+  const canRunRecipe = Boolean(savedRecipe && (!admin || (savedRecipe.effective.glossaryModel && savedRecipe.effective.translateModel)));
   const allReady = sorted.length > 0 && sorted.every((book) => (volumes.get(book.id)?.processingStatus ?? book.processingStatus) === 'ready');
   return (
     <div className="space-y-4">
-      {admin && <Card className="gap-3 p-4 sm:p-5">
+      {canStart && <Card className="gap-3 p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold">Перевод серии</h2>
             <p className="text-sm text-[var(--app-text-muted)]">{recipe?.name || (series.genre ? (genreNames[series.genre] ?? series.genre) : 'Жанр не указан')}</p>
           </div>
-          <Button variant="outline" size="sm" onClick={load} disabled={fetching}><RefreshCw className={fetching ? 'animate-spin' : ''} />Обновить</Button>
+          {admin && <Button variant="outline" size="sm" onClick={load} disabled={fetching}><RefreshCw className={fetching ? 'animate-spin' : ''} />Обновить</Button>}
         </div>
         {recipe && <details className="text-sm"><summary className="cursor-pointer font-medium">Базовый рецепт серии</summary>
             <dl className="mt-2 space-y-1 break-words">
@@ -166,10 +174,10 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
               <div><dt className="inline text-[var(--app-text-muted)]">Шаблон перевода · </dt><dd className="inline">{recipe.prompts.translate}</dd></div>
             </dl>
           </details>}
-          {canRunRecipe && <>
+          {canRunRecipe && (admin || !firstRunUrl) && <>
           {showRun ? (
             <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); void operate('run'); }}>
-              <ModelChoice label="Модель глоссария для запуска" value={glossaryModel} inherited={savedRecipe?.effective.glossaryModel}
+              {admin && <><ModelChoice label="Модель глоссария для запуска" value={glossaryModel} inherited={savedRecipe?.effective.glossaryModel}
                 models={models?.data?.models ?? []} disabled={working} onChange={setGlossaryModel}/>
               <ModelChoice label="Модель перевода для запуска" value={translateModel} inherited={savedRecipe?.effective.translateModel}
                 models={models?.data?.models ?? []} disabled={working} onChange={setTranslateModel}/>
@@ -177,23 +185,26 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
               <details onToggle={e => setPreviewBooks(e.currentTarget.open)}><summary>Параметры по томам ({sorted.length})</summary>
                 {previewBooks && <ul className="mt-2 text-sm">{sorted.map(book => <VolumePreview key={book.id} book={book}
                   sourceLang={book.sourceLanguage || sourceLang} targetLang={targetLang} glossaryModel={glossaryModel} translateModel={translateModel}/>)}</ul>}
-              </details>
+              </details></>}
+              {!admin && <p>Томов в запуске · {sorted.length}. Направление · {sourceLang} → {targetLang}.</p>}
               <p className="text-sm text-[var(--app-text-muted)]">Сервер поставит первый том в очередь и начнёт обработку остальных томов по рецепту. Вызовы модели учитываются в расходах.</p>
               {hasGaps && <p role="status" className="text-sm">В нумерации есть пропуски. В запуск войдут только перечисленные тома, в указанном порядке.</p>}
-              <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!allReady || working || running}><Play />Подтвердить запуск</Button>
+              <div className="flex flex-wrap gap-2"><Button type="submit" disabled={!allReady || !settingsReady || working || running}><Play />Подтвердить запуск</Button>
                 <Button type="button" variant="outline" disabled={working} onClick={() => setShowRun(false)}>Отмена</Button></div>
             </form>
-          ) : <Button className="self-start" disabled={!allReady || working || running || Boolean(followUntil)} onClick={() => setShowRun(true)}><Play />Запустить перевод серии</Button>}
+          ) : <Button className="self-start" disabled={!allReady || !settingsReady || working || running || Boolean(followUntil)} onClick={() => setShowRun(true)}><Play />Запустить перевод серии</Button>}
           {!allReady && <p className="text-sm text-[var(--app-text-muted)]">Для запуска дождитесь импорта каждого тома.</p>}
+          {!settingsReady && <p className="text-sm text-[var(--app-text-muted)]">Перед запуском сохраните параметры серии.</p>}
         </>}
-        {detail && !canRunRecipe && <p className="text-sm text-[var(--app-text-muted)]">Для запуска нужны сохранённые параметры перевода серии.</p>}
+        {!canRunRecipe && <p className="text-sm text-[var(--app-text-muted)]">Для запуска нужны сохранённые параметры перевода серии.</p>}
         {message && <p role="status" className="text-sm">{message}</p>}
+        {firstRunUrl && <Link className="self-start text-sm underline" href={firstRunUrl}>Открыть журнал тома</Link>}
         {error && <p role="alert" className="break-words text-sm">{error}</p>}
       </Card>}
       {series.ownerVerified && sourceLang && targetLang && <RecipeEditor ownerId={ownerId} admin={admin}
-        locator={{ scope:'series', scopeId:series.id, sourceLang, targetLang }} onResolved={setSavedRecipe}/>}
+        locator={{ scope:'series', scopeId:series.id, sourceLang, targetLang }} onResolved={setSavedRecipe} onReadyToRun={setSettingsReady}/>}
       {role === 'admin' && !series.ownerVerified && <p className="text-sm text-[var(--app-text-muted)]">Доступны ваши тома. Для управления всей серией требуется подтверждение её владельца.</p>}
-      {role === 'author' && <Card className="items-start gap-2 p-4"><Button disabled><Play />Запустить перевод серии</Button><p className="text-sm font-semibold">Планируется</p><p className="text-sm text-[var(--app-text-muted)]">Для запуска от имени автора требуется доступ к обработке серии.</p></Card>}
+      {role === 'author' && series.ownerVerified && !access.allowed && <LaunchAccessNotice access={access}/>}
       <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
           <h2 className="text-lg font-semibold">Тома серии</h2>

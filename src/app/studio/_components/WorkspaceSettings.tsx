@@ -15,6 +15,7 @@ import { createPersonalPrompt, listPersonalPrompts, PersonalPromptError, readLeg
 import { templateLink, workspaceBase } from '@/lib/translationWorkspacePath';
 import SampleRun from './SampleRun';
 import { AccountRecipes } from './RecipeSettings';
+import { AuthorGrants } from './AuthorGrants';
 
 const labels = { glossary: 'Глоссарий', translate: 'Перевод', revise: 'Стилистическая редактура', 'reader-check': 'Читательская проверка' };
 type Group = keyof typeof labels;
@@ -32,6 +33,17 @@ function templateLabel(template: ServerPrompt) {
 }
 
 export default function WorkspaceSettings({ name, ownerId }: { name?: string; ownerId: string }) {
+  const access = useSearchParams().get('section') === 'access' && !name;
+  return <div className="pt-stack">
+    {!name && <nav className="pt-sections flex-wrap" aria-label="Разделы настроек">
+      <Button variant="ghost" asChild><Link aria-current={!access ? 'page' : undefined} href={settings}>Рецепты и шаблоны</Link></Button>
+      <Button variant="ghost" asChild><Link aria-current={access ? 'page' : undefined} href={settings + '?section=access'}>Доступ авторов</Link></Button>
+    </nav>}
+    {access ? <AuthorGrants key={ownerId} ownerId={ownerId}/> : <PromptSettings name={name} ownerId={ownerId}/>}
+  </div>;
+}
+
+function PromptSettings({ name, ownerId }: { name?: string; ownerId: string }) {
   const query = useSearchParams();
   const variantId = query.get('variant');
   const [templates, setTemplates] = useState<ServerPrompt[] | null>(null);
