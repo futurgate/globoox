@@ -4,12 +4,12 @@ import { studioFetch } from '@/lib/studioFetch';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Play, RefreshCw } from 'lucide-react';
+import { ChevronRight, Download, Play, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ModelChoice, RecipeEditor } from './RecipeSettings';
 import { recipeEndpoint, runsEndpoint, type StudioRun, type RecipeSettings } from '@/lib/studioRecipe';
-import { bookGet, useBookData } from './bookRequests';
+import { bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 import type { WorkspaceBook, WorkspaceSeries } from '@/lib/translationWorkspaceTypes';
 import { bookPath, processingLabel } from './projectLinks';
 
@@ -62,6 +62,7 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
   const [fetching, setFetching] = useState(false);
   const [followUntil, setFollowUntil] = useState(0);
   const inFlight = useRef<AbortController | null>(null);
+  const archive = useBookAction();
   const mutation = useRef<AbortController | null>(null);
   const endpoint = '/api/translation-workspace/series/' + encodeURIComponent(series.id);
   const admin = role === 'admin' && series.ownerVerified;
@@ -194,7 +195,15 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
       {role === 'admin' && !series.ownerVerified && <p className="text-sm text-[var(--app-text-muted)]">Доступны ваши тома. Для управления всей серией требуется подтверждение её владельца.</p>}
       {role === 'author' && <Card className="items-start gap-2 p-4"><Button disabled><Play />Запустить перевод серии</Button><p className="text-sm font-semibold">Планируется</p><p className="text-sm text-[var(--app-text-muted)]">Для запуска от имени автора требуется доступ к обработке серии.</p></Card>}
       <Card className="overflow-hidden">
-        <h2 className="px-4 py-3 text-lg font-semibold">Тома серии</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+          <h2 className="text-lg font-semibold">Тома серии</h2>
+          {admin && sorted.length > 0 && <Button size="sm" variant="outline" disabled={archive.busy}
+            onClick={() => void archive.run(signal => downloadBookFile(endpoint + '/download-translated?lang=' + encodeURIComponent(targetLang),
+              (series.name || 'Серия') + ' (' + targetLang + ')', signal, 'zip'))}>
+            <Download />{archive.busy ? 'Собираем ZIP…' : 'Скачать готовые тома · ZIP · ' + targetLang}</Button>}
+        </div>
+        {archive.error && <p role="alert" className="px-4 text-sm">{archive.error}</p>}
+        {archive.notice && <p role="status" className="px-4 text-sm">{archive.notice}</p>}
         {sorted.length === 0 && <p className="px-4 pb-4 text-sm">В этой серии пока нет томов.</p>}
         {sorted.map((book) => {
           const v = volumes.get(book.id);
@@ -211,6 +220,7 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
               {(g.status === 'error' || (v.liveness === 'stalled' && g.status === 'building')) && <Button size="sm" variant="outline" disabled={working} onClick={() => void operate('restart', book.id, 'step0', g.language)}>Продолжить словарь</Button>}
             </div>)}
             {v?.translations.map((t) => <div key={t.language} className="mt-2 flex flex-wrap items-center gap-2 text-sm"><span>Перевод {t.language} · {t.doneChapters}/{t.totalChapters} глав{t.errorChapters > 0 ? ' · ошибок: ' + t.errorChapters : ''}</span>
+              {t.state === 'complete' && <Button size="sm" variant="outline" asChild><Link href={bookPath(book.id) + '/translations/' + encodeURIComponent(t.language) + '/editions'}>Обложка и EPUB</Link></Button>}
               {t.state !== 'complete' && (t.errorChapters > 0 || (t.state === 'partial' && v.liveness === 'stalled')) && <Button size="sm" variant="outline" disabled={working} onClick={() => void operate('restart', book.id, 'translate', t.language)}>Продолжить перевод</Button>}
             </div>)}
           </div>;

@@ -12,7 +12,7 @@ interface StageSpend {
   complete: boolean; models: string[];
 }
 interface HistoryRow extends StudioRun { costUsd: number | null; spend?: StageSpend[]; usageComplete: boolean }
-const stageName = { glossary:'Глоссарий', translate:'Перевод текста', series:'Перевод в серии' };
+const stageName = { glossary:'Глоссарий', translate:'Перевод текста', series:'Перевод в серии', book:'Перевод книги' };
 const stateName = { done:'Завершён', running:'Выполняется', error:'Ошибка', stopped:'Остановлен' };
 const formatCost = new Intl.NumberFormat('ru', { style:'currency', currency:'USD', maximumFractionDigits:5 });
 const formatCount = new Intl.NumberFormat('ru');
@@ -22,7 +22,7 @@ function statusOf(run: StudioRun) {
   if (!stages.length) return 'В очереди';
   const unfinished = stages.find(s => s.status === 'running') ?? stages.find(s => s.status === 'error' || s.status === 'stopped');
   if (unfinished) return stateName[unfinished.status];
-  return run.operation === 'series' && !run.stages.translate ? 'Ожидает перевода' : 'Завершён';
+  return (run.operation === 'series' || run.operation === 'book') && !run.stages.translate ? 'Ожидает перевода' : 'Завершён';
 }
 
 function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
@@ -36,7 +36,7 @@ function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
       <p><strong>Рецепт</strong> · {config.recipeId}</p>
       {config.wishes && <p><strong>Пожелания</strong> · {config.wishes}</p>}
       <p><strong>Единицы</strong> · {{ keep:'Как в оригинале', us:'Американские', metric:'Метрические' }[config.units] || config.units}</p>
-      {(['glossary','translate'] as const).filter(stage => run.operation === 'series' || run.operation === stage).map(stage => {
+      {(['glossary','translate'] as const).filter(stage => run.operation === 'series' || run.operation === 'book' || run.operation === stage).map(stage => {
         const frozen = config[stage];
         const spent = run.spend?.find(row => row.stage === stage);
         const source = config.sources[stage === 'glossary' ? 'glossaryModel' : 'translateModel'];

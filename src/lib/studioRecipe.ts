@@ -37,7 +37,7 @@ export function omitEmptyValues(values: RecipeValues): RecipeValues {
 
 export type RunStageState = { status: 'running' | 'done' | 'stopped' | 'error'; attempt: number; startedAt: string; finishedAt?: string | null }
 export type StudioRun = {
-  id: string; groupId?: string; seriesId?: string | null; createdAt: string; bookId: string; operation: 'glossary' | 'translate' | 'series';
+  id: string; groupId?: string; seriesId?: string | null; createdAt: string; bookId: string; operation: 'glossary' | 'translate' | 'series' | 'book';
   stages: { glossary?: RunStageState; translate?: RunStageState }
 }
 export function runsEndpoint(bookId: string, lang: string) {
@@ -59,7 +59,7 @@ export function runEndpoint(bookId: string, lang: string, runId: string) {
 // A newer series run may also have written the book. Only the most recent
 // applicable run can be resumed from a manual stage card.
 export function resumableStage(runs: readonly StudioRun[], stage: 'glossary' | 'translate') {
-  const latest = runs.find(run => run.operation === stage || run.operation === 'series')
+  const latest = runs.find(run => run.operation === stage || run.operation === 'series' || run.operation === 'book')
   const status = latest?.stages?.[stage]?.status
   return latest?.operation === stage && (status === 'stopped' || status === 'error') ? latest.id : undefined
 }

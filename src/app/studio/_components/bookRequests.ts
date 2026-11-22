@@ -8,7 +8,7 @@ export function bookEndpoint(bookId: string, action: string, lang: string) {
   return `/api/translation-workspace/books/${encodeURIComponent(bookId)}/${action}?lang=${encodeURIComponent(lang)}`;
 }
 
-async function checkedResponse(response: Response) {
+export async function checkedResponse(response: Response) {
   if (response.ok) return response;
   const body = await response.json().catch(() => null);
   const detail = body?.message || body?.statusMessage || body?.error;
@@ -20,22 +20,27 @@ export async function bookGet<T>(url: string, signal?: AbortSignal): Promise<T> 
   return r.json();
 }
 
-export async function downloadBookFile(url: string, filename: string, signal: AbortSignal) {
+export async function downloadBookFile(url: string, filename: string, signal: AbortSignal, format: 'epub' | 'zip' = 'epub') {
   const response = await checkedResponse(await studioFetch(url, { cache: 'no-store', signal }));
   const mime = response.headers.get('content-type') || '';
-  if (!mime.includes('application/epub+zip') && !mime.includes('application/octet-stream')) {
-    throw new Error('Сервер не вернул файл EPUB.');
+  const expected = format === 'zip' ? 'application/zip' : 'application/epub+zip';
+  if (!mime.includes(expected) && !mime.includes('application/octet-stream')) {
+    throw new Error('Сервер не вернул файл ' + format.toUpperCase() + '.');
   }
   const blob = await response.blob();
   signal.throwIfAborted();
   const objectUrl = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = objectUrl;
-  anchor.download = filename.replace(/[/\\]/g, '_') + '.epub';
+  anchor.download = filename.replace(/[/\\]/g, '_') + '.' + format;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
   setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  if (format === 'zip') {
+    const skipped = response.headers.get('X-Skipped-Volumes');
+    return skipped ? 'Скачивание началось. В архив не вошли тома: ' + skipped.split(',').join(', ') + '.' : 'Скачивание архива началось.';
+  }
 }
 
 export async function bookPost(url: string, body: object, signal?: AbortSignal) {

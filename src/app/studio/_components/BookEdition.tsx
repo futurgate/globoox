@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { BookTranslationEstimate, FictionCosts, QaReportV2, ReaderCheckCostStageBreakdown } from '@/lib/api';
 import { downloadText } from '@/app/prototype/_components/downloads';
+import { BookExportCover } from './BookExportCover';
 import { RecipeRuns } from './RecipeRuns';
 import { ActionFeedback, stages } from './BookStage';
 import { bookEndpoint, bookPost, downloadBookFile, useBookAction, useBookData } from './bookRequests';
@@ -31,32 +32,34 @@ export function BookEdition({ bookId, title, lang, isAdmin }: { bookId: string; 
   const [report, setReport] = useState<QaReportV2>();
   const [reload, setReload] = useState(0);
   const action = useBookAction();
-  const coverage = useBookData<BookTranslationEstimate>(isAdmin ? bookEndpoint(bookId, 'translation-estimate', lang) : null, reload);
+  const coverAction = useBookAction();
+  const coverage = useBookData<BookTranslationEstimate>(bookEndpoint(bookId, 'translation-estimate', lang), reload);
   const target = coverage?.data?.byLanguage.find(l => l.lang === lang);
   const covered = target && target.blocksRemaining === 0 && target.blocksTranslated > 0;
   const download = bookEndpoint(bookId, 'download-translated', lang);
   return <div className="pt-stack">
-    {isAdmin ? <Card className="p-5 gap-3">
+    <BookExportCover bookId={bookId} lang={lang} action={coverAction} disabled={action.busy}/>
+    <Card className="p-5 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2"><h2>Переведённый EPUB</h2><Button variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</Button></div>
       {coverage?.error ? <ActionFeedback error={coverage.error}/> : <p className="pt-muted">{!coverage ? 'Проверяем готовность текста…' : target ? `Переведено блоков: ${target.blocksTranslated}, осталось: ${target.blocksRemaining}.` : 'Не удалось определить готовность по статистике блоков.'}</p>}
       <div className="flex flex-wrap gap-2">
         {covered || coverage?.error || (coverage?.data && !target)
-          ? <Button disabled={action.busy} onClick={() => void action.run(signal => downloadBookFile(download, (title || bookId) + ' (' + lang + ')', signal))}>Скачать EPUB</Button>
+          ? <Button disabled={action.busy || coverAction.busy} onClick={() => void action.run(signal => downloadBookFile(download, (title || bookId) + ' (' + lang + ')', signal))}>Скачать EPUB</Button>
           : <Button disabled>Скачать EPUB после перевода</Button>}
-        <Button variant="outline" disabled={action.busy || (!!target && !covered)} onClick={() => void action.run(async signal => {
+        {isAdmin && <Button variant="outline" disabled={action.busy || coverAction.busy || (!!target && !covered)} onClick={() => void action.run(async signal => {
           const r = await bookPost(bookEndpoint(bookId,'translation-quality',lang),{ targetLang:lang, genre:'fiction' },signal);
           const next: QaReportV2 = await r.json();
           if (!signal.aborted) setReport(next);
-        })}>{action.busy ? 'Проверка…' : 'Проверить качество EPUB'}</Button>
+        })}>Проверить качество EPUB</Button>}
       </div>
       <ActionFeedback error={action.error}/>
-      {report && <div className="grid gap-2"><h3>Результат проверки</h3>
+      {isAdmin && report && <div className="grid gap-2"><h3>Результат проверки</h3>
         <p>Ошибок текста: {report.summary.errors} · замечаний: {report.summary.review} · ошибок структуры EPUB: {report.epub.blocking.length}.</p>
         {[...report.epub.blocking, ...report.epub.warnings].map((s,i) => <p key={i}>{s}</p>)}
         {report.issues.length > 0 && <details><summary>Замечания по тексту</summary>{report.issues.map((issue, i) => <p key={i} className="py-1">{issue.message}</p>)}</details>}
         <Button variant="outline" onClick={() => downloadText(`quality-${bookId}-${lang}.json`,JSON.stringify(report,null,2),'application/json')}>Скачать результат проверки</Button></div>}
-    </Card> : <Planned title="Скачать переведённый EPUB" description="Выдача перевода автору ожидает подключения права на скачивание своей книги."/>}
-    <Planned title="Карточка издания и материалы" description="Подтверждение выходных данных, локализованной обложки и надписей для сборки."/>
+    </Card>
+    <Planned title="EPUB для продажи" description="Подготовка выходных данных, аннотации и титульного листа для магазинов."/>
     <Planned title="Проверенный выпуск и итоговый отчёт" description="Выдача выпуска после обязательной проверки и сводный отчёт по книге."/>
   </div>;
 }
