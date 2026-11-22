@@ -4,8 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { workspaceBase } from '@/lib/translationWorkspacePath';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy, Library } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { downloadCsv } from '@/app/prototype/_components/downloads';
@@ -20,10 +21,14 @@ import {
   getGlossary,
   copyGlossaryFromBook,
   setGlossaryJson,
+  freezeGlossary,
   startStylisticRevision,
   getRevisionProgress,
   getRevisionDiff,
+  applyRevision,
+  getRevisionCostRuns,
   getFictionCosts,
+  getFictionCostRuns,
   startReaderCheck,
   getReaderCheckProgress,
   getReaderCheckJournal,
@@ -46,17 +51,19 @@ import {
   type GlossaryProgressEvent,
   type RevisionProgressEvent,
   type RevisionDiffEntry,
+  type RevisionCostRun,
   type BookGlossary,
   type FictionCosts,
   type FictionStageCost,
+  type FictionCostRun,
 } from '@/lib/api';
 // (FictionCostStage not imported — stage labels use a string-keyed map.)
 
 const inputCls =
   'w-full rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-3 py-2 text-sm outline-none focus:border-[var(--app-accent)]';
 
-// v1 fiction pipeline supports EN/FR targets (Russian source).
-const FICTION_LANGS = ['EN', 'FR'] as const;
+// Fiction pipeline targets. EN/FR from a Russian source; RU from an English source.
+const FICTION_LANGS = ['EN', 'FR', 'RU'] as const;
 type FictionLang = (typeof FICTION_LANGS)[number];
 
 // Static fallback shown until GET /api/admin/models resolves (or if it fails) —
@@ -113,6 +120,69 @@ function classifyRunError(e: unknown, streamStarted: boolean): 'aborted' | 'drop
   return streamStarted ? 'dropped' : 'failed';
 }
 
+/**
+ * At-a-glance Pass-2 revision run state. Keyed off the backend run-state (GET
+ * /revise-full-book) so a run that stalled, stopped incomplete, failed, or
+ * finished in the background is obvious without reading the progress bar. States
+ * mirror the GET endpoint: running | stalled | incomplete | error | done | idle.
+ * A STOPPED run (stalled / incomplete / error) is highlighted so it's easy to
+ * spot that it needs a resume. `live` forces 'running' while THIS tab is streaming
+ * (before the first server heartbeat lands).
+ */
+function RevisionStateBadge({ state, live, error }: { state: string; live: boolean; error?: string | null }) {
+  const s = live ? 'running' : state;
+  const meta: Record<
+    string,
+    { label: string; className: string; Icon: React.ComponentType<{ className?: string }> | null; spin?: boolean; title: string }
+  > = {
+    running: {
+      label: 'In progress',
+      className: 'border-sky-500/30 bg-sky-500/10 text-sky-600 dark:text-sky-400',
+      Icon: Loader2, spin: true,
+      title: 'A revision run is in progress.',
+    },
+    done: {
+      label: 'Complete',
+      className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+      Icon: Check,
+      title: 'All revisable blocks are revised.',
+    },
+    stalled: {
+      label: 'Interrupted',
+      className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
+      Icon: ShieldAlert,
+      // Prefer the server's note (e.g. a rate-limit summary) when present.
+      title: error || 'The run stopped heartbeating (proxy/platform timeout, deploy, or crash). Click “Run revision” to resume the rest — finished blocks are skipped.',
+    },
+    incomplete: {
+      label: 'Stopped — incomplete',
+      className: 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-500',
+      Icon: ShieldAlert,
+      title: error || 'The run finished but some blocks were left unrevised. Click “Run revision” to finish the rest.',
+    },
+    error: {
+      label: 'Failed',
+      className: 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
+      Icon: X,
+      title: error || 'The run failed — see the error below.',
+    },
+    idle: {
+      label: 'Not started',
+      className: 'border-transparent bg-[var(--separator-opaque)] text-[var(--app-text-muted)]',
+      Icon: null,
+      title: 'No revision has run for this book/language yet.',
+    },
+  };
+  const m = meta[s] ?? meta.idle;
+  const Icon = m.Icon;
+  return (
+    <Badge variant="outline" className={m.className} title={m.title}>
+      {Icon && <Icon className={m.spin ? 'animate-spin' : undefined} />}
+      {m.label}
+    </Badge>
+  );
+}
+
 // ── Per-stage prompt editor (server-backed) ──────────────────────────────────
 // Edits the REAL pipeline prompt files for the selected book's direction. Saving
 // stores a server-side override (prompt_overrides) that the next real run uses.
@@ -164,6 +234,12 @@ export default function AdminFictionPage() {
   const [errors, setErrors] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  // Per-chapter glossary scope log (point 2 principle 2): which entries were sent
+  // for each chapter, so we can verify declined forms still pull their entry.
+  type ScopeEntry = { index: number; title: string | null; entriesIn: number; entriesOut: number; names: string[]; terms: string[] };
+  const [scopeLog, setScopeLog] = useState<ScopeEntry[]>([]);
+  const [scopeOpen, setScopeOpen] = useState(false);
+  const [scopeCopied, setScopeCopied] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
   const [overwriteTranslation, setOverwriteTranslation] = useState(false);
   const [runRevisionAfter, setRunRevisionAfter] = useState(false);
@@ -181,6 +257,11 @@ export default function AdminFictionPage() {
   const [diffOpen, setDiffOpen] = useState(false);
   const [diffLoading, setDiffLoading] = useState(false);
   const [diffEntries, setDiffEntries] = useState<RevisionDiffEntry[] | null>(null);
+  const [revisionApplyBusyId, setRevisionApplyBusyId] = useState<string | null>(null);
+  const [revisionApprovingAll, setRevisionApprovingAll] = useState(false);
+  const [revisionCostRuns, setRevisionCostRuns] = useState<RevisionCostRun[] | null>(null);
+  const [revisionCostRunsOpen, setRevisionCostRunsOpen] = useState(false);
+  const [revisionCostRunsLoading, setRevisionCostRunsLoading] = useState(false);
 
   // History (one entry per book+language), persists across tab reloads.
   const [history, setHistory] = useState<FictionHistoryEntry[]>([]);
@@ -196,6 +277,10 @@ export default function AdminFictionPage() {
   const [glossary, setGlossary] = useState<BookGlossary | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const [rebuildGlossary, setRebuildGlossary] = useState(false);
+  // Freeze flag (point 2 principle 3): a frozen glossary can't be regenerated /
+  // overwritten (generate/set/copy 409) until unfrozen.
+  const [glossaryFrozen, setGlossaryFrozen] = useState(false);
+  const [glossaryFreezing, setGlossaryFreezing] = useState(false);
   // Optional: seed a fresh glossary build from another book's finished glossary
   // (same language) so a later book in a series inherits its names/terms/voice.
   const [seedFromBookId, setSeedFromBookId] = useState('');
@@ -240,6 +325,11 @@ export default function AdminFictionPage() {
   const [fictionCosts, setFictionCosts] = useState<FictionCosts | null>(null);
   const [costsLoading, setCostsLoading] = useState(false);
 
+  // Per-run cost history (revision + reader-check): per-stage + total per run.
+  const [costRuns, setCostRuns] = useState<FictionCostRun[] | null>(null);
+  const [costRunsOpen, setCostRunsOpen] = useState(false);
+  const [costRunsLoading, setCostRunsLoading] = useState(false);
+
   // Per-stage prompt editor (server-backed; edits the real pipeline prompts).
   const [promptsOpen, setPromptsOpen] = useState(false);
   const [promptStages, setPromptStages] = useState<BookStagePrompt[] | null>(null);
@@ -273,6 +363,18 @@ export default function AdminFictionPage() {
       setFictionCosts(null); // non-fatal — cost panel is best-effort
     } finally {
       setCostsLoading(false);
+    }
+  }, [bookId, lang]);
+
+  const loadFictionCostRuns = useCallback(async () => {
+    if (!bookId) { setCostRuns(null); return; }
+    setCostRunsLoading(true);
+    try {
+      setCostRuns((await getFictionCostRuns(bookId, lang)).runs);
+    } catch {
+      setCostRuns(null); // non-fatal — cost panel is best-effort
+    } finally {
+      setCostRunsLoading(false);
     }
   }, [bookId, lang]);
 
@@ -361,7 +463,9 @@ export default function AdminFictionPage() {
   useEffect(() => {
     if (!isAdmin || !bookId) return;
     void loadFictionCosts();
-  }, [isAdmin, bookId, lang, loadFictionCosts]);
+    // Keep the per-run view in sync with the selected book/lang while it's open.
+    if (costRunsOpen) void loadFictionCostRuns();
+  }, [isAdmin, bookId, lang, loadFictionCosts, costRunsOpen, loadFictionCostRuns]);
 
   // Prefill progress when book/lang changes (so a previously-finished book
   // shows as complete and the download button is enabled).
@@ -377,6 +481,28 @@ export default function AdminFictionPage() {
   // loader/label so progress is visible even without an active stream here.
   const glossaryBuilding = glossaryRunning || glossaryState === 'building';
 
+  // Plain-text dump of the per-chapter glossary scope log, for one-click copy.
+  const scopeLogText = useMemo(() => {
+    if (scopeLog.length === 0) return '';
+    return scopeLog
+      .map((s) => {
+        const header = `## Chapter ${s.index + 1}${s.title ? ` — ${s.title}` : ''}  (${s.entriesOut}/${s.entriesIn} entries)`;
+        const names = s.names.length ? ['NAMES:', ...s.names.map((n) => `  ${n}`)].join('\n') : 'NAMES: (none)';
+        const terms = s.terms.length ? ['TERMS:', ...s.terms.map((t) => `  ${t}`)].join('\n') : 'TERMS: (none)';
+        return `${header}\n${names}\n${terms}`;
+      })
+      .join('\n\n');
+  }, [scopeLog]);
+
+  const copyScopeLog = useCallback(async () => {
+    if (!scopeLogText) return;
+    try {
+      await navigator.clipboard.writeText(scopeLogText);
+      setScopeCopied(true);
+      setTimeout(() => setScopeCopied(false), 1500);
+    } catch { /* clipboard blocked — ignore */ }
+  }, [scopeLogText]);
+
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
     try {
@@ -386,6 +512,16 @@ export default function AdminFictionPage() {
       setComplete(p.state === 'complete');
       setTranslationState(p.state);
       setCurrent(null);
+      // Rebuild the per-chapter glossary scope log from persisted data so it is
+      // visible after a run / reload. Skip while a live run is streaming (abortRef
+      // set) — the live events own the log then, to avoid clobbering it.
+      if (!abortRef.current) {
+        const persisted = (p.chapters || [])
+          .map((c) => c.glossary_scope)
+          .filter((s): s is NonNullable<typeof s> => !!s)
+          .sort((a, b) => a.index - b.index);
+        if (persisted.length > 0) setScopeLog(persisted);
+      }
     } catch {
       // No progress yet — reset.
       setTotal(0);
@@ -399,6 +535,7 @@ export default function AdminFictionPage() {
     if (!isAdmin || !bookId) return;
     setErrors([]);
     setError(null);
+    setScopeLog([]); // clear stale log; loadProgress refills it from persisted scope
     void loadProgress();
   }, [isAdmin, bookId, lang, loadProgress]);
 
@@ -761,6 +898,8 @@ export default function AdminFictionPage() {
     if (!isAdmin || !bookId) return;
     setDiffOpen(false);
     setDiffEntries(null);
+    setRevisionCostRunsOpen(false);
+    setRevisionCostRuns(null);
     void loadRevisionProgress();
   }, [isAdmin, bookId, lang, loadRevisionProgress]);
 
@@ -789,6 +928,70 @@ export default function AdminFictionPage() {
     }
   }, [bookId, lang, diffOpen]);
 
+  // Review one revised block (auto-commit mode). approve accepts the applied text
+  // (or `editedText`); reject reverts the block to its Pass-1 draft. Updates the
+  // open diff entry in place so the panel reflects the new outcome without a reload.
+  const handleRevisionApply = useCallback(
+    async (blockId: string, action: 'approve' | 'reject', editedText?: string) => {
+      if (!bookId) return;
+      setRevisionApplyBusyId(blockId);
+      setRevisionError(null);
+      try {
+        const r = await applyRevision(bookId, lang, blockId, action, editedText);
+        setDiffEntries((prev) =>
+          prev
+            ? prev.map((e) =>
+                e.blockId === blockId
+                  ? {
+                      ...e,
+                      outcome: r.outcome,
+                      revised: r.after ?? e.revised,
+                      rejectReason: action === 'reject' ? 'human_rejected' : null,
+                    }
+                  : e,
+              )
+            : prev,
+        );
+      } catch (e) {
+        setRevisionError(e instanceof Error ? e.message : `Failed to ${action} revision`);
+      } finally {
+        setRevisionApplyBusyId(null);
+      }
+    },
+    [bookId, lang],
+  );
+
+  // Accept every still-unreviewed ('applied') block as-is. Items edited in a
+  // textarea but not individually approved are accepted with their current revised
+  // text — edit + approve those one by one to keep a manual edit.
+  const handleRevisionApproveAll = useCallback(async () => {
+    if (!bookId || revisionApprovingAll) return;
+    const targets = (diffEntries ?? []).filter((e) => e.outcome === 'applied');
+    if (targets.length === 0) return;
+    setRevisionApprovingAll(true);
+    setRevisionError(null);
+    try {
+      for (const e of targets) {
+        await handleRevisionApply(e.blockId, 'approve');
+      }
+    } finally {
+      setRevisionApprovingAll(false);
+    }
+  }, [bookId, revisionApprovingAll, diffEntries, handleRevisionApply]);
+
+  const loadRevisionCostRuns = useCallback(async () => {
+    if (!bookId) return;
+    setRevisionCostRunsLoading(true);
+    try {
+      const r = await getRevisionCostRuns(bookId, lang);
+      setRevisionCostRuns(r.runs);
+    } catch {
+      setRevisionCostRuns(null);
+    } finally {
+      setRevisionCostRunsLoading(false);
+    }
+  }, [bookId, lang]);
+
   const handleTranslate = useCallback(async () => {
     if (!bookId || running) return;
     setRunning(true);
@@ -797,6 +1000,8 @@ export default function AdminFictionPage() {
     setComplete(false);
     setDone(0);
     setCurrent(null);
+    setScopeLog([]);
+    setScopeCopied(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -817,6 +1022,26 @@ export default function AdminFictionPage() {
           break;
         case 'chapter_error':
           setErrors((e) => [...e, `Chapter ${(ev.index ?? 0) + 1}: ${ev.error ?? 'error'}`]);
+          break;
+        case 'stopped':
+          // Automatic stop (call-budget guard) or a user Stop seen before the
+          // client aborted. Surface the backend's reason so the run no longer
+          // just "freezes" silently — the colleague's original complaint.
+          setError(ev.message || `Run stopped (${ev.reason ?? 'unknown'})`);
+          setCurrent(null);
+          break;
+        case 'glossary_scope':
+          setScopeLog((log) => [
+            ...log,
+            {
+              index: ev.index ?? log.length,
+              title: ev.title ?? null,
+              entriesIn: ev.entriesIn ?? 0,
+              entriesOut: ev.entriesOut ?? 0,
+              names: ev.names ?? [],
+              terms: ev.terms ?? [],
+            },
+          ]);
           break;
         case 'book_done':
           if (typeof ev.done === 'number') setDone(ev.done);
@@ -889,14 +1114,32 @@ export default function AdminFictionPage() {
       setGlossaryDone(g.chaptersDone);
       setGlossaryTotal(g.chaptersTotal);
       setGlossaryError(g.error);
+      setGlossaryFrozen(g.frozen === true);
     } catch {
       setGlossary(null);
       setGlossaryState('idle');
       setGlossaryDone(0);
       setGlossaryTotal(0);
       setGlossaryError(null);
+      setGlossaryFrozen(false);
     }
   }, [bookId, lang]);
+
+  // Freeze / unfreeze the current glossary, then refresh status.
+  const handleToggleFreeze = useCallback(async () => {
+    if (!bookId) return;
+    setGlossaryFreezing(true);
+    try {
+      const next = !glossaryFrozen;
+      await freezeGlossary(bookId, lang, next);
+      setGlossaryFrozen(next);
+      await loadGlossary();
+    } catch (e) {
+      setGlossaryError(e instanceof Error ? e.message : 'Failed to change freeze state');
+    } finally {
+      setGlossaryFreezing(false);
+    }
+  }, [bookId, lang, glossaryFrozen, loadGlossary]);
 
   useEffect(() => {
     if (!isAdmin || !bookId) return;
@@ -1134,20 +1377,34 @@ export default function AdminFictionPage() {
     );
   }
 
+  // A run that stopped before completing (crashed/stalled, incomplete, or errored)
+  // while nothing is streaming now — its reason note (e.g. a rate-limit summary) is
+  // shown inside the progress panel rather than as a generic red error line.
+  const revisionStopped =
+    !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <div className="flex items-start justify-between gap-3">
         <PageHeader title="Fiction Translation" />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={!bookId || refreshing}
-          title="Pull the latest status for every stage (translation, glossary, revision)"
-        >
-          <RefreshCw className={`mr-2 h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/fiction/series">
+            <Button variant="outline" size="sm" title="Upload a series ZIP and watch per-volume progress">
+              <Library className="mr-2 h-3.5 w-3.5" />
+              Series
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={!bookId || refreshing}
+            title="Pull the latest status for every stage (translation, glossary, revision)"
+          >
+            <RefreshCw className={`mr-2 h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       <p className="mb-5 text-sm text-[var(--app-text-muted)]">
@@ -1321,6 +1578,47 @@ export default function AdminFictionPage() {
         )}
 
         {error && <p className="text-sm text-red-500">{error}</p>}
+
+        {/* ── Per-chapter glossary scope log (point 2 principle 2) ── */}
+        {scopeLog.length > 0 && (
+          <div className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setScopeOpen((o) => !o)}
+                className="flex items-center gap-1 font-medium text-[var(--app-text)]"
+              >
+                {scopeOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                Glossary sent per chapter ({scopeLog.length} chapters)
+              </button>
+              <Button variant="outline" size="sm" onClick={copyScopeLog}>
+                {scopeCopied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
+                {scopeCopied ? 'Copied' : 'Copy log'}
+              </Button>
+            </div>
+            <p className="mt-1 text-[var(--app-text-muted)]">
+              Which glossary entries were sent to each chapter. Use it to check a declined form still pulls its entry
+              (e.g. a character in the chapter but missing from NAMES).
+            </p>
+            {scopeOpen && (
+              <div className="mt-2 max-h-96 overflow-auto rounded bg-[var(--app-surface-muted,rgba(0,0,0,0.03))] p-2">
+                {scopeLog.map((s) => (
+                  <div key={s.index} className="mb-3 last:mb-0">
+                    <p className="font-medium">
+                      Ch {s.index + 1}{s.title ? ` — ${s.title}` : ''}{' '}
+                      <span className="font-normal text-[var(--app-text-muted)]">({s.entriesOut}/{s.entriesIn})</span>
+                    </p>
+                    <p className="mt-0.5 whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-[var(--app-text-muted)]">
+                      {s.names.length ? `NAMES:\n  ${s.names.join('\n  ')}` : 'NAMES: (none)'}
+                      {'\n'}
+                      {s.terms.length ? `TERMS:\n  ${s.terms.join('\n  ')}` : 'TERMS: (none)'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Per-stage prompt editor (server-backed) ── */}
@@ -1476,6 +1774,26 @@ export default function AdminFictionPage() {
               {glossaryOpen ? 'Hide glossary' : 'View glossary'}
             </Button>
           )}
+
+          {glossary && !glossaryBuilding && (
+            <Button
+              variant="outline"
+              onClick={handleToggleFreeze}
+              disabled={glossaryFreezing}
+              title={glossaryFrozen
+                ? 'Unfreeze: allow regenerating / overwriting this glossary'
+                : 'Freeze: stop generate / set / copy from modifying this glossary while volumes translate against it'}
+            >
+              {glossaryFreezing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {glossaryFrozen ? 'Unfreeze glossary' : 'Freeze glossary'}
+            </Button>
+          )}
+
+          {glossaryFrozen && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+              🔒 Frozen
+            </span>
+          )}
         </div>
 
         <label
@@ -1626,14 +1944,17 @@ export default function AdminFictionPage() {
 
       {/* ── Stylistic revision (Pass 2) ── */}
       <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
-        <div>
-          <h2 className="flex items-center gap-2 text-sm font-semibold">
-            <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
-          </h2>
-          <p className="mt-1 text-xs text-[var(--app-text-muted)]">
-            Polishes the translated text block by block using neighboring context + the glossary. Runs on
-            the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
-          </p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-semibold">
+              <Wand2 className="h-4 w-4" /> Stylistic revision (Pass 2)
+            </h2>
+            <p className="mt-1 text-xs text-[var(--app-text-muted)]">
+              Polishes the translated text block by block using neighboring context + the glossary. Runs on
+              the selected book + language; already-revised blocks are skipped. Before/after is saved for review.
+            </p>
+          </div>
+          {bookId && <RevisionStateBadge state={revisionState} live={revisionRunning} error={revisionError} />}
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -1668,6 +1989,41 @@ export default function AdminFictionPage() {
             )}
             {diffOpen ? 'Hide changes' : 'View changes'}
           </Button>
+
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (revisionCostRunsOpen) { setRevisionCostRunsOpen(false); return; }
+              await loadRevisionCostRuns();
+              setRevisionCostRunsOpen(true);
+            }}
+            disabled={!bookId || revisionCostRunsLoading}
+            title="Cost of each revision run, newest first"
+          >
+            {revisionCostRunsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : revisionCostRunsOpen ? (
+              <ChevronDown className="mr-2 h-4 w-4" />
+            ) : (
+              <ChevronRight className="mr-2 h-4 w-4" />
+            )}
+            Cost per run
+          </Button>
+
+          {(() => {
+            const pending = (diffEntries ?? []).filter((e) => e.outcome === 'applied').length;
+            if (!diffOpen || pending === 0) return null;
+            return (
+              <Button onClick={handleRevisionApproveAll} disabled={!bookId || revisionApprovingAll}>
+                {revisionApprovingAll ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCheck className="mr-2 h-4 w-4" />
+                )}
+                Approve all ({pending})
+              </Button>
+            );
+          })()}
         </div>
 
         <label
@@ -1688,7 +2044,7 @@ export default function AdminFictionPage() {
         </label>
 
         {(revisionRunning || revisionTotal > 0) && revisionState !== 'idle' && (() => {
-          const stopped = !revisionRunning && (revisionState === 'stalled' || revisionState === 'incomplete' || revisionState === 'error');
+          const stopped = revisionStopped;
           const label = revisionRunning
             ? 'Revising…'
             : revisionState === 'done'
@@ -1718,17 +2074,29 @@ export default function AdminFictionPage() {
                 />
               </div>
               {stopped && (
-                <p className="text-xs text-[var(--app-text-muted)]">
-                  Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
-                </p>
+                <div className="space-y-1">
+                  {/* Server-reported reason for the stop (e.g. a rate-limit summary). */}
+                  {revisionError && (
+                    <p className="text-xs font-medium text-amber-600 dark:text-amber-500">{revisionError}</p>
+                  )}
+                  <p className="text-xs text-[var(--app-text-muted)]">
+                    Last progress {revisionUpdatedAt ? new Date(revisionUpdatedAt).toLocaleString() : 'unknown'}. Click “Run revision” to finish the rest — already-revised blocks are skipped (cron also resumes it automatically).
+                  </p>
+                </div>
               )}
             </div>
           );
         })()}
 
-        {revisionError && <p className="text-sm text-red-500">{revisionError}</p>}
+        {/* Live-run errors (dropped stream / failed start / apply errors). The
+            stopped-state note is shown inside the panel above, so don't duplicate it. */}
+        {revisionError && !revisionStopped && <p className="text-sm text-red-500">{revisionError}</p>}
 
-        {diffOpen && diffEntries && <RevisionDiffView entries={diffEntries} />}
+        {revisionCostRunsOpen && <RevisionCostRunsTable runs={revisionCostRuns} loading={revisionCostRunsLoading} />}
+
+        {diffOpen && diffEntries && (
+          <RevisionDiffView entries={diffEntries} onApply={handleRevisionApply} busyId={revisionApplyBusyId} />
+        )}
       </div>
 
       {/* ── Reader-check QA pass (calques / reader) ── */}
@@ -1903,10 +2271,32 @@ export default function AdminFictionPage() {
               cost tracking; time is only known for measured runs.
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={loadFictionCosts} disabled={!bookId || costsLoading}>
-            <RefreshCw className={`mr-2 h-3.5 w-3.5 ${costsLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex shrink-0 items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                if (costRunsOpen) { setCostRunsOpen(false); return; }
+                await loadFictionCostRuns();
+                setCostRunsOpen(true);
+              }}
+              disabled={!bookId || costRunsLoading}
+              title="Cost of each revision / reader-check run (per stage + total per run), newest first"
+            >
+              {costRunsLoading ? (
+                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+              ) : costRunsOpen ? (
+                <ChevronDown className="mr-2 h-3.5 w-3.5" />
+              ) : (
+                <ChevronRight className="mr-2 h-3.5 w-3.5" />
+              )}
+              Per run
+            </Button>
+            <Button variant="outline" size="sm" onClick={loadFictionCosts} disabled={!bookId || costsLoading}>
+              <RefreshCw className={`mr-2 h-3.5 w-3.5 ${costsLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {!fictionCosts && costsLoading && (
@@ -1961,6 +2351,17 @@ export default function AdminFictionPage() {
               <span className="font-medium">estimate</span> = worst-case (empty-cache) projection from book structure ·
               <span className="font-medium"> measured</span> = real recorded spend. A stage shows <span className="italic">not run yet</span> until it has been executed under cost tracking.
             </p>
+          </div>
+        )}
+
+        {costRunsOpen && (
+          <div className="space-y-2 border-t border-[var(--separator-opaque)] pt-4">
+            <p className="text-xs text-[var(--app-text-muted)]">
+              Measured spend of each <span className="font-medium">run</span> (revision and reader-check), newest
+              first — per stage, then the run&rsquo;s total across its stages. Glossary and translation have no
+              per-run ledger, so they don&rsquo;t appear here.
+            </p>
+            <FictionCostRunsTable runs={costRuns} loading={costRunsLoading} />
           </div>
         )}
       </div>
@@ -2269,7 +2670,28 @@ function ReaderCheckJournalView({
   );
 }
 
-function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
+const REVISION_OUTCOME_STYLE: Record<string, string> = {
+  applied: 'text-sky-600 dark:text-sky-400',
+  approved: 'text-emerald-600 dark:text-emerald-400',
+  rejected: 'text-amber-600 dark:text-amber-500',
+  unchanged: 'text-[var(--app-text-muted)]',
+};
+const REVISION_OUTCOME_LABEL: Record<string, string> = {
+  applied: 'applied — review',
+  approved: 'approved',
+  rejected: 'rejected (reverted)',
+  unchanged: 'unchanged',
+};
+
+function RevisionDiffView({
+  entries,
+  onApply,
+  busyId,
+}: {
+  entries: RevisionDiffEntry[];
+  onApply: (blockId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busyId: string | null;
+}) {
   // Group entries by chapter, preserving the (already chapter+position ordered) sequence.
   const groups: { key: string; title: string; items: RevisionDiffEntry[] }[] = [];
   for (const e of entries) {
@@ -2287,19 +2709,69 @@ function RevisionDiffView({ entries }: { entries: RevisionDiffEntry[] }) {
     );
   }
 
+  const applied = entries.filter((e) => e.outcome === 'applied').length;
+  const approved = entries.filter((e) => e.outcome === 'approved').length;
+  const rejected = entries.filter((e) => e.outcome === 'rejected').length;
+
   return (
     <div className="space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] p-4 text-sm">
-      <p className="text-xs text-[var(--app-text-muted)]">{entries.length} changed block{entries.length === 1 ? '' : 's'}</p>
+      <p className="text-xs text-[var(--app-text-muted)]">
+        {entries.length} changed block{entries.length === 1 ? '' : 's'} · {applied} to review · {approved} approved · {rejected} rejected
+      </p>
       {groups.map((g) => (
         <section key={g.key} className="space-y-2">
           <h4 className="text-xs font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">{g.title}</h4>
           <ul className="space-y-3">
             {g.items.map((e) => (
-              <RevisionDiffEntryRow key={e.blockId} entry={e} />
+              <RevisionDiffEntryRow key={e.blockId} entry={e} onApply={onApply} busy={busyId === e.blockId} />
             ))}
           </ul>
         </section>
       ))}
+    </div>
+  );
+}
+
+// Per-run Pass-2 revision cost history: one row per run (newest first). LLM time is
+// summed call time across the run's calls (not wall-clock).
+function RevisionCostRunsTable({ runs, loading }: { runs: RevisionCostRun[] | null; loading: boolean }) {
+  if (loading && !runs) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading cost history…
+      </div>
+    );
+  }
+  if (!runs || runs.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No runs recorded yet — run a revision pass.</p>;
+  }
+  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+  return (
+    <div className="overflow-x-auto rounded-[var(--radius)] border border-[var(--separator-opaque)]">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-[var(--separator-opaque)] text-left text-xs text-[var(--app-text-muted)]">
+            <th className="p-2 font-medium">Run</th>
+            <th className="p-2 font-medium">Model</th>
+            <th className="p-2 text-right font-medium">Calls</th>
+            <th className="p-2 text-right font-medium">Tokens</th>
+            <th className="p-2 text-right font-medium">Cost</th>
+            <th className="p-2 text-right font-medium">LLM time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {runs.map((r) => (
+            <tr key={r.runId} className="border-b border-[var(--separator-opaque)] last:border-b-0">
+              <td className="p-2 tabular-nums">{when(r.startedAt)}</td>
+              <td className="p-2 text-[var(--app-text-muted)]">{r.model ?? '—'}</td>
+              <td className="p-2 text-right tabular-nums">{r.totals.calls}</td>
+              <td className="p-2 text-right tabular-nums">{fmtTokens(r.totals.tokensIn + r.totals.tokensOut)}</td>
+              <td className="p-2 text-right font-medium tabular-nums">{fmtUsd(r.totals.costUsd)}</td>
+              <td className="p-2 text-right tabular-nums text-[var(--app-text-muted)]">{fmtDuration(r.totals.durationMs)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -2346,6 +2818,72 @@ function ReaderCostRunsTable({ runs, loading }: { runs: ReaderCheckCostRun[] | n
             </tr>
           ))}
         </tbody>
+      </table>
+    </div>
+  );
+}
+
+// Per-run cost: one tbody per run (its stage rows + a bold total row), newest
+// first. Mirrors the per-stage table above but scoped to a single run_id.
+function FictionCostRunsTable({ runs, loading }: { runs: FictionCostRun[] | null; loading: boolean }) {
+  if (loading && !runs) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-[var(--app-text-muted)]">
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading per-run cost…
+      </div>
+    );
+  }
+  if (!runs || runs.length === 0) {
+    return <p className="text-sm text-[var(--app-text-muted)]">No runs recorded yet — run a revision or reader-check pass.</p>;
+  }
+  const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : '—');
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[620px] border-collapse text-sm">
+        <thead>
+          <tr className="text-left text-xs uppercase tracking-wide text-[var(--app-text-muted)]">
+            <th className="py-1 pr-3 font-medium">Run</th>
+            <th className="py-1 pr-3 font-medium">Stage</th>
+            <th className="py-1 pr-3 text-right font-medium">Calls</th>
+            <th className="py-1 pr-3 text-right font-medium">Tokens in → out</th>
+            <th className="py-1 pr-3 text-right font-medium">Time</th>
+            <th className="py-1 text-right font-medium">Cost</th>
+          </tr>
+        </thead>
+        {runs.map((r) => {
+          const rows = r.stages.length + 1; // stage rows + total row
+          return (
+            <tbody key={r.runId} className="border-t-2 border-[var(--separator-opaque)]">
+              {r.stages.map((s, i) => (
+                <tr key={s.stage}>
+                  {i === 0 && (
+                    <td className="py-2 pr-3 align-top" rowSpan={rows}>
+                      <div className="tabular-nums">{when(r.startedAt)}</div>
+                      <div className="mt-0.5 flex items-center gap-1.5">
+                        <span className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-[var(--app-accent)]/15 text-[var(--app-accent)]">
+                          {r.kind === 'revision' ? 'revision' : 'reader-check'}
+                        </span>
+                      </div>
+                      {r.model && <div className="mt-0.5 text-[10px] text-[var(--app-text-muted)]">{r.model}</div>}
+                    </td>
+                  )}
+                  <td className="py-2 pr-3">{STAGE_LABEL[s.stage] ?? s.stage}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums">{s.calls.toLocaleString('en-US')}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums">{fmtTokens(s.tokensIn)} → {fmtTokens(s.tokensOut)}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums text-[var(--app-text-muted)]">{fmtDuration(s.durationMs)}</td>
+                  <td className="py-2 text-right tabular-nums">{fmtUsd(s.costUsd)}</td>
+                </tr>
+              ))}
+              <tr className="font-semibold">
+                <td className="py-2 pr-3">Total</td>
+                <td className="py-2 pr-3 text-right tabular-nums">{r.total.calls.toLocaleString('en-US')}</td>
+                <td className="py-2 pr-3 text-right tabular-nums">{fmtTokens(r.total.tokensIn)} → {fmtTokens(r.total.tokensOut)}</td>
+                <td className="py-2 pr-3 text-right tabular-nums">{fmtDuration(r.total.durationMs)}</td>
+                <td className="py-2 text-right tabular-nums">{fmtUsd(r.total.costUsd)}</td>
+              </tr>
+            </tbody>
+          );
+        })}
       </table>
     </div>
   );
@@ -2428,10 +2966,30 @@ function StageCostRows({ row }: { row: FictionStageCost }) {
   );
 }
 
-function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
+function RevisionDiffEntryRow({
+  entry,
+  onApply,
+  busy,
+}: {
+  entry: RevisionDiffEntry;
+  onApply: (blockId: string, action: 'approve' | 'reject', editedText?: string) => void;
+  busy: boolean;
+}) {
   const [showSource, setShowSource] = useState(false);
+  // Seeded once from the revised text; the row is keyed by blockId so edits persist
+  // across outcome changes (same pattern as ReaderFixEditor).
+  const [text, setText] = useState(entry.revised);
+
+  const rejected = entry.outcome === 'rejected';
+  const approveLabel = entry.outcome === 'approved' ? 'Save & re-apply' : 'Approve';
   return (
     <li className="rounded-[var(--radius)] border border-[var(--separator-opaque)] p-3">
+      <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
+        <span className={`font-semibold uppercase ${REVISION_OUTCOME_STYLE[entry.outcome] ?? ''}`}>
+          {REVISION_OUTCOME_LABEL[entry.outcome] ?? entry.outcome}
+        </span>
+        {rejected && <span className="text-[var(--app-text-muted)]">· showing the Pass-1 draft (revision not in the book)</span>}
+      </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-text-muted)]">Draft (before)</div>
@@ -2439,17 +2997,34 @@ function RevisionDiffEntryRow({ entry }: { entry: RevisionDiffEntry }) {
         </div>
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
-          <p className="whitespace-pre-wrap">{entry.revised}</p>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={Math.min(10, Math.max(2, text.split('\n').length))}
+            disabled={busy}
+            className="w-full rounded-[var(--radius)] border border-sky-500/40 bg-[var(--app-surface-bg)] p-2 text-sm outline-none focus:border-[var(--app-accent)]"
+          />
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => setShowSource((s) => !s)}
-        className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
-      >
-        {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-        {showSource ? 'Hide source' : 'Show source'}
-      </button>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={() => onApply(entry.blockId, 'approve', text)} disabled={busy || !text.trim()}>
+          {busy ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Check className="mr-1 h-3 w-3" />}
+          {approveLabel}
+        </Button>
+        {!rejected && (
+          <Button size="sm" variant="outline" onClick={() => onApply(entry.blockId, 'reject')} disabled={busy}>
+            <X className="mr-1 h-3 w-3" /> Reject &amp; revert
+          </Button>
+        )}
+        <button
+          type="button"
+          onClick={() => setShowSource((s) => !s)}
+          className="ml-auto inline-flex items-center gap-1 text-xs text-[var(--app-text-muted)] hover:underline"
+        >
+          {showSource ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+          {showSource ? 'Hide source' : 'Show source'}
+        </button>
+      </div>
       {showSource && <p className="mt-1 whitespace-pre-wrap text-xs text-[var(--app-text-muted)]">{entry.source}</p>}
     </li>
   );
