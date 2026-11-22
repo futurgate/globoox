@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { GlossaryStatus } from '@/lib/api';
+import IOSDialog from '@/components/ui/ios-dialog';
+import { X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
@@ -10,7 +12,8 @@ import type { GlossaryDocument } from '@/lib/studioGlossaryDraft';
 import { ActionFeedback, StageCard } from './BookStage';
 import { bookEndpoint, bookPost, useBookAction, useBookData } from './bookRequests';
 import { GlossaryEditor } from './GlossaryEditor';
-import { StudioEntityMenu } from './StudioEntityMenu';
+import { StageTemplateList } from './StageTemplateLinks';
+import { StudioEntityMenu, type StudioMenuAction } from './StudioEntityMenu';
 import { RefreshButton } from './RequestFeedback';
 
 type Glossary = Omit<GlossaryStatus,'updatedAt'|'glossary'> & {
@@ -18,9 +21,12 @@ type Glossary = Omit<GlossaryStatus,'updatedAt'|'glossary'> & {
   lastBuild?: { addedNamed?: unknown[]; addedTerms?: unknown[]; chaptersProcessed?: number } | null;
 };
 
-export function BookGlossaryPanel({ bookId, lang, books, models, admin, title = 'Глоссарий тома' }: {
+export function BookGlossaryPanel({ bookId, lang, books, models, admin, sourceLang, downloadOriginal, title = 'Глоссарий тома' }: {
   bookId: string; lang: string; books: readonly { id: string; title: string | null }[]; models: readonly string[]; admin: boolean; title?: string;
+  sourceLang?: string; downloadOriginal?: StudioMenuAction;
 }) {
+  const [showTemplate, setShowTemplate] = useState(false);
+  const templateTitle = useId();
   const [source, setSource] = useState('');
   const [dirty, setDirty] = useState(false);
   const [reload, setReload] = useState(0);
@@ -53,14 +59,27 @@ export function BookGlossaryPanel({ bookId, lang, books, models, admin, title = 
     });
   }
 
+  const actions: StudioMenuAction[] = [];
+  if (admin && sourceLang) actions.push({ label: 'Шаблон глоссария', onClick: () => setShowTemplate(true) });
+  if (data?.glossary != null) {
+    actions.push({ label: 'Скачать сохранённый JSON', onClick: () =>
+      downloadText(`glossary-${bookId}-${lang}.json`, JSON.stringify(data.glossary, null, 2), 'application/json') });
+    if (admin) actions.push({
+      label: data.frozen ? 'Разморозить' : 'Заморозить', disabled: locked,
+      onClick: () => change('glossary-freeze', { frozen: !data.frozen }, data.frozen ? 'Глоссарий разморожен.' : 'Глоссарий заморожен.'),
+    });
+  }
+  if (downloadOriginal) actions.push(downloadOriginal);
+
   return <div className="pt-stack">
-    <Card className="min-w-0 gap-3 p-5">
+    {showTemplate && admin && sourceLang && <IOSDialog open onOpenChange={setShowTemplate} labelledBy={templateTitle} className="p-5">
+      <div className="flex items-center justify-between gap-2"><h2 id={templateTitle}>Шаблон глоссария</h2>
+        <Button variant="ghost" size="icon-sm" aria-label="Закрыть шаблон" onClick={() => setShowTemplate(false)}><X aria-hidden/></Button></div>
+      <StageTemplateList glossaryOnly bookId={bookId} lang={lang} sourceLang={sourceLang}/>
+    </IOSDialog>}
+    <Card className="min-w-0 gap-3 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2"><h2>{title}</h2>
-        {data?.glossary != null && <StudioEntityMenu label="Действия с глоссарием" inHeader actions={[
-          {label:'Скачать сохранённый JSON', onClick:() => downloadText(`glossary-${bookId}-${lang}.json`,JSON.stringify(data.glossary,null,2),'application/json')},
-          ...(admin ? [{label:data.frozen ? 'Разморозить' : 'Заморозить', disabled:locked, onClick:() =>
-            change('glossary-freeze',{ frozen:!data.frozen },data.frozen ? 'Глоссарий разморожен.' : 'Глоссарий заморожен.')}] : []),
-        ]}/>}
+        <StudioEntityMenu label="Действия с глоссарием" inHeader actions={actions}/>
         <RefreshButton pending={!current || current.refreshing} disabled={action.busy} variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</RefreshButton></div>
       <ActionFeedback error={current?.error}/>
       {!data && !current?.error && <p role="status">Загрузка глоссария…</p>}

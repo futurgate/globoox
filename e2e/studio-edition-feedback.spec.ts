@@ -65,9 +65,11 @@ test('edition refresh retains the ready count and shows waiting for quality and 
     return route.fulfill({ json: estimate });
   });
   await page.route('**/translation-quality?lang=EN', async route => {
+    expect(route.request().postDataJSON().genre).toBe('nonfiction');
     await check.promise;
-    return route.fulfill({ json: { summary: { errors: 0, review: 0 }, epub: { blocking: [], warnings: [] }, issues: [] } });
+    return route.fulfill({ json: { summary: { errors: 0, review: 0 }, epub: { status: 'unavailable', blocking: [], warnings: [] }, issues: [] } });
   });
+  await page.route('**/studio/recipe-settings?**', route => route.fulfill({ json: {genre: 'nonfiction'} }));
   await page.route('**/download-translated?lang=EN', async route => {
     await file.promise;
     return route.fulfill({ contentType: 'application/epub+zip', body: Buffer.from('test-book') });
@@ -86,6 +88,7 @@ test('edition refresh retains the ready count and shows waiting for quality and 
   await expect(download).toBeDisabled();
   check.resolve();
   await expect(page.getByRole('heading',{name:'Результат проверки'})).toBeVisible();
+  await expect(page.getByText(/Файл EPUB не проверен/)).toBeVisible();
   await download.click();
   await expect(page.getByText('Готовим EPUB к скачиванию…')).toBeVisible();
   const downloaded = page.waitForEvent('download');

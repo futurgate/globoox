@@ -2,8 +2,8 @@
 .bar {
   position: fixed;
   z-index: 18;
-  inset-inline: clamp(222px, 19vw, 278px) 0;
-  bottom: 0;
+  inset-inline: var(--studio-sidebar-width, 0px) 0;
+  bottom: var(--studio-keyboard-inset, 0px);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -17,6 +17,6 @@
 .status { margin-inline-end: auto; font-size: 0.875rem; }
 @media (max-width: 760px) {
   .space { height: 108px; }
-  .bar { inset-inline: 0; bottom: max(calc(52px + env(safe-area-inset-bottom)), var(--studio-keyboard-inset, 0px)); padding: 9px 16px; }
+  .bar { padding: 9px 16px max(9px, env(safe-area-inset-bottom)); }
   .status { flex: 1 0 100%; }
 }

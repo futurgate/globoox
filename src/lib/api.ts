@@ -2488,7 +2488,7 @@ export interface QaReportV2 {
   previousRun?: { runId: string; generatedAt: string; errors: number; review: number }
   chapters: QaChapterSummary[]
   issues: QaIssue[]
-  epub: { blocking: string[]; warnings: string[] }
+  epub: { status?: 'checked' | 'unavailable'; blocking: string[]; warnings: string[] }
 }
 
 export interface QaRunSummaryRow {

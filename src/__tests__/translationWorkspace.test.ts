@@ -95,6 +95,7 @@ describe('live translation workspace boundaries', () => {
       expect.objectContaining({ global: { headers: { Authorization: 'Bearer fixture-user-token' } } }))
     expect((await bookGet(req(), context(foreign, 'download'))).status).toBe(404)
     expect((await bookGet(req(), context(book, 'download'))).status).toBe(200)
+    expect(new URL(proxy.mock.calls[0][0].url).search).toBe('?studio=1')
     expect(proxy.mock.calls[0].slice(1)).toEqual([owner, { userId: owner, token: 'fixture-user-token' }])
   })
 
@@ -286,7 +287,9 @@ describe('live translation workspace boundaries', () => {
     expect((await bookPost(post({}), context(book, 'translate-full-book'))).status).toBe(403)
     expect(proxy).not.toHaveBeenCalled()
     expect((await bookGet(get(), context(book, 'download-translated'))).status).toBe(200)
-    expect((await bookGet(get(), context(book, 'translation-estimate'))).status).toBe(200)
+    const estimateRequest = new Request(base + '?studioTargetLang=EN&ownerId=foreign&lang=EN')
+    expect((await bookGet(estimateRequest, context(book, 'translation-estimate'))).status).toBe(200)
+    expect(new URL(proxy.mock.calls[1][0].url).search).toBe('?studioTargetLang=EN')
     expect(proxy.mock.calls.map(([req, userId]) => [new URL(req.url).pathname, userId])).toEqual([
       [`/api/books/${book}/download-owned-translation`, owner],
       [`/api/books/${book}/translation-estimate`, owner],

@@ -3,7 +3,9 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import { readerCheckJournalRows } from '@/lib/readerCheckJournalCsv'
 import type { ReaderCheckJournalItem } from '@/lib/api'
-import { BookRuns } from '@/app/studio/_components/BookEdition'
+import { BookRuns, epubCheckSummary } from '@/app/studio/_components/BookEdition'
+import { ProjectRunHistory } from '@/app/studio/_components/ProjectRunHistory'
+import { BookExecution, StageCard } from '@/app/studio/_components/BookStage'
 
 const { read } = vi.hoisted(() => ({ read: vi.fn() }))
 vi.mock('@/app/studio/_components/bookRequests', () => ({
@@ -13,6 +15,13 @@ vi.mock('@/app/studio/_components/bookRequests', () => ({
 }))
 
 describe('translation studio reports', () => {
+  it('distinguishes checked EPUBs from a failed build and a legacy empty report', () => {
+    const empty = { blocking: [], warnings: [] }
+    expect(epubCheckSummary({ ...empty, status: 'checked' })).toContain('ошибок: 0')
+    expect(epubCheckSummary({ ...empty, status: 'unavailable' })).toContain('не проверен')
+    expect(epubCheckSummary(empty)).toContain('нет статуса')
+    expect(epubCheckSummary({ ...empty, blocking: ['ZIP'] })).toContain('ошибок: 1')
+  })
   it('keeps the diagnostic fields and their order in reader-check journal exports', () => {
     const item: ReaderCheckJournalItem = {
       id: 'item', chapterId: 'chapter', chapterNumber: 0, chapterTitle: 'Архив', variant: 'reader',
@@ -44,5 +53,22 @@ describe('translation studio reports', () => {
       expect(html).toContain(text)
     }
     expect(read.mock.calls.map(call => call[0])).toEqual(['fiction-costs', 'fiction-cost-runs', '/api/studio/recipe-runs?bookId=book&targetLang=EN'])
+  })
+
+  it('keeps polling a series if another volume is running after an error', () => {
+    read.mockReset()
+    renderToStaticMarkup(React.createElement(ProjectRunHistory, { projectId: 'project' }))
+    const poll = read.mock.calls[0][2]
+    expect(poll({ groups: [{ status: 'error', volumes: [{ status: 'error' }, { status: 'running' }] }] })).toBe(true)
+    expect(poll({ groups: [{ status: 'error', volumes: [{ status: 'error' }, { status: 'done' }] }] })).toBe(false)
+  })
+
+  it('shows chapter errors when the translation worker has finished processing the book', () => {
+    read.mockImplementation((url: string) => url === 'translate-full-book'
+      ? { data: { state: 'complete', totalChapters: 3, counts: { done: 2, error: 1 } } }
+      : { data: { runs: [] } })
+    const card = React.createElement(StageCard, { stage: 'translate', bookId: 'book', lang: 'EN', models: [] })
+    const html = renderToStaticMarkup(React.createElement(BookExecution, null, card))
+    expect(html).toContain('глав с ошибкой: 1')
   })
 })

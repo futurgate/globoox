@@ -18,32 +18,36 @@ const stageLabels: Record<TemplateLink['stage'], string> = {
   correction: 'Исправление замечаний',
 };
 
-export function StageTemplateLinks({ bookId, lang, sourceLang, glossaryOnly = false }: {
-  bookId: string; lang: string; sourceLang: string; glossaryOnly?: boolean;
-}) {
+type TemplateContext = { bookId: string; lang: string; sourceLang: string };
+
+export function StageTemplateLinks(props: TemplateContext) {
   const [open, setOpen] = useState(false);
+  return <details className="rounded-lg border p-4" onToggle={event => setOpen(event.currentTarget.open)}>
+    <summary className="cursor-pointer font-medium">Шаблоны для этого направления</summary>
+    {open && <StageTemplateList {...props}/>}
+  </details>;
+}
+
+export function StageTemplateList({ bookId, lang, sourceLang, glossaryOnly = false }: TemplateContext & { glossaryOnly?: boolean }) {
   const [version, setVersion] = useState(0);
-  const result = useBookData<TemplateLink[]>(open ? bookEndpoint(bookId, 'stage-prompts', lang) : null, version);
-  const recipe = useBookData<RecipeSettings>(open ? recipeEndpoint({scope:'book', scopeId:bookId, sourceLang, targetLang:lang}) : null, version);
+  const result = useBookData<TemplateLink[]>(bookEndpoint(bookId, 'stage-prompts', lang), version);
+  const recipe = useBookData<RecipeSettings>(recipeEndpoint({scope:'book', scopeId:bookId, sourceLang, targetLang:lang}), version);
   const [personal, setPersonal] = useState<PersonalPrompt[] | null>(null);
   const [personalError, setPersonalError] = useState(false);
   useEffect(() => {
-    if (!open) return;
     const controller = new AbortController();
     listPersonalPrompts(controller.signal).then(items => { if (!controller.signal.aborted) { setPersonal(items); setPersonalError(false); } })
       .catch(() => { if (!controller.signal.aborted) { setPersonal(null); setPersonalError(true); } });
     return () => controller.abort();
-  }, [open, version]);
+  }, [version]);
   function retry() {
     setPersonalError(false);
     setVersion(n => n + 1);
   }
   const stages = result?.data?.filter(item => !glossaryOnly || item.stage === 'glossary');
 
-  return <details className="rounded-lg border p-4" onToggle={event => { setOpen(event.currentTarget.open); if (!event.currentTarget.open) { setPersonal(null); setPersonalError(false); } }}>
-    <summary className="cursor-pointer font-medium">{glossaryOnly ? 'Шаблон глоссария' : 'Шаблоны для этого направления'}</summary>
-    {open && <div className="grid gap-2 pt-3">
-      <p className="pt-muted">Для каждого этапа можно открыть шаблон, выбранный для переводов ваших книг.</p>
+  return <div className="grid gap-2 pt-3">
+      {!glossaryOnly && <p className="pt-muted">Для каждого этапа можно открыть шаблон, выбранный для переводов ваших книг.</p>}
       {personalError && <div role="alert">Не удалось загрузить выбор вашего аккаунта. <Button variant="ghost" onClick={retry}>Повторить загрузку</Button></div>}
       {(!result || (!personal && !personalError)) && <p role="status">Загружаем шаблоны…</p>}
       {result?.error && <div><p role="alert">{result.error}</p><Button variant="ghost" onClick={retry}>Повторить</Button></div>}
@@ -60,6 +64,5 @@ export function StageTemplateLinks({ bookId, lang, sourceLang, glossaryOnly = fa
           {personal && <Button asChild size="sm" variant="outline"><Link href={templateLink(name, 'new')} aria-label={'Добавить вариант · ' + (stageLabels[stage] || name)}>Добавить вариант</Link></Button>}
         </div>;
       })}
-    </div>}
-  </details>;
+  </div>;
 }

@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useId, useState } from 'react';
 import { Search, Trash2 } from 'lucide-react';
+import { StudioEntityMenu } from './StudioEntityMenu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { entryFields, glossaryRows, updateGlossaryRow, type GlossaryDocument, type GlossaryList, type GlossaryRow } from '@/lib/studioGlossaryDraft';
@@ -50,11 +51,11 @@ export function GlossaryTable({ doc, onChange, disabled, issue, canFind, onFind 
 
   return <div className="grid min-w-0 gap-3">
     <div className="flex flex-wrap items-end justify-between gap-2">
-      <label className="pt-field">Найти запись<Input type="search" value={filter} onChange={e => { setFilter(e.target.value); setPage(0); }} /></label>
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="outline" disabled={disabled} onClick={() => add('named_entities')}>Добавить имя</Button>
-        <Button size="sm" variant="outline" disabled={disabled} onClick={() => add('terminology')}>Добавить термин</Button>
-      </div>
+      <label className="pt-field min-w-28 flex-1 sm:max-w-xs">Найти запись<Input type="search" value={filter} onChange={e => { setFilter(e.target.value); setPage(0); }} /></label>
+      <StudioEntityMenu label="Добавить запись" triggerText="Добавить" disabled={disabled} actions={[
+        { label: 'Имя', onClick: () => add('named_entities') },
+        { label: 'Термин', onClick: () => add('terminology') },
+      ]}/>
     </div>
     <div className="relative max-w-full overflow-x-auto">
       <table id={id} className="w-full min-w-[42rem] border-collapse text-left text-sm" aria-label="Записи глоссария">

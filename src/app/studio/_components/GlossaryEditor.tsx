@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Expand, TriangleAlert, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ChoicePills } from '@/components/ui/choice-pills';
 import { CopyableTextarea } from '@/components/ui/copy-text';
 import IOSDialog from '@/components/ui/ios-dialog';
 import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
@@ -79,10 +80,10 @@ export function GlossaryEditor({ bookId, lang, glossary, updatedAt, frozen, lock
     inDialog={modal} onReset={() => { setDraft(null); setOnOpening(null); setShowSaveFeedback(false); }} onSave={save}/>;
   const editor = <div className="grid min-w-0 gap-3">
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="pt-sections" aria-label="Представление глоссария">
-        <Button variant="ghost" aria-pressed={tab === 'table'} onClick={() => setTab('table')}>Таблица</Button>
-        <Button variant="ghost" aria-pressed={tab === 'json'} onClick={() => setTab('json')}>JSON{issue && <TriangleAlert aria-label="Ошибка JSON" className="size-4"/>}</Button>
-      </div>
+      <ChoicePills<'table' | 'json'> label="Представление глоссария" value={tab} onChange={setTab} choices={[
+        { id: 'table', label: 'Таблица' },
+        { id: 'json', label: <>JSON{issue && <TriangleAlert aria-label="Ошибка JSON" className="size-4"/>}</> },
+      ]}/>
       {!modal && <Button variant="ghost" size="sm" onClick={() => { setOnOpening(draft); setModal(true); }}><Expand aria-hidden="true"/>Развернуть</Button>}
     </div>
     {frozen && <p className="pt-muted text-sm">Глоссарий зафиксирован. Сохранение правки создаст рабочую версию.</p>}

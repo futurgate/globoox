@@ -1,0 +1,101 @@
+.studio-shell {
+  --studio-sidebar-width: clamp(222px, 19vw, 278px);
+  grid-template-columns: var(--studio-sidebar-width) minmax(0, 1fr);
+}
+.studio-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.studio-page-heading h1 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.studio-shell .studio-menu-trigger {
+  display: none;
+}
+.studio-menu-drawer {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: env(safe-area-inset-top) 16px max(16px, env(safe-area-inset-bottom));
+}
+.studio-menu-drawer .pt-navigation {
+  margin-bottom: 16px;
+}
+:is(.studio-shell, .studio-menu-drawer) .pt-navigation [data-slot='button'] {
+  height: auto;
+  white-space: normal;
+}
+:is(.studio-shell, .studio-menu-drawer) .pt-navigation [data-slot='button'] > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (width < 60rem) {
+  .studio-shell {
+    display: block;
+    --studio-sidebar-width: 0px;
+  }
+  .studio-shell .pt-sidebar { display: none; }
+  .studio-shell .studio-menu-trigger {
+    display: inline-flex;
+    min-height: 44px;
+    color: var(--app-text);
+  }
+  .studio-shell .pt-main {
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+  }
+}
+
+.studio-sections {
+  min-width: 0;
+  container: studio-section-nav / inline-size;
+}
+.studio-sections .studio-sections-trigger {
+  display: none;
+}
+.studio-sections .studio-section-links {
+  margin: 0;
+}
+@container studio-section-nav (width < 38rem) {
+  .studio-sections .studio-sections-trigger {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    height: auto;
+    justify-content: flex-start;
+    padding-block: 8px;
+    white-space: normal;
+    text-align: start;
+  }
+  .studio-sections-trigger span { color: var(--app-text-muted); }
+  .studio-sections-trigger strong { margin-inline-start: auto; font-weight: 600; }
+  .studio-sections-trigger[aria-expanded='true'] svg { transform: rotate(180deg); }
+  .studio-sections .studio-section-links {
+    display: none;
+    gap: 0;
+    margin-top: 4px;
+    padding: 4px;
+    border: 1px solid var(--app-border);
+    border-radius: var(--radius);
+    background: var(--app-surface-bg);
+  }
+  .studio-sections .studio-section-links[data-expanded='true'] {
+    display: flex;
+    flex-direction: column;
+  }
+  .studio-sections .studio-section-links [data-slot='button'] {
+    justify-content: flex-start;
+    padding-inline: 12px;
+    border: 0;
+    border-radius: var(--radius);
+    color: var(--app-text);
+    white-space: normal;
+    text-align: start;
+  }
+  .studio-sections .studio-section-links [aria-current='page'] {
+    background: var(--fill-secondary);
+    font-weight: 600;
+  }
+}

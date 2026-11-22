@@ -231,7 +231,7 @@ export default function LiveWorkspace() {
   }
 
   return <StudioHeaderActions.Provider value={headerActions}><PrototypeShell live role={data.role} items={items} active={active} title={title}
-    detail={parent ? { parent, action: <div id="studio-page-actions" ref={setHeaderActions}/> } : undefined} itemHref={page => base + '/' + page}>
+    detail={parent ? { parent, action: <div id="studio-page-actions" className="flex min-w-0 items-center gap-1" ref={setHeaderActions}/> } : undefined} itemHref={page => base + '/' + page}>
     {error && <div role="alert" className="mb-4 flex items-center gap-3">{error}
       <Button variant="outline" onClick={() => void refresh()}>Попробовать снова</Button></div>}
     {panel}

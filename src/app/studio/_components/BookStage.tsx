@@ -130,6 +130,9 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, books, on
   const reportedState = interrupted?.status || data?.state;
   let statusLabel = state?.error ? 'Статус недоступен' : 'Загрузка…';
   if (running) statusLabel = names.running;
+  else if (stage === 'translate' && reportedState === 'complete' && data?.counts?.error) {
+    statusLabel = `Завершён с ошибками · глав с ошибкой: ${data.counts.error}`;
+  }
   else if (reportedState === 'running' && stage === 'translate') statusLabel = names.incomplete;
   else if (reportedState) statusLabel = names[reportedState] || reportedState;
   return <Card className="p-4 gap-3">
