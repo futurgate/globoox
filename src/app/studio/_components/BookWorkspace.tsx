@@ -12,12 +12,13 @@ import type { BookTranslationEstimate, PlaygroundModels } from '@/lib/api';
 import { RecipeEditor } from './RecipeSettings';
 import type { RecipeSettings } from '@/lib/studioRecipe';
 import { StageTemplateLinks } from './StageTemplateLinks';
-import { BookEdition, BookRuns, Estimate, Planned } from './BookEdition';
+import { BookEdition, BookRuns, Estimate } from './BookEdition';
 import { BookGlossaryPanel } from './BookGlossary';
 import { BookFlow } from './BookFlow';
 import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
 import { RecipeRuns } from './RecipeRuns';
 import { BookReview } from './BookReview';
+import { withStudioDraftGuard } from './StudioDraftActions';
 import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 import { bookTranslationPath, processingLabel, projectsPath } from './projectLinks';
@@ -58,7 +59,8 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
   const available = targets[source] || [];
   const target = lang || available[0] || '';
   const validDirection = available.includes(target);
-  const access = useLaunchAccess(!isAdmin && !section && !book.seriesId && validDirection);
+  const editorialSection = section === 'review' || section === 'glossary';
+  const access = useLaunchAccess(!isAdmin && validDirection && (editorialSection || (!section && !book.seriesId)));
   const showModels = isAdmin && validDirection && (!section || section === 'glossary');
   const modelList = useBookData<PlaygroundModels>(showModels ? '/api/admin/models' : null, modelRetry);
   const models = modelList?.data?.models ?? [];
@@ -75,7 +77,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
     <ActionFeedback error={original.error}/>
     {!ready && <Card className="p-5 gap-2"><h3>{status}</h3><p className="pt-muted">Перевод доступен после успешной обработки исходного файла.</p><Button asChild variant="outline"><Link href={projectsPath + '/projects'}>К проектам</Link></Button></Card>}
     {ready && <>
-      {available.length > 0 && <IOSSettingsRow label="Язык перевода" value={target} onChange={v => router.push(route(v,section))}
+      {available.length > 0 && <IOSSettingsRow label="Язык перевода" value={target} onChange={v => withStudioDraftGuard(() => router.push(route(v,section)))}
         options={available.map(id => ({ id, label:languages[id] || id }))}/>}
       {!validDirection ? <p className="pt-callout">Для этого направления нет доступного перевода.{available.length > 0 ? ' Выберите поддерживаемый язык.' : ''}</p> : <>
         <nav className="pt-sections flex-wrap" aria-label="Разделы перевода">
@@ -99,8 +101,12 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
           <AuthorProgress bookId={book.id} lang={target}/>
           {book.seriesId && <Button variant="outline" asChild><Link href={projectsPath + '/series/' + encodeURIComponent(book.seriesId)}>Открыть перевод серии</Link></Button>}
         </>)}
-        {section === 'glossary' && (isAdmin ? <><StageTemplateLinks bookId={book.id} lang={target} sourceLang={source} glossaryOnly/><BookGlossaryPanel bookId={book.id} lang={target} models={models} books={books}/></> : <Planned title="Глоссарий тома" description="Авторский просмотр терминов и выбор вариантов ожидают подключения доступа к словарю своей книги."/>)}
-        {section === 'review' && (isAdmin ? <BookReview bookId={book.id} lang={target}/> : <Planned title="Решения по тексту" description="Здесь автор сможет проверять предложения и выбирать формулировки в своей книге."/>)}
+        {editorialSection && !access.allowed && <LaunchAccessNotice access={access} editorial/>}
+        {section === 'glossary' && access.allowed && <>
+          {isAdmin && <StageTemplateLinks bookId={book.id} lang={target} sourceLang={source} glossaryOnly/>}
+          <BookGlossaryPanel key={book.id + '/' + target} bookId={book.id} lang={target} models={models} books={books} admin={isAdmin}/>
+        </>}
+        {section === 'review' && access.allowed && <BookReview bookId={book.id} lang={target}/>}
         {section === 'runs' && (isAdmin ? <BookRuns bookId={book.id} lang={target}/> : <RecipeRuns bookId={book.id} lang={target} version={0} admin={false}/>)}
         {section === 'editions' && <BookEdition key={book.id + '/' + target} bookId={book.id} title={book.title} lang={target} isAdmin={isAdmin}/>}
       </>}

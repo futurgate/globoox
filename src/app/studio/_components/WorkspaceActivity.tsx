@@ -11,6 +11,7 @@ import type { WorkspaceAttention as Attention, WorkspaceActivity as Activity, Wo
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import { bookPath } from './projectLinks';
 import SeriesWorkspace from './SeriesWorkspace';
+import { GlossaryDecisions } from './GlossaryDecisions';
 
 function bookUrl(bookId: string, language?: string | null) {
   const book = bookPath(bookId);
@@ -67,12 +68,12 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
     finally { setBusy(''); }
   }
 
-  if (!admin) return <Card className="p-5"><h2>Решения по вашим книгам</h2>
-    <p className="pt-muted">Планируется · Для просмотра автором нужен доступ к вопросам по своей книге.</p></Card>;
+  if (!admin) return <GlossaryDecisions admin={false}/>;
   return <div className="pt-stack">
     <div><RefreshButton size="sm" variant="outline" pending={loading} onClick={load}/></div>
     {error && <p role="alert">{error}</p>}
     {!data && !error && <p role="status">Загружаем…</p>}
+    {decisions && <GlossaryDecisions admin/>}
     {data && (decisions ? <Card className="gap-2 p-5">
       <h2>Открытые вопросы</h2>
       {!data.attentionAvailable ? <p role="status">Сервер сейчас не предоставляет список вопросов.</p>

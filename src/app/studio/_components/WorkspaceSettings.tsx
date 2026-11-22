@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
+import { StudioDraftActions } from './StudioDraftActions';
+import { StudioEntityMenu } from './StudioEntityMenu';
 import { PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -190,7 +192,26 @@ function PromptEditor({ ownerId, template, catalog, variant, local, active, pers
   if (template.group === 'translate') required.add('[N]');
   const missing = [...required].filter(field => !value.includes(field));
   const valid = !!value.trim() && !missing.length;
-  const dirty = !variant || label.trim() !== variant.label || value !== variant.content || useForBooks !== variant.active;
+  const dirty = label !== (source?.label ?? 'Мой вариант') || value !== (source?.content ?? template.content) ||
+    useForBooks !== (variant?.active ?? !local);
+  const copyId = useRef<string | null>(null);
+  async function duplicate() {
+    if (busy) return;
+    setBusy(true); setError('');
+    try {
+      const variants = await listPersonalPrompts();
+      const original = variant?.label ?? templateLabel(template);
+      const baseName = original.replace(/ copy(?: \d+)?$/, '').slice(0, 105);
+      const names = new Set(variants.filter(p => p.template === template.name).map(p => p.label));
+      let suffix = ' copy';
+      for (let i = 2; names.has(baseName + suffix); i++) suffix = ' copy ' + i;
+      copyId.current ??= crypto.randomUUID();
+      const copy = await createPersonalPrompt(ownerId, { id: copyId.current, template: template.name, label: baseName + suffix,
+        content: variant?.content ?? template.content, activate: false });
+      onSaved(copy); router.push(templateLink(template.name, copy.id));
+    } catch (err) { setError(studioErrorMessage(err, 'Не удалось создать дубликат.')); }
+    finally { setBusy(false); }
+  }
 
   async function mutate(op: 'save' | 'archive' | 'restore' | 'base') {
     if (!personalReady || busy) return;
@@ -243,19 +264,27 @@ function PromptEditor({ ownerId, template, catalog, variant, local, active, pers
       </>}
       {archived && <p className="pt-muted">Вариант скрыт из списка. После восстановления его снова можно выбрать для перевода.</p>}
       <div className="flex flex-wrap gap-2">
-        {editable && <Button disabled={busy || !label.trim() || !valid || !dirty} onClick={() => mutate('save')}>{local && !variant ? 'Сохранить в аккаунт' : 'Сохранить вариант'}</Button>}
+        {editable && !variant && !dirty && <Button disabled={busy || !valid} onClick={() => void mutate('save')}>{local ? 'Сохранить в аккаунт' : 'Создать вариант'}</Button>}
         {!personal && active && personalReady && <Button variant="outline" disabled={busy} onClick={() => mutate('base')}>Использовать базовый в моих переводах</Button>}
-        {variant && personalReady && <Button variant="outline" disabled={busy} onClick={() => archived ? mutate('restore') : setConfirmDelete(true)}>
-          {archived ? 'Восстановить вариант' : 'Удалить вариант'}</Button>}
+        {personalReady && (!personal || variant) && <StudioEntityMenu inHeader label="Действия с шаблоном" actions={[
+          { label: 'Дублировать', disabled: busy || dirty, onClick: () => void duplicate() },
+          ...(variant ? [{ label: archived ? 'Восстановить' : 'Скрыть', disabled: busy || dirty,
+            onClick: () => archived ? void mutate('restore') : setConfirmDelete(true) }] : []),
+        ]}/>}
       </div>
-      {busy && <PendingText>Сохраняем изменения шаблона…</PendingText>}
+      {editable && <StudioDraftActions dirty={dirty} busy={busy && dirty} disabled={!label.trim() || !valid || Boolean(variant && revision !== variant.revision)}
+        saveLabel={local && !variant ? 'Сохранить в аккаунт' : 'Сохранить вариант'} onSave={() => void mutate('save')} onReset={() => {
+          setLabel(source?.label ?? 'Мой вариант'); setValue(source?.content ?? template.content);
+          setRevision(variant?.revision); setUseForBooks(variant?.active ?? !local); setError(''); setNotice('');
+        }}/>}
+      {busy && !dirty && <PendingText>Сохраняем изменения шаблона…</PendingText>}
       {variant && revision !== variant.revision && <div role="alert">Сохранённая версия изменилась. <Button variant="outline" onClick={reloadForm}>Загрузить сохранённый текст</Button></div>}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
     </Card>
     {!archived && personalReady && <SampleRun template={template} catalog={catalog} draft={personal ? value : template.content} valid={valid}/>}
     <IOSAlertDialog open={confirmDelete} onOpenChange={open => { if (!open) setConfirmDelete(false); }} showCancel destructive loading={busy}
-      title="Удалить личный вариант?" description={variant?.active ? 'Для следующих запусков будет выбран базовый шаблон. Вариант можно восстановить через фильтр удалённых.' : 'Вариант можно восстановить через фильтр удалённых.'}
-      confirmLabel="Удалить" cancelLabel="Отмена" onConfirm={() => mutate('archive')}/>
+      title="Скрыть личный вариант?" description={variant?.active ? 'Для следующих запусков будет выбран базовый шаблон. Вариант можно восстановить через фильтр удалённых.' : 'Вариант можно восстановить через фильтр удалённых.'}
+      confirmLabel="Скрыть" cancelLabel="Отмена" onConfirm={() => mutate('archive')}/>
   </>;
 }

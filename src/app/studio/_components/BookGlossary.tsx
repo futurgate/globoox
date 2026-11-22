@@ -1,92 +1,90 @@
 'use client';
 
 import { useState } from 'react';
-import type { BookGlossary, GlossaryStatus } from '@/lib/api';
+import type { GlossaryStatus } from '@/lib/api';
 import { Card } from '@/components/ui/card';
-import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
-import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
-import { Input } from '@/components/ui/input';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import { downloadText } from '@/app/prototype/_components/downloads';
+import type { GlossaryDocument } from '@/lib/studioGlossaryDraft';
 import { ActionFeedback, StageCard } from './BookStage';
 import { bookEndpoint, bookPost, useBookAction, useBookData } from './bookRequests';
+import { GlossaryEditor } from './GlossaryEditor';
+import { StudioEntityMenu } from './StudioEntityMenu';
+import { RefreshButton } from './RequestFeedback';
 
-type Conflict = { source?: string; existing_target?: string; proposed_target?: string; chapter_index?: number };
-type Glossary = GlossaryStatus & {
-  frozen?: boolean; conflicts?: Conflict[];
+type Glossary = Omit<GlossaryStatus,'updatedAt'|'glossary'> & {
+  glossary: unknown; updatedAt?: string | null;
   lastBuild?: { addedNamed?: unknown[]; addedTerms?: unknown[]; chaptersProcessed?: number } | null;
 };
 
-export function BookGlossaryPanel({ bookId, lang, books, models }: {
-  bookId: string; lang: string; books: readonly { id: string; title: string | null }[]; models: readonly string[];
+export function BookGlossaryPanel({ bookId, lang, books, models, admin, title = 'Глоссарий тома' }: {
+  bookId: string; lang: string; books: readonly { id: string; title: string | null }[]; models: readonly string[]; admin: boolean; title?: string;
 }) {
   const [source, setSource] = useState('');
-  const [draft, setDraft] = useState('');
-  const [filter, setFilter] = useState('');
+  const [dirty, setDirty] = useState(false);
   const [reload, setReload] = useState(0);
   const action = useBookAction();
-  const current = useBookData<Glossary>(bookEndpoint(bookId, 'generate-glossary', lang), action.version + reload);
-  const data = current?.data, glossary = data?.glossary;
-  const json = glossary ? JSON.stringify(glossary, null, 2) : '';
-  const locked = !data || data.frozen || data.state === 'building' || action.busy;
-  const entries = [
-    ...(glossary?.terminology || []).map(t => ({ src: t.source_term, dst: t.preferred_translation, note: t.note })),
-    ...(glossary?.named_entities || []).map(t => ({ src: t.entity, dst: t.preferred_target, note: t.note })),
-  ];
-  const visible = entries.filter(t => [t.src, t.dst].some(v => v?.toLocaleLowerCase().includes(filter.toLocaleLowerCase())));
-  let parsed: BookGlossary | null = null, count = 0;
-  if (draft.trim()) {
-    try {
-      const obj = JSON.parse(draft);
-      const terms = (obj.terminology || []).filter((t: { source_term?: string; preferred_translation?: string }) => t?.source_term && t?.preferred_translation);
-      const names = (obj.named_entities || []).filter((t: { entity?: string; preferred_target?: string }) => t?.entity && t?.preferred_target);
-      count = terms.length + names.length;
-      if (count > 0) parsed = obj;
-    } catch { /* The validation message remains visible while the JSON is incomplete. */ }
+  const current = useBookData<Glossary>(bookEndpoint(bookId,'generate-glossary',lang), action.version + reload);
+  // Keep the committed snapshot mounted if a background refresh fails while the user is typing.
+  const [seen, setSeen] = useState<Glossary>();
+  const [data, setData] = useState<Glossary>();
+  if (current?.data && seen !== current.data) {
+    setSeen(current.data);
+    setData(current.data);
   }
+  const building = data?.state === 'building' || data?.state === 'pending';
+  const locked = !data || building || action.busy || dirty;
 
+  async function save(glossary: GlossaryDocument, expectedUpdatedAt: string | null, signal: AbortSignal) {
+    try {
+      const response = await bookPost(bookEndpoint(bookId, 'set-glossary', lang), { lang, glossary, expectedUpdatedAt }, signal);
+      const result = await response.json() as Glossary;
+      signal.throwIfAborted();
+      setData(previous => previous && { ...previous, ...result, frozen: result.frozen ?? false });
+    } finally {
+      if (!signal.aborted) setReload(n => n + 1);
+    }
+  }
   function change(which: string, extra: object, message: string) {
-    return action.run(async signal => {
+    void action.run(async signal => {
       await bookPost(bookEndpoint(bookId, which, lang), { lang, ...extra }, signal);
       return message;
     });
   }
+
   return <div className="pt-stack">
-    <Card className="p-5 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2"><h2>Глоссарий тома</h2><RefreshButton pending={!current || current.refreshing} variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</RefreshButton></div>
-      {current?.error ? <ActionFeedback error={current.error}/> : !data ? <p role="status">Загрузка глоссария…</p> : !glossary ? <p>Для этого языка глоссарий ещё не создан.</p> : <>
-        <p className="pt-muted">{entries.length} записей · {data.frozen ? 'Заморожен' : 'Открыт для изменений'}</p>
-        {data.lastBuild && <p>Последняя генерация добавила имён: {data.lastBuild.addedNamed?.length ?? 0}, терминов: {data.lastBuild.addedTerms?.length ?? 0}.</p>}
-        <label className="pt-field">Найти запись<Input value={filter} onChange={e => setFilter(e.target.value)} /></label>
-        <div className="max-h-80 overflow-auto" aria-label="Записи глоссария">{visible.map((t, i) => <div className="pt-row" key={i}><span>{t.src}</span><span>{t.dst}</span></div>)}{!visible.length && <p>Подходящих записей нет.</p>}</div>
-        {!!data.conflicts?.length && <details><summary>Расхождения ({data.conflicts.length})</summary>{data.conflicts.map((c, i) => <p className="pt-row" key={i}>{c.source} · {c.existing_target} / {c.proposed_target}{c.chapter_index != null && ` · глава ${c.chapter_index + 1}`}</p>)}</details>}
-        <details><summary>Полный JSON</summary><pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all text-xs">{json}</pre></details>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => downloadText(`glossary-${bookId}-${lang}.json`, json, 'application/json')}>Скачать JSON</Button>
-          <CopyTextButton text={json} subject="Полный JSON глоссария"/>
-          <Button variant="ghost" disabled={action.busy || data.state === 'building'} onClick={() => void change('glossary-freeze', { frozen: !data.frozen }, data.frozen ? 'Глоссарий разморожен.' : 'Глоссарий заморожен.')}>{data.frozen ? 'Разморозить' : 'Заморозить'}</Button>
-        </div>
+    <Card className="min-w-0 gap-3 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2"><h2>{title}</h2>
+        {data?.glossary != null && <StudioEntityMenu label="Действия с глоссарием" inHeader actions={[
+          {label:'Скачать сохранённый JSON', onClick:() => downloadText(`glossary-${bookId}-${lang}.json`,JSON.stringify(data.glossary,null,2),'application/json')},
+          ...(admin ? [{label:data.frozen ? 'Разморозить' : 'Заморозить', disabled:locked, onClick:() =>
+            change('glossary-freeze',{ frozen:!data.frozen },data.frozen ? 'Глоссарий разморожен.' : 'Глоссарий заморожен.')}] : []),
+        ]}/>}
+        <RefreshButton pending={!current || current.refreshing} disabled={action.busy} variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</RefreshButton></div>
+      <ActionFeedback error={current?.error}/>
+      {!data && !current?.error && <p role="status">Загрузка глоссария…</p>}
+      {data && <>
+        {!data.glossary && <p className="pt-muted">Для этого языка пока нет сохранённого глоссария.</p>}
+        {data.lastBuild && <p className="pt-muted text-sm">Последняя генерация добавила имён: {data.lastBuild.addedNamed?.length ?? 0}, терминов: {data.lastBuild.addedTerms?.length ?? 0}.</p>}
+        <GlossaryEditor bookId={bookId} lang={lang} glossary={data.glossary} updatedAt={data.updatedAt ?? null}
+          frozen={!!data.frozen} locked={building || action.busy} onSave={save} onDirtyChange={setDirty}/>
       </>}
       <ActionFeedback pending={action.pending} error={action.error} notice={action.notice}/>
     </Card>
-    <Card className="p-5 gap-3">
-      <h3>Источник словаря</h3>
-      <IOSSettingsRow label="Начальный словарь" value={source} onChange={setSource} disabled={Boolean(locked)}
-        options={[{ id: '', label: 'Без другой книги' }, ...books.filter(b => b.id !== bookId).map(b => ({ id: b.id, label: b.title || 'Книга без названия' }))]} />
-      {source && <><p className="pt-muted">Нужен готовый словарь выбранной книги на том же языке. Можно перенести его целиком или использовать в начале новой генерации.</p><Button variant="outline" disabled={Boolean(locked)} onClick={() => {
-        if (glossary && !window.confirm('Заменить словарь тома копией из выбранной книги?')) return;
-        void change('copy-glossary', { sourceBookId: source }, 'Словарь перенесён.');
-      }}>Перенести без генерации</Button></>}
-      <details><summary>Импорт JSON</summary>
-        <div className="grid gap-3 pt-3"><CopyableTextarea fieldClassName="pt-field" label="Словарь для полной замены" value={draft} onChange={e => setDraft(e.target.value)} rows={5} />
-          {draft && <p role="status">{parsed ? `Подготовлено записей: ${count}` : 'Нужен корректный JSON с парой исходного и переведённого имени или термина.'}</p>}
-          <Button disabled={Boolean(locked) || !parsed} onClick={() => {
-            if (!parsed || (glossary && !window.confirm('Заменить текущий глоссарий содержимым JSON?'))) return;
-            void change('set-glossary', { glossary: parsed }, 'Словарь сохранён.');
-          }}>Импортировать</Button></div>
-      </details>
-    </Card>
-    <StageCard stage="glossary" bookId={bookId} lang={lang} sourceBookId={source} books={books} models={models} onChange={() => setReload(n => n + 1)} />
+    {admin && <>
+      <Card className="gap-3 p-5"><h3>Источник словаря</h3>
+        <IOSSettingsRow label="Начальный словарь" value={source} onChange={setSource} disabled={locked || data?.frozen}
+          options={[{ id:'',label:'Без другой книги' }, ...books.filter(b => b.id !== bookId).map(b => ({ id:b.id,label:b.title || 'Книга без названия' }))]}/>
+        {source && <><p className="pt-muted">Готовый словарь своей книги на том же языке можно перенести целиком или использовать в начале генерации.</p>
+          <Button variant="outline" disabled={locked || data?.frozen} onClick={() => {
+            if (data?.glossary && !window.confirm('Заменить словарь тома копией из выбранной книги?')) return;
+            change('copy-glossary',{ sourceBookId:source },'Словарь перенесён.');
+          }}>Перенести без генерации</Button></>}
+      </Card>
+      {dirty && <p className="pt-muted">Сначала сохраните изменения глоссария.</p>}
+      <fieldset disabled={dirty} className="min-w-0"><StageCard stage="glossary" bookId={bookId} lang={lang} sourceBookId={source}
+        books={books} models={models} onChange={() => setReload(n => n + 1)}/></fieldset>
+    </>}
   </div>;
 }

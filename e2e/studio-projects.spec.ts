@@ -33,6 +33,7 @@ test('a project owns its book list; moving a volume preserves its series and sta
   await page.goto(collection);
   await page.getByRole('link', { name: /Хроники Севера.*1 книга/ }).click();
   await expect(page.getByRole('link', { name: 'Северная трилогия', exact: true })).toHaveAttribute('href', '/studio/series/s');
+  await page.getByRole('button', { name: 'Действия с книгой «Первый снег»' }).click();
   await page.getByRole('button', { name: 'Переместить', exact: true }).click();
   await page.getByRole('button', { name: /Проект назначения/ }).click();
   await page.getByRole('option', { name: 'Сборник' }).click();
@@ -43,9 +44,11 @@ test('a project owns its book list; moving a volume preserves its series and sta
   await expect(page).toHaveURL(origin + '/studio/books/first');
   await expect(page.getByRole('navigation', { name: 'На уровень выше' }).getByRole('link', { name: 'Сборник' })).toBeVisible();
   await page.goBack();
+  await page.getByRole('button', { name: 'Действия с книгой «Первый снег»' }).click();
   await page.getByRole('button', { name: 'В архив', exact: true }).click();
   await expect(page.getByRole('link', { name: /Первый снег/ })).toHaveCount(0);
   await page.getByRole('button', { name: 'Архив проекта' }).click();
+  await page.getByRole('button', { name: 'Действия с книгой «Первый снег»' }).click();
   await page.getByRole('button', { name: 'Восстановить' }).click();
   await page.getByRole('button', { name: 'К книгам' }).click();
   await page.getByRole('link', { name: 'Северная трилогия', exact: true }).click();
@@ -73,7 +76,17 @@ test('create and rename an empty project, then add an existing book without a du
   await page.getByLabel('Название проекта').fill('Рассказы');
   await page.getByRole('button', { name: 'Создать проект' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Рассказы');
-  await page.getByRole('button', { name: 'Переименовать' }).click();
+  const projectMenu = page.locator('#studio-page-actions').getByRole('button', { name: 'Действия с проектом' });
+  await projectMenu.focus();
+  await page.keyboard.press('Enter');
+  await expect(projectMenu).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Переименовать' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(projectMenu).toBeFocused();
+  await projectMenu.press('Enter');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
   await page.getByLabel('Название проекта').fill('Мои рассказы');
   await page.getByRole('button', { name: 'Сохранить' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Мои рассказы');
@@ -154,6 +167,7 @@ test('a standalone book becomes the next volume after the confirmed predecessor,
     return route.fulfill({ json: { ok: true, volumeNumber: 2 } });
   });
   await page.goto(collection + '/short');
+  await page.getByRole('button', { name: 'Действия с книгой «Второй снег»' }).click();
   await page.getByRole('button', { name: 'Добавить в серию' }).click();
   const confirm = page.getByRole('button', { name: 'Подтвердить добавление тома' });
   await expect(confirm).toBeDisabled();
@@ -189,6 +203,7 @@ test('two standalone books in different projects can start a series without laun
     return route.fulfill({ json: { ok: true, seriesId: 'two-volumes', volumeNumber: 2 } });
   });
   await page.goto(collection + '/short');
+  await page.getByRole('button', { name: 'Действия с книгой «Второй снег»' }).click();
   await page.getByRole('button', { name: 'Начать серию' }).click();
   await page.getByLabel('Название новой серии').fill('Новая серия');
   const confirm = page.getByRole('button', { name: 'Создать серию из двух книг' });
