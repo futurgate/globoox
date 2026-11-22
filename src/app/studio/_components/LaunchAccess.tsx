@@ -17,10 +17,10 @@ export function useLaunchAccess(author: boolean) {
     error: result?.error, refreshing: result?.refreshing === true, refresh };
 }
 
-export function LaunchAccessNotice({ access }: { access: ReturnType<typeof useLaunchAccess> }) {
-  if (access.loading) return <p className="pt-muted text-sm" role="status">Проверяем доступ к запуску…</p>;
+export function LaunchAccessNotice({ access, editorial = false }: { access: ReturnType<typeof useLaunchAccess>; editorial?: boolean }) {
+  if (access.loading) return <p className="pt-muted text-sm" role="status">{editorial ? 'Проверяем доступ к редактированию…' : 'Проверяем доступ к запуску…'}</p>;
   return <div className="flex flex-wrap items-center gap-2 text-sm">
-    {access.error ? <p role="alert">{access.error}</p> : <p className="pt-muted">Доступ к запуску перевода выдаёт администратор.</p>}
+    {access.error ? <p role="alert">{access.error}</p> : <p className="pt-muted">{editorial ? 'Редактирование своих книг доступно приглашённым авторам. Доступ выдаёт администратор.' : 'Доступ к запуску перевода выдаёт администратор.'}</p>}
     <RefreshButton size="sm" pending={access.refreshing} onClick={access.refresh}>Обновить доступ</RefreshButton>
   </div>;
 }

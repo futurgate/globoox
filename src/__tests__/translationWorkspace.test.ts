@@ -293,6 +293,25 @@ describe('live translation workspace boundaries', () => {
     ])
   })
 
+  it('keeps editorial updates in the owned book and forwards the reviewed version without author overrides', async () => {
+    tables.profiles[0].is_admin = false
+    const body = { lang: 'EN', glossary: {}, expectedUpdatedAt: 'v1', model: 'other', force: true }
+    expect((await bookPost(post(body), context(foreign, 'set-glossary'))).status).toBe(404)
+    expect((await bookPost(post(body), context(foreign, 'glossary-usages'))).status).toBe(404)
+    expect((await bookPost(post(body), context(foreign, 'glossary-retranslate'))).status).toBe(404)
+    expect((await bookPost(post({ lang: 'EN', glossary: {} }), context(book, 'set-glossary'))).status).toBe(400)
+    expect(proxy).not.toHaveBeenCalled()
+    expect((await bookPost(post(body), context(book, 'set-glossary'))).status).toBe(200)
+    expect(await proxy.mock.calls[0][0].json()).toEqual({ lang: 'EN', glossary: {}, expectedUpdatedAt: 'v1' })
+  })
+
+  it('checks an active invitation for local editorial block reads', async () => {
+    tables.profiles[0].is_admin = false
+    proxy.mockResolvedValueOnce(Response.json({ canStartTranslation: false }))
+    expect((await bookGet(new Request(base + '?lang=EN&blockId=' + item), context(book, 'review-block'))).status).toBe(403)
+    expect(new URL(proxy.mock.calls[0][0].url).pathname).toBe('/api/studio/translation-access')
+  })
+
   it('uses the verified book for a QA action', async () => {
     expect((await bookPost(post({ bookId: foreign, targetLang: 'EN' }), context(book, 'translation-quality'))).status).toBe(200)
     const forwarded = proxy.mock.calls[0][0] as Request
@@ -313,7 +332,9 @@ describe('live translation workspace boundaries', () => {
     expect((await read(series)).status).toBe(404)
     tables.profiles[0].is_admin = false
     expect((await read(item)).status).toBe(403)
-    expect(proxy).not.toHaveBeenCalled()
+    proxy.mockResolvedValueOnce(Response.json({ canStartTranslation: true }))
+    expect((await read(item)).status).toBe(200)
+    expect(proxy.mock.calls.every(([request]) => new URL(request.url).pathname === '/api/studio/translation-access')).toBe(true)
   })
 
   it('excludes unrelated attention and translation jobs and prevents cross-book resolution', async () => {

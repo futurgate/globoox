@@ -22,11 +22,12 @@ type Group = {
 type Page = { groups: Group[]; nextCursor: string | null };
 const hasActive = (page: Page) => page.groups.some(group => activeStatus(group.status));
 
-export function ProjectTabs({ projectId, runs }: { projectId: string; runs: boolean }) {
+export function ProjectTabs({ projectId, active }: { projectId: string; active?: string }) {
   const url = projectPath(projectId);
   return <nav className="pt-sections mb-4" aria-label="Разделы проекта">
-    <Button variant="ghost" asChild><Link href={url} aria-current={!runs ? 'page' : undefined}>Книги</Link></Button>
-    <Button variant="ghost" asChild><Link href={url + '/runs'} aria-current={runs ? 'page' : undefined}>Запуски</Link></Button>
+    <Button variant="ghost" asChild><Link href={url} aria-current={!active ? 'page' : undefined}>Книги</Link></Button>
+    <Button variant="ghost" asChild><Link href={url + '/glossary'} aria-current={active === 'glossary' ? 'page' : undefined}>Глоссарий</Link></Button>
+    <Button variant="ghost" asChild><Link href={url + '/runs'} aria-current={active === 'runs' ? 'page' : undefined}>Запуски</Link></Button>
   </nav>;
 }
 

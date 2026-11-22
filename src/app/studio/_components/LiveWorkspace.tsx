@@ -13,6 +13,8 @@ import { workspaceBase as base } from '@/lib/translationWorkspacePath';
 import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import { PrototypeShell, type NavItem } from '@/app/prototype/_components/PrototypeShell';
 import ProjectLibrary from './ProjectLibrary';
+import { StudioHeaderActions } from './StudioEntityMenu';
+import { ProjectGlossary } from './ProjectGlossary';
 import BookWorkspace, { bookSections } from './BookWorkspace';
 import { bookTranslationPath, projectPath, seriesPath } from './projectLinks';
 import { ProjectRunHistory, ProjectTabs } from './ProjectRunHistory';
@@ -35,6 +37,7 @@ function WorkspaceLogin({ reauth = false }: { reauth?: boolean }) {
 }
 
 export default function LiveWorkspace() {
+  const [headerActions, setHeaderActions] = useState<HTMLDivElement | null>(null);
   const parts = useParams<{ path?: string[] }>().path ?? [];
   const [data, setData] = useState<WorkspaceData | null>(null);
   const [guest, setGuest] = useState(false);
@@ -171,7 +174,7 @@ export default function LiveWorkspace() {
     title = isNew ? 'Загрузка книги или серии' : projects.label;
     parent = isNew ? projects : undefined;
     panel = <ProjectLibrary data={data} view={isNew ? 'new' : 'projects'} refresh={refresh} />;
-  } else if (first === 'projects' && id && (parts.length === 2 || (parts.length === 3 && (sub === 'upload' || sub === 'runs')))) {
+  } else if (first === 'projects' && id && (parts.length === 2 || (parts.length === 3 && (sub === 'upload' || sub === 'runs' || sub === 'glossary')))) {
     const project = data.projects?.find(item => item.id === id);
     if (project) {
       const upload = sub === 'upload';
@@ -179,10 +182,11 @@ export default function LiveWorkspace() {
       if (sub) {
         parent = { label: project.name, href: projectPath(id) };
         if (sub === 'runs') title = 'Запуски';
+        if (sub === 'glossary') title = 'Глоссарий проекта';
       }
       panel = upload ? <ProjectLibrary key={id} data={data} view="new" projectId={id} refresh={refresh}/> : <>
-        <ProjectTabs projectId={id} runs={sub === 'runs'}/>
-        {sub === 'runs' ? <ProjectRunHistory key={id} projectId={id}/> : <ProjectLibrary key={id} data={data} view="project" projectId={id} refresh={refresh}/>}
+        <ProjectTabs projectId={id} active={sub}/>
+        {sub === 'glossary' ? <ProjectGlossary key={id} projectId={id} books={data.books} admin={admin}/> : sub === 'runs' ? <ProjectRunHistory key={id} projectId={id}/> : <ProjectLibrary key={id} data={data} view="project" projectId={id} refresh={refresh}/>}
       </>;
     }
   } else if (first === 'series' && id && parts.length === 2) {
@@ -226,10 +230,10 @@ export default function LiveWorkspace() {
     panel = <WorkspaceSettings key={data.userId} ownerId={data.userId} name={sub} />;
   }
 
-  return <PrototypeShell live role={data.role} items={items} active={active} title={title}
-    detail={parent ? { parent } : undefined} itemHref={page => base + '/' + page}>
+  return <StudioHeaderActions.Provider value={headerActions}><PrototypeShell live role={data.role} items={items} active={active} title={title}
+    detail={parent ? { parent, action: <div id="studio-page-actions" ref={setHeaderActions}/> } : undefined} itemHref={page => base + '/' + page}>
     {error && <div role="alert" className="mb-4 flex items-center gap-3">{error}
       <Button variant="outline" onClick={() => void refresh()}>Попробовать снова</Button></div>}
     {panel}
-  </PrototypeShell>;
+  </PrototypeShell></StudioHeaderActions.Provider>;
 }

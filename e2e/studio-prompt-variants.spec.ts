@@ -87,8 +87,9 @@ test('copy uses the current text, reports clipboard states and resets without ch
 });
 
 async function archive(page: Page) {
-  await page.getByRole('button', {name:'Удалить вариант'}).click();
-  await page.getByRole('dialog').getByRole('button', {name:'Удалить',exact:true}).click();
+  await page.getByRole('button', {name:'Действия с шаблоном'}).click();
+  await page.getByRole('button', {name:'Скрыть', exact:true}).click();
+  await page.getByRole('dialog').getByRole('button', {name:'Скрыть',exact:true}).click();
   await expect(page).toHaveURL(settings);
 }
 
@@ -114,7 +115,7 @@ test('an account prompt works on a second device, survives deletion and restores
   await expect(second.getByLabel('Название варианта')).toHaveValue('Имена и места');
   await second.getByLabel('Текст шаблона').fill('People from {SOURCE_TEXT}');
   await second.getByRole('button',{name:'Сохранить вариант'}).click();
-  await expect(second.getByRole('status')).toHaveText('Сохранено в аккаунте.');
+  await expect(second.getByRole('status').filter({hasText:'Сохранено в аккаунте.'})).toBeVisible();
   await page.getByLabel('Текст шаблона').fill('Stale {SOURCE_TEXT}');
   await page.getByRole('button',{name:'Сохранить вариант'}).click();
   await expect(page.getByText('Конфликт версий')).toBeVisible();
@@ -127,11 +128,12 @@ test('an account prompt works on a second device, survives deletion and restores
   await page.getByLabel('Показать удалённые').check();
   await page.getByRole('link',{name:/Имена и места.*Удалён/}).click();
   await expect(page.getByLabel('Текст шаблона')).toHaveJSProperty('readOnly',true);
-  await page.getByRole('button',{name:'Восстановить вариант'}).click();
+  await page.getByRole('button',{name:'Действия с шаблоном'}).click();
+  await page.getByRole('button',{name:'Восстановить',exact:true}).click();
   await expect(page.getByLabel('Использовать в моих переводах')).not.toBeChecked();
   await page.getByLabel('Использовать в моих переводах').check();
   await page.getByRole('button',{name:'Сохранить вариант'}).click();
-  await expect(page.getByRole('status')).toHaveText('Сохранено в аккаунте.');
+  await expect(page.getByRole('status').filter({hasText:'Сохранено в аккаунте.'})).toBeVisible();
   await page.goto(settings + '/templates/' + glossary.name);
   await page.getByRole('button',{name:'Использовать базовый в моих переводах'}).click();
   await expect(page.getByRole('status')).toHaveText('Для ваших переводов выбран базовый шаблон.');

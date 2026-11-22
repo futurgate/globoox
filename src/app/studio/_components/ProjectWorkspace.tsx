@@ -5,7 +5,8 @@ import { studioFetch } from '@/lib/studioFetch';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, Pencil, Upload } from 'lucide-react';
+import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, Upload } from 'lucide-react';
+import { StudioEntityMenu } from './StudioEntityMenu';
 import { PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -200,11 +201,29 @@ export default function ProjectWorkspace({ data, project, refresh }: Props) {
       return 'Книга перемещена в проект «' + projectById.get(target!) + '».';
     });
   };
+  function bookActions(book: WorkspaceBook) {
+    if (archived) return [{ label: 'Восстановить', disabled: action.busy, onClick: () => changeBook(book, 'restore') }];
+    const actions = [];
+    if (!book.seriesId && (choices.length > 0 || standalone.length > 1)) {
+      actions.push({ label: choices.length ? 'Добавить в серию' : 'Начать серию', onClick: () => {
+        setAppendBookId(book.id); setMovingBookId(''); setAdding(false);
+      } });
+    }
+    if (otherProjects.length) {
+      actions.push({ label: 'Переместить', onClick: () => {
+        setMovingBookId(book.id); setDestination(''); setAppendBookId(''); setAdding(false);
+      } });
+    }
+    actions.push({ label: 'В архив', onClick: () => changeBook(book, 'archive') });
+    return actions.map(item => ({ ...item, disabled: action.busy }));
+  }
   return <div className="space-y-4">
     <div className="flex flex-wrap gap-2">
       <Button asChild><Link href={projectPath(project.id) + '/upload'}><Upload />Загрузить EPUB</Link></Button>
       {outside.length > 0 && <Button variant="outline" disabled={action.busy} onClick={() => { setAdding(!adding); setMovingBookId(''); setAppendBookId(''); }}><FolderInput />Добавить из проекта</Button>}
-      <Button variant="ghost" onClick={() => setRenaming(!renaming)}><Pencil />Переименовать</Button>
+      <StudioEntityMenu inHeader label="Действия с проектом" actions={[
+        { label: 'Переименовать', onClick: () => setRenaming(true), disabled: renaming || action.busy },
+      ]}/>
     </div>
     {renaming && <ProjectNameForm ownerId={data.userId} project={project} refresh={refresh} close={() => setRenaming(false)} />}
     {adding && outside.length > 0 && <Card className="space-y-3 p-4">
@@ -227,19 +246,10 @@ export default function ProjectWorkspace({ data, project, refresh }: Props) {
       </div>
       {sorted.length === 0 && <p className="px-4 pb-4 text-sm pt-muted">{archived ? 'В архиве пока нет книг.' : 'В проекте пока нет книг.'}</p>}
       {sorted.map(book => <div key={book.id} className="border-t border-[var(--app-border)]">
-        <div className="flex flex-wrap items-center gap-x-2">
+        <div className="flex items-center gap-x-2">
           <BookRow book={book} context={book.seriesId ? [seriesById.get(book.seriesId) || 'Серия', book.volumeNumber != null && 'том ' + book.volumeNumber].filter(Boolean).join(' · ') : undefined} />
-          <div className="flex flex-wrap gap-1 px-3 pb-2 sm:pb-0">
-            {archived ? <Button variant="outline" size="sm" disabled={action.busy} onClick={() => changeBook(book, 'restore')}>Восстановить</Button>
-            : <>
-              {!book.seriesId && (choices.length > 0 || standalone.length > 1) && <Button variant="outline" size="sm" disabled={action.busy} onClick={() => {
-                setAppendBookId(appendBookId === book.id ? '' : book.id); setMovingBookId(''); setAdding(false);
-              }}>{choices.length ? 'Добавить в серию' : 'Начать серию'}</Button>}
-              {otherProjects.length > 0 && <Button variant="outline" size="sm" disabled={action.busy} onClick={() => {
-                setMovingBookId(movingBookId === book.id ? '' : book.id); setDestination(''); setAppendBookId(''); setAdding(false);
-              }}>Переместить</Button>}
-              <Button variant="ghost" size="sm" disabled={action.busy} onClick={() => changeBook(book, 'archive')}>В архив</Button>
-            </>}
+          <div className="shrink-0 pe-2">
+            <StudioEntityMenu label={'Действия с книгой «' + (book.title || 'Без названия') + '»'} actions={bookActions(book)}/>
           </div>
         </div>
         {appendBookId === book.id && !book.seriesId && !archived && <SeriesMembershipForm key={book.id} book={book} data={data} choices={choices}

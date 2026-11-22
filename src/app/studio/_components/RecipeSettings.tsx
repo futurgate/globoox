@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { StudioDraftActions, withStudioDraftGuard } from './StudioDraftActions';
 import { PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -156,8 +157,14 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
           })}
         </div>}
       </details>}
-      <div className="flex flex-wrap items-center gap-3"><Button variant="outline" disabled={(!changed && (settings.genreSource !== 'suggestion' || settings.revision > 0)) || working || conflict} onClick={() => void save()}>{working ? 'Сохраняем…' : 'Сохранить параметры'}</Button>
-        {notice && <span role="status" className="pt-muted">{notice}</span>}</div>
+      {!changed && settings.genreSource === 'suggestion' && !settings.revision &&
+        <Button variant="outline" disabled={working || conflict} onClick={() => void save()}>Принять предложенный жанр</Button>}
+      <StudioDraftActions dirty={Boolean(changed)} busy={working} disabled={conflict}
+        saveLabel="Сохранить параметры" onSave={() => void save()} onReset={() => {
+          setValues(settings.values); setGenre(settings.genre); setError(''); setNotice('');
+          if (conflict) setReload(n => n + 1);
+        }}/>
+      {notice && <span role="status" className="pt-muted">{notice}</span>}
     </>}
   </Card>;
 }
@@ -172,7 +179,7 @@ export function AccountRecipes({ ownerId, variants }: { ownerId: string; variant
   if (catalog?.error) return <p role="alert">{catalog.error} <Button variant="ghost" onClick={() => setVersion(n => n+1)}>Загрузить рецепты</Button></p>;
   if (!recipe) return <p role="status">{catalog ? 'В каталоге пока нет рецептов.' : 'Загружаем рецепты…'}</p>;
   return <section className="pt-stack">
-    <IOSSettingsRow label="Базовый рецепт" value={recipe.id} options={recipes.map(r => ({ id:r.id, label:r.name }))} onChange={setSelected}/>
+    <IOSSettingsRow label="Базовый рецепт" value={recipe.id} options={recipes.map(r => ({ id:r.id, label:r.name }))} onChange={value => withStudioDraftGuard(() => setSelected(value))}/>
     <RecipeEditor key={recipe.id} ownerId={ownerId} admin variants={variants}
       locator={{ scope: 'account', genre: recipe.genre, sourceLang: recipe.sourceLang, targetLang: recipe.targetLang }}/>
   </section>;
