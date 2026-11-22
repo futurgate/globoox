@@ -314,6 +314,26 @@ export function forgetLegacyBrowserSession() {
   }
 }
 
+export function getStoredReaderAccessToken(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const key = readerSessionStorageKey()
+    return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) ||
+      (key && findStoredReaderSession(window.localStorage.getItem(key))?.access_token) || null
+  } catch {
+    return null
+  }
+}
+
+/** Check only for this project's cookie (including SSR chunks). The server validates it. */
+export function hasReaderSessionCookie(): boolean {
+  const key = readerSessionStorageKey()
+  return Boolean(key && typeof document !== 'undefined' && document.cookie.split(';').some(cookie => {
+    const name = cookie.trimStart().split('=', 1)[0]
+    return name === key || (name.startsWith(key + '.') && /^\d+$/.test(name.slice(key.length + 1)))
+  }))
+}
+
 export async function getBrowserAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   const now = Date.now()
@@ -328,15 +348,7 @@ export async function getBrowserAccessToken(): Promise<string | null> {
   } catch {
     // A legacy reader session can exist without a Supabase browser session.
   }
-  if (!token) {
-    try {
-      token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-      const key = readerSessionStorageKey()
-      if (!token && key) token = findStoredReaderSession(window.localStorage.getItem(key))?.access_token ?? null
-    } catch {
-      // Cookie-only sessions can still be authenticated by the same-origin API.
-    }
-  }
+  if (!token) token = getStoredReaderAccessToken()
   if (generation !== browserTokenGeneration) return getBrowserAccessToken()
   browserTokenCache = { token, expiresAt: now + 3000 }
   return token

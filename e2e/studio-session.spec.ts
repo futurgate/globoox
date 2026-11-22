@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type Request } from '@playwright/test';
 import { loadEnvConfig } from '@next/env';
 
 const origin = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
@@ -15,6 +15,15 @@ function sdkStorageKey() {
   const authUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || loadEnvConfig(process.cwd(), true).combinedEnv.NEXT_PUBLIC_SUPABASE_URL;
   if (!authUrl) throw new Error('The test app needs its Supabase URL');
   return 'sb-' + new URL(authUrl).hostname.split('.')[0] + '-auth-token';
+}
+
+async function hasSessionCookie(request: Request, accessToken: string) {
+  // These short SDK fixtures fit one cookie. The workspace API accepts a valid
+  // same-origin cookie whether the client additionally supplies a bearer or not.
+  const prefix = sdkStorageKey() + '=base64-';
+  const encoded = (await request.headerValue('cookie'))?.split('; ').find(value => value.startsWith(prefix));
+  if (!encoded) return false;
+  return JSON.parse(Buffer.from(encoded.slice(prefix.length), 'base64url').toString()).access_token === accessToken;
 }
 
 async function isolateLogin(page: Page) {
@@ -66,6 +75,56 @@ test('Studio and its child panels use the signed-in reader session and clear ano
   await expect(page.getByRole('link', { name: 'Войти в Globoox' })).toBeVisible();
 });
 
+test('an authenticated cookie opens Studio and its queue while the browser auth lock is held', async ({ page, context }) => {
+  await isolateLogin(page);
+  const storageKey = sdkStorageKey();
+  const expiresAt = Math.floor(Date.now() / 1000) + 3600;
+  const session = { access_token: 'test-access', refresh_token: 'test-refresh', expires_at: expiresAt,
+    token_type: 'bearer', user: { id: firstId, aud: 'authenticated', role: 'authenticated', app_metadata: {}, user_metadata: {} } };
+  const value = 'base64-' + Buffer.from(JSON.stringify(session)).toString('base64url');
+  await context.addCookies([{ name: storageKey, value, url: origin }]);
+  await page.addInitScript(key => {
+    // A competing tab holds the same lock the real SDK needs before emitting INITIAL_SESSION.
+    void navigator.locks.request('lock:' + key, () => new Promise<void>(() => {}));
+  }, storageKey);
+  const cookie = storageKey + '=' + value;
+  let queueUsedCookie = false;
+  await page.route('**' + workspaceApi, async route => {
+    const cookies = (await route.request().headerValue('cookie'))?.split('; ') ?? [];
+    if (!cookies.includes(cookie)) return route.fulfill({ status: 401, json: { error: 'Sign in' } });
+    return route.fulfill({ json: data(firstId, true) });
+  });
+  await page.route('**' + workspaceApi + '/activity', async route => {
+    queueUsedCookie = ((await route.request().headerValue('cookie'))?.split('; ') ?? []).includes(cookie);
+    return route.fulfill({ status: queueUsedCookie ? 200 : 401, json: { attention: [], translations: [], attentionAvailable: true,
+      attentionComplete: true, translationsAvailable: true } });
+  });
+  await page.goto(origin + '/studio');
+  await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
+  await page.locator('.pt-sidebar').getByRole('link', { name: 'Очередь' }).click();
+  await expect.poll(() => queueUsedCookie).toBe(true);
+});
+
+test('a stalled project request offers a retry that can open the catalog', async ({ page }) => {
+  await isolateLogin(page);
+  let catalogRequested = false;
+  let recovered = false;
+  await page.route('**' + workspaceApi, route => {
+    catalogRequested = true;
+    // Leave the first request pending to model a server that never responds.
+    if (recovered) return route.fulfill({ json: data(firstId, true) });
+  });
+  await page.clock.install();
+  await page.goto(origin + '/studio');
+  await expect.poll(() => catalogRequested).toBe(true);
+  await page.clock.fastForward('01:00');
+  const retry = page.getByRole('button', { name: 'Попробовать снова' });
+  await expect(retry).toBeVisible();
+  recovered = true;
+  await retry.click();
+  await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
+});
+
 test('password login returns to the Studio deep link with the durable Supabase session', async ({ page }) => {
   await isolateLogin(page);
   await page.addInitScript(key => localStorage.setItem(key, 'older-reader-session'), readerKey);
@@ -79,18 +138,19 @@ test('password login returns to the Studio deep link with the durable Supabase s
     access_token: token, refresh_token: 'local-test-refresh', token_type: 'bearer', expires_in: 3600, expires_at: expiry, user: testUser,
   };
   let admin = true;
-  let activityToken = '';
+  let activityAuthenticated = false;
   await page.route('**/auth/v1/token?grant_type=password', route => route.fulfill({ json: session }));
-  await page.route('**' + workspaceApi + '/activity', route => {
-    activityToken = route.request().headers().authorization;
+  await page.route('**' + workspaceApi + '/activity', async route => {
+    activityAuthenticated = await hasSessionCookie(route.request(), token);
+    expect(route.request().headers().authorization).not.toBe('Bearer older-reader-session');
     return route.fulfill({ json: { attention: [], translations: [], attentionAvailable: true, attentionComplete: true, translationsAvailable: true } });
   });
   await page.route('**/auth/v1/user', route => route.request().headers().authorization === 'Bearer ' + token
     ? route.fulfill({ json: testUser })
     : route.fulfill({ status: 401, json: { message: 'Expired reader credential' } }));
-  await page.route('**' + workspaceApi, route => {
-    expect(route.request().headers().authorization).toBe('Bearer ' + token);
-    expect(route.request().headers().cookie).toMatch(/sb-.*-auth-token/);
+  await page.route('**' + workspaceApi, async route => {
+    expect(route.request().headers().authorization).not.toBe('Bearer older-reader-session');
+    if (!await hasSessionCookie(route.request(), token)) return route.fulfill({ status: 401, json: { error: 'Missing session' } });
     return route.fulfill({ json: data(firstId, admin) });
   });
   await page.goto(origin + '/auth?next=%2Fstudio%2Fprojects');
@@ -106,7 +166,7 @@ test('password login returns to the Studio deep link with the durable Supabase s
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
   const sidebar = page.locator('.pt-sidebar');
   await sidebar.getByRole('link', { name: 'Очередь' }).click();
-  await expect.poll(() => activityToken).toBe('Bearer ' + token);
+  await expect.poll(() => activityAuthenticated).toBe(true);
   admin = false;
   await page.evaluate(session => {
     const match = document.cookie.match(/(?:^|;\s*)(sb-[^=;]+?-auth-token)(?:\.\d+)?=/);
@@ -143,9 +203,11 @@ test('Studio renews an old reader session and keeps its account after a reload',
     return route.fulfill({ json: session });
   });
   await page.route('**/auth/v1/user', route => route.fulfill({ json: user }));
-  await page.route('**' + workspaceApi, route => route.request().headers().authorization === 'Bearer ' + freshToken
-    ? route.fulfill({ json: data(firstId, false) })
-    : route.fulfill({ status: 401, json: { error: 'Expired session' } }));
+  await page.route('**' + workspaceApi, async route => {
+    const authorized = await hasSessionCookie(route.request(), freshToken) || route.request().headers().authorization === 'Bearer ' + freshToken;
+    return authorized ? route.fulfill({ json: data(firstId, false) })
+      : route.fulfill({ status: 401, json: { error: 'Expired session' } });
+  });
   await page.goto(origin + '/studio');
   await expect(page.getByRole('link', { name: /Проект автора/ })).toBeVisible();
   await page.reload();
