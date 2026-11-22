@@ -141,15 +141,15 @@ export default function AuthorPrototype() {
     p?.volumes[0];
   const isLocal =
     !!p && !!v && !['projects', 'decisions', 'import', 'recipe'].includes(view);
-  const ancestors = [{ label: 'Мои проекты', href: authorHref('projects') }];
+  let parent = { label: 'Мои проекты', href: authorHref('projects') };
   if (isLocal && view in taskTitles) {
-    ancestors.push({ label: p.title, href: authorHref('overview', p.id) });
+    parent = { label: p.title, href: authorHref('overview', p.id) };
   } else if (view === 'recipe') {
-    ancestors.push({ label: 'Новый проект', href: authorHref('import') });
+    parent = { label: 'Новый проект', href: authorHref('import') };
   }
   const detail =
     isLocal || view === 'import' || view === 'recipe'
-      ? { ancestors }
+      ? { parent }
       : undefined;
   return (
     <PrototypeShell

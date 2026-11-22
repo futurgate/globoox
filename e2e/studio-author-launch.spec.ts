@@ -83,7 +83,7 @@ for (const target of launchPages) {
     await expect(page.getByText('Доступ к запуску перевода выдаёт администратор.')).toBeVisible();
     await expect(page.getByRole('button', { name: target.button })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Подтвердить запуск' })).toHaveCount(0);
-    await expect(page.getByRole('textbox', { name: 'Пожелания к переводу' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Указания по стилю перевода' })).toBeVisible();
     expect(submissions).toEqual([]);
     expect(unexpected).toEqual([]);
   });

@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableText, CopyableTextarea } from '@/components/ui/copy-text';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
-import { fetchPlaygroundModels, runFictionFlowPlaygroundStream, type ServerPrompt } from '@/lib/api';
+import { runFictionFlowPlaygroundStream, type PlaygroundModels, type ServerPrompt } from '@/lib/api';
+import { studioErrorMessage } from '@/lib/studioFetch';
+import { bookGet } from './bookRequests';
 
 import { previewDirections, promptPreview } from '@/lib/translationPromptPreview';
 
@@ -22,11 +24,11 @@ export default function SampleRun({ template, catalog, draft, valid }: {
   const [output, setOutput] = useState('');
   const controller = useRef<AbortController | null>(null);
   useEffect(() => {
-    let active = true;
-    fetchPlaygroundModels().then(data => { if (active) { setModels(data.models); setModel(data.models[0] ?? ''); }}).catch(() => {
-      if (active) setError('Список моделей сейчас недоступен.');
-    });
-    return () => { active = false; controller.current?.abort(); };
+    const request = new AbortController();
+    bookGet<PlaygroundModels>('/api/admin/models', request.signal).then(data => {
+      if (!request.signal.aborted) { setModels(data.models); setModel(data.models[0] ?? ''); }
+    }).catch(() => { if (!request.signal.aborted) setError('Список моделей сейчас недоступен.'); });
+    return () => { request.abort(); controller.current?.abort(); };
   }, []);
   const { stage, enabled, prompts, available } = promptPreview(template, catalog, direction, draft);
   async function run() {
@@ -48,7 +50,7 @@ export default function SampleRun({ template, catalog, draft, valid }: {
       const value = result[stage];
       setOutput(stage === 'glossary' ? result.glossary?.text || '' : stage === 'translate' ? result.translate?.draftText || '' : JSON.stringify(value, null, 2) ?? 'Нет исправлений.');
     } catch (err) {
-      if (!next.signal.aborted) setError(err instanceof Error ? err.message : 'Не удалось выполнить пробу.');
+      if (!next.signal.aborted) setError(studioErrorMessage(err, 'Не удалось выполнить пробу.'));
     } finally { if (!next.signal.aborted) setRunning(false); }
   }
   return <Card className="p-5 gap-3"><h2>Проба на фрагменте</h2>
@@ -59,8 +61,8 @@ export default function SampleRun({ template, catalog, draft, valid }: {
     {!available && valid && <p role="alert">Для пробы не найден действующий шаблон одного из этапов этого направления.</p>}
     <IOSSettingsRow label="Направление" value={direction} options={directions.map(id => ({id, label:id.replace('-', ' → ')}))} onChange={setDirection} disabled={running || directions.length < 2}/>
     <IOSSettingsRow label="Модель" value={model} options={models.map(id => ({id, label:id}))} onChange={setModel} disabled={running || !models.length}/>
-    <label className="pt-field">Фрагмент оригинала<Textarea value={text} rows={4} onChange={e=>setText(e.target.value)} /></label>
+    <CopyableTextarea fieldClassName="pt-field" label="Фрагмент оригинала" value={text} rows={4} onChange={e=>setText(e.target.value)} />
     <div><Button variant="outline" disabled={running || !model || !text.trim() || !valid || !available} onClick={run}>{running ? 'Выполняется…' : 'Запустить пробу'}</Button></div>
-    {error && <p role="alert">{error}</p>}{output && <pre className="whitespace-pre-wrap break-words text-sm" role="status">{output}</pre>}
+    {error && <p role="alert">{error}</p>}{output && <CopyableText label="Результат пробы" text={output} className="text-sm" role="status"/>}
   </Card>;
 }

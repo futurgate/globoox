@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { bookRunPath } from './projectLinks';
+import { CopyableText } from '@/components/ui/copy-text';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { runEndpoint, runsEndpoint, type FrozenRecipe, recipeSourceNames, type StudioRun } from '@/lib/studioRecipe';
@@ -36,7 +37,7 @@ function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
     {!result && <p role="status">Загружаем параметры запуска…</p>}
     {config && <>
       <p><strong>Рецепт</strong> · {config.recipeId}</p>
-      {config.wishes && <p><strong>Пожелания</strong> · {config.wishes}</p>}
+      {config.wishes && <p><strong>Указания по стилю перевода</strong> · {config.wishes}</p>}
       <p><strong>Единицы</strong> · {{ keep:'Как в оригинале', us:'Американские', metric:'Метрические' }[config.units] || config.units}</p>
       {(['glossary','translate'] as const).filter(stage => run.operation === 'series' || run.operation === 'book' || run.operation === stage).map(stage => {
         const frozen = config[stage];
@@ -47,7 +48,7 @@ function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
           <p>Выбрана модель {frozen.model}{source ? ' · ' + recipeSourceNames[source] : ''}</p>
           {spent && <p>Попыток {spent.attempts} · учтено вызовов {spent.calls} · модели {spent.models.join(', ') || '—'} · вход из кэша {count(spent.cachedTokens)} · токены рассуждений {count(spent.reasoningTokens)}</p>}
           <details><summary>Шаблон на момент старта · {frozen.template}</summary>
-            <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap break-words text-xs">{frozen.prompt}</pre>
+            <CopyableText label="Шаблон на момент старта" text={frozen.prompt} className="mt-2 max-h-72 overflow-auto text-xs"/>
           </details>
         </div>;
       })}

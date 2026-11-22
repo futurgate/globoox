@@ -1,6 +1,6 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 import { Badge } from '@/components/ui/badge';
 import {
   uiFilterPillBase,
@@ -279,15 +279,12 @@ export function Review({
                   {reader ? run.text[selected] : run.revisionBase[selected]}
                 </p>
               </div>
-              <label className="adm-field">
-                {reader ? 'Предложение' : 'Текст в книге'}
-                <Textarea
-                  key={kind + selected}
-                  readOnly={reader && states[selected] === 'Совпадает'}
-                  value={displayed}
-                  onChange={(e) => edit(e.target.value)}
-                />
-              </label>
+              <CopyableTextarea fieldClassName="adm-field" label={reader ? 'Предложение' : 'Текст в книге'}
+                key={kind + selected}
+                readOnly={reader && states[selected] === 'Совпадает'}
+                value={displayed}
+                onChange={(e) => edit(e.target.value)}
+              />
               {reader && pending(states[selected]) && (
                 <p className="adm-note">Попадёт в книгу после одобрения.</p>
               )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CopyTextButton } from '@/components/ui/copy-text';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { BookTranslationEstimate, FictionCosts, QaReportV2, ReaderCheckCostStageBreakdown } from '@/lib/api';
@@ -112,7 +113,6 @@ export function BookRuns({ bookId, lang }: { bookId: string; lang: string }) {
   const [version, setVersion] = useState(0);
   const costs = useBookData<FictionCosts>(bookEndpoint(bookId, 'fiction-costs', lang), version);
   const runs = useBookData<{ runs: CostRun[] }>(bookEndpoint(bookId, 'fiction-cost-runs', lang), version);
-  const action = useBookAction();
   const visibleStages = costs?.data?.stages.filter(stage => stage.ran || stage.measured) ?? [];
 
   return <div className="pt-stack">
@@ -121,7 +121,7 @@ export function BookRuns({ bookId, lang }: { bookId: string; lang: string }) {
         <h2>Расходы по этапам</h2>
         <Button variant="ghost" onClick={() => setVersion(v => v + 1)}>Обновить</Button>
       </div>
-      <ActionFeedback error={costs?.error || action.error} notice={action.notice}/>
+      <ActionFeedback error={costs?.error}/>
       {!costs && <p role="status">Загружаем статистику…</p>}
       {costs?.data && <>
         {costs.data.hasMeasured && <p>Учтённый расход по книге · {dollars(costs.data.totals.measured.costUsd)}</p>}
@@ -140,10 +140,7 @@ export function BookRuns({ bookId, lang }: { bookId: string; lang: string }) {
             </p>}
           </details>;
         })}
-        <Button variant="outline" onClick={() => void action.run(async () => {
-          await navigator.clipboard.writeText(JSON.stringify(costs.data, null, 2));
-          return 'Статистика скопирована.';
-        })}>Скопировать статистику</Button>
+        <div><CopyTextButton subject="Статистика расхода" text={JSON.stringify(costs.data, null, 2)}/></div>
       </>}
     </Card>
     <RecipeRuns bookId={bookId} lang={lang} version={version}/>

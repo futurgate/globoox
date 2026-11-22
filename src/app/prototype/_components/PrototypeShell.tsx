@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { workspaceBase } from '@/lib/translationWorkspacePath';
 import IOSReaderHeader, {
-  type HeaderAncestor,
+  type HeaderParentLink,
 } from '@/components/ui/ios-reader-header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +34,7 @@ type ShellProps = {
   onSelect?: (id: string) => void;
   title: string;
   subtitle?: string;
-  detail?: { ancestors: readonly HeaderAncestor[]; action?: ReactNode };
+  detail?: { parent: HeaderParentLink; action?: ReactNode };
   children: ReactNode;
 };
 
@@ -133,8 +133,8 @@ export function PrototypeShell({
             title={title}
             subtitle={subtitle}
             headingRef={heading}
-            navigationLabel="Путь навигации"
-            ancestors={detail.ancestors}
+            navigationLabel="На уровень выше"
+            parent={detail.parent}
             trailingRight={detail.action}
           />
         ) : (

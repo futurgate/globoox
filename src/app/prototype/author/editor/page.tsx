@@ -3,7 +3,7 @@
 import { Card } from '@/components/ui/card'
 import IOSItemsStack from '@/components/ui/ios-items-stack'
 import IOSSettingsRow from '@/components/ui/ios-settings-row'
-import { Textarea } from '@/components/ui/textarea'
+import { CopyableTextarea } from '@/components/ui/copy-text'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
@@ -97,14 +97,11 @@ function RecipeSettings({ initial }: { initial: Recipe }) {
                     onChange={(value) => set({ [model]: value })}
                   />
                 </IOSItemsStack>
-                <label className="pt-field">
-                  Шаблон этапа
-                  <Textarea
-                    rows={5}
-                    value={draft[prompt]}
-                    onChange={(e) => set({ [prompt]: e.target.value })}
-                  />
-                </label>
+                <CopyableTextarea fieldClassName="pt-field" label="Шаблон этапа"
+                  rows={5}
+                  value={draft[prompt]}
+                  onChange={(e) => set({ [prompt]: e.target.value })}
+                />
               </div>
             )
           })}

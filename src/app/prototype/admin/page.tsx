@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/button-styles';
 
 import { Button } from '@/components/ui/button';
+import { CopyTextButton } from '@/components/ui/copy-text';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 
@@ -165,7 +166,6 @@ export default function AdminPrototype() {
   const [filter, setFilter] = useState('all');
   const [overwrite, setOverwrite] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [chapter, setChapter] = useState(1);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -215,9 +215,8 @@ export default function AdminPrototype() {
     setConfirm(false);
     setOverwrite(false);
     setError('');
-    setCopied(false);
     setChapter(1);
-  }, [setConfirm, setOverwrite, setError, setCopied, setChapter]);
+  }, [setConfirm, setOverwrite, setError, setChapter]);
   useEffect(() => listenHash(resetScreenControls), [resetScreenControls]);
   const jump = (s: Screen, nextBook = book, nextLang = lang) => {
     const href = adminHref(s, nextBook, nextLang);
@@ -356,12 +355,10 @@ export default function AdminPrototype() {
         across
           ? undefined
           : {
-              ancestors: [
-                {
-                  label: 'Переводы книг',
-                  href: adminHref('books', book, lang),
-                },
-              ],
+              parent: {
+                label: 'Переводы книг',
+                href: adminHref('books', book, lang),
+              },
               action: (
                 <IOSSettingsRow
                   label="Русский →"
@@ -731,7 +728,6 @@ export default function AdminPrototype() {
                   }))}
                   onChange={(value) => {
                     setChapter(Number(value));
-                    setCopied(false);
                   }}
                 />
               </div>
@@ -756,27 +752,11 @@ export default function AdminPrototype() {
                       </div>
                     ))}
                   </div>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    onClick={async () => {
-                      try {
-                        await navigator.clipboard.writeText(
-                          run.glossary
-                            .slice(0, 2)
-                            .map((t) => t.source + ' → ' + t.target)
-                            .join('\n'),
-                        );
-                        setCopied(true);
-                      } catch {
-                        setError(
-                          'Браузер запретил копирование. Выделите пары в журнале.',
-                        );
-                      }
-                    }}
-                  >
-                    {copied ? 'Скопировано' : 'Скопировать список'}
-                  </Button>
+                  <CopyTextButton
+                    key={chapter}
+                    text={run.glossary.slice(0, 2).map(t => t.source + ' → ' + t.target).join('\n')}
+                    subject="Словарь в запросе"
+                  />
                 </>
               ) : (
                 <p className="adm-note">

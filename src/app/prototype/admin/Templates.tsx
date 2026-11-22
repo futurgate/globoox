@@ -1,6 +1,6 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -65,18 +65,15 @@ function Editor({
   );
   return (
     <>
-      <label className="adm-field">
-        Текст шаблона
-        <Textarea
-          className="font-mono"
-          rows={7}
-          value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            setNotice('');
-          }}
-        />
-      </label>
+      <CopyableTextarea fieldClassName="adm-field" label="Текст шаблона"
+        className="font-mono"
+        rows={7}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          setNotice('');
+        }}
+      />
       {missing.length > 0 && (
         <p role="alert">
           Добавьте обязательные подстановки: {missing.join(', ')}

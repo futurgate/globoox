@@ -1,6 +1,6 @@
 'use client';
 
-import { studioFetch } from '@/lib/studioFetch';
+import { studioErrorMessage, studioFetch } from '@/lib/studioFetch';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -42,7 +42,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
       const activity: Activity = await response.json();
       if (!next.signal.aborted) { setData(activity); setError(''); }
     } catch (err) {
-      if (!next.signal.aborted) setError(err instanceof Error ? err.message : 'Не удалось загрузить события.');
+      if (!next.signal.aborted) setError(studioErrorMessage(err, 'Не удалось загрузить события.'));
     }
   }, []);
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function WorkspaceActivity({ view, workspace }: {view: 'decisions
       });
       if (!response.ok) throw new Error('Не удалось закрыть вопрос (' + response.status + ').');
       await load();
-    } catch (err) { setError(err instanceof Error ? err.message : 'Не удалось закрыть вопрос.'); }
+    } catch (err) { setError(studioErrorMessage(err, 'Не удалось закрыть вопрос.')); }
     finally { setBusy(''); }
   }
 

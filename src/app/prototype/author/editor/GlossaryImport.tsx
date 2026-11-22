@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
+import { CopyableTextarea } from '@/components/ui/copy-text'
 import { Button } from '@/components/ui/button'
 
 import { useMemo, useState } from 'react'
@@ -79,16 +79,13 @@ export function GlossaryImport({ initial }: { initial: Glossary }) {
         <span className="pt-muted">
           Русский → Английский · Версия {current.version} · Записей {current.entries.length}
         </span>
-        <label className="pt-field">
-          Исходный список JSON
-          <Textarea
-            rows={5}
-            spellCheck={false}
-            value={raw}
-            onChange={(e) => edit(e.target.value)}
-            placeholder={'[{"source":"Белая Гряда","target":"White Ridge"}]'}
-          />
-        </label>
+        <CopyableTextarea fieldClassName="pt-field" label="Исходный список JSON"
+          rows={5}
+          spellCheck={false}
+          value={raw}
+          onChange={(e) => edit(e.target.value)}
+          placeholder={'[{"source":"Белая Гряда","target":"White Ridge"}]'}
+        />
         <div className="ed-actions">
           <Button variant="outline" onClick={() => edit(JSON.stringify(demoImport, null, 2))}>
             Подставить демо-JSON

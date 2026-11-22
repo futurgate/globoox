@@ -105,6 +105,27 @@ test('an authenticated cookie opens Studio and its queue while the browser auth 
   await expect.poll(() => queueUsedCookie).toBe(true);
 });
 
+test('queue opens after a temporary network failure without asking the reader to refresh', async ({ page }) => {
+  await isolateLogin(page);
+  await page.route('**' + workspaceApi, route => route.fulfill({ json: data(firstId, true) }));
+  const started = Promise.withResolvers<void>();
+  let available = false;
+  await page.route('**' + workspaceApi + '/activity', async route => {
+    if (!available) {
+      await route.abort('connectionreset');
+      started.resolve();
+      return;
+    }
+    return route.fulfill({ json: { attention: [], translations: [], attentionAvailable: true,
+      attentionComplete: true, translationsAvailable: true } });
+  });
+  await page.goto(origin + '/studio/queue');
+  await started.promise;
+  available = true;
+  await expect(page.getByText(/пока нет зарегистрированных переводов/)).toBeVisible();
+  await expect(page.getByRole('alert').filter({ hasText: /failed to fetch|load failed/i })).toHaveCount(0);
+});
+
 test('a stalled project request offers a retry that can open the catalog', async ({ page }) => {
   await isolateLogin(page);
   let catalogRequested = false;

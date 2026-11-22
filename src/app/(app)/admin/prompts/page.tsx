@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { workspaceBase } from '@/lib/translationWorkspacePath';
 import { Loader2, ShieldAlert, RefreshCw, Save, RotateCcw, ChevronDown, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { listServerPrompts, saveServerPrompt, resetServerPrompt, type ServerPrompt } from '@/lib/api';
@@ -174,7 +175,7 @@ export default function AdminPromptsPage() {
 
                     {open && (
                       <div className="space-y-2 border-t border-[var(--separator-opaque)] p-3">
-                        <textarea
+                        <CopyableTextarea aria-label={p.label} copyLanguage="en"
                           value={draft}
                           onChange={(e) => setDrafts((prev) => ({ ...prev, [p.name]: e.target.value }))}
                           spellCheck={false}

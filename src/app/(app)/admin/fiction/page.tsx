@@ -4,8 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { workspaceBase } from '@/lib/translationWorkspacePath';
 import { useRouter } from 'next/navigation';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy, Library } from 'lucide-react';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Library } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -239,7 +240,6 @@ export default function AdminFictionPage() {
   type ScopeEntry = { index: number; title: string | null; entriesIn: number; entriesOut: number; names: string[]; terms: string[] };
   const [scopeLog, setScopeLog] = useState<ScopeEntry[]>([]);
   const [scopeOpen, setScopeOpen] = useState(false);
-  const [scopeCopied, setScopeCopied] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
   const [overwriteTranslation, setOverwriteTranslation] = useState(false);
   const [runRevisionAfter, setRunRevisionAfter] = useState(false);
@@ -493,15 +493,6 @@ export default function AdminFictionPage() {
       })
       .join('\n\n');
   }, [scopeLog]);
-
-  const copyScopeLog = useCallback(async () => {
-    if (!scopeLogText) return;
-    try {
-      await navigator.clipboard.writeText(scopeLogText);
-      setScopeCopied(true);
-      setTimeout(() => setScopeCopied(false), 1500);
-    } catch { /* clipboard blocked — ignore */ }
-  }, [scopeLogText]);
 
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
@@ -1001,7 +992,6 @@ export default function AdminFictionPage() {
     setDone(0);
     setCurrent(null);
     setScopeLog([]);
-    setScopeCopied(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -1591,10 +1581,7 @@ export default function AdminFictionPage() {
                 {scopeOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
                 Glossary sent per chapter ({scopeLog.length} chapters)
               </button>
-              <Button variant="outline" size="sm" onClick={copyScopeLog}>
-                {scopeCopied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
-                {scopeCopied ? 'Copied' : 'Copy log'}
-              </Button>
+              <CopyTextButton text={scopeLogText} language="en" subject="Glossary scope log"/>
             </div>
             <p className="mt-1 text-[var(--app-text-muted)]">
               Which glossary entries were sent to each chapter. Use it to check a declined form still pulls its entry
@@ -1684,7 +1671,7 @@ export default function AdminFictionPage() {
                     </label>
                   </div>
                   <p className="text-xs text-[var(--app-text-muted)]">{meta.hint}</p>
-                  <textarea
+                  <CopyableTextarea aria-label={meta.label} copyLanguage="en"
                     value={draft}
                     onChange={(e) => setPromptDrafts((prev) => ({ ...prev, [p.name]: e.target.value }))}
                     spellCheck={false}
@@ -1874,7 +1861,7 @@ export default function AdminFictionPage() {
           </Button>
           {pasteOpen && (
             <div className="space-y-2">
-              <textarea
+              <CopyableTextarea aria-label="Glossary JSON" copyLanguage="en"
                 value={pasteJson}
                 onChange={(e) => setPasteJson(e.target.value)}
                 disabled={pasteSaving}
@@ -2568,7 +2555,7 @@ function ReaderFixEditor({
       {item.before != null && (
         <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{item.before}</p>
       )}
-      <textarea
+      <CopyableTextarea aria-label="Suggested text" copyLanguage="en"
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={Math.min(8, Math.max(2, text.split('\n').length))}
@@ -2997,7 +2984,7 @@ function RevisionDiffEntryRow({
         </div>
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
-          <textarea
+          <CopyableTextarea aria-label="Revised text" copyLanguage="en"
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={Math.min(10, Math.max(2, text.split('\n').length))}

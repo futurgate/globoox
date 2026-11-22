@@ -99,6 +99,8 @@ export async function proxyToBackend(request: Request, expectedReadingUser?: str
 
     const data = await res.json().catch(() => null)
     const response = NextResponse.json(data ?? {}, { status: res.status })
+    const retryAfter = res.headers.get('retry-after')
+    if (retryAfter) response.headers.set('Retry-After', retryAfter)
     response.headers.set('x-data-source', 'backend')
     response.headers.set('x-authenticated', identity ? 'true' : 'false')
     return response

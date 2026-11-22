@@ -11,7 +11,7 @@ function workspace(userId: string, title: string) {
   };
 }
 
-test('direct book entry, breadcrumbs, sidebar and history share one catalog and shell', async ({ page }) => {
+test('direct book entry, parent link, sidebar and history share one catalog and shell', async ({ page }) => {
   let catalogRequests = 0;
   let documentRequests = 0;
   const title = 'Северный архив';
@@ -34,7 +34,7 @@ test('direct book entry, breadcrumbs, sidebar and history share one catalog and 
     expect(catalogRequests).toBe(1);
   };
 
-  await page.getByRole('navigation', { name: 'Путь навигации' }).getByRole('link', { name: 'Мои проекты' }).click();
+  await page.getByRole('navigation', { name: 'На уровень выше' }).getByRole('link', { name: 'Мои проекты' }).click();
   await expect(heading).toHaveText('Мои проекты');
   await checkShell();
 
@@ -52,6 +52,34 @@ test('direct book entry, breadcrumbs, sidebar and history share one catalog and 
   await page.getByRole('link', { name: new RegExp(title) }).click();
   await expect(heading).toHaveText(title);
   await checkShell();
+});
+
+test('a direct run link walks up through the selected language, book, project and catalog', async ({ page }) => {
+  const id = 'a1000000-0000-4000-8000-000000000001';
+  const data = workspace('owner', 'Северный архив');
+  await page.route('**/api/**', route => route.fulfill({ status: 404, json: {} }));
+  await page.route('**' + catalog, route => route.fulfill({ json: {
+    ...data, projects: [{ id: 'collection', name: 'Сборник' }],
+    books: [{ ...data.books[0], projectId: 'collection' }],
+  } }));
+  const translation = '/studio/books/book/translations/FR';
+  await page.goto(origin + translation + '/runs/' + id);
+  const nav = page.getByRole('navigation', { name: 'На уровень выше' });
+  const back = nav.getByRole('link');
+  for (const [heading, parent, href] of [
+    ['Запуск перевода', 'Запуски и расход', translation + '/runs'],
+    ['Запуски и расход', 'Северный архив', translation],
+    ['Северный архив', 'Сборник', '/studio/projects/collection'],
+    ['Сборник', 'Мои проекты', '/studio/projects'],
+  ]) {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);
+    await expect(back).toHaveCount(1);
+    await expect(back).toHaveText(parent);
+    await expect(back).toHaveAttribute('href', href);
+    await back.click();
+    await expect(page).toHaveURL(origin + href);
+  }
+  await expect(nav).toHaveCount(0);
 });
 
 test('returning to projects restores its filter and preserves unrelated URL parameters', async ({ page }) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { studioFetch } from '@/lib/studioFetch';
+import { studioErrorMessage, studioFetch } from '@/lib/studioFetch';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -12,7 +12,7 @@ export async function checkedResponse(response: Response) {
   if (response.ok) return response;
   const body = await response.json().catch(() => null);
   const detail = body?.message || body?.statusMessage || body?.error;
-  throw new Error(typeof detail === 'string' ? detail : `Сервер вернул ошибку ${response.status}.`);
+  throw new Error(studioErrorMessage(detail, `Сервер вернул ошибку ${response.status}.`, response.status));
 }
 
 export async function bookGet<T>(url: string, signal?: AbortSignal): Promise<T> {
@@ -65,7 +65,7 @@ export function useBookData<T>(url: string | null, version = 0, poll: boolean | 
           if (typeof poll === 'function') continuePolling = poll(data);
         }
       } catch (e) {
-        if (!controller.signal.aborted) setResult({ url, error: e instanceof Error ? e.message : 'Не удалось получить данные.' });
+        if (!controller.signal.aborted) setResult({ url, error: studioErrorMessage(e, 'Не удалось получить данные.') });
       } finally {
         if (continuePolling && !controller.signal.aborted) timer = setTimeout(refresh, 5500);
       }
@@ -92,7 +92,7 @@ export function useBookAction() {
       const message = await work(controller.signal);
       if (!controller.signal.aborted) setNotice(message || '');
     } catch (e) {
-      if (!controller.signal.aborted) setError(e instanceof Error ? e.message : 'Не удалось выполнить действие.');
+      if (!controller.signal.aborted) setError(studioErrorMessage(e, 'Не удалось выполнить действие.'));
     } finally {
       if (!controller.signal.aborted) {
         setBusy(false); setVersion(n => n + 1);

@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 import { listPersonalPrompts, type PersonalPrompt } from '@/lib/translationPromptVariants';
-import { studioFetch } from '@/lib/studioFetch';
+import { studioErrorMessage, studioFetch } from '@/lib/studioFetch';
 import { omitEmptyValues, recipeEndpoint, recipeGenres, recipeUnits, recipeSourceNames,
   type RecipeLocator, type RecipeSettings, type RecipeValues } from '@/lib/studioRecipe';
 import { bookGet, useBookData } from './bookRequests';
@@ -69,7 +69,7 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
       if (!data.values || !data.effective || typeof data.revision !== 'number') throw Error('Сервер не подтвердил параметры перевода.');
       setSettings(data); setValues(data.values); setGenre(data.genre); onResolved?.(data);
       setOld(data.scope === 'book' && data.scopeId && !data.revision ? previousBrief(ownerId, data.scopeId, data.targetLang) : null);
-    }).catch(e => { if (!c.signal.aborted) setError(e.message); });
+    }).catch(e => { if (!c.signal.aborted) setError(studioErrorMessage(e, 'Не удалось загрузить параметры перевода.')); });
     return () => { c.abort(); saveController.current?.abort(); };
   }, [url, ownerId, reload, onResolved]);
   useEffect(() => {
@@ -94,13 +94,13 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
       const data = await response.json();
       if (!response.ok) {
         if (response.status === 409) setConflict(true);
-        throw Error(data.message || data.error || 'Не удалось сохранить параметры.');
+        throw Error(studioErrorMessage(data.message || data.error, 'Не удалось сохранить параметры.', response.status));
       }
       if (!data.effective || typeof data.revision !== 'number') throw Error('Сервер не подтвердил сохранение параметров.');
       if (!c.signal.aborted) {
         setValues(data.values); setSettings(data); setGenre(data.genre); setOld(null); setNotice('Параметры сохранены.'); onResolved?.(data);
       }
-    } catch (e) { if (!c.signal.aborted) setError(e instanceof Error ? e.message : 'Не удалось сохранить параметры.'); }
+    } catch (e) { if (!c.signal.aborted) setError(studioErrorMessage(e, 'Не удалось сохранить параметры.')); }
     finally { saveController.current = null; if (!c.signal.aborted) setWorking(false); }
   }
   const title = locator.scope === 'account' ? 'Параметры рецепта' : locator.scope === 'book' ? 'Параметры книги' : 'Параметры серии';
@@ -117,14 +117,18 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onReso
     {!settings && !error && <p role="status">Загружаем параметры…</p>}
     {((!settings && error) || conflict) && <Button className="self-start" variant="outline" onClick={() => setReload(n => n + 1)}>Загрузить сохранённые параметры</Button>}
     {settings && <>
-      <p className="pt-muted">{locator.sourceLang} → {locator.targetLang} · {locator.scope === 'account' ? 'Для новых запусков своих книг этого жанра' : 'Для новых запусков перевода'}</p>
+      <p className="pt-muted">{locator.sourceLang} → {locator.targetLang} · {locator.scope === 'account' ? 'Ваши настройки для новых запусков книг этого жанра' : 'Для новых запусков перевода'}</p>
       {old && <div><Button variant="outline" onClick={() => { setValues(v => ({ ...v, ...old.values })); if (old.genre) setGenre(old.genre); setOld(null); }}>Подставить прежний черновик с этого устройства</Button></div>}
       {settings.genreSource === 'suggestion' && locator.scope === 'book' && <p className="pt-muted text-sm">Жанр предложен по данным книги. При сохранении будет использован ваш выбор.</p>}
       {locator.scope !== 'account' && <IOSSettingsRow label="Жанр" value={genre} options={recipeGenres} onChange={v => { setGenre(v); setNotice(''); }} disabled={working}/>}
       <IOSSettingsRow label="Единицы измерения" value={values.units ?? ''} onChange={v => change('units',v)} disabled={working}
         options={[{ id:'', label: unitName ? 'По рецепту · ' + unitName : 'По рецепту' }, ...recipeUnits]}/>
-      <label className="pt-field">Пожелания к переводу<Textarea rows={3} maxLength={4000} value={values.wishes ?? ''} disabled={working}
-        placeholder={settings.inherited?.wishes || 'Например, сохранить обращения и названия приёмов'} onChange={e => change('wishes', e.target.value)}/></label>
+      <CopyableTextarea fieldClassName="pt-field" label="Указания по стилю перевода" aria-describedby="studio-wishes-help" rows={3} maxLength={4000} value={values.wishes ?? ''} disabled={working}
+        placeholder={settings.inherited?.wishes || 'Например, сохранить иронию рассказчика и обращения на «вы»'} onChange={e => change('wishes', e.target.value)}/>
+      <p id="studio-wishes-help" className="pt-muted text-sm">
+        В новых запусках эти указания получит модель при составлении глоссария и переводе текста.
+        {settings.inherited?.wishes && ' Оставьте поле пустым, чтобы использовать унаследованные указания.'}
+      </p>
       {admin && <details open={technical} onToggle={e => setTechnical(e.currentTarget.open)}>
         <summary className="cursor-pointer font-medium">Модели и шаблоны этапов</summary>
         {technical && <div className="grid gap-4 pt-3">
@@ -162,7 +166,7 @@ export function AccountRecipes({ ownerId, variants }: { ownerId: string; variant
   if (catalog?.error) return <p role="alert">{catalog.error} <Button variant="ghost" onClick={() => setVersion(n => n+1)}>Загрузить рецепты</Button></p>;
   if (!recipe) return <p role="status">{catalog ? 'В каталоге пока нет рецептов.' : 'Загружаем рецепты…'}</p>;
   return <section className="pt-stack">
-    <IOSSettingsRow label="Мой рецепт перевода" value={recipe.id} options={recipes.map(r => ({ id:r.id, label:r.name }))} onChange={setSelected}/>
+    <IOSSettingsRow label="Базовый рецепт" value={recipe.id} options={recipes.map(r => ({ id:r.id, label:r.name }))} onChange={setSelected}/>
     <RecipeEditor key={recipe.id} ownerId={ownerId} admin variants={variants}
       locator={{ scope: 'account', genre: recipe.genre, sourceLang: recipe.sourceLang, targetLang: recipe.targetLang }}/>
   </section>;

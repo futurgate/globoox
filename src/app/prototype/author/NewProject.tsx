@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import IOSItemsStack from '@/components/ui/ios-items-stack';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 
 import {
   ArrowDown,
@@ -325,15 +325,12 @@ export function NewProject({
                 onChange={(units) => change({ units })}
               />
             </IOSItemsStack>
-            <label className="au-label">
-              Ваши пожелания
-              <Textarea
-                value={draft.wishes}
-                onChange={(e) => change({ wishes: e.target.value })}
-                placeholder="Например, сохранить короткие реплики и иронию рассказчика"
-                rows={3}
-              />
-            </label>
+            <CopyableTextarea fieldClassName="au-label" label="Ваши пожелания"
+              value={draft.wishes}
+              onChange={(e) => change({ wishes: e.target.value })}
+              placeholder="Например, сохранить короткие реплики и иронию рассказчика"
+              rows={3}
+            />
           </Card>
           <Card className="au-estimate">
             <div>

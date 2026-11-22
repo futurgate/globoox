@@ -19,11 +19,11 @@ import { RecipeRuns } from './RecipeRuns';
 import { BookReview } from './BookReview';
 import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, bookGet, downloadBookFile, useBookAction, useBookData } from './bookRequests';
-import { bookPath, processingLabel, projectsPath } from './projectLinks';
+import { bookTranslationPath, processingLabel, projectsPath } from './projectLinks';
 
 const targets: Record<string, string[]> = { RU: ['EN','FR'], EN:['RU'], FR:['EN','RU'] };
 const languages: Record<string,string> = { RU:'Русский', EN:'Английский', FR:'Французский' };
-const tabs = [
+export const bookSections = [
   { id:'', label:'Обзор' }, { id:'glossary', label:'Глоссарий' }, { id:'review', label:'Решения по тексту' },
   { id:'runs', label:'Запуски и расход' }, { id:'editions', label:'Издания' },
 ];
@@ -71,8 +71,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
     });
     return () => controller.abort();
   }, [showModels, modelRetry]);
-  const bookUrl = bookPath(book.id);
-  const route = (targetLang: string, tab: string) => bookUrl + '/translations/' + encodeURIComponent(targetLang) + (tab ? '/' + tab : '');
+  const route = (targetLang: string, tab: string) => bookTranslationPath(book.id, targetLang, tab);
   const ready = !book.processingStatus || book.processingStatus === 'ready';
   const status = book.processingStatus ? processingLabel[book.processingStatus] || book.processingStatus : '';
   return <BookExecution><div className="pt-stack">
@@ -89,7 +88,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         options={available.map(id => ({ id, label:languages[id] || id }))}/>}
       {!validDirection ? <p className="pt-callout">Для этого направления нет доступного перевода.{available.length > 0 ? ' Выберите поддерживаемый язык.' : ''}</p> : <>
         <nav className="pt-sections flex-wrap" aria-label="Разделы перевода">
-          {tabs.map(t => <Button key={t.id} variant="ghost" asChild><Link aria-current={section === t.id ? 'page' : undefined} href={route(target,t.id)}>{t.label}</Link></Button>)}
+          {bookSections.map(t => <Button key={t.id} variant="ghost" asChild><Link aria-current={section === t.id ? 'page' : undefined} href={route(target,t.id)}>{t.label}</Link></Button>)}
         </nav>
         {showModels && modelError && <div className="pt-callout">{modelError} <Button variant="ghost" onClick={() => setModelRetry(v => v+1)}>Повторить</Button></div>}
         {section === '' && <RecipeEditor key={[ownerId,book.id,target].join('/')} ownerId={ownerId} admin={isAdmin} models={models}

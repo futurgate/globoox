@@ -1,6 +1,6 @@
 'use client';
 
-import { studioFetch, studioRequestToken } from '@/lib/studioFetch';
+import { studioErrorMessage, studioFetch, studioRequestToken } from '@/lib/studioFetch';
 import { clearBrowserAccessTokenCache, forgetLegacyBrowserSession, renewLegacyReaderSession } from '@/lib/api';
 
 import Link from 'next/link';
@@ -13,15 +13,14 @@ import { workspaceBase as base } from '@/lib/translationWorkspacePath';
 import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import { PrototypeShell, type NavItem } from '@/app/prototype/_components/PrototypeShell';
 import ProjectLibrary from './ProjectLibrary';
-import BookWorkspace from './BookWorkspace';
-import { bookPath, projectPath } from './projectLinks';
+import BookWorkspace, { bookSections } from './BookWorkspace';
+import { bookTranslationPath, projectPath, seriesPath } from './projectLinks';
 import { ProjectRunHistory, ProjectTabs } from './ProjectRunHistory';
 import { RunTimeline } from './RunTimeline';
 import WorkspaceActivity from './WorkspaceActivity';
 import WorkspaceSettings from './WorkspaceSettings';
 
 const projects = { label: 'Мои проекты', href: base + '/projects' };
-const bookTabs = new Set(['glossary', 'review', 'runs', 'editions']);
 const sectionNames: Record<string, string> = {
   projects: 'Мои проекты', decisions: 'Требуют решения', queue: 'Очередь', settings: 'Настройки перевода',
 };
@@ -93,7 +92,7 @@ export default function LiveWorkspace() {
     } catch (err) {
       if (controller.signal.aborted) return;
       setGuest(false);
-      setError(err instanceof Error ? err.message : 'Не удалось загрузить кабинет.');
+      setError(studioErrorMessage(err, 'Не удалось загрузить кабинет.'));
     } finally {
       window.clearTimeout(deadline);
       if (request.current === controller) request.current = null;
@@ -156,6 +155,7 @@ export default function LiveWorkspace() {
 
   const admin = data.role === 'admin';
   const [first = 'projects', id, sub, lang, tab, runId] = parts;
+  const bookSection = bookSections.find(section => section.id === tab);
   const items: NavItem[] = [
     { id: 'projects', label: sectionNames.projects, icon: Layers3 },
     { id: 'decisions', label: sectionNames.decisions, icon: Bell },
@@ -163,20 +163,23 @@ export default function LiveWorkspace() {
   ];
   let title = 'Страница недоступна';
   let active = 'projects';
-  let ancestors = [projects];
+  let parent: typeof projects | undefined = projects;
   let panel = <p>Проверьте адрес или откройте книгу из своих проектов.</p>;
 
   if (first === 'projects' && (!id || id === 'new') && parts.length <= 2) {
     const isNew = id === 'new';
     title = isNew ? 'Загрузка книги или серии' : projects.label;
-    ancestors = isNew ? [projects] : [];
+    parent = isNew ? projects : undefined;
     panel = <ProjectLibrary data={data} view={isNew ? 'new' : 'projects'} refresh={refresh} />;
   } else if (first === 'projects' && id && (parts.length === 2 || (parts.length === 3 && (sub === 'upload' || sub === 'runs')))) {
     const project = data.projects?.find(item => item.id === id);
     if (project) {
       const upload = sub === 'upload';
       title = upload ? 'Добавить книгу' : project.name;
-      if (upload) ancestors.push({ label: project.name, href: projectPath(id) });
+      if (sub) {
+        parent = { label: project.name, href: projectPath(id) };
+        if (sub === 'runs') title = 'Запуски';
+      }
       panel = upload ? <ProjectLibrary key={id} data={data} view="new" projectId={id} refresh={refresh}/> : <>
         <ProjectTabs projectId={id} runs={sub === 'runs'}/>
         {sub === 'runs' ? <ProjectRunHistory key={id} projectId={id}/> : <ProjectLibrary key={id} data={data} view="project" projectId={id} refresh={refresh}/>}
@@ -187,41 +190,44 @@ export default function LiveWorkspace() {
     if (series || data.books.some(book => book.seriesId === id)) {
       title = series?.name || 'Серия';
       const sourceProject = data.projects?.find(item => item.sourceSeriesId === id);
-      if (sourceProject) ancestors.push({ label: sourceProject.name, href: projectPath(sourceProject.id) });
+      if (sourceProject) parent = { label: sourceProject.name, href: projectPath(sourceProject.id) };
       panel = <ProjectLibrary key={id} data={data} view="series" seriesId={id} refresh={refresh} />;
     }
   } else if (first === 'books' && id && (parts.length === 2 ||
-      (sub === 'translations' && /^[a-z]{2}$/i.test(lang || '') && (parts.length === 4 || (parts.length === 5 && bookTabs.has(tab)) ||
+      (sub === 'translations' && /^[a-z]{2}$/i.test(lang || '') && (parts.length === 4 || (parts.length === 5 && bookSection) ||
         (parts.length === 6 && tab === 'runs' && /^[0-9a-f-]{36}$/i.test(runId)))))) {
     const book = data.books.find(item => item.id === id);
     if (book) {
       title = book.title || 'Книга без названия';
       const series = data.series.find(item => book.seriesId === item.id);
       const project = data.projects?.find(item => item.id === book.projectId);
-      if (project) ancestors.push({ label: project.name, href: projectPath(project.id) });
-      else if (book.seriesId) ancestors.push({ label: series?.name || 'Серия', href: base + '/series/' + book.seriesId });
-      if (runId) {
-        ancestors.push({ label: book.title, href: bookPath(id) }, { label: 'Запуски', href: bookPath(id) + '/translations/' + lang.toUpperCase() + '/runs' });
+      if (runId && bookSection) {
+        parent = { label: bookSection.label, href: bookTranslationPath(id, lang, tab) };
         title = 'Запуск перевода';
         panel = <RunTimeline key={runId} bookId={id} lang={lang.toUpperCase()} runId={runId} title={book.title}/>;
       } else {
+        if (bookSection) {
+          parent = { label: title, href: bookTranslationPath(id, lang) };
+          title = bookSection.label;
+        } else if (project) parent = { label: project.name, href: projectPath(project.id) };
+        else if (book.seriesId) parent = { label: series?.name || 'Серия', href: seriesPath(book.seriesId) };
         panel = <BookWorkspace key={[data.userId, id, lang].join('/')} ownerId={data.userId} book={book} books={data.books} isAdmin={admin} lang={lang?.toUpperCase()} section={tab} />;
       }
     }
   } else if ((first === 'decisions' || (admin && first === 'queue')) && parts.length === 1) {
     active = first;
     title = sectionNames[first];
-    ancestors = [];
+    parent = undefined;
     panel = <WorkspaceActivity key={data.userId + first} view={first} workspace={data} />;
   } else if (admin && first === 'settings' && (parts.length === 1 || (id === 'templates' && parts.length === 3))) {
     title = sub ? 'Шаблон этапа' : sectionNames.settings;
     active = first;
-    ancestors = sub ? [{ label: sectionNames.settings, href: base + '/settings' }] : [];
+    parent = sub ? { label: sectionNames.settings, href: base + '/settings' } : undefined;
     panel = <WorkspaceSettings key={data.userId} ownerId={data.userId} name={sub} />;
   }
 
   return <PrototypeShell live role={data.role} items={items} active={active} title={title}
-    detail={ancestors.length ? { ancestors } : undefined} itemHref={page => base + '/' + page}>
+    detail={parent ? { parent } : undefined} itemHref={page => base + '/' + page}>
     {error && <div role="alert" className="mb-4 flex items-center gap-3">{error}
       <Button variant="outline" onClick={() => void refresh()}>Попробовать снова</Button></div>}
     {panel}

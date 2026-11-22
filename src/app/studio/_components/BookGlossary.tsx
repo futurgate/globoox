@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { BookGlossary, GlossaryStatus } from '@/lib/api';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
 import { Input } from '@/components/ui/input';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import { downloadText } from '@/app/prototype/_components/downloads';
@@ -63,7 +63,7 @@ export function BookGlossaryPanel({ bookId, lang, books, models }: {
         <details><summary>Полный JSON</summary><pre className="max-h-80 overflow-auto whitespace-pre-wrap break-all text-xs">{json}</pre></details>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => downloadText(`glossary-${bookId}-${lang}.json`, json, 'application/json')}>Скачать JSON</Button>
-          <Button variant="ghost" disabled={action.busy} onClick={() => void action.run(async () => { await navigator.clipboard.writeText(json); return 'Глоссарий скопирован.'; })}>Скопировать</Button>
+          <CopyTextButton text={json} subject="Полный JSON глоссария"/>
           <Button variant="ghost" disabled={action.busy || data.state === 'building'} onClick={() => void change('glossary-freeze', { frozen: !data.frozen }, data.frozen ? 'Глоссарий разморожен.' : 'Глоссарий заморожен.')}>{data.frozen ? 'Разморозить' : 'Заморозить'}</Button>
         </div>
       </>}
@@ -78,7 +78,7 @@ export function BookGlossaryPanel({ bookId, lang, books, models }: {
         void change('copy-glossary', { sourceBookId: source }, 'Словарь перенесён.');
       }}>Перенести без генерации</Button></>}
       <details><summary>Импорт JSON</summary>
-        <div className="grid gap-3 pt-3"><label className="pt-field">Словарь для полной замены<Textarea value={draft} onChange={e => setDraft(e.target.value)} rows={5} /></label>
+        <div className="grid gap-3 pt-3"><CopyableTextarea fieldClassName="pt-field" label="Словарь для полной замены" value={draft} onChange={e => setDraft(e.target.value)} rows={5} />
           {draft && <p role="status">{parsed ? `Подготовлено записей: ${count}` : 'Нужен корректный JSON с парой исходного и переведённого имени или термина.'}</p>}
           <Button disabled={Boolean(locked) || !parsed} onClick={() => {
             if (!parsed || (glossary && !window.confirm('Заменить текущий глоссарий содержимым JSON?'))) return;
