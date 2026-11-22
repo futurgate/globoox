@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, Pencil, Upload } from 'lucide-react';
+import { PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -66,6 +67,7 @@ export function ProjectNameForm({ ownerId, project, refresh, close }: {
       <label className="block space-y-1 text-sm font-medium">Название проекта
         <Input autoFocus required maxLength={200} disabled={action.busy} value={name} onChange={e => setName(e.target.value)} />
       </label>
+      {action.busy && <PendingText>Сохраняем изменения проекта…</PendingText>}
       {action.error && <p role="alert">{action.error}</p>}
       <div className="flex gap-2">
         <Button type="submit" disabled={action.busy || !name.trim()}>{project ? 'Сохранить' : 'Создать проект'}</Button>
@@ -213,6 +215,7 @@ export default function ProjectWorkspace({ data, project, refresh }: Props) {
       <div className="flex gap-2"><Button disabled={!incomingBook || action.busy} onClick={() => incomingBook && changeBook(incomingBook, 'move', project.id)}>Переместить в этот проект</Button>
         <Button variant="ghost" disabled={action.busy} onClick={() => setAdding(false)}>Отмена</Button></div>
     </Card>}
+    {action.busy && <PendingText>Сохраняем изменения проекта…</PendingText>}
     {action.error && <p role="alert">{action.error}</p>}
     {action.notice && <p role="status">{action.notice}</p>}
     <Card className="gap-0 overflow-hidden">

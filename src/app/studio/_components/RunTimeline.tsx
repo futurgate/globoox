@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { RunStageState, StudioRun } from '@/lib/studioRecipe';
@@ -72,7 +73,7 @@ export function RunTimeline({ bookId, lang, runId, title }: {
     <Card className="gap-3 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2>{data ? operationNames[data.operation] + ' · ' + lang : 'Состояние запуска'}</h2>
-        <Button size="sm" variant="outline" onClick={() => setVersion(v => v + 1)}>Обновить</Button>
+        <RefreshButton pending={!first || first.refreshing || Boolean(older?.refreshing)} size="sm" variant="outline" onClick={() => setVersion(v => v + 1)}>Обновить</RefreshButton>
       </div>
       {error && <p role="alert">{error}</p>}
       {!first && <p role="status">Загружаем запуск…</p>}

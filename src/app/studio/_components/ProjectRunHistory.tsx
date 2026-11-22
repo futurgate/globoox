@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from 'react';
 import Link from 'next/link';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { StudioRun } from '@/lib/studioRecipe';
@@ -45,7 +46,7 @@ export function ProjectRunHistory({ projectId }: { projectId: string }) {
   const page = response?.data;
   return <Card className="gap-3 p-4 sm:p-5">
     <div className="flex items-center justify-between gap-2"><h2>Запуски проекта</h2>
-      <Button variant="ghost" size="sm" onClick={() => setVersion(v => v + 1)}>Обновить</Button></div>
+      <RefreshButton pending={!response || response.refreshing} variant="ghost" size="sm" onClick={() => setVersion(v => v + 1)}>Обновить</RefreshButton></div>
     {response?.error && <p role="alert">{response.error}</p>}
     {!response && <p role="status">Загружаем запуски…</p>}
     {page && !page.groups.length && <p className="pt-muted">В этом проекте пока нет учтённых запусков Studio.</p>}

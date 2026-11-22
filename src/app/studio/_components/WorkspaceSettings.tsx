@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
+import { PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -54,14 +55,17 @@ function PromptSettings({ name, ownerId }: { name?: string; ownerId: string }) {
   const [catalogError, setCatalogError] = useState('');
   const [personalError, setPersonalError] = useState('');
   const [attempt, setAttempt] = useState(0);
+  const [completedAttempt, setCompletedAttempt] = useState(-1);
+  const refreshing = attempt > 0 && completedAttempt !== attempt;
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
-    bookGet<{ prompts: ServerPrompt[] }>('/api/admin/prompts', signal).then(({ prompts }) => {
+    const shared = bookGet<{ prompts: ServerPrompt[] }>('/api/admin/prompts', signal).then(({ prompts }) => {
       if (!signal.aborted) { setTemplates(prompts); setCatalogError(''); }
     }).catch(() => { if (!signal.aborted) setCatalogError('Не удалось загрузить базовые шаблоны.'); });
-    listPersonalPrompts(signal).then(items => { if (!signal.aborted) { setVariants(items); setPersonalError(''); } })
+    const personal = listPersonalPrompts(signal).then(items => { if (!signal.aborted) { setVariants(items); setPersonalError(''); } })
       .catch(() => { if (!signal.aborted) setPersonalError('Сервер личных шаблонов сейчас недоступен.'); });
+    void Promise.all([shared, personal]).then(() => { if (!signal.aborted) setCompletedAttempt(attempt); });
     readLegacyPrompts(ownerId).then(items => { if (!signal.aborted) setLegacy(items); }).catch(() => {});
     return () => controller.abort();
   }, [ownerId, attempt]);
@@ -97,7 +101,8 @@ function PromptSettings({ name, ownerId }: { name?: string; ownerId: string }) {
     personal={!!variantId} active={active} catalog={previewCatalog} personalReady={personalReady} onSaved={saved}
     loadLatest={() => setAttempt(n => n + 1)} />;
   return <div className="pt-stack">
-    {(catalogError || personalError) && <div className="grid justify-items-start gap-2" role="alert"><p>{catalogError || personalError}</p>{retry}</div>}
+    {refreshing && <PendingText>Обновляем шаблоны…</PendingText>}
+    {!refreshing && (catalogError || personalError) && <div className="grid justify-items-start gap-2" role="alert"><p>{catalogError || personalError}</p>{retry}</div>}
     {!personalError && !variants && <p role="status">Загружаем личные варианты…</p>}
     {!name && <AccountRecipes ownerId={ownerId} variants={variants ?? undefined}/>}
     {panel}
@@ -243,6 +248,7 @@ function PromptEditor({ ownerId, template, catalog, variant, local, active, pers
         {variant && personalReady && <Button variant="outline" disabled={busy} onClick={() => archived ? mutate('restore') : setConfirmDelete(true)}>
           {archived ? 'Восстановить вариант' : 'Удалить вариант'}</Button>}
       </div>
+      {busy && <PendingText>Сохраняем изменения шаблона…</PendingText>}
       {variant && revision !== variant.revision && <div role="alert">Сохранённая версия изменилась. <Button variant="outline" onClick={reloadForm}>Загрузить сохранённый текст</Button></div>}
       {error && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}

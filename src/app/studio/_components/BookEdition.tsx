@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CopyTextButton } from '@/components/ui/copy-text';
+import { RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { BookTranslationEstimate, FictionCosts, QaReportV2, ReaderCheckCostStageBreakdown } from '@/lib/api';
@@ -20,10 +21,11 @@ export function Estimate({ bookId, lang, model }: {bookId: string; lang: string;
   const [show, setShow] = useState(false);
   const [version, setVersion] = useState(0);
   const result = useBookData<BookTranslationEstimate>(show && model ? bookEndpoint(bookId, 'translation-estimate', lang) + '&model=' + encodeURIComponent(model) : null, version);
+  const calculating = Boolean(model && show && (!result || result.refreshing));
   const estimate = result?.data?.byLanguage.find(l => l.lang === lang);
   return <Card className="p-5 gap-3"><h3>Оценка перевода текста</h3>
     <p className="pt-muted">{model ? 'По оставшимся блокам книги и тарифу модели ' + model + '.' : 'Оценка доступна после загрузки параметров перевода.'}</p>
-    <Button variant="outline" disabled={!model || (show && !result)} onClick={() => { setShow(true); setVersion(v => v + 1); }}>{model && show && !result ? 'Расчёт…' : 'Рассчитать'}</Button>
+    <Button variant="outline" disabled={!model || calculating} aria-busy={calculating} onClick={() => { setShow(true); setVersion(v => v + 1); }}>{calculating ? 'Расчёт…' : 'Рассчитать'}</Button>
     <ActionFeedback error={result?.error}/>
     {result?.data && <p>{estimate ? `${dollars(estimate.cost.totalUsd)} · осталось блоков: ${estimate.blocksRemaining} · модель ${result.data.model}` : 'Для этого направления оценка отсутствует.'}</p>}
   </Card>;
@@ -41,19 +43,19 @@ export function BookEdition({ bookId, title, lang, isAdmin }: { bookId: string; 
   return <div className="pt-stack">
     <BookExportCover bookId={bookId} lang={lang} action={coverAction} disabled={action.busy}/>
     <Card className="p-5 gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-2"><h2>Переведённый EPUB</h2><Button variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</Button></div>
+      <div className="flex flex-wrap items-center justify-between gap-2"><h2>Переведённый EPUB</h2><RefreshButton pending={!coverage || coverage.refreshing} onClick={() => setReload(v => v + 1)}/></div>
       {coverage?.error ? <ActionFeedback error={coverage.error}/> : <p className="pt-muted">{!coverage ? 'Проверяем готовность текста…' : target ? `Переведено блоков: ${target.blocksTranslated}, осталось: ${target.blocksRemaining}.` : 'Не удалось определить готовность по статистике блоков.'}</p>}
       <div className="flex flex-wrap gap-2">
         {covered || coverage?.error || (coverage?.data && !target)
-          ? <Button disabled={action.busy || coverAction.busy} onClick={() => void action.run(signal => downloadBookFile(download, (title || bookId) + ' (' + lang + ')', signal))}>Скачать EPUB</Button>
+          ? <Button disabled={action.busy || coverAction.busy} onClick={() => void action.run(signal => downloadBookFile(download, (title || bookId) + ' (' + lang + ')', signal), 'Готовим EPUB к скачиванию…')}>Скачать EPUB</Button>
           : <Button disabled>Скачать EPUB после перевода</Button>}
         {isAdmin && <Button variant="outline" disabled={action.busy || coverAction.busy || (!!target && !covered)} onClick={() => void action.run(async signal => {
           const r = await bookPost(bookEndpoint(bookId,'translation-quality',lang),{ targetLang:lang, genre:'fiction' },signal);
           const next: QaReportV2 = await r.json();
           if (!signal.aborted) setReport(next);
-        })}>Проверить качество EPUB</Button>}
+        }, 'Проверяем текст и структуру EPUB…')}>Проверить качество EPUB</Button>}
       </div>
-      <ActionFeedback error={action.error}/>
+      <ActionFeedback error={action.error} notice={action.notice} pending={action.pending}/>
       {isAdmin && report && <div className="grid gap-2"><h3>Результат проверки</h3>
         <p>Ошибок текста: {report.summary.errors} · замечаний: {report.summary.review} · ошибок структуры EPUB: {report.epub.blocking.length}.</p>
         {[...report.epub.blocking, ...report.epub.warnings].map((s,i) => <p key={i}>{s}</p>)}
@@ -119,7 +121,7 @@ export function BookRuns({ bookId, lang }: { bookId: string; lang: string }) {
     <Card className="p-5 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2>Расходы по этапам</h2>
-        <Button variant="ghost" onClick={() => setVersion(v => v + 1)}>Обновить</Button>
+        <RefreshButton pending={!costs || !runs || costs.refreshing || runs.refreshing} onClick={() => setVersion(v => v + 1)}/>
       </div>
       <ActionFeedback error={costs?.error}/>
       {!costs && <p role="status">Загружаем статистику…</p>}

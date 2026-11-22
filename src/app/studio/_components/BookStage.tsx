@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { resumableStage, runEndpoint, runsEndpoint, type FrozenRecipe, type StudioRun } from '@/lib/studioRecipe';
+import { RefreshButton, PendingText } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { studioErrorMessage } from '@/lib/studioFetch';
 import { Card } from '@/components/ui/card';
@@ -52,7 +53,8 @@ export function useBookExecution() {
   return useContext(ExecutionContext)!;
 }
 
-export function ActionFeedback({ error, notice }: { error?: string; notice?: string }) {
+export function ActionFeedback({ error, notice, pending }: { error?: string; notice?: string; pending?: string }) {
+  if (pending) return <PendingText>{pending}</PendingText>;
   if (error) return <p className="pt-callout" role="alert">{error}</p>;
   return notice ? <p className="pt-muted" role="status">{notice}</p> : null;
 }
@@ -167,7 +169,7 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, books, on
         await bookPost(bookEndpoint(bookId, 'stop-stage', lang), { lang, stage }, signal);
         return 'Остановка запрошена. Текущие вызовы завершатся.';
       })}>Остановить</Button>}
-      <Button variant="ghost" onClick={() => { setTick(v => v + 1); }}>Обновить</Button>
+      <RefreshButton pending={!state || state.refreshing || Boolean(runHistory?.refreshing || detail?.refreshing)} onClick={() => setTick(v => v + 1)}/>
     </div>
   </Card>;
 }

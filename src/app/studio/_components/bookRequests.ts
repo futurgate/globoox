@@ -41,6 +41,7 @@ export async function downloadBookFile(url: string, filename: string, signal: Ab
     const skipped = response.headers.get('X-Skipped-Volumes');
     return skipped ? 'Скачивание началось. В архив не вошли тома: ' + skipped.split(',').join(', ') + '.' : 'Скачивание архива началось.';
   }
+  return 'Скачивание EPUB началось.';
 }
 
 export async function bookPost(url: string, body: object, signal?: AbortSignal) {
@@ -51,7 +52,7 @@ export async function bookPost(url: string, body: object, signal?: AbortSignal) 
 }
 
 export function useBookData<T>(url: string | null, version = 0, poll: boolean | ((data: T) => boolean) = false) {
-  const [result, setResult] = useState<{ url: string; data?: T; error?: string } | null>(null);
+  const [result, setResult] = useState<{ url: string; version: number; data?: T; error?: string } | null>(null);
   useEffect(() => {
     if (!url) return;
     const controller = new AbortController();
@@ -61,11 +62,11 @@ export function useBookData<T>(url: string | null, version = 0, poll: boolean | 
       try {
         const data = await bookGet<T>(url, controller.signal);
         if (!controller.signal.aborted) {
-          setResult({ url, data });
+          setResult({ url, version, data });
           if (typeof poll === 'function') continuePolling = poll(data);
         }
       } catch (e) {
-        if (!controller.signal.aborted) setResult({ url, error: studioErrorMessage(e, 'Не удалось получить данные.') });
+        if (!controller.signal.aborted) setResult({ url, version, error: studioErrorMessage(e, 'Не удалось получить данные.') });
       } finally {
         if (continuePolling && !controller.signal.aborted) timer = setTimeout(refresh, 5500);
       }
@@ -73,21 +74,22 @@ export function useBookData<T>(url: string | null, version = 0, poll: boolean | 
     void refresh();
     return () => { controller.abort(); clearTimeout(timer); };
   }, [url, version, poll]);
-  return result?.url === url ? result : null;
+  if (!result || result.url !== url || (result.version !== version && result.error)) return null;
+  return { ...result, refreshing: result.version !== version };
 }
 
 export function useBookAction() {
   const active = useRef<AbortController | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState('');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [version, setVersion] = useState(0);
   useEffect(() => () => { active.current?.abort(); }, []);
-  const run = useCallback(async (work: (signal: AbortSignal) => Promise<string | void>) => {
+  const run = useCallback(async (work: (signal: AbortSignal) => Promise<string | void>, pendingMessage = 'Сохраняем изменения…') => {
     if (active.current) return;
     const controller = new AbortController();
     active.current = controller;
-    setBusy(true); setError(''); setNotice('');
+    setPending(pendingMessage); setError(''); setNotice('');
     try {
       const message = await work(controller.signal);
       if (!controller.signal.aborted) setNotice(message || '');
@@ -95,12 +97,12 @@ export function useBookAction() {
       if (!controller.signal.aborted) setError(studioErrorMessage(e, 'Не удалось выполнить действие.'));
     } finally {
       if (!controller.signal.aborted) {
-        setBusy(false); setVersion(n => n + 1);
+        setPending(''); setVersion(n => n + 1);
       }
       active.current = null;
     }
   }, []);
-  return { busy, error, notice, run, version };
+  return { busy: Boolean(pending), pending, error, notice, run, version };
 }
 
 export async function consumeStage(response: Response): Promise<string> {
