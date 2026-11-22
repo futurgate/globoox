@@ -1,7 +1,7 @@
 'use client';
 
-import { studioFetch } from '@/lib/studioFetch';
-import { clearBrowserAccessTokenCache, forgetLegacyBrowserSession, getBrowserAccessToken, renewLegacyReaderSession } from '@/lib/api';
+import { studioFetch, studioRequestToken } from '@/lib/studioFetch';
+import { clearBrowserAccessTokenCache, forgetLegacyBrowserSession, renewLegacyReaderSession } from '@/lib/api';
 
 import Link from 'next/link';
 import { useParams, usePathname, useSearchParams } from 'next/navigation';
@@ -42,6 +42,7 @@ export default function LiveWorkspace() {
   const [error, setError] = useState('');
   const [reauth, setReauth] = useState(false);
   const sdkAccount = useRef<string | null>(null);
+  const sdkToken = useRef<string | null>(null);
   const request = useRef<AbortController | null>(null);
   const account = useRef<string | null | undefined>(undefined);
 
@@ -51,12 +52,21 @@ export default function LiveWorkspace() {
     request.current = controller;
     setError('');
     setReauth(false);
+    const deadline = window.setTimeout(() => {
+      if (request.current !== controller || controller.signal.aborted) return;
+      request.current = null;
+      controller.abort();
+      setGuest(false);
+      setError('Не удалось дождаться ответа при загрузке проектов. Попробуйте снова.');
+    }, 20_000);
     try {
-      const token = sessionToken || await getBrowserAccessToken();
+      const token = sessionToken ?? studioRequestToken();
       const options = { cache: 'no-store', signal: controller.signal } as const;
-      let response = await studioFetch('/api/translation-workspace', options, token ?? undefined);
-      if (response.status === 401 && !sdkAccount.current && !controller.signal.aborted) {
-        const renewed = await renewLegacyReaderSession(token, controller.signal);
+      let response = await studioFetch('/api/translation-workspace', options, token);
+      if (response.status === 401 && !controller.signal.aborted) {
+        const renewed = sdkToken.current
+          ? (sdkToken.current !== token ? sdkToken.current : null)
+          : await renewLegacyReaderSession(token, controller.signal);
         if (renewed && !controller.signal.aborted) response = await studioFetch('/api/translation-workspace', options, renewed);
       }
       if (controller.signal.aborted) return;
@@ -84,45 +94,50 @@ export default function LiveWorkspace() {
       if (controller.signal.aborted) return;
       setGuest(false);
       setError(err instanceof Error ? err.message : 'Не удалось загрузить кабинет.');
+    } finally {
+      window.clearTimeout(deadline);
+      if (request.current === controller) request.current = null;
     }
   }, []);
 
   useEffect(() => {
+    // Start with the host cookie even if another tab holds Supabase's auth lock.
+    void refresh();
     const client = createClient();
-    let initialized = false;
     const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
       const userId = session?.user.id ?? null;
       sdkAccount.current = userId;
-      const first = !initialized;
-      initialized = true;
-      if (event === 'SIGNED_OUT') forgetLegacyBrowserSession();
-      else clearBrowserAccessTokenCache();
-      if (!first && event !== 'SIGNED_OUT' && account.current === userId) {
-        if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') void refresh(session?.access_token);
+      sdkToken.current = session?.access_token ?? null;
+      if (event === 'SIGNED_OUT') {
+        forgetLegacyBrowserSession();
+        request.current?.abort();
+        account.current = null;
+        setData(null); setError(''); setGuest(true);
         return;
       }
 
-      account.current = userId;
-      request.current?.abort();
-      setData(null);
-      setError('');
-      // The API authenticates the initial request against the server session.
-      const loadWorkspace = event !== 'SIGNED_OUT' && (first || !!userId);
-      setGuest(!loadWorkspace);
-      if (loadWorkspace) void refresh(session?.access_token);
+      clearBrowserAccessTokenCache();
+      if (event === 'INITIAL_SESSION' && (!userId || request.current || account.current === userId)) return;
+      if (!userId) return;
+      if (account.current !== userId) {
+        account.current = userId;
+        setData(null); setGuest(false);
+      } else if (event !== 'TOKEN_REFRESHED' && event !== 'USER_UPDATED') return;
+      void refresh(session?.access_token);
     });
     // Reader sessions from an earlier release can change in another tab without
     // emitting an SDK auth event. Clear the previous owner's view before revalidation.
     const storageChanged = (event: StorageEvent) => {
       if (event.key && event.key !== 'globoox:access_token' && !/^sb-.+-auth-token$/.test(event.key)) return;
       clearBrowserAccessTokenCache();
+      sdkToken.current = null;
       request.current?.abort();
       setData(null); setGuest(false); setError('');
       void refresh();
     };
     window.addEventListener('storage', storageChanged);
     return () => {
-      request.current?.abort(); subscription.unsubscribe();
+      request.current?.abort(); request.current = null; subscription.unsubscribe();
       window.removeEventListener('storage', storageChanged);
     };
   }, [refresh]);
