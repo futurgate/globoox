@@ -14,7 +14,9 @@ import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import { PrototypeShell, type NavItem } from '@/app/prototype/_components/PrototypeShell';
 import ProjectLibrary from './ProjectLibrary';
 import BookWorkspace from './BookWorkspace';
-import { projectPath } from './projectLinks';
+import { bookPath, projectPath } from './projectLinks';
+import { ProjectRunHistory, ProjectTabs } from './ProjectRunHistory';
+import { RunTimeline } from './RunTimeline';
 import WorkspaceActivity from './WorkspaceActivity';
 import WorkspaceSettings from './WorkspaceSettings';
 
@@ -138,7 +140,7 @@ export default function LiveWorkspace() {
   }
 
   const admin = data.role === 'admin';
-  const [first = 'projects', id, sub, lang, tab] = parts;
+  const [first = 'projects', id, sub, lang, tab, runId] = parts;
   const items: NavItem[] = [
     { id: 'projects', label: sectionNames.projects, icon: Layers3 },
     { id: 'decisions', label: sectionNames.decisions, icon: Bell },
@@ -154,13 +156,16 @@ export default function LiveWorkspace() {
     title = isNew ? 'Загрузка книги или серии' : projects.label;
     ancestors = isNew ? [projects] : [];
     panel = <ProjectLibrary data={data} view={isNew ? 'new' : 'projects'} refresh={refresh} />;
-  } else if (first === 'projects' && id && (parts.length === 2 || (parts.length === 3 && sub === 'upload'))) {
+  } else if (first === 'projects' && id && (parts.length === 2 || (parts.length === 3 && (sub === 'upload' || sub === 'runs')))) {
     const project = data.projects?.find(item => item.id === id);
     if (project) {
       const upload = sub === 'upload';
       title = upload ? 'Добавить книгу' : project.name;
       if (upload) ancestors.push({ label: project.name, href: projectPath(id) });
-      panel = <ProjectLibrary key={id} data={data} view={upload ? 'new' : 'project'} projectId={id} refresh={refresh} />;
+      panel = upload ? <ProjectLibrary key={id} data={data} view="new" projectId={id} refresh={refresh}/> : <>
+        <ProjectTabs projectId={id} runs={sub === 'runs'}/>
+        {sub === 'runs' ? <ProjectRunHistory key={id} projectId={id}/> : <ProjectLibrary key={id} data={data} view="project" projectId={id} refresh={refresh}/>}
+      </>;
     }
   } else if (first === 'series' && id && parts.length === 2) {
     const series = data.series.find(item => item.id === id);
@@ -171,7 +176,8 @@ export default function LiveWorkspace() {
       panel = <ProjectLibrary key={id} data={data} view="series" seriesId={id} refresh={refresh} />;
     }
   } else if (first === 'books' && id && (parts.length === 2 ||
-      (sub === 'translations' && /^[a-z]{2}$/i.test(lang || '') && (parts.length === 4 || (parts.length === 5 && bookTabs.has(tab)))))) {
+      (sub === 'translations' && /^[a-z]{2}$/i.test(lang || '') && (parts.length === 4 || (parts.length === 5 && bookTabs.has(tab)) ||
+        (parts.length === 6 && tab === 'runs' && /^[0-9a-f-]{36}$/i.test(runId)))))) {
     const book = data.books.find(item => item.id === id);
     if (book) {
       title = book.title || 'Книга без названия';
@@ -179,7 +185,13 @@ export default function LiveWorkspace() {
       const project = data.projects?.find(item => item.id === book.projectId);
       if (project) ancestors.push({ label: project.name, href: projectPath(project.id) });
       else if (book.seriesId) ancestors.push({ label: series?.name || 'Серия', href: base + '/series/' + book.seriesId });
-      panel = <BookWorkspace key={[data.userId, id, lang].join('/')} ownerId={data.userId} book={book} books={data.books} isAdmin={admin} lang={lang?.toUpperCase()} section={tab} />;
+      if (runId) {
+        ancestors.push({ label: book.title, href: bookPath(id) }, { label: 'Запуски', href: bookPath(id) + '/translations/' + lang.toUpperCase() + '/runs' });
+        title = 'Запуск перевода';
+        panel = <RunTimeline key={runId} bookId={id} lang={lang.toUpperCase()} runId={runId} title={book.title}/>;
+      } else {
+        panel = <BookWorkspace key={[data.userId, id, lang].join('/')} ownerId={data.userId} book={book} books={data.books} isAdmin={admin} lang={lang?.toUpperCase()} section={tab} />;
+      }
     }
   } else if ((first === 'decisions' || (admin && first === 'queue')) && parts.length === 1) {
     active = first;

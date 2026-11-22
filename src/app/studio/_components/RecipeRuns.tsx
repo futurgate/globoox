@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { bookRunPath } from './projectLinks';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { runEndpoint, runsEndpoint, type FrozenRecipe, recipeSourceNames, type StudioRun } from '@/lib/studioRecipe';
@@ -53,37 +55,39 @@ function RunDetails({ run, lang }: { run: HistoryRow; lang: string }) {
   </div>;
 }
 
-export function RecipeRuns({ bookId, lang, version }: { bookId: string; lang: string; version: number }) {
+export function RecipeRuns({ bookId, lang, version, admin = true }: { bookId: string; lang: string; version: number; admin?: boolean }) {
   const [open, setOpen] = useState('');
-  const result = useBookData<{ runs: HistoryRow[]; limit: number }>(runsEndpoint(bookId, lang), version);
+  const [reload, setReload] = useState(0);
+  const result = useBookData<{ runs: HistoryRow[]; limit: number }>(runsEndpoint(bookId, lang), version + reload);
   return <Card className="p-5 gap-3">
-    <h3>Запуски глоссария и перевода</h3>
+    <div className="flex flex-wrap items-center justify-between gap-2"><h3>Запуски глоссария и перевода</h3>
+      <Button size="sm" variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить историю</Button></div>
     {result?.error && <p role="alert">{result.error}</p>}
     {!result && <p role="status">Загружаем историю…</p>}
     {result?.data && !result.data.runs.length && <p>Для этого перевода ещё нет запусков с сохранёнными параметрами.</p>}
     {!!result?.data?.runs.length && <div className="overflow-x-auto"><table className="w-full text-left text-sm tabular-nums [&_td]:p-2 [&_th]:p-2">
       <caption className="text-left pt-muted">Последние {result.data.limit} запусков · {lang}</caption>
-      <thead><tr>{['Запуск','Состояние','Вход','Выход','Расход, USD',''].map((title,i) => <th key={i} scope="col">{title}</th>)}</tr></thead>
+      <thead><tr>{['Запуск','Состояние',...(admin ? ['Вход','Выход'] : []),'Расход, USD',...(admin ? [''] : [])].map((title,i) => <th key={i} scope="col">{title}</th>)}</tr></thead>
       <tbody>{result.data.runs.map(run => {
         const details = open === run.id;
         const sum = (key: 'tokensIn' | 'tokensOut') => {
           const measured = (run.spend ?? []).filter(s => s[key] !== null);
           return measured.length ? measured.reduce((v,s) => v + s[key]!,0) : null;
         };
-        return <RunRows key={run.id} run={run} lang={lang} details={details} tokensIn={sum('tokensIn')} tokensOut={sum('tokensOut')}
+        return <RunRows key={run.id} run={run} lang={lang} admin={admin} details={details} tokensIn={sum('tokensIn')} tokensOut={sum('tokensOut')}
           toggle={() => setOpen(details ? '' : run.id)}/>;
       })}</tbody>
     </table></div>}
   </Card>;
 }
 
-function RunRows({ run, lang, details, toggle, tokensIn, tokensOut }: {
-  run: HistoryRow; lang: string; details: boolean; toggle: () => void; tokensIn: number | null; tokensOut: number | null;
+function RunRows({ run, lang, admin, details, toggle, tokensIn, tokensOut }: {
+  run: HistoryRow; lang: string; admin: boolean; details: boolean; toggle: () => void; tokensIn: number | null; tokensOut: number | null;
 }) {
-  return <><tr className="border-t align-top"><td>{stageName[run.operation]}<small className="block pt-muted">{new Date(run.createdAt).toLocaleString('ru')}</small></td>
-    <td>{statusOf(run)}</td><td>{count(tokensIn)}</td><td>{count(tokensOut)}</td>
+  return <><tr className="border-t align-top"><td><Link className="underline" href={bookRunPath(run.bookId,lang,run.id)}>{stageName[run.operation]}</Link><small className="block pt-muted">{new Date(run.createdAt).toLocaleString('ru')}</small></td>
+    <td>{statusOf(run)}</td>{admin && <><td>{count(tokensIn)}</td><td>{count(tokensOut)}</td></>}
     <td>{run.costUsd == null ? '—' : formatCost.format(run.costUsd)}
-      {!run.usageComplete && (run.spend?.length ?? 0) > 0 && <small className="block pt-muted">Данные неполные</small>}</td>
-    <td><Button size="sm" variant="ghost" onClick={toggle} aria-expanded={details}>{details ? 'Свернуть' : 'Подробнее'}</Button></td></tr>
-    {details && <tr><td colSpan={6}><RunDetails run={run} lang={lang}/></td></tr>}</>;
+      {!run.usageComplete && run.costUsd != null && <small className="block pt-muted">Данные неполные</small>}</td>
+    {admin && <td><Button size="sm" variant="ghost" onClick={toggle} aria-expanded={details}>{details ? 'Свернуть' : 'Подробнее'}</Button></td>}</tr>
+    {admin && details && <tr><td colSpan={6}><RunDetails run={run} lang={lang}/></td></tr>}</>;
 }
