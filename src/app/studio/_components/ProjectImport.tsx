@@ -1,6 +1,6 @@
 'use client';
 
-import { studioFetch } from '@/lib/studioFetch';
+import { studioErrorMessage, studioFetch } from '@/lib/studioFetch';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { FileArchive, Upload } from 'lucide-react';
@@ -110,7 +110,7 @@ export default function ProjectImport({ data, refresh, projectId }: { data: Work
       }
       const rejected = cause instanceof ApiRequestError && [400, 401, 403, 413, 415, 422].includes(cause.status);
       setCheckCatalog(sentForProcessing && !rejected);
-      setError(cause instanceof Error ? cause.message : 'Не удалось загрузить файл.');
+      setError(studioErrorMessage(cause, 'Не удалось загрузить файл.'));
     } finally {
       if (!signal.aborted) setPhase('');
       controller.current = null;

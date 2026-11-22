@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableText, CopyableTextarea } from '@/components/ui/copy-text';
 import type { ReaderCheckJournal, RevisionDiffEntry } from '@/lib/api';
 import { readerCheckJournalRows } from '@/lib/readerCheckJournalCsv';
 import { downloadCsv } from '@/app/prototype/_components/downloads';
@@ -30,15 +30,15 @@ function ReviewRow({ item, revision, onApply, busy }: {
     <summary>{item.label} · {outcomes[item.outcome] || item.outcome}</summary>
     <div className="grid gap-2 pt-3">
       {item.problem && <p>{item.problem}</p>}
-      {item.original && <p><strong>Исходный фрагмент</strong><br/>{item.original}</p>}
-      <p><strong>{revision ? 'Черновик перевода' : 'До правки'}</strong><br/>{item.before}</p>
+      {item.original && <div><strong>Исходный фрагмент</strong><CopyableText as="p" label="Исходный фрагмент" text={item.original}/></div>}
+      <div><strong>{revision ? 'Черновик перевода' : 'До правки'}</strong><CopyableText as="p" label={revision ? 'Черновик перевода' : 'До правки'} text={item.before}/></div>
       {item.editable ? <>
-        <label className="pt-field">{revision ? 'После редактуры' : 'Предложение'}<Textarea aria-label={revision ? 'После редактуры' : 'Предложение'} value={text} onChange={e => setText(e.target.value)} rows={4} /></label>
+        <CopyableTextarea fieldClassName="pt-field" label={revision ? 'После редактуры' : 'Предложение'} value={text} onChange={e => setText(e.target.value)} rows={4} />
         <div className="flex flex-wrap gap-2">
           <Button disabled={busy || !text.trim()} onClick={() => onApply('approve', text)}>{text !== item.after ? 'Применить свой вариант' : 'Подтвердить'}</Button>
           <Button variant="outline" disabled={busy || reverted} onClick={() => onApply('reject')}>{revision ? 'Вернуть черновик' : item.outcome === 'fixed' ? 'Отменить применённую правку' : 'Отклонить предложение'}</Button>
         </div>
-      </> : item.after ? <p>{item.after}</p> : null}
+      </> : item.after ? <CopyableText as="p" label="После правки" text={item.after}/> : null}
     </div>
   </details>;
 }
@@ -56,8 +56,8 @@ function FocusedBlock({bookId,lang}: {bookId: string; lang: string}) {
     <h2>Фрагмент, требующий решения</h2>
     {!valid || result?.error ? <p role="alert">{result?.error || 'Некорректная ссылка на фрагмент.'}</p> : !block ? <p role="status">Загрузка фрагмента…</p> : <>
       <p className="pt-muted">{block.chapterTitle || (block.chapterNumber != null ? 'Глава '+block.chapterNumber : 'Глава')} · блок {block.position}</p>
-      <h3>Исходный текст</h3><p className="whitespace-pre-wrap">{block.original || 'Текст отсутствует.'}</p>
-      <h3>Текущий перевод</h3><p className="whitespace-pre-wrap">{block.translated || 'Для этого языка перевод блока ещё не записан.'}</p>
+      <h3>Исходный текст</h3>{block.original ? <CopyableText as="p" label="Исходный текст" text={block.original}/> : <p>Текст отсутствует.</p>}
+      <h3>Текущий перевод</h3>{block.translated ? <CopyableText as="p" label="Текущий перевод" text={block.translated}/> : <p>Для этого языка перевод блока ещё не записан.</p>}
     </>}
   </Card>;
 }

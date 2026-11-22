@@ -1,6 +1,6 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 import { Badge } from '@/components/ui/badge';
 
 import { Button } from '@/components/ui/button';
@@ -248,26 +248,23 @@ export function Glossary({
       )}
       {mode === 'paste' && (
         <div className="adm-inset">
-          <label className="adm-field">
-            JSON глоссария
-            <Textarea
-              rows={4}
-              placeholder={JSON.stringify(
-                {
-                  terminology: [
-                    {
-                      source_term: 'Северный предел',
-                      preferred_translation: terms(lang)[2].target,
-                    },
-                  ],
-                },
-                null,
-                2,
-              )}
-              value={raw}
-              onChange={(e) => setRaw(e.target.value)}
-            />
-          </label>
+          <CopyableTextarea fieldClassName="adm-field" label="JSON глоссария"
+            rows={4}
+            placeholder={JSON.stringify(
+              {
+                terminology: [
+                  {
+                    source_term: 'Северный предел',
+                    preferred_translation: terms(lang)[2].target,
+                  },
+                ],
+              },
+              null,
+              2,
+            )}
+            value={raw}
+            onChange={(e) => setRaw(e.target.value)}
+          />
           <p className="adm-note">Импорт заменит текущие записи.</p>
           {error && <p role="alert">{error}</p>}
           <div className="adm-actions">

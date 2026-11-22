@@ -7,10 +7,12 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableText, CopyableTextarea } from '@/components/ui/copy-text';
 import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
-import { listServerPrompts, type ServerPrompt } from '@/lib/api';
+import type { ServerPrompt } from '@/lib/api';
+import { bookGet } from './bookRequests';
+import { studioErrorMessage } from '@/lib/studioFetch';
 import { createPersonalPrompt, listPersonalPrompts, PersonalPromptError, readLegacyPrompts, updatePersonalPrompt, type LegacyPrompt, type PersonalPrompt } from '@/lib/translationPromptVariants';
 import { templateLink, workspaceBase } from '@/lib/translationWorkspacePath';
 import SampleRun from './SampleRun';
@@ -53,13 +55,15 @@ function PromptSettings({ name, ownerId }: { name?: string; ownerId: string }) {
   const [personalError, setPersonalError] = useState('');
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    let live = true;
-    listServerPrompts().then(items => { if (live) { setTemplates(items); setCatalogError(''); } })
-      .catch(() => { if (live) setCatalogError('Не удалось загрузить базовые шаблоны.'); });
-    listPersonalPrompts().then(items => { if (live) { setVariants(items); setPersonalError(''); } })
-      .catch(() => { if (live) setPersonalError('Сервер личных шаблонов сейчас недоступен.'); });
-    readLegacyPrompts(ownerId).then(items => { if (live) setLegacy(items); }).catch(() => {});
-    return () => { live = false; };
+    const controller = new AbortController();
+    const { signal } = controller;
+    bookGet<{ prompts: ServerPrompt[] }>('/api/admin/prompts', signal).then(({ prompts }) => {
+      if (!signal.aborted) { setTemplates(prompts); setCatalogError(''); }
+    }).catch(() => { if (!signal.aborted) setCatalogError('Не удалось загрузить базовые шаблоны.'); });
+    listPersonalPrompts(signal).then(items => { if (!signal.aborted) { setVariants(items); setPersonalError(''); } })
+      .catch(() => { if (!signal.aborted) setPersonalError('Сервер личных шаблонов сейчас недоступен.'); });
+    readLegacyPrompts(ownerId).then(items => { if (!signal.aborted) setLegacy(items); }).catch(() => {});
+    return () => controller.abort();
   }, [ownerId, attempt]);
 
   function saved(item: PersonalPrompt) {
@@ -206,7 +210,7 @@ function PromptEditor({ ownerId, template, catalog, variant, local, active, pers
       else if (op === 'save' && !variant) router.replace(templateLink(template.name, result.id));
       setNotice(op === 'restore' ? 'Вариант восстановлен.' : op === 'base' ? 'Для ваших переводов выбран базовый шаблон.' : 'Сохранено в аккаунте.');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось сохранить изменения.');
+      setError(studioErrorMessage(err, 'Не удалось сохранить изменения.'));
       if (err instanceof PersonalPromptError && err.status === 409) loadLatest();
     } finally { setBusy(false); setConfirmDelete(false); }
   }
@@ -224,9 +228,9 @@ function PromptEditor({ ownerId, template, catalog, variant, local, active, pers
         {!personal && personalReady && <Button asChild variant="outline"><Link href={templateLink(template.name,'new')}>Изменить для себя</Link></Button>}
       </div>
       {personal && <label className="pt-field">Название варианта<Input value={label} maxLength={120} readOnly={!editable} disabled={busy} onChange={e => {setLabel(e.target.value); setNotice('');}}/></label>}
-      <label className="pt-field">Текст шаблона<Textarea rows={13} spellCheck={false} className="font-mono text-sm" readOnly={!editable} disabled={busy}
-        value={personal ? value : template.content} onChange={e => {setValue(e.target.value); setNotice('');}}/></label>
-      {!personal && template.content !== template.shipped && <details><summary>Исходный текст поставки</summary><pre className="whitespace-pre-wrap break-words pt-2 text-sm">{template.shipped}</pre></details>}
+      <CopyableTextarea fieldClassName="pt-field" label="Текст шаблона" rows={13} spellCheck={false} className="font-mono text-sm" readOnly={!editable} disabled={busy}
+        value={personal ? value : template.content} onChange={e => {setValue(e.target.value); setNotice('');}}/>
+      {!personal && template.content !== template.shipped && <details><summary>Исходный текст поставки</summary><CopyableText label="Исходный текст поставки" text={template.shipped} className="pt-2 text-sm"/></details>}
       {editable && <>
         <label><input type="checkbox" checked={useForBooks} disabled={busy} onChange={e => {setUseForBooks(e.target.checked); setNotice('');}}/> Использовать в моих переводах</label>
         <p className="pt-muted">{useForBooks ? 'После сохранения следующие запуски этого этапа в ваших книгах и сериях получат этот текст.' : 'Вариант будет доступен в аккаунте. Его можно выбрать для перевода позже.'}</p>
@@ -238,10 +242,6 @@ function PromptEditor({ ownerId, template, catalog, variant, local, active, pers
         {!personal && active && personalReady && <Button variant="outline" disabled={busy} onClick={() => mutate('base')}>Использовать базовый в моих переводах</Button>}
         {variant && personalReady && <Button variant="outline" disabled={busy} onClick={() => archived ? mutate('restore') : setConfirmDelete(true)}>
           {archived ? 'Восстановить вариант' : 'Удалить вариант'}</Button>}
-        <Button variant="outline" onClick={async () => {
-          try { await navigator.clipboard.writeText(personal ? value : template.content); setNotice('Скопировано.'); }
-          catch { setError('Выделите текст шаблона и скопируйте его.'); }
-        }}>Скопировать</Button>
       </div>
       {variant && revision !== variant.revision && <div role="alert">Сохранённая версия изменилась. <Button variant="outline" onClick={reloadForm}>Загрузить сохранённый текст</Button></div>}
       {error && <p role="alert">{error}</p>}

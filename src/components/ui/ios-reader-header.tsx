@@ -8,7 +8,7 @@ import { uiIconTriggerButton } from '@/components/ui/button-styles';
 import IOSIcon from '@/components/ui/ios-icon';
 import { cn } from '@/lib/utils';
 
-export type HeaderAncestor = { label: string; href: string };
+export type HeaderParentLink = { label: string; href: string };
 
 interface SharedHeaderProps {
   title: ReactNode;
@@ -24,7 +24,7 @@ type IOSReaderHeaderProps = SharedHeaderProps &
     | { layout?: 'reader'; backLabel?: string; onBack?: () => void }
     | {
         layout: 'workspace';
-        ancestors: readonly HeaderAncestor[];
+        parent: HeaderParentLink;
         navigationLabel: string;
       }
   );
@@ -39,6 +39,7 @@ export default function IOSReaderHeader(props: IOSReaderHeaderProps) {
     headingRef,
   } = props;
   const workspace = props.layout === 'workspace';
+  const ParentLink = workspace && props.parent.href.startsWith('#') ? 'a' : Link;
   return (
     <header
       className={cn(
@@ -53,31 +54,14 @@ export default function IOSReaderHeader(props: IOSReaderHeaderProps) {
       }}
     >
       {workspace && (
-        <nav aria-label={props.navigationLabel} className="pt-2 sm:pt-3">
-          <ol className="m-0 flex min-w-0 list-none items-center gap-x-2 p-0">
-            {props.ancestors.map(({ label, href }, index) => {
-              const BreadcrumbLink = href.startsWith('#') ? 'a' : Link;
-              return (
-                <li key={href} className="flex min-w-0 items-center gap-x-2">
-                  {index > 0 && (
-                    <span
-                      aria-hidden="true"
-                      className="text-xs text-[var(--reader-muted-text)]"
-                    >
-                      /
-                    </span>
-                  )}
-                  <BreadcrumbLink
-                    href={href}
-                    title={label}
-                    className="inline-flex min-h-6 min-w-0 items-center text-xs font-medium text-[color:color-mix(in_srgb,var(--reader-text)_78%,transparent)] underline decoration-[var(--reader-border)] underline-offset-2 hover:text-[var(--reader-accent)] hover:decoration-current focus-visible:decoration-current"
-                  >
-                    <span className="truncate">{label}</span>
-                  </BreadcrumbLink>
-                </li>
-              );
-            })}
-          </ol>
+        <nav aria-label={props.navigationLabel} className="pt-1">
+          <Button asChild size="sm" variant="ghost"
+            className="-ml-2 min-h-11 max-w-full gap-1 text-[var(--reader-accent)]">
+            <ParentLink href={props.parent.href} title={props.parent.label}>
+              <IOSIcon icon={ChevronLeft} className="size-4" aria-hidden="true" />
+              <span className="truncate">{props.parent.label}</span>
+            </ParentLink>
+          </Button>
         </nav>
       )}
       <div

@@ -41,7 +41,7 @@ test('a project owns its book list; moving a volume preserves its series and sta
   await page.goto(collection + '/short');
   await page.getByRole('link', { name: /Первый снег/ }).click();
   await expect(page).toHaveURL(origin + '/studio/books/first');
-  await expect(page.getByRole('navigation', { name: 'Путь навигации' }).getByRole('link', { name: 'Сборник' })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'На уровень выше' }).getByRole('link', { name: 'Сборник' })).toBeVisible();
   await page.goBack();
   await page.getByRole('button', { name: 'В архив', exact: true }).click();
   await expect(page.getByRole('link', { name: /Первый снег/ })).toHaveCount(0);
@@ -110,7 +110,7 @@ for (const existing of [true, false]) {
     });
     await page.getByRole('button', { name: 'Загрузить', exact: true }).click();
     await expect(page).toHaveURL(origin + '/studio/books/imported');
-    await expect(page.getByRole('navigation', { name: 'Путь навигации' }).getByRole('link', { name: existing ? 'Сборник' : 'Новая книга' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'На уровень выше' }).getByRole('link', { name: existing ? 'Сборник' : 'Новая книга' })).toBeVisible();
   });
 }
 

@@ -44,6 +44,48 @@ async function intercept(page: Page, owner: string, library: Library, prompts: S
   });
 }
 
+test('copy uses the current text, reports clipboard states and resets without changing the draft', async ({ page }) => {
+  const writes: string[] = [];
+  let complete: () => void;
+  let deny: () => void;
+  await page.exposeFunction('writeTestClipboard', (text: string) => {
+    writes.push(text);
+    return new Promise<void>((resolve, reject) => {
+      complete = resolve;
+      deny = () => reject(new Error('Permission denied'));
+    });
+  });
+  await page.addInitScript(() => {
+    const bridge = window as unknown as {writeTestClipboard: (text: string) => Promise<void>};
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText: (text: string) => bridge.writeTestClipboard(text) } });
+  });
+  await intercept(page, alice, {});
+  await page.goto(settings + '/templates/' + glossary.name);
+  const templateField = page.getByRole('textbox', { name: 'Текст шаблона' });
+  const copy = templateField.locator('..').getByRole('button');
+  await expect(templateField).toHaveJSProperty('readOnly', true);
+  await copy.click();
+  await expect.poll(() => writes).toEqual([glossary.content]);
+  await expect(copy).toHaveAccessibleName('Копирование…');
+  await expect(copy).toBeDisabled();
+  complete!();
+  await expect(copy).toHaveAccessibleName('Скопировано');
+  await expect(copy).toHaveAccessibleName('Скопировать');
+
+  await page.getByRole('link', { name: 'Изменить для себя' }).click();
+  const draft = '  Моя правка\n{SOURCE_TEXT}\n';
+  await templateField.fill(draft);
+  await copy.focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(() => writes.at(-1)).toBe(draft);
+  deny!();
+  await expect(copy).toHaveAccessibleName(/Не удалось скопировать/);
+  await expect(copy).toHaveAccessibleName('Скопировать');
+  await expect(templateField).toHaveValue(draft);
+  await templateField.fill('');
+  await expect(copy).toBeDisabled();
+});
+
 async function archive(page: Page) {
   await page.getByRole('button', {name:'Удалить вариант'}).click();
   await page.getByRole('dialog').getByRole('button', {name:'Удалить',exact:true}).click();

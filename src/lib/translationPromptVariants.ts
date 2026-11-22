@@ -1,4 +1,4 @@
-import { studioFetch } from './studioFetch';
+import { studioErrorMessage, studioFetch } from './studioFetch';
 export interface PersonalPrompt {
   id: string;
   template: string;
@@ -29,8 +29,8 @@ async function send(path: string, options?: RequestInit) {
   const response = await studioFetch(path, { ...options, cache: 'no-store', credentials: 'same-origin' });
   const data = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = data?.message ?? data?.statusMessage ?? data?.error?.message;
-    throw new PersonalPromptError(typeof message === 'string' ? message : 'Сервер не выполнил запрос (' + response.status + ').', response.status);
+    const message = data?.message ?? data?.statusMessage ?? data?.error?.message ?? data?.error;
+    throw new PersonalPromptError(studioErrorMessage(message, 'Сервер не выполнил запрос (' + response.status + ').', response.status), response.status);
   }
   return data;
 }

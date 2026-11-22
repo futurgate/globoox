@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { resumableStage, runEndpoint, runsEndpoint, type FrozenRecipe, type StudioRun } from '@/lib/studioRecipe';
 import { Button } from '@/components/ui/button';
+import { studioErrorMessage } from '@/lib/studioFetch';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import { bookEndpoint, bookPost, consumeStage, useBookAction, useBookData } from './bookRequests';
@@ -95,6 +96,7 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, books, on
     return () => report(stage, false);
   }, [report, stage, running]);
   const failed = data?.error || data?.chapters?.find(c => c.error)?.error;
+  const failureMessage = failed && studioErrorMessage(failed, 'При выполнении этапа возникла ошибка.');
   const blocked = !data || (tracked && !runHistory?.data) || (resumeId && !frozen) || running || otherRunning || (stage === 'glossary' && data.frozen);
   const overwriteNote = stage === 'translate' ? 'Заменить переведённые блоки и сбросить связанные правки'
     : stage === 'glossary' ? 'Пересобрать словарь с первой главы' : stage === 'revise' ? 'Пересчитать уже отредактированные блоки' : 'Заново проверить главы';
@@ -136,7 +138,10 @@ export function StageCard({ stage, bookId, lang, models, sourceBookId, books, on
     {total > 0 && <p className="pt-muted">{stage === 'revise' ? 'Блоков' : 'Глав'} {done} из {total}</p>}
     {otherRunning && <p className="pt-muted">Дождитесь завершения текущего этапа книги.</p>}
     {data?.frozen && <p>Словарь заморожен. Разморозьте его во вкладке «Глоссарий» для новой генерации.</p>}
-    {failed && <p className="pt-callout">{failed}</p>}
+    {failureMessage && <div className="pt-callout">
+      <p>{failureMessage}</p>
+      {failed !== failureMessage && <details><summary>Технические подробности</summary><p>{failed}</p></details>}
+    </div>}
     <ActionFeedback error={state?.error || runHistory?.error || detail?.error ||
       (resumeId && detail?.data && !frozen ? 'Не удалось прочитать сохранённые параметры запуска.' : '') || start.error || stop.error} notice={start.notice || stop.notice}/>
     <details><summary className="text-sm">Параметры запуска</summary>

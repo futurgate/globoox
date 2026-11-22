@@ -383,7 +383,7 @@ export default function ComponentsPreviewPage() {
       inlinePreview: (
         <IOSReaderHeader
           layout="workspace" title="Northbound" subtitle="Northern Archive · Volume 1"
-          navigationLabel="Breadcrumbs" ancestors={[{ label: 'Book translations', href: '/prototype/admin' }]}
+          navigationLabel="Up one level" parent={{ label: 'Book translations', href: '/prototype/admin' }}
           trailingRight={<IOSSettingsRow label="Language" value={editionLanguage}
             options={[{ id: 'EN', label: 'English' }, { id: 'FR', label: 'French' }]} onChange={setEditionLanguage} />}
         />

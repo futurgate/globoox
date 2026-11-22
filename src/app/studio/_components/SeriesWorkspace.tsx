@@ -1,6 +1,6 @@
 'use client';
 
-import { studioFetch } from '@/lib/studioFetch';
+import { studioErrorMessage, studioFetch } from '@/lib/studioFetch';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -31,7 +31,7 @@ async function readResponse(response: Response) {
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
     const message = payload?.message ?? payload?.error;
-    throw new Error(typeof message === 'string' ? message : 'Запрос не выполнен (' + response.status + ').');
+    throw new Error(studioErrorMessage(message, 'Запрос не выполнен (' + response.status + ').', response.status));
   }
   return payload;
 }
@@ -83,7 +83,7 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
       if (!value || value.id !== series.id || !Array.isArray(value.volumes)) throw new Error('Сервер не подтвердил данные серии.');
       if (!request.signal.aborted) { setDetail(value); setError(''); }
     } catch (cause) {
-      if (!request.signal.aborted) { setError(cause instanceof Error ? cause.message : 'Не удалось открыть данные серии.'); }
+      if (!request.signal.aborted) { setError(studioErrorMessage(cause, 'Не удалось открыть данные серии.')); }
     } finally {
       if (inFlight.current === request) inFlight.current = null;
       if (!request.signal.aborted) setFetching(false);
@@ -138,7 +138,7 @@ export default function SeriesWorkspace({ series, role, books, ownerId }: {
         void load();
       }
     } catch (cause) {
-      if (!request.signal.aborted) setError(cause instanceof Error ? cause.message : 'Не удалось запустить этап.');
+      if (!request.signal.aborted) setError(studioErrorMessage(cause, 'Не удалось запустить этап.'));
     } finally {
       if (mutation.current === request) mutation.current = null;
       if (!request.signal.aborted) setWorking(false);

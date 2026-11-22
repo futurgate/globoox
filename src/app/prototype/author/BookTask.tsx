@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { CopyableTextarea } from '@/components/ui/copy-text';
 import IOSItemsStack from '@/components/ui/ios-items-stack';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import { cn } from '@/lib/utils';
@@ -175,15 +175,12 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
             </label>
           </div>
         </div>
-        <label className="au-label">
-          Аннотация
-          <Textarea
-            placeholder="Краткое описание издания"
-            value={edit.description}
-            rows={3}
-            onChange={(e) => setEdit({ ...edit, description: e.target.value })}
-          />
-        </label>
+        <CopyableTextarea fieldClassName="au-label" label="Аннотация"
+          placeholder="Краткое описание издания"
+          value={edit.description}
+          rows={3}
+          onChange={(e) => setEdit({ ...edit, description: e.target.value })}
+        />
         <IOSItemsStack>
           <IOSSettingsRow
             label="Порядок страниц"
@@ -224,14 +221,11 @@ export function BookTask({ view, p, v, save, saveProject }: Props) {
           <small>Оригинал</small>
           <p>{originalSample(p)}</p>
         </div>
-        <label className="au-label">
-          Текст для издания
-          <Textarea
-            rows={3}
-            value={correct}
-            onChange={(e) => setCorrect(e.target.value)}
-          />
-        </label>
+        <CopyableTextarea fieldClassName="au-label" label="Текст для издания"
+          rows={3}
+          value={correct}
+          onChange={(e) => setCorrect(e.target.value)}
+        />
         <details className="au-details">
           <summary>Повторить перевод фрагмента</summary>
           <label className="au-label">
