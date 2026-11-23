@@ -69,7 +69,7 @@ test('a direct run link walks up through the selected language, book, project an
   for (const [heading, parent, href] of [
     ['Запуск перевода', 'Запуски и расход', translation + '/runs'],
     ['Запуски и расход', 'Северный архив', translation],
-    ['Северный архив', 'Сборник', '/studio/projects/collection'],
+    ['Северный архив', 'Сборник', '/studio/projects/collection?lang=FR'],
     ['Сборник', 'Мои проекты', '/studio/projects'],
   ]) {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(heading);

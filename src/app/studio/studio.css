@@ -119,7 +119,8 @@
   .studio-shell .pt-detail-header:has(#studio-page-actions button) > div:last-child {
     flex-wrap: wrap;
   }
-  .studio-shell .pt-detail-header:has(#studio-page-actions button) > div:last-child > div:first-child {
+  /* Project tools sit below the title, leaving only its compact menu on this row. */
+  .studio-shell .pt-main:not(:has(.studio-project-context)) .pt-detail-header:has(#studio-page-actions button) > div:last-child > div:first-child {
     flex-basis: 100%;
   }
   .studio-shell .pt-detail-header #studio-page-actions {

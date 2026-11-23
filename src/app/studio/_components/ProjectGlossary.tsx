@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { downloadText } from '@/app/prototype/_components/downloads';
@@ -23,9 +23,9 @@ type ProjectDocument = {
 const labels: Record<Coverage, string> = {
   included: 'Учтена', missing: 'Ещё не учтена', unknown: 'Состав прежнего глоссария не записан',
 };
-type Props = { projectId: string; lang: string; admin: boolean; onDirty?: (value: boolean) => void };
+type Props = { projectId: string; lang: string; admin: boolean; onDirty?: (value: boolean) => void; buildAction?: ReactNode };
 
-function ProjectDocumentPanel({ projectId, lang, onDirty }: Omit<Props, 'admin'>) {
+function ProjectDocumentPanel({ projectId, lang, onDirty, buildAction }: Omit<Props, 'admin'>) {
   const [reload, setReload] = useState(0);
   const url = '/api/studio/project-glossary?' + new URLSearchParams({projectId, lang});
   const result = useBookData<ProjectDocument>(url, reload);
@@ -52,23 +52,22 @@ function ProjectDocumentPanel({ projectId, lang, onDirty }: Omit<Props, 'admin'>
     }
   }
 
-  const error = result?.error && <div role="alert">{result.error}{' '}
-    <RefreshButton pending={result.refreshing} onClick={() => setReload(n => n + 1)}/></div>;
-  if (!current) return error || <PendingText>Загружаем глоссарий проекта…</PendingText>;
-  const included = current.books.filter(book => book.coverage === 'included').length;
-  const unknown = current.books.filter(book => book.coverage === 'unknown').length;
-  return <div className="pt-stack">
-    {error}
-    <Card className="gap-3 p-4 sm:p-5">
-      <div className="flex flex-wrap items-center justify-between gap-2"><h2>Глоссарий проекта</h2>
-        <div className="flex items-center gap-2">
-          <RefreshButton pending={!result || result.refreshing} onClick={() => setReload(n => n + 1)}/>
-          <StudioEntityMenu label="Действия с глоссарием" actions={[{
-            label: 'Скачать сохранённый JSON', onClick: () => downloadText('glossary-' + projectId + '-' + lang + '.json',
-              JSON.stringify(current.glossary, null, 2), 'application/json'),
-          }]}/>
-        </div>
+  const included = current?.books.filter(book => book.coverage === 'included').length ?? 0;
+  const unknown = current?.books.filter(book => book.coverage === 'unknown').length ?? 0;
+  return <Card className="gap-3 p-4 sm:p-5">
+    <div className="flex flex-wrap items-center justify-between gap-2"><h2>Глоссарий проекта</h2>
+      <div role="group" aria-label="Действия с глоссарием проекта" className="flex min-w-0 flex-wrap items-center gap-2">
+        {!current?.archived && buildAction}
+        <RefreshButton size="sm" pending={!result || result.refreshing} onClick={() => setReload(n => n + 1)}/>
+        {current && <StudioEntityMenu label="Действия с глоссарием" actions={[{
+          label: 'Скачать сохранённый JSON', onClick: () => downloadText('glossary-' + projectId + '-' + lang + '.json',
+            JSON.stringify(current.glossary, null, 2), 'application/json'),
+        }]}/>}
       </div>
+    </div>
+    {result?.error && <p role="alert">{result.error}</p>}
+    {!current && !result?.error && <PendingText>Загружаем глоссарий проекта…</PendingText>}
+    {current && <>
       {current.books.length ? <details className="rounded-md border border-[var(--app-border)] px-3 py-2 text-sm">
         <summary className="cursor-pointer font-medium">Учтено книг: {included} из {current.books.length}{unknown > 0 && <> · вклад не подтверждён для {unknown}</>}</summary>
         <ul className="mt-2 divide-y divide-[var(--app-border)]">
@@ -82,12 +81,12 @@ function ProjectDocumentPanel({ projectId, lang, onDirty }: Omit<Props, 'admin'>
       <GlossaryEditor projectId={projectId} lang={lang} glossary={current.glossary} updatedAt={current.revision}
         frozen={false} locked={current.archived} lockedMessage="Глоссарий в архиве доступен для чтения."
         onSave={save} onDirtyChange={onDirty}/>
-    </Card>
-  </div>;
+    </>}
+  </Card>;
 }
 
-export function ProjectGlossary({ projectId, lang, admin, onDirty }: Props) {
+export function ProjectGlossary({ projectId, lang, admin, onDirty, buildAction }: Props) {
   const access = useLaunchAccess(!admin);
   if (!access.allowed) return <LaunchAccessNotice access={access}/>;
-  return <ProjectDocumentPanel key={projectId + '/' + lang} projectId={projectId} lang={lang} onDirty={onDirty}/>;
+  return <ProjectDocumentPanel key={projectId + '/' + lang} projectId={projectId} lang={lang} onDirty={onDirty} buildAction={buildAction}/>;
 }

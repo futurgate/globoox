@@ -68,3 +68,15 @@ it('requests a complete language-scoped project page and preserves direct links 
   view();
   expect(api.read).toHaveBeenLastCalledWith('/api/studio/project-runs?projectId=project&groupId=group');
 });
+
+it('distinguishes glossary-only and translated books in a finished project run', () => {
+  const done = { status:'done' };
+  const volume = {...group.volumes[0],status:'done',activeStage:null};
+  api.read.mockReturnValue({data:{groups:[{...group,status:'done',volumes:[
+    {...volume,stages:{glossary:done}},
+    {...volume,runId:'run-2',stages:{glossary:done,translate:done}},
+  ]}]}});
+  const html=render();
+  expect(html).toContain('Готов только глоссарий');
+  expect(html).toContain('Глоссарий и перевод готовы');
+});

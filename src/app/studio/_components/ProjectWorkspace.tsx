@@ -237,6 +237,18 @@ export default function ProjectWorkspace({ data, project, refresh, section = '' 
     setAccepted(groupId); setLaunch(null); refreshProgress(v => v+1);
   }
   const isBusy = action.busy || orderMode;
+  const queueActions = [
+    ...(!project.archived && !showArchive && outside.length ? [{
+      label: 'Добавить из проекта', icon: FolderInput, secondary: false, disabled: action.busy, onClick: () => setForm('adding'),
+    }] : []),
+    ...(!project.archived && !showArchive && supportsQueue && members.length > 1 ? [{
+      label: 'Изменить порядок', icon: ListOrdered, secondary: false, disabled: action.busy, onClick: () => { setOrderMode(true); setMoving(''); },
+    }] : []),
+    ...(showArchive || archivedBooks.length ? [{
+      label: showArchive ? 'К очереди' : 'Архив книг', icon: showArchive ? BookOpen : Archive,
+      disabled: false, onClick: () => setShowArchive(!showArchive), secondary: true,
+    }] : []),
+  ];
   const projectActions = [
     ...(!project.archived ? [{label:'Переименовать',onClick:() => setForm('rename'),disabled:isBusy}] : []),
     ...(supportsQueue ? [{label:project.archived ? 'Восстановить проект' : 'Архивировать проект',
@@ -248,8 +260,8 @@ export default function ProjectWorkspace({ data, project, refresh, section = '' 
       <StudioLanguagePicker ownerId={data.userId} value={lang} supported={members.length || archivedBooks.length ? languageOptions : Object.keys(languages)} allowManualGlossary
         canManage={access.allowed} preferVisibleDefault={!requestedLang} onChange={setLanguage} disabled={isBusy} className="min-w-0 rounded-lg border border-[var(--app-border)]"/>
       {readyToLaunch && <div className="flex flex-wrap items-center gap-2">
-        {recipeSource && <Button variant="outline" disabled={isBusy || glossaryDirty} aria-haspopup="dialog" onClick={() => setRecipeOpen(true)}>
-          <SlidersHorizontal aria-hidden/>Параметры перевода</Button>}
+        {recipeSource && <Button variant="outline" disabled={isBusy || glossaryDirty} aria-haspopup="dialog" aria-label="Параметры перевода" onClick={() => setRecipeOpen(true)}>
+          <SlidersHorizontal aria-hidden/><span>Параметры<span className="hidden sm:inline"> перевода</span></span></Button>}
         <Button disabled={isBusy || glossaryDirty || !recipeSource || !progress?.data}
           onClick={() => setLaunch('translate')}><Play aria-hidden/>Перевести проект</Button>
       </div>}
@@ -260,30 +272,30 @@ export default function ProjectWorkspace({ data, project, refresh, section = '' 
       {knownLanguage && (!automaticLanguage || (members.length > 0 && !recipeSource)) && <p className="pt-callout">Для этого языка можно вести глоссарий вручную. Автоматический перевод пока недоступен.</p>}
       {project.archived && <p className="pt-callout">Проект в архиве. Книги и результаты доступны для просмотра.
         <Button size="sm" variant="ghost" disabled={action.busy} onClick={changeArchive}>Восстановить проект</Button></p>}
-      {(section === 'glossary' && readyToLaunch) && <Button variant="outline" disabled={isBusy || glossaryDirty || !recipeSource || !progress?.data}
-        onClick={() => setLaunch('glossary')}><BookOpen aria-hidden/>Собрать глоссарий</Button>}
       {progress?.error && <div className="pt-callout flex flex-wrap items-center gap-2" role="alert">{progress.error}
         <RefreshButton size="sm" pending={progress.refreshing} onClick={() => refreshProgress(v => v+1)}/></div>}
-      {accepted && <p role="status">Запуск принят. <Link className="underline" href={projectPath(project.id)+'/runs?'+new URLSearchParams({lang,group:accepted})}>Открыть запуски проекта</Link></p>}
+      {accepted && !(section === 'runs' && search.get('group') === accepted) && <p role="status">Запуск принят. <Link className="underline" href={projectPath(project.id)+'/runs?'+new URLSearchParams({lang,group:accepted})}>Открыть запуски проекта</Link></p>}
       <ActionFeedback pending={orderMode ? undefined : action.pending} notice={action.notice} error={orderMode ? undefined : action.error}/>
       {glossaryDirty && <p className="pt-muted text-sm">Перед запуском сохраните или сбросьте изменения глоссария.</p>}
-      {section === 'glossary' && (knownLanguage || !access.allowed) && <ProjectGlossary key={lang} projectId={project.id} lang={lang} admin={data.role === 'admin'} onDirty={setGlossaryDirty}/>}
+      {section === 'glossary' && (knownLanguage || !access.allowed) && <ProjectGlossary key={lang} projectId={project.id} lang={lang}
+        admin={data.role === 'admin'} onDirty={setGlossaryDirty}
+        buildAction={readyToLaunch && <Button size="sm" variant="outline" disabled={isBusy || glossaryDirty || !recipeSource || !progress?.data}
+          onClick={() => setLaunch('glossary')}><BookOpen aria-hidden/>Собрать глоссарий</Button>}/>}
       {section === 'runs' && knownLanguage && <ProjectRunHistory key={lang} projectId={project.id} lang={lang} archived={project.archived} admin={data.role === 'admin'}/>}
       {!section && <>
         {!access.allowed && !project.archived && <LaunchAccessNotice access={access}/>}
         <Card className="min-w-0 gap-0">
           <div className="flex flex-wrap items-center justify-between gap-2 p-4">
             <h2 className="text-lg font-semibold">{showArchive ? 'Архив книг' : 'Очередь книг'}</h2>
-            {!orderMode && <div role="group" aria-label="Действия со списком книг" className="flex flex-wrap items-center gap-2">
-              {!project.archived && !showArchive && <>
-                <Button variant="outline" size="sm" asChild><Link href={projectPath(project.id)+'/upload?'+new URLSearchParams({lang})}><Upload/>Загрузить EPUB</Link></Button>
-                {!!outside.length && <Button size="sm" variant="outline" disabled={action.busy} onClick={() => setForm('adding')}><FolderInput/>Добавить из проекта</Button>}
-              </>}
-              {!showArchive && !project.archived && supportsQueue && members.length > 1 &&
-                <Button variant="outline" size="sm" disabled={action.busy} onClick={() => {setOrderMode(true);setMoving('');}}>
-                  <ListOrdered/>Изменить порядок</Button>}
-              {(showArchive || !!archivedBooks.length) && <Button size="sm" variant="ghost" onClick={() => setShowArchive(!showArchive)}>
-                {showArchive ? <BookOpen/> : <Archive/>}{showArchive ? 'К очереди' : 'Архив книг'}</Button>}
+            {!orderMode && <div role="group" aria-label="Действия со списком книг" className="flex min-w-0 flex-wrap items-center gap-2">
+              {!project.archived && !showArchive && <Button variant="outline" size="sm" asChild>
+                <Link href={projectPath(project.id)+'/upload?'+new URLSearchParams({lang})}><Upload/>Загрузить EPUB</Link></Button>}
+              {queueActions.map(({ label, onClick, disabled, secondary, icon: Icon }) =>
+                <Button key={label} className="hidden sm:inline-flex" variant={secondary ? 'ghost' : 'outline'} size="sm"
+                  disabled={disabled} onClick={onClick}><Icon aria-hidden/>{label}</Button>)}
+              {!!queueActions.length && <div className="sm:hidden">
+                <StudioEntityMenu label="Ещё действия со списком книг" actions={queueActions}/>
+              </div>}
             </div>}
           </div>
           {orderMode ? <ProjectOrderEditor books={members} revision={project.orderRevision!} busy={action.busy} error={action.error}

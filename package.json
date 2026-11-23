@@ -9,7 +9,8 @@
     "lint": "eslint",
     "docs:check": "node scripts/check-docs.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:studio:local": "playwright test --config=playwright.studio.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-scroll-area": "^1.2.10",

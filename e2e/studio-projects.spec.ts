@@ -82,12 +82,12 @@ test('create and rename an empty project, then add an existing book without a du
   await projectMenu.focus();
   await page.keyboard.press('Enter');
   await expect(projectMenu).toHaveAttribute('aria-expanded', 'true');
-  await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Переименовать' })).toBeFocused();
+  const rename = page.getByRole('button', { name: 'Переименовать' });
+  await expect(rename).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(projectMenu).toBeFocused();
   await projectMenu.press('Enter');
-  await page.keyboard.press('Tab');
+  await expect(rename).toBeFocused();
   await page.keyboard.press('Enter');
   await page.getByLabel('Название проекта').fill('Мои рассказы');
   await page.getByRole('button', { name: 'Сохранить' }).click();
@@ -178,6 +178,7 @@ test('the project order is the launch order; deselected predecessors only prepar
   await page.keyboard.press('Escape');
   await page.getByRole('button',{name:'Перевести проект'}).click();
   await page.getByRole('checkbox',{name:/Первый снег/}).uncheck();
+  await expect(page.getByText('Книг для перевода: 1 · Только глоссарий: 1', {exact:true})).toBeVisible();
   await expect(page.getByText('Только глоссарий для следующих книг')).toBeVisible();
   expect(submitted).toBe(0);
   await page.getByRole('button',{name:'Подтвердить запуск'}).click();
@@ -185,7 +186,9 @@ test('the project order is the launch order; deselected predecessors only prepar
   expect(submitted).toBe(1);
 });
 
-test('the keyboard grip saves order with the revision that was shown', async ({ page }) => {
+for (const mobile of [false, true]) test(mobile ? 'the mobile queue menu opens the reorder workflow and saves' :
+  'the keyboard grip saves order with the revision that was shown', async ({ page }) => {
+  if (mobile) await page.setViewportSize({width:390,height:844});
   const data = catalog();
   data.projects![0].orderRevision = 2;
   Object.assign(data.books[0], { projectPosition:1 });
@@ -200,6 +203,12 @@ test('the keyboard grip saves order with the revision that was shown', async ({ 
     return route.fulfill({json:{id:'north',orderRevision:3}});
   });
   await page.goto(collection+'/north');
+  if (mobile) {
+    const toolbar = page.getByRole('group', { name:'Действия со списком книг' });
+    await expect(toolbar.getByRole('link', { name:'Загрузить EPUB' })).toBeVisible();
+    await expect(page.getByRole('button', {name:'Изменить порядок'})).toHaveCount(0);
+    await toolbar.getByRole('button', { name:'Ещё действия со списком книг' }).click();
+  }
   await page.getByRole('button',{name:'Изменить порядок'}).click();
   await page.getByRole('button',{name:'Переместить «Второй снег», позиция 2'}).press('ArrowUp');
   await page.getByRole('button',{name:'Выйти из режима'}).click();

@@ -18,6 +18,7 @@ import { activeStatus, operationNames, runCost, runDate, runStatusNames, stageNa
 type Volume = {
   runId: string; bookId: string; title: string; volumeNumber: number | null; lang: string; status: RunStatus;
   projectId?: string | null; projectName?: string | null;
+  stages?: Partial<Record<'glossary' | 'translate', {status:RunStatus}>>;
   activeStage: keyof typeof stageNames | null; progress?: { done: number; total: number; updatedAt: string } | null;
 };
 type Group = {
@@ -129,14 +130,16 @@ export function ProjectRunHistory({ projectId, lang, archived = false, admin = f
               {group.projectName || 'Открыть проект'}</Link>}
             <small className="block pt-muted">{group.operation === 'project' || group.operation === 'project-glossary' ? 'Книг: ' + group.totalVolumes : operationNames[group.operation]} · {group.lang} · {runDate(group.createdAt)}</small>
           </td>
-          <td>{grouped ? <>{group.replacedBy ? 'Заменён новым запуском' : group.stopRequested && activeStatus(group.status) ? 'Останавливается' : runStatusNames[group.status]}<small className="block pt-muted">Готово томов в проекте: {group.doneVolumes} из {group.totalVolumes}</small></> : <Progress volume={book}/>}</td>
+          <td>{grouped ? <>{group.replacedBy ? 'Заменён новым запуском' : group.stopRequested && activeStatus(group.status) ? 'Останавливается' : runStatusNames[group.status]}<small className="block pt-muted">{projectRun ? 'Обработано книг' : 'Готово томов в проекте'}: {group.doneVolumes} из {group.totalVolumes}</small></> : <Progress volume={book}/>}</td>
           <td className="tabular-nums">{runCost(group.costUsd)}
             {group.costUsd != null && !group.usageComplete && <small className="block pt-muted">Учтено частично</small>}</td>
         </tr>
         {grouped && open && <tr><td colSpan={3}><ul className="grid gap-2">{group.volumes.map(v => <li key={v.runId} className="flex flex-wrap items-baseline justify-between gap-x-4">
           <Link className="min-w-0 break-words underline" href={bookRunPath(v.bookId,v.lang,v.runId)}>{v.volumeNumber != null && 'Том ' + v.volumeNumber + ' · '}{v.title}</Link>
           {!projectId && !group.projectId && v.projectId && <Link className="text-xs underline" href={projectPath(v.projectId)}>{v.projectName || 'Открыть проект'}</Link>}
-          <span className="pt-muted"><Progress volume={v}/></span>
+          <span className="pt-muted">{projectRun && v.status === 'done' && v.stages?.glossary?.status === 'done'
+            ? v.stages.translate?.status === 'done' ? 'Глоссарий и перевод готовы' : 'Готов только глоссарий'
+            : <Progress volume={v}/>}</span>
         </li>)}</ul>
           {projectRun && projectId && access.allowed && <GroupActions group={group} projectId={projectId} archived={archived} refresh={() => setVersion(v => v+1)}/>}
         </td></tr>}
