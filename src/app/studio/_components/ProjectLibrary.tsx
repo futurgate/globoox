@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { ChoicePills } from '@/components/ui/choice-pills';
 import { Input } from '@/components/ui/input';
 import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import ProjectImport from './ProjectImport';
@@ -34,7 +35,9 @@ type Props = {
 };
 
 export default function ProjectLibrary({ data, view, seriesId, projectId, refresh }: Props) {
-  const search = useSearchParams().get('q') ?? '';
+  const params = useSearchParams();
+  const search = params.get('q') ?? '';
+  const archived = params.get('archived') === '1';
   const [creating, setCreating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -57,6 +60,10 @@ export default function ProjectLibrary({ data, view, seriesId, projectId, refres
     return () => { active = false; clearTimeout(timer); };
   }, [pending, view, refresh]);
 
+  if (view === 'new' && projectId && data.projects?.find(p => p.id === projectId)?.archived) {
+    return <Card className="gap-3 p-4"><p>Для загрузки книги восстановите проект из архива.</p>
+      <Button asChild variant="outline" className="self-start"><Link href={projectPath(projectId)}>Открыть проект</Link></Button></Card>;
+  }
   if (view === 'new') return <ProjectImport key={data.userId + (projectId || '')} data={data} refresh={refresh} projectId={projectId} />;
   if (view === 'project') {
     const project = data.projects?.find(entry => entry.id === projectId);
@@ -78,22 +85,25 @@ export default function ProjectLibrary({ data, view, seriesId, projectId, refres
     if (book.projectId && !book.projectArchived) counts.set(book.projectId, (counts.get(book.projectId) ?? 0) + 1);
     if (book.seriesId) seriesCounts.set(book.seriesId, (seriesCounts.get(book.seriesId) ?? 0) + 1);
   }
+  const archivedIds = new Set(data.projects?.filter(project => project.archived).map(project => project.id));
+  const archiveFilter = data.projects?.some(project => project.orderRevision != null) ?? false;
+  const showArchived = archiveFilter && archived;
   const groups = data.projects
-    ? data.projects.map(project => ({ id: project.id, name: project.name, href: projectPath(project.id), detail: bookCount(counts.get(project.id) ?? 0) }))
+    ? data.projects.filter(project => Boolean(project.archived) === showArchived).map(project => ({ id: project.id, name: project.name, href: projectPath(project.id), detail: bookCount(counts.get(project.id) ?? 0) }))
     : data.series.map(series => ({ id: series.id, name: series.name || 'Серия без названия', href: seriesPath(series.id), detail: 'Серия · ' + volumeCount(seriesCounts.get(series.id) ?? 0) }));
   const matchingGroups = groups.filter(entry => !query || matches(entry.name)).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
   const books = data.books.filter(book => {
-    if (book.projectArchived) return false;
+    if (book.projectArchived || Boolean(book.projectId && archivedIds.has(book.projectId)) !== showArchived) return false;
     if (query) return matches(book.title) || matches(book.author);
     // During a rolling update the old API returns only books and series.
     return !data.projects && (!book.seriesId || !seriesById.has(book.seriesId));
   });
   const noResults = !matchingGroups.length && !books.length;
 
-  function updateSearch(value: string) {
+  function updateFilter(key: 'q' | 'archived', value: string) {
     const url = new URL(window.location.href);
-    if (value) url.searchParams.set('q', value);
-    else url.searchParams.delete('q');
+    if (value) url.searchParams.set(key, value);
+    else url.searchParams.delete(key);
     window.history.replaceState(null, '', url);
   }
 
@@ -113,18 +123,21 @@ export default function ProjectLibrary({ data, view, seriesId, projectId, refres
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-48 flex-1">
           <Search aria-hidden className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[var(--app-text-muted)]" />
-          <Input className="pl-9" type="search" aria-label="Поиск по названию и автору" placeholder="Название проекта, книги или автор" value={search} onChange={(e) => updateSearch(e.target.value)} />
+          <Input className="pl-9" type="search" aria-label="Поиск по названию и автору" placeholder="Название проекта, книги или автор" value={search} onChange={(e) => updateFilter('q', e.target.value)} />
         </div>
         <Button variant="outline" size="icon" onClick={reload} disabled={refreshing} aria-label="Обновить каталог" title="Обновить каталог"><RefreshCw className={refreshing ? 'animate-spin' : ''} /></Button>
         {data.projects && <Button variant="outline" onClick={() => setCreating(!creating)}>Новый проект</Button>}
         <Button asChild><Link href={projectsPath + '/projects/new'}><Plus />Загрузить</Link></Button>
       </div>
+      {archiveFilter && <ChoicePills label="Фильтр проектов" value={showArchived ? 'archived' : 'active'}
+        choices={[{ id: 'active', label: 'Активные' }, { id: 'archived', label: 'Архив' }]}
+        onChange={value => updateFilter('archived', value === 'archived' ? '1' : '')}/>}
       {creating && data.projects && <ProjectNameForm ownerId={data.userId} refresh={refresh} close={() => setCreating(false)} />}
       {error && <p role="alert">{error}</p>}
       {noResults ? (
         <Card className="gap-2 p-6" role="status">
-          <p className="font-medium">{query ? 'По вашему запросу ничего не найдено' : 'Пока нет загруженных книг'}</p>
-          <p className="text-sm text-[var(--app-text-muted)]">{query ? 'Попробуйте другое название или имя автора.' : 'Загрузите EPUB, чтобы начать работу со своей книгой.'}</p>
+          <p className="font-medium">{query ? 'По вашему запросу ничего не найдено' : showArchived ? 'В архиве нет проектов' : 'Пока нет загруженных книг'}</p>
+          <p className="text-sm text-[var(--app-text-muted)]">{query ? 'Попробуйте другое название или имя автора.' : showArchived ? 'Здесь появятся проекты, которые вы отправите в архив.' : 'Загрузите EPUB, чтобы начать работу со своей книгой.'}</p>
         </Card>
       ) : (
         <Card className="overflow-hidden divide-y divide-[var(--app-border)]">

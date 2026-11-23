@@ -8,7 +8,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronsUpDown, Check } from 'lucide-react';
+import { ChevronsUpDown, Check, Pencil, Plus } from 'lucide-react';
 import IOSIcon from '@/components/ui/ios-icon';
 import {
   uiDropdownItemButton,
@@ -22,12 +22,14 @@ import { cn } from '@/lib/utils';
 export interface IOSSettingsRowOption {
   id: string;
   label: string;
+  onEdit?: () => void;
 }
 
 interface IOSSettingsRowProps {
   label: string;
   value: string;
   options: readonly IOSSettingsRowOption[];
+  addAction?: { label: string; onClick: () => void };
   onChange: (id: string) => void;
   className?: string;
   compactLabels?: { label: string; value: string };
@@ -39,6 +41,7 @@ export default function IOSSettingsRow({
   label,
   value,
   options,
+  addAction,
   onChange,
   className,
   compactLabels,
@@ -60,13 +63,14 @@ export default function IOSSettingsRow({
     menuHeight: 280,
     measureMenu: true,
   });
+  const hasActions = Boolean(addAction || options.some(option => option.onEdit));
   const currentLabel = options.find((opt) => opt.id === value)?.label ?? value;
 
   useLayoutEffect(() => {
     const menu = menuRef.current;
     if (!menu || !isOpen || !isPositioned) return;
     const selected =
-      menu.querySelector<HTMLButtonElement>('[aria-selected="true"]') ??
+      menu.querySelector<HTMLButtonElement>('[aria-selected="true"], [aria-checked="true"]') ??
       menu.querySelector('button');
     selected?.focus({ preventScroll: true });
     selected?.scrollIntoView({ block: 'nearest' });
@@ -138,10 +142,10 @@ export default function IOSSettingsRow({
         type="button"
         aria-label={accessibleLabel}
         title={currentLabel}
-        aria-haspopup="listbox"
+        aria-haspopup={hasActions ? 'menu' : 'listbox'}
         aria-expanded={isOpen}
         aria-controls={isOpen ? listId : undefined}
-        disabled={disabled || !options.length}
+        disabled={disabled || (!options.length && !addAction)}
         onClick={() => setOpen(!isOpen)}
         onKeyDown={(event) => {
           if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -190,18 +194,19 @@ export default function IOSSettingsRow({
           >
             <IOSItemsStack className="shadow-lg">
               <div
-                role="listbox"
+                role={hasActions ? 'menu' : 'listbox'}
                 id={listId}
                 aria-label={accessibleLabel ?? label}
                 onKeyDown={navigate}
                 className="max-h-[min(18rem,calc(100dvh-24px))] overflow-y-auto overscroll-contain py-1 [&>button+button]:border-t [&>button+button]:border-[var(--app-border)]"
               >
-                {options.map((opt) => (
-                  <button
+                {options.map((opt) => {
+                  const choice = <button
                     key={opt.id}
                     type="button"
-                    role="option"
-                    aria-selected={value === opt.id}
+                    role={hasActions ? 'menuitemradio' : 'option'}
+                    aria-selected={hasActions ? undefined : value === opt.id}
+                    aria-checked={hasActions ? value === opt.id : undefined}
                     tabIndex={-1}
                     className={cn(
                       uiDropdownItemButton,
@@ -220,8 +225,18 @@ export default function IOSSettingsRow({
                         className="size-[18px] shrink-0 text-[var(--app-accent)]"
                       />
                     )}
-                  </button>
-                ))}
+                  </button>;
+                  if (!hasActions) return choice;
+                  return <div key={opt.id} role="none" className="flex items-center border-b border-[var(--app-border)] last:border-0">
+                    {choice}
+                    {opt.onEdit && <button type="button" role="menuitem" tabIndex={-1}
+                      aria-label={'Редактировать · ' + opt.label} title={'Редактировать · ' + opt.label}
+                      className="inline-flex size-11 shrink-0 items-center justify-center text-[var(--app-text-muted)] hover:bg-[var(--fill-tertiary)]"
+                      onClick={() => { close(); opt.onEdit?.(); }}><Pencil className="size-4" aria-hidden/></button>}
+                  </div>;
+                })}
+                {addAction && <button type="button" role="menuitem" tabIndex={-1} className={cn(uiDropdownItemButton, 'min-h-11 justify-start gap-2')}
+                  onClick={() => { close(); addAction.onClick(); }}><Plus className="size-4" aria-hidden/>{addAction.label}</button>}
               </div>
             </IOSItemsStack>
           </div>,

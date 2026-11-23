@@ -1,5 +1,6 @@
 'use client';
 
+import { GlossarySources } from './GlossarySources';
 import Link from 'next/link';
 import { useState } from 'react';
 import { RefreshButton } from './RequestFeedback';
@@ -104,6 +105,7 @@ export function RunTimeline({ bookId, lang, runId, title }: {
         {(data.tokensIn != null || data.tokensOut != null) && <p className="pt-muted text-sm">Токены · вход {data.tokensIn?.toLocaleString('ru') ?? '—'} · выход {data.tokensOut?.toLocaleString('ru') ?? '—'}</p>}
       </>}
     </Card>
+    {data?.stages.glossary?.status === 'done' && <GlossarySources bookId={bookId} lang={lang} runId={runId}/>}
     {data?.stages.translate?.status === 'done' && <RunResult bookId={bookId} lang={lang} runId={runId} title={title} version={version}/>}
     {data && <Card className="gap-3 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-2"><h2>Журнал запуска</h2>

@@ -142,7 +142,8 @@ export function PrototypeShell({
   const menu = useRef<HTMLDetailsElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const pathname = usePathname();
-  const page = live ? pathname : null;
+  // Sibling tabs share a heading and preserve the reading position.
+  const page = live ? pathname?.replace(/^(\/studio\/projects\/[^/]+)\/(?:runs|glossary)$/, '$1') : null;
   function closePrototypeMenu() {
     if (menu.current) menu.current.open = false;
   }

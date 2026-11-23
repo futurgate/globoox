@@ -1,10 +1,13 @@
-export type RecipeScope = 'account' | 'series' | 'book'
+export type RecipeScope = 'account' | 'series' | 'project' | 'book'
 export type RecipeLocator = { scope: RecipeScope; scopeId?: string; sourceLang: string; targetLang: string; genre?: string }
 export type RecipeValues = Partial<Record<'glossaryModel' | 'translateModel' | 'glossaryPromptId' | 'translatePromptId' | 'wishes' | 'units', string>>
 export type RecipeSource = RecipeScope | 'default' | 'run'
 export type RecipeSettings = RecipeLocator & {
   genre: string
   genreSource?: string
+  projectId?: string | null
+  inheritedGenre?: string
+  genreInherited?: boolean
   values: RecipeValues
   inherited: RecipeValues
   effective: RecipeValues
@@ -21,7 +24,7 @@ export const recipeUnits = [
   { id: 'keep', label: 'Как в оригинале' }, { id: 'metric', label: 'Метрические' }, { id: 'us', label: 'Американские' },
 ]
 export const recipeSourceNames: Record<RecipeSource, string> = {
-  default: 'базовый рецепт', account: 'мой аккаунт', series: 'серия', book: 'книга', run: 'этот запуск',
+  default: 'базовый рецепт', account: 'мой аккаунт', series: 'серия', project: 'проект', book: 'книга', run: 'этот запуск',
 }
 
 export function recipeEndpoint(locator: RecipeLocator) {
@@ -37,7 +40,7 @@ export function omitEmptyValues(values: RecipeValues): RecipeValues {
 
 export type RunStageState = { status: 'running' | 'done' | 'stopped' | 'error'; attempt: number; startedAt: string; finishedAt?: string | null }
 export type StudioRun = {
-  id: string; groupId?: string; seriesId?: string | null; createdAt: string; bookId: string; operation: 'glossary' | 'translate' | 'series' | 'book';
+  id: string; isProjectRun?: boolean; groupId?: string; seriesId?: string | null; createdAt: string; bookId: string; operation: 'glossary' | 'translate' | 'series' | 'book';
   stages: { glossary?: RunStageState; translate?: RunStageState }
 }
 export function runsEndpoint(bookId: string, lang: string) {
@@ -61,5 +64,5 @@ export function runEndpoint(bookId: string, lang: string, runId: string) {
 export function resumableStage(runs: readonly StudioRun[], stage: 'glossary' | 'translate') {
   const latest = runs.find(run => run.operation === stage || run.operation === 'series' || run.operation === 'book')
   const status = latest?.stages?.[stage]?.status
-  return latest?.operation === stage && (status === 'stopped' || status === 'error') ? latest.id : undefined
+  return !latest?.isProjectRun && latest?.operation === stage && (status === 'stopped' || status === 'error') ? latest.id : undefined
 }

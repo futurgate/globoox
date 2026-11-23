@@ -21,8 +21,8 @@ type Glossary = Omit<GlossaryStatus,'updatedAt'|'glossary'> & {
   lastBuild?: { addedNamed?: unknown[]; addedTerms?: unknown[]; chaptersProcessed?: number } | null;
 };
 
-export function BookGlossaryPanel({ bookId, lang, books, models, admin, sourceLang, downloadOriginal, title = 'Глоссарий тома' }: {
-  bookId: string; lang: string; books: readonly { id: string; title: string | null }[]; models: readonly string[]; admin: boolean; title?: string;
+export function BookGlossaryPanel({ bookId, lang, books, models, admin, sourceLang, downloadOriginal, actionsInHeader = true, title = 'Глоссарий тома' }: {
+  bookId: string; lang: string; books: readonly { id: string; title: string | null }[]; models: readonly string[]; admin: boolean; actionsInHeader?: boolean; title?: string;
   sourceLang?: string; downloadOriginal?: StudioMenuAction;
 }) {
   const [showTemplate, setShowTemplate] = useState(false);
@@ -79,7 +79,7 @@ export function BookGlossaryPanel({ bookId, lang, books, models, admin, sourceLa
     </IOSDialog>}
     <Card className="min-w-0 gap-3 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2"><h2>{title}</h2>
-        <StudioEntityMenu label="Действия с глоссарием" inHeader actions={actions}/>
+        <StudioEntityMenu label="Действия с глоссарием" inHeader={actionsInHeader} actions={actions}/>
         <RefreshButton pending={!current || current.refreshing} disabled={action.busy} variant="ghost" onClick={() => setReload(v => v + 1)}>Обновить</RefreshButton></div>
       <ActionFeedback error={current?.error}/>
       {!data && !current?.error && <p role="status">Загрузка глоссария…</p>}

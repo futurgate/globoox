@@ -50,14 +50,14 @@ test('Studio and its child panels use the signed-in reader session and clear ano
     }
     return route.fulfill({ status: 401, json: { error: 'Requires verified session' } });
   });
-  await page.route('**' + workspaceApi + '/activity', route => {
+  await page.route('**/api/studio/workspace-runs', route => {
     activityAuthorization = route.request().headers().authorization;
-    return route.fulfill({ json: { attention: [], translations: [], attentionAvailable: true, attentionComplete: true, translationsAvailable: true } });
+    return route.fulfill({ json: { groups: [], nextCursor: null } });
   });
   await page.goto(origin + '/studio');
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
   const sidebar = page.locator('.pt-sidebar');
-  await sidebar.getByRole('link', { name: 'Очередь' }).click();
+  await sidebar.getByRole('link', { name: 'Все запуски' }).click();
   await expect.poll(() => activityAuthorization).toBe('Bearer reader-first-test-session');
   await sidebar.getByRole('link', { name: 'Мои проекты' }).click();
   await page.evaluate(key => {
@@ -67,7 +67,7 @@ test('Studio and its child panels use the signed-in reader session and clear ano
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toHaveCount(0);
   secondRequest.resolve();
   await expect(page.getByRole('link', { name: /Проект автора/ })).toBeVisible();
-  await expect(sidebar.getByRole('link', { name: 'Очередь' })).toHaveCount(0);
+  await expect(sidebar.getByRole('link', { name: 'Все запуски' })).toHaveCount(0);
   await page.evaluate(key => {
     localStorage.removeItem(key);
     window.dispatchEvent(new StorageEvent('storage', { key, newValue: null }));
@@ -94,14 +94,13 @@ test('an authenticated cookie opens Studio and its queue while the browser auth 
     if (!cookies.includes(cookie)) return route.fulfill({ status: 401, json: { error: 'Sign in' } });
     return route.fulfill({ json: data(firstId, true) });
   });
-  await page.route('**' + workspaceApi + '/activity', async route => {
+  await page.route('**/api/studio/workspace-runs', async route => {
     queueUsedCookie = ((await route.request().headerValue('cookie'))?.split('; ') ?? []).includes(cookie);
-    return route.fulfill({ status: queueUsedCookie ? 200 : 401, json: { attention: [], translations: [], attentionAvailable: true,
-      attentionComplete: true, translationsAvailable: true } });
+    return route.fulfill({ status: queueUsedCookie ? 200 : 401, json: { groups: [], nextCursor: null } });
   });
   await page.goto(origin + '/studio');
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
-  await page.locator('.pt-sidebar').getByRole('link', { name: 'Очередь' }).click();
+  await page.locator('.pt-sidebar').getByRole('link', { name: 'Все запуски' }).click();
   await expect.poll(() => queueUsedCookie).toBe(true);
 });
 
@@ -110,19 +109,18 @@ test('queue opens after a temporary network failure without asking the reader to
   await page.route('**' + workspaceApi, route => route.fulfill({ json: data(firstId, true) }));
   const started = Promise.withResolvers<void>();
   let available = false;
-  await page.route('**' + workspaceApi + '/activity', async route => {
+  await page.route('**/api/studio/workspace-runs', async route => {
     if (!available) {
       await route.abort('connectionreset');
       started.resolve();
       return;
     }
-    return route.fulfill({ json: { attention: [], translations: [], attentionAvailable: true,
-      attentionComplete: true, translationsAvailable: true } });
+    return route.fulfill({ json: { groups: [], nextCursor: null } });
   });
   await page.goto(origin + '/studio/queue');
   await started.promise;
   available = true;
-  await expect(page.getByText(/пока нет зарегистрированных переводов/)).toBeVisible();
+  await expect(page.getByText(/пока нет запусков Studio/)).toBeVisible();
   await expect(page.getByRole('alert').filter({ hasText: /failed to fetch|load failed/i })).toHaveCount(0);
 });
 
@@ -161,10 +159,10 @@ test('password login returns to the Studio deep link with the durable Supabase s
   let admin = true;
   let activityAuthenticated = false;
   await page.route('**/auth/v1/token?grant_type=password', route => route.fulfill({ json: session }));
-  await page.route('**' + workspaceApi + '/activity', async route => {
+  await page.route('**/api/studio/workspace-runs', async route => {
     activityAuthenticated = await hasSessionCookie(route.request(), token);
     expect(route.request().headers().authorization).not.toBe('Bearer older-reader-session');
-    return route.fulfill({ json: { attention: [], translations: [], attentionAvailable: true, attentionComplete: true, translationsAvailable: true } });
+    return route.fulfill({ json: { groups: [], nextCursor: null } });
   });
   await page.route('**/auth/v1/user', route => route.request().headers().authorization === 'Bearer ' + token
     ? route.fulfill({ json: testUser })
@@ -186,7 +184,7 @@ test('password login returns to the Studio deep link with the durable Supabase s
   await expect(page).toHaveURL(origin + '/studio/projects');
   await expect(page.getByRole('link', { name: /Проект редактора/ })).toBeVisible();
   const sidebar = page.locator('.pt-sidebar');
-  await sidebar.getByRole('link', { name: 'Очередь' }).click();
+  await sidebar.getByRole('link', { name: 'Все запуски' }).click();
   await expect.poll(() => activityAuthenticated).toBe(true);
   admin = false;
   await page.evaluate(session => {
@@ -196,7 +194,7 @@ test('password login returns to the Studio deep link with the durable Supabase s
     peer.postMessage({ event: 'TOKEN_REFRESHED', session });
     peer.close();
   }, session);
-  await expect(sidebar.getByRole('link', { name: 'Очередь' })).toHaveCount(0);
+  await expect(sidebar.getByRole('link', { name: 'Все запуски' })).toHaveCount(0);
 });
 
 test('Studio renews an old reader session and keeps its account after a reload', async ({ page }) => {

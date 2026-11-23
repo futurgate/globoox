@@ -7,7 +7,7 @@ import { PendingText, RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
-import type { WorkspaceBook } from '@/lib/translationWorkspaceTypes';
+import type { WorkspaceBook, WorkspaceProject } from '@/lib/translationWorkspaceTypes';
 import type { PlaygroundModels } from '@/lib/api';
 import { RecipeEditor } from './RecipeSettings';
 import type { RecipeSettings } from '@/lib/studioRecipe';
@@ -15,6 +15,7 @@ import { StageTemplateLinks } from './StageTemplateLinks';
 import { StudioEntityMenu, StudioHeaderTools, type StudioMenuAction } from './StudioEntityMenu';
 import { BookEdition, BookRuns, Estimate } from './BookEdition';
 import { BookGlossaryPanel } from './BookGlossary';
+import { BookProjectRun } from './BookProjectRun';
 import { BookFlow } from './BookFlow';
 import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
 import { RecipeRuns } from './RecipeRuns';
@@ -25,15 +26,15 @@ import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 import { bookTranslationPath, processingLabel, projectsPath } from './projectLinks';
 
-const targets: Record<string, string[]> = { RU: ['EN','FR'], EN:['RU'], FR:['EN','RU'] };
-const languages: Record<string,string> = { RU:'Русский', EN:'Английский', FR:'Французский' };
+import { targets, languages } from '@/lib/studioLanguages';
+
 export const bookSections = [
   { id:'', label:'Обзор' }, { id:'glossary', label:'Глоссарий' }, { id:'review', label:'Решения по тексту' },
   { id:'runs', label:'Запуски и расход' }, { id:'editions', label:'Издания' },
 ];
 
 interface Props {
-  ownerId: string; book: WorkspaceBook; books: readonly WorkspaceBook[]; isAdmin: boolean; lang?: string; section?: string;
+  ownerId: string; project?: WorkspaceProject; book: WorkspaceBook; books: readonly WorkspaceBook[]; isAdmin: boolean; lang?: string; section?: string;
 }
 
 type ProgressEstimate = {
@@ -60,7 +61,7 @@ export function AuthorProgress({ bookId, lang }: { bookId: string; lang: string 
   </Card>;
 }
 
-export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, section = '' }: Props) {
+export default function BookWorkspace({ ownerId, project, book, books, isAdmin, lang, section = '' }: Props) {
   const router = useRouter();
   const original = useBookAction();
   const [modelRetry, setModelRetry] = useState(0);
@@ -72,7 +73,8 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
   const target = lang || available[0] || '';
   const validDirection = available.includes(target);
   const editorialSection = section === 'review' || section === 'glossary';
-  const access = useLaunchAccess(!isAdmin && validDirection && (editorialSection || (!section && !book.seriesId)));
+  const projectQueue = project && project.orderRevision !== undefined ? project : undefined;
+  const access = useLaunchAccess(!isAdmin && validDirection && (editorialSection || (!section && (Boolean(projectQueue) || !book.seriesId))));
   const showModels = isAdmin && validDirection && (!section || section === 'glossary');
   const modelList = useBookData<PlaygroundModels>(showModels ? '/api/admin/models' : null, modelRetry);
   const models = modelList?.data?.models ?? [];
@@ -104,8 +106,11 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
         {showModels && modelList?.error && <div className="pt-callout">Не удалось загрузить список моделей. Можно запустить этап с моделью по умолчанию. <Button variant="ghost" onClick={() => setModelRetry(v => v+1)}>Повторить</Button></div>}
         {section === '' && <RecipeEditor key={[ownerId,book.id,target].join('/')} ownerId={ownerId} admin={isAdmin} models={models}
           locator={{ scope: 'book', scopeId: book.id, sourceLang: source, targetLang: target }} onResolved={setRecipe} onReadyToRun={setSettingsReady}/>}
-        {section === '' && !book.seriesId && (access.allowed
-          ? <BookFlow key={book.id + target} bookId={book.id} lang={target} settingsReady={settingsReady} editionsUrl={route(target,'editions')}/>
+        {(section === '' || section === 'glossary') && projectQueue && (access.allowed
+          ? <BookProjectRun key={[book.id,target,section].join('/')} book={book} books={books} project={projectQueue} lang={target} ready={section === 'glossary' || settingsReady} glossaryOnly={section === 'glossary'}/>
+          : !section && <LaunchAccessNotice access={access}/>)}
+        {section === '' && !book.seriesId && (!projectQueue || access.allowed) && (access.allowed
+          ? <BookFlow key={book.id + target} bookId={book.id} lang={target} legacyOnly={!!projectQueue} settingsReady={settingsReady} editionsUrl={route(target,'editions')}/>
           : <LaunchAccessNotice access={access}/>)}
         {section === '' && (isAdmin ? <>
           <Estimate bookId={book.id} lang={target} model={estimateModel}/>
@@ -116,7 +121,7 @@ export default function BookWorkspace({ ownerId, book, books, isAdmin, lang, sec
           </section>
         </> : <>
           <AuthorProgress key={recipe?.revision ?? 0} bookId={book.id} lang={target}/>
-          {book.seriesId && <Button variant="outline" asChild><Link href={projectsPath + '/series/' + encodeURIComponent(book.seriesId)}>Открыть перевод серии</Link></Button>}
+          {book.seriesId && !projectQueue && <Button variant="outline" asChild><Link href={projectsPath + '/series/' + encodeURIComponent(book.seriesId)}>Открыть перевод серии</Link></Button>}
         </>)}
         {editorialSection && !access.allowed && <LaunchAccessNotice access={access} editorial/>}
         {glossaryPage && <BookGlossaryPanel key={book.id + '/' + target} bookId={book.id} lang={target} sourceLang={source}
