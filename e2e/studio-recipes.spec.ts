@@ -1,3 +1,4 @@
+import { defaultCatalog } from '../src/lib/studioLanguages';
 import { test, expect, type Page } from '@playwright/test';
 import type { RecipeSettings, RecipeValues } from '../src/lib/studioRecipe';
 
@@ -23,6 +24,7 @@ async function mockStudio(page: Page) {
     const request = route.request();
     const { pathname, searchParams } = new URL(request.url());
     const reply = (json: unknown) => route.fulfill({ json });
+    if (request.method() === 'GET' && pathname === '/api/studio/languages') return reply(defaultCatalog);
     if (pathname === '/api/translation-workspace') {
       return reply({
         role: 'admin', userId: owner, series: [],
@@ -79,7 +81,7 @@ test('one book can override its glossary model and revert to its recipe without 
   const save = page.getByRole('button', { name: 'Сохранить параметры' });
   await openBook(0);
   await expect(glossary).toContainText('По рецепту · ' + flash);
-  await expect(translation).toContainText('По рецепту · ' + hydrogen);
+  await expect(translation).toContainText('Из аккаунта · ' + hydrogen);
   await glossary.click();
   await page.getByRole('option', { name: alternate, exact: true }).click();
   await save.click();
@@ -91,7 +93,7 @@ test('one book can override its glossary model and revert to its recipe without 
 
   await openBook(1);
   await expect(glossary).toContainText('По рецепту · ' + flash);
-  await expect(translation).toContainText('По рецепту · ' + hydrogen);
+  await expect(translation).toContainText('Из аккаунта · ' + hydrogen);
   await openBook(0);
   await expect(glossary).toContainText(alternate);
   await glossary.click();

@@ -1,3 +1,4 @@
+import { defaultCatalog } from '../src/lib/studioLanguages';
 import { expect, test } from '@playwright/test';
 
 test('project glossary previews only, defaults manual edits off and retries the same explicit run', async ({ page }) => {
@@ -20,7 +21,7 @@ test('project glossary previews only, defaults manual edits off and retries the 
     if (path.endsWith('/project-glossary')) return route.fulfill({json:new URL(req.url()).searchParams.has('source') ?
       {bookId:book,updatedAt:version} : {revision:'project-revision',archived:false,glossary:docs,
         books:[{bookId:book,title:'Второй том',coverage:'included',runId:null}]}});
-    if (path.endsWith('/languages')) return route.fulfill({json:{languages:[]}});
+    if (req.method() === 'GET' && path.endsWith('/languages')) return route.fulfill({json:defaultCatalog});
     if (path.endsWith('/glossary-usages')) return route.fulfill({json:{total:2,nextOffset:null,updatedAt:version,previousTarget:'Court',items:cases}});
     if (path.endsWith('/glossary-retranslate') && req.method() === 'GET') return route.fulfill({json:{runs:[]}});
     if (path.endsWith('/glossary-retranslate') && req.method() === 'POST') {

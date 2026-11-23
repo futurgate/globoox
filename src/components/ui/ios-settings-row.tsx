@@ -200,8 +200,9 @@ export default function IOSSettingsRow({
                 id={listId}
                 aria-label={accessibleLabel ?? label}
                 onKeyDown={navigate}
-                className="max-h-[min(18rem,calc(100dvh-24px))] overflow-y-auto overscroll-contain py-1 [&>button+button]:border-t [&>button+button]:border-[var(--app-border)]"
+                className="flex max-h-[min(22rem,calc(100dvh-24px))] flex-col"
               >
+                <div className="min-h-0 overflow-y-auto overscroll-contain py-1 [&>button+button]:border-t [&>button+button]:border-[var(--app-border)]">
                 {options.map((opt) => {
                   const choice = <button
                     key={opt.id}
@@ -238,7 +239,8 @@ export default function IOSSettingsRow({
                       onClick={() => { close(); opt.onEdit?.(); }}><Pencil className="size-4" aria-hidden/></button>}
                   </div>;
                 })}
-                {addAction && <button type="button" role="menuitem" tabIndex={-1} className={cn(uiDropdownItemButton, 'min-h-11 justify-start gap-2')}
+                </div>
+                {addAction && <button type="button" role="menuitem" tabIndex={-1} className={cn(uiDropdownItemButton, 'min-h-11 shrink-0 justify-start gap-2 border-t border-[var(--app-border)]')}
                   onClick={() => { close(); addAction.onClick(); }}><Plus className="size-4" aria-hidden/>{addAction.label}</button>}
               </div>
             </IOSItemsStack>

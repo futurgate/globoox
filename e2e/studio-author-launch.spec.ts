@@ -1,3 +1,4 @@
+import { defaultCatalog } from '../src/lib/studioLanguages';
 import { expect, test, type Page } from '@playwright/test';
 import type { WorkspaceData } from '../src/lib/translationWorkspaceTypes';
 
@@ -26,6 +27,7 @@ async function mockAccess(page: Page, allowed: boolean) {
     const reply = (json: unknown) => route.fulfill({ json });
     const status = { bookId: book, runId: run, lang: 'EN', stage: 'glossary', status: 'queued' };
     if (request.method() === 'GET') {
+      if (path === '/api/studio/languages') return reply(defaultCatalog);
       if (path === '/api/translation-workspace') return reply(workspace);
       if (path === '/api/studio/translation-access') return reply({ canStartTranslation: allowed });
       if (path === '/api/studio/recipe-settings') return reply({

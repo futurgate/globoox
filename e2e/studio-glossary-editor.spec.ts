@@ -1,3 +1,4 @@
+import { defaultCatalog } from '../src/lib/studioLanguages';
 import { expect, test, type Page } from '@playwright/test';
 
 const bookId = '10000000-0000-4000-8000-000000000001';
@@ -13,6 +14,7 @@ async function fixture(page: Page, invited = true) {
   await page.route('**/api/**', async route => {
     const req = route.request();
     const url = new URL(req.url()).pathname;
+    if (req.method() === 'GET' && url === '/api/studio/languages') return route.fulfill({json: defaultCatalog});
     if (url === '/api/translation-workspace') return route.fulfill({ json: {userId:'owner',role:'author',series:[],books:[
       {id:bookId,title:'Собственная книга',sourceLanguage:'RU',processingStatus:'ready'},
     ]} });

@@ -1,3 +1,4 @@
+import { defaultCatalog } from '../src/lib/studioLanguages';
 import { expect, test } from '@playwright/test';
 
 const origin = process.env.E2E_BASE_URL ?? 'http://localhost:3000';
@@ -10,6 +11,7 @@ test('administrator grants and revokes translation access for an existing accoun
   await page.route('**/api/**', async route => {
     const request = route.request();
     const url = new URL(request.url());
+    if (request.method() === 'GET' && url.pathname === '/api/studio/languages') return route.fulfill({json: defaultCatalog});
     if (url.pathname === '/api/translation-workspace')
       return route.fulfill({ json: { userId:owner, role:'admin', books:[], projects:[], series:[] } });
     if (url.pathname === '/api/studio/translation-access') return route.fulfill({ json:{canStartTranslation:true} });

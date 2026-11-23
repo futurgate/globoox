@@ -17,7 +17,7 @@ function BookRecipe({ book, lang }: { book: WorkspaceBook; lang: string }) {
   const sourceLang = (book.sourceLanguage || 'RU').toUpperCase();
   const info = useBookData<RecipeSettings>(expanded ? recipeEndpoint({scope:'book',scopeId:book.id,sourceLang,targetLang:lang}) : null);
   return <details className="mt-1 text-sm pt-muted" onToggle={event => setExpanded(event.currentTarget.open)}>
-    <summary>Параметры книги</summary>
+    <summary>Параметры книги<span className="sr-only"> «{book.title}»</span></summary>
     {expanded && (info?.data ? <p>{[
       recipeGenres.find(g => g.id === info.data?.genre)?.label ?? info.data.genre,
       info.data.effective.glossaryModel && 'Глоссарий · ' + info.data.effective.glossaryModel,
@@ -62,43 +62,51 @@ export function ProjectLaunchDialog({ projectId, books, progress, lang, operatio
     onAccepted(result.groupId);
   }
   return <IOSDialog open onOpenChange={open => { if (!open && !action.busy) onClose(); }} labelledBy={title}
-    closeOnOverlay={!action.busy} className="flex max-h-[85dvh] flex-col gap-4 overflow-y-auto p-5 sm:max-w-xl sm:pb-5">
-    <h2 id={title} className="text-xl font-semibold">{glossaryOnly ? 'Собрать глоссарий' : bookId ? 'Перевести книгу' : 'Перевести проект'}</h2>
-    <p>Язык перевода · {languageName(lang)}</p>
-    <fieldset className="min-w-0" disabled={action.busy}><legend className="mb-2 font-medium">
-      {bookId ? 'Книги в запуске' : glossaryOnly ? 'Для каких книг подготовить глоссарий?' : 'Какие книги перевести?'}
-    </legend>
-      {ordered.map((book,index) => {
-        const included = scope.includes(book);
-        if (bookId && !included) return null;
-        const selectedBook = selected.has(book.id);
-        return <div className="border-t py-2" key={book.id}>
-          <label className="flex items-start gap-3">
-            {!bookId && <input type="checkbox" className="mt-1 shrink-0" checked={selectedBook} onChange={e => {
-              const next = new Set(selected);
-              if (e.target.checked) next.add(book.id); else next.delete(book.id);
-              setSelected(next);
-            }}/>}
-            <span><strong>{index + 1}. {book.title}</strong>
-              {included && <small className="block pt-muted">{!selectedBook ? 'Только глоссарий для следующих книг' :
-                glossaryOnly ? 'Подготовка глоссария' : 'Глоссарий и перевод'}</small>}
-            </span>
-          </label>
-          {included && <BookRecipe book={book} lang={lang}/>}
-        </div>;
-      })}
-    </fieldset>
-    <p className="pt-muted text-sm">Глоссарий собирается в указанном порядке. Обработка по сохранённым параметрам книг расходует токены.</p>
-    {scope.some(book => byBook.get(book.id)?.glossary.orderChanged) &&
-      <p role="status" className="pt-callout">Порядок книг изменился после сборки словаря. Сервер проверит глоссарии затронутых книг с учётом их нового порядка.</p>}
-    {scope.some(book => byBook.get(book.id)?.glossary.status === 'done') &&
-      <p className="pt-muted text-sm">Для прежнего глоссария без сведений об исходном порядке может потребоваться повторная обработка глав.</p>}
-    {block && <p role="status" className="pt-callout">{block}</p>}
-    {active && activeRunId && <Button asChild variant="outline"><Link href={bookRunPath(active.id,lang,activeRunId)}>Открыть текущий запуск</Link></Button>}
-    <ActionFeedback pending={action.pending} error={action.error}/>
-    <div className="flex flex-wrap justify-end gap-2">
-      <Button variant="outline" disabled={action.busy} onClick={onClose}>Отмена</Button>
-      <Button disabled={!!block || action.busy} onClick={() => void action.run(confirm,'Отправляем запуск проекта…')}>Подтвердить запуск</Button>
+    closeOnOverlay={!action.busy} className="flex max-h-[85dvh] flex-col overflow-hidden sm:max-w-xl">
+    <div className="grid shrink-0 gap-2 px-5 pt-5">
+      <h2 id={title} className="text-xl font-semibold">{glossaryOnly ? 'Собрать глоссарий' : bookId ? 'Перевести книгу' : 'Перевести проект'}</h2>
+      <p>Язык перевода · {languageName(lang)}</p>
+    </div>
+    <div className="grid min-h-0 gap-3 overflow-y-auto px-5 py-4">
+      <fieldset className="min-w-0" disabled={action.busy}><legend className="mb-2 font-medium">
+        {bookId ? 'Книги в запуске' : glossaryOnly ? 'Для каких книг подготовить глоссарий?' : 'Какие книги перевести?'}
+      </legend>
+        {ordered.map((book,index) => {
+          const included = scope.includes(book);
+          if (bookId && !included) return null;
+          const selectedBook = selected.has(book.id);
+          return <div className="border-t py-2" key={book.id}>
+            <label className="flex items-start gap-3">
+              {!bookId && <input type="checkbox" className="mt-1 shrink-0" checked={selectedBook} onChange={e => {
+                const next = new Set(selected);
+                if (e.target.checked) next.add(book.id); else next.delete(book.id);
+                setSelected(next);
+              }}/>}
+              <span><strong>{index + 1}. {book.title}</strong>
+                {included && <small className="block pt-muted">{!selectedBook ? 'Только глоссарий для следующих книг' :
+                  glossaryOnly ? 'Подготовка глоссария' : 'Глоссарий и перевод'}</small>}
+              </span>
+            </label>
+            {included && <BookRecipe book={book} lang={lang}/>}
+          </div>;
+        })}
+      </fieldset>
+      {scope.some(book => byBook.get(book.id)?.glossary.orderChanged) &&
+        <p role="status" className="pt-callout">Порядок книг изменился. При обновлении глоссария может потребоваться повторная обработка глав.</p>}
+      {block && <p role="status" className="pt-callout">{block}</p>}
+      {active && activeRunId && <Button asChild variant="outline"><Link href={bookRunPath(active.id,lang,activeRunId)}>Открыть текущий запуск</Link></Button>}
+    </div>
+    <div className="grid shrink-0 gap-2 border-t border-[var(--app-border)] px-5 py-4">
+      <p aria-live="polite" className="text-sm font-medium">
+        {glossaryOnly ? 'Книг для глоссария: ' + scope.length : 'Книг для перевода: ' + selected.size}
+        {!glossaryOnly && scope.length > selected.size && <> · <span className="inline-block">Только глоссарий: {scope.length - selected.size}</span></>}
+      </p>
+      <p className="pt-muted text-sm">Обработка книг расходует токены.</p>
+      <ActionFeedback pending={action.pending} error={action.error}/>
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button variant="outline" disabled={action.busy} onClick={onClose}>Отмена</Button>
+        <Button disabled={!!block || action.busy} onClick={() => void action.run(confirm,'Отправляем запуск проекта…')}>Подтвердить запуск</Button>
+      </div>
     </div>
   </IOSDialog>;
 }
