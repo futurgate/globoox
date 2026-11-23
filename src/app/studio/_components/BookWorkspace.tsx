@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { PendingText, RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import IOSSettingsRow from '@/components/ui/ios-settings-row';
+import { StudioLanguagePicker, useStudioLanguageName } from './StudioLanguages';
 import type { WorkspaceBook, WorkspaceProject } from '@/lib/translationWorkspaceTypes';
 import type { PlaygroundModels } from '@/lib/api';
 import { RecipeEditor } from './RecipeSettings';
@@ -26,7 +26,7 @@ import { ActionFeedback, BookExecution, StageCard } from './BookStage';
 import { bookEndpoint, downloadBookFile, useBookAction, useBookData } from './bookRequests';
 import { bookTranslationPath, processingLabel, projectsPath } from './projectLinks';
 
-import { targets, languages } from '@/lib/studioLanguages';
+import { targets } from '@/lib/studioLanguages';
 
 export const bookSections = [
   { id:'', label:'Обзор' }, { id:'glossary', label:'Глоссарий' }, { id:'review', label:'Решения по тексту' },
@@ -34,7 +34,7 @@ export const bookSections = [
 ];
 
 interface Props {
-  ownerId: string; project?: WorkspaceProject; book: WorkspaceBook; books: readonly WorkspaceBook[]; isAdmin: boolean; lang?: string; section?: string;
+  ownerId: string; project?: WorkspaceProject; book: WorkspaceBook; books: readonly WorkspaceBook[]; isAdmin: boolean; canManageLanguages?: boolean; lang?: string; section?: string;
 }
 
 type ProgressEstimate = {
@@ -44,12 +44,13 @@ type ProgressEstimate = {
 
 export function AuthorProgress({ bookId, lang }: { bookId: string; lang: string }) {
   const [version, setVersion] = useState(0);
+  const languageName = useStudioLanguageName();
   const url = bookEndpoint(bookId, 'translation-estimate', lang) + '&studioTargetLang=' + encodeURIComponent(lang);
   const state = useBookData<ProgressEstimate>(url, version);
   const info = state?.data?.byLanguage.find(l => l.lang === lang);
   const confirmed = state?.data?.studioTargetLang === lang;
   return <Card className="p-5 gap-3">
-    <div className="flex flex-wrap justify-between gap-2"><h3>Перевод на {languages[lang]?.toLowerCase() || lang}</h3><RefreshButton pending={!state || state.refreshing} onClick={() => setVersion(v => v+1)}/></div>
+    <div className="flex flex-wrap justify-between gap-2"><h3>Перевод на {languageName(lang)}</h3><RefreshButton pending={!state || state.refreshing} onClick={() => setVersion(v => v+1)}/></div>
     <ActionFeedback error={state?.error}/>
     {!state && <p role="status">Загрузка состояния книги…</p>}
     {info && <><p>Переведено блоков: {info.blocksTranslated} из {info.blocksTranslated + info.blocksRemaining}.</p>
@@ -61,8 +62,9 @@ export function AuthorProgress({ bookId, lang }: { bookId: string; lang: string 
   </Card>;
 }
 
-export default function BookWorkspace({ ownerId, project, book, books, isAdmin, lang, section = '' }: Props) {
+export default function BookWorkspace({ ownerId, project, book, books, isAdmin, canManageLanguages = isAdmin, lang, section = '' }: Props) {
   const router = useRouter();
+  const languageName = useStudioLanguageName();
   const original = useBookAction();
   const [modelRetry, setModelRetry] = useState(0);
   const [recipe, setRecipe] = useState<RecipeSettings | null>(null);
@@ -89,13 +91,13 @@ export default function BookWorkspace({ ownerId, project, book, books, isAdmin, 
 
   return <BookExecution><div className="pt-stack">
     {ready && available.length > 0 && <StudioHeaderTools>
-      <IOSSettingsRow label="Перевод на" value={target} aria-label={`Язык перевода: ${languages[source] || source} → ${languages[target] || target}`}
+      <StudioLanguagePicker label="Язык перевода" ownerId={ownerId} value={target} supported={available} canManage={canManageLanguages} preferVisibleDefault={!lang}
         compactLabels={{ label: source + ' →', value: target }} className="rounded-lg text-[var(--app-text)]"
         onChange={next => { if (next !== target) withStudioDraftGuard(() => router.push(route(next, section))); }}
-        options={available.map(id => ({ id, label: languages[id] || id }))}/>
+        />
     </StudioHeaderTools>}
     {!glossaryPage && <StudioEntityMenu inHeader label="Действия с книгой" actions={[downloadOriginal]}/>}
-    {(!section || !ready) && <p className="pt-muted text-sm">{[book.author, `Оригинал: ${languages[source] || source}`, status].filter(Boolean).join(' · ')}</p>}
+    {(!section || !ready) && <p className="pt-muted text-sm">{[book.author, `Оригинал: ${languageName(source)}`, status].filter(Boolean).join(' · ')}</p>}
     <ActionFeedback pending={original.pending} error={original.error} notice={original.notice}/>
     {!ready && <Card className="p-5 gap-2"><h3>{status}</h3><p className="pt-muted">Перевод доступен после успешной обработки исходного файла.</p><Button asChild variant="outline"><Link href={projectsPath + '/projects'}>К проектам</Link></Button></Card>}
     {ready && <>

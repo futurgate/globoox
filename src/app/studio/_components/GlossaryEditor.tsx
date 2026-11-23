@@ -10,19 +10,24 @@ import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
 import { emptyGlossary, inspectGlossary, type GlossaryDocument, type GlossaryRow } from '@/lib/studioGlossaryDraft';
 import { GlossaryTable } from './GlossaryTable';
 import { StudioJsonDiagnostic } from './StudioJsonDiagnostic';
-import { GlossaryTermUsage } from './GlossaryTermUsage';
+import { ProjectTermUsage, GlossaryTermUsage } from './GlossaryTermUsage';
 import { StudioDraftActions } from './StudioDraftActions';
 import { ActionFeedback } from './BookStage';
 import { useBookAction } from './bookRequests';
 
 type Draft = { raw: string; base: string; expectedAt: string | null; lastGood?: GlossaryDocument };
 type Props = {
-  bookId: string; lang: string; glossary: unknown; updatedAt: string | null; frozen: boolean; locked: boolean;
+  bookId?: string; projectId?: string; lockedMessage?: string; lang: string; glossary: unknown; updatedAt: string | null; frozen: boolean; locked: boolean;
   onSave: (doc: GlossaryDocument, expectedAt: string | null, signal: AbortSignal) => Promise<void>;
-  onDirtyChange: (dirty: boolean) => void;
+  onDirtyChange?: (dirty: boolean) => void;
 };
 
-export function GlossaryEditor({ bookId, lang, glossary, updatedAt, frozen, locked, onSave, onDirtyChange }: Props) {
+function usageEntry(row: GlossaryRow) {
+  return { kind: row.list === 'named_entities' ? 'named_entity' as const : 'terminology' as const,
+    source: row.source, target: row.target, forms: row.forms };
+}
+
+export function GlossaryEditor({ bookId, projectId, lockedMessage, lang, glossary, updatedAt, frozen, locked, onSave, onDirtyChange }: Props) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [modal, setModal] = useState(false);
   const [discardModal, setDiscardModal] = useState(false);
@@ -38,7 +43,7 @@ export function GlossaryEditor({ bookId, lang, glossary, updatedAt, frozen, lock
   const dirty = Boolean(draft && raw !== draft.base);
   const stale = Boolean(draft && draft.expectedAt !== updatedAt);
   const cannotEdit = locked || action.busy;
-  useEffect(() => { onDirtyChange(dirty); }, [dirty, onDirtyChange]);
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
 
   function update(rawText: string) {
     setShowSaveFeedback(false);
@@ -87,7 +92,7 @@ export function GlossaryEditor({ bookId, lang, glossary, updatedAt, frozen, lock
       {!modal && <Button variant="ghost" size="sm" onClick={() => { setOnOpening(draft); setModal(true); }}><Expand aria-hidden="true"/>Развернуть</Button>}
     </div>
     {frozen && <p className="pt-muted text-sm">Глоссарий зафиксирован. Сохранение правки создаст рабочую версию.</p>}
-    {locked && <p role="status">Глоссарий формируется. Редактирование станет доступно после завершения.</p>}
+    {locked && <p role="status">{lockedMessage || 'Глоссарий формируется. Редактирование станет доступно после завершения.'}</p>}
     {stale && <p className="pt-callout" role="alert">Есть более новая сохранённая версия. Скопируйте нужные правки, затем нажмите «Сбросить изменения», чтобы открыть её.</p>}
     {feedback}
     {tab === 'json' ? <CopyableTextarea id={id + '-json'} label="JSON глоссария" value={raw} onChange={e => update(e.target.value)} spellCheck={false}
@@ -108,8 +113,8 @@ export function GlossaryEditor({ bookId, lang, glossary, updatedAt, frozen, lock
       description="Изменения, сделанные в этом диалоге, будут сброшены." destructive showCancel
       cancelLabel="Продолжить редактирование" confirmLabel="Выйти без сохранения" actionsLayout="vertical"
       onConfirm={() => { setDraft(onOpening); setDiscardModal(false); setModal(false); }}/>
-    {usage && updatedAt && <GlossaryTermUsage bookId={bookId} lang={lang} updatedAt={updatedAt} entry={{
-      kind: usage.list === 'named_entities' ? 'named_entity' : 'terminology', source: usage.source, target: usage.target, forms: usage.forms,
-    }} onClose={() => setUsage(null)}/>}
+    {usage && updatedAt && (projectId ?
+      <ProjectTermUsage projectId={projectId} revision={updatedAt} lang={lang} entry={usageEntry(usage)} onClose={() => setUsage(null)}/> :
+      bookId && <GlossaryTermUsage bookId={bookId} updatedAt={updatedAt} lang={lang} entry={usageEntry(usage)} onClose={() => setUsage(null)}/>)}
   </>;
 }

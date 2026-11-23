@@ -81,7 +81,7 @@ function GroupActions({ group, projectId, archived, refresh }: {
   </div>;
 }
 
-export function ProjectRunHistory({ projectId, archived = false, admin = false }: { projectId?: string; archived?: boolean; admin?: boolean }) {
+export function ProjectRunHistory({ projectId, lang, archived = false, admin = false }: { projectId?: string; lang?: string; archived?: boolean; admin?: boolean }) {
   const [pages, setPages] = useState<string[]>(['']);
   const [version, setVersion] = useState(0);
   const [expanded, setExpanded] = useState('');
@@ -90,6 +90,7 @@ export function ProjectRunHistory({ projectId, archived = false, admin = false }
   const cursor = pages[pages.length - 1];
   const params = new URLSearchParams();
   if (projectId) params.set('projectId',projectId);
+  if (projectId && lang && !target) params.set('lang', lang);
   if (target) params.set('groupId',target);
   else if (cursor) params.set('cursor',cursor);
   const endpoint = projectId ? '/api/studio/project-runs' : '/api/studio/workspace-runs';
@@ -106,7 +107,7 @@ export function ProjectRunHistory({ projectId, archived = false, admin = false }
     {target && <Link className="w-fit underline" href={back} scroll={false}>Все запуски проекта</Link>}
     {response?.error && <p role="alert">{response.error}</p>}
     {!response && <p role="status">Загружаем запуски…</p>}
-    {page && !groups?.length && <p className="pt-muted">{target ? 'Запуск не найден в этом проекте.' : projectId ? 'В этом проекте пока нет учтённых запусков Studio.' : 'У вас пока нет запусков Studio.'}</p>}
+    {page && !groups?.length && <p className="pt-muted">{target ? 'Запуск не найден в этом проекте.' : projectId ? (lang ? 'На выбранном языке в проекте пока нет запусков.' : 'В этом проекте пока нет учтённых запусков Studio.') : 'У вас пока нет запусков Studio.'}</p>}
     {!!groups?.length && <div className="min-w-0 overflow-x-auto"><table className="w-full text-left text-sm [&_th]:px-2 [&_th]:py-2 [&_td]:px-2 [&_td]:py-3">
       <caption className="sr-only">{projectId ? 'История запусков проекта' : 'История моих запусков по всем проектам'}</caption>
       <thead><tr>{['Запуск', 'Состояние', 'Расход, USD'].map(c => <th scope="col" key={c}>{c}</th>)}</tr></thead>

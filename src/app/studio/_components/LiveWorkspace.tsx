@@ -14,16 +14,15 @@ import type { WorkspaceData } from '@/lib/translationWorkspaceTypes';
 import { PrototypeShell, type NavItem } from '@/app/prototype/_components/PrototypeShell';
 import ProjectLibrary from './ProjectLibrary';
 import { StudioHeaderActions } from './StudioEntityMenu';
-import { ProjectGlossary } from './ProjectGlossary';
 import BookWorkspace, { bookSections } from './BookWorkspace';
 import { bookTranslationPath, projectPath, seriesPath } from './projectLinks';
 import ProjectWorkspace from './ProjectWorkspace';
-import { ProjectRunHistory } from './ProjectRunHistory';
 import { RunTimeline } from './RunTimeline';
 import WorkspaceActivity from './WorkspaceActivity';
 import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
 import { WorkspaceRuns } from './WorkspaceRuns';
 import WorkspaceSettings from './WorkspaceSettings';
+import { StudioLanguageProvider } from './StudioLanguages';
 
 const projects = { label: 'Мои проекты', href: base + '/projects' };
 const sectionNames: Record<string, string> = {
@@ -41,6 +40,7 @@ function WorkspaceLogin({ reauth = false }: { reauth?: boolean }) {
 
 export default function LiveWorkspace() {
   const [headerActions, setHeaderActions] = useState<HTMLDivElement | null>(null);
+  const projectLanguage = useSearchParams().get('lang');
   const parts = useParams<{ path?: string[] }>().path ?? [];
   const [data, setData] = useState<WorkspaceData | null>(null);
   const [guest, setGuest] = useState(false);
@@ -167,7 +167,7 @@ export default function LiveWorkspace() {
     { id: 'projects', label: sectionNames.projects, icon: Layers3 },
     { id: 'decisions', label: sectionNames.decisions, icon: Bell },
     ...(currentAccess.allowed ? [{ id: 'queue', label: sectionNames.queue, icon: ListOrdered }] : []),
-    ...(admin ? [{ id: 'settings', label: sectionNames.settings, icon: Settings2 }] : []),
+    ...((admin || currentAccess.allowed) ? [{ id: 'settings', label: admin ? sectionNames.settings : 'Мои языки', icon: Settings2 }] : []),
   ];
   let title = 'Страница недоступна';
   let active = 'projects';
@@ -184,12 +184,9 @@ export default function LiveWorkspace() {
     if (project) {
       const upload = sub === 'upload';
       title = upload ? 'Добавить книгу' : project.name;
-      if (upload) parent = { label: project.name, href: projectPath(id) };
+      if (upload) parent = { label: project.name, href: projectPath(id) + (projectLanguage ? '?' + new URLSearchParams({lang:projectLanguage}) : '') };
       panel = upload ? <ProjectLibrary key={id} data={data} view="new" projectId={id} refresh={refresh}/> :
-        <ProjectWorkspace key={id} data={data} project={project} refresh={refresh} section={sub === 'glossary' || sub === 'runs' ? sub : ''}>
-          {sub === 'glossary' && <ProjectGlossary projectId={id} books={data.books} admin={admin}/>}
-          {sub === 'runs' && <ProjectRunHistory projectId={id} archived={project.archived} admin={admin}/>}
-        </ProjectWorkspace>;
+        <ProjectWorkspace key={id} data={data} project={project} refresh={refresh} section={sub}/>;
     }
   } else if (first === 'series' && id && parts.length === 2) {
     const series = data.series.find(item => item.id === id);
@@ -215,9 +212,9 @@ export default function LiveWorkspace() {
         if (bookSection) {
           parent = { label: title, href: bookTranslationPath(id, lang) };
           title = bookSection.label;
-        } else if (project) parent = { label: project.name, href: projectPath(project.id) };
+        } else if (project) parent = { label: project.name, href: projectPath(project.id) + (lang ? '?' + new URLSearchParams({lang:lang.toUpperCase()}) : '') };
         else if (book.seriesId) parent = { label: series?.name || 'Серия', href: seriesPath(book.seriesId) };
-        panel = <BookWorkspace key={[data.userId, id, lang].join('/')} ownerId={data.userId} project={project} book={book} books={data.books} isAdmin={admin} lang={lang?.toUpperCase()} section={tab} />;
+        panel = <BookWorkspace key={[data.userId, id, lang].join('/')} ownerId={data.userId} project={project} book={book} books={data.books} isAdmin={admin} canManageLanguages={admin || currentAccess.allowed} lang={lang?.toUpperCase()} section={tab} />;
       }
     }
   } else if ((first === 'decisions' || first === 'queue') && parts.length === 1) {
@@ -226,17 +223,18 @@ export default function LiveWorkspace() {
     parent = undefined;
     panel = first === 'queue' ? (currentAccess.allowed ? <WorkspaceRuns key={data.userId} workspace={data}/> :
       <LaunchAccessNotice access={currentAccess}/>) : <WorkspaceActivity key={data.userId + first} view="decisions" workspace={data} />;
-  } else if (admin && first === 'settings' && (parts.length === 1 || (id === 'templates' && parts.length === 3))) {
-    title = sub ? 'Шаблон этапа' : sectionNames.settings;
+  } else if (first === 'settings' && ((parts.length === 1 && (admin || currentAccess.allowed)) || (admin && id === 'templates' && parts.length === 3))) {
+    title = sub ? 'Шаблон этапа' : admin ? sectionNames.settings : 'Мои языки';
     active = first;
     parent = sub ? { label: sectionNames.settings, href: base + '/settings' } : undefined;
-    panel = <WorkspaceSettings key={data.userId} ownerId={data.userId} name={sub} />;
+    panel = <WorkspaceSettings admin={admin} key={data.userId} ownerId={data.userId} name={sub} />;
   }
 
-  return <StudioHeaderActions.Provider value={headerActions}><PrototypeShell live role={data.role} items={items} active={active} title={title}
+  return <StudioLanguageProvider key={data.userId} ownerId={data.userId} enabled={admin || currentAccess.allowed}>
+    <StudioHeaderActions.Provider value={headerActions}><PrototypeShell live role={data.role} items={items} active={active} title={title}
     detail={parent ? { parent, action: <div id="studio-page-actions" className="flex min-w-0 items-center gap-1" ref={setHeaderActions}/> } : undefined} itemHref={page => base + '/' + page}>
     {error && <div role="alert" className="mb-4 flex items-center gap-3">{error}
       <Button variant="outline" onClick={() => void refresh()}>Попробовать снова</Button></div>}
     {panel}
-  </PrototypeShell></StudioHeaderActions.Provider>;
+  </PrototypeShell></StudioHeaderActions.Provider></StudioLanguageProvider>;
 }

@@ -58,3 +58,13 @@ it('lists all owned commands and links an archived project to the original group
   expect(html).toContain('Архивная книга');
   expect(html).not.toContain('Продолжить запуск');
 });
+
+it('requests a complete language-scoped project page and preserves direct links to earlier runs', () => {
+  api.params.delete('group');
+  const view = () => renderToStaticMarkup(React.createElement(ProjectRunHistory, { projectId:'project',lang:'FR',admin:true }));
+  view();
+  expect(api.read).toHaveBeenLastCalledWith('/api/studio/project-runs?projectId=project&lang=FR');
+  api.params.set('group','group');
+  view();
+  expect(api.read).toHaveBeenLastCalledWith('/api/studio/project-runs?projectId=project&groupId=group');
+});

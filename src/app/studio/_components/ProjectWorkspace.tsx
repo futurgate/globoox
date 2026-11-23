@@ -2,11 +2,11 @@
 
 import { studioFetch } from '@/lib/studioFetch';
 
-import { useEffect, useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, ListOrdered, Play, Upload } from 'lucide-react';
-import { StudioEntityMenu, StudioHeaderTools } from './StudioEntityMenu';
+import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, ListOrdered, Play, SlidersHorizontal, Upload, X } from 'lucide-react';
+import { StudioEntityMenu } from './StudioEntityMenu';
 import { PendingText, RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import type { WorkspaceBook, WorkspaceData, WorkspaceProject } from '@/lib/translationWorkspaceTypes';
 import { useBookAction, useBookData } from './bookRequests';
-import { languages, targets } from '@/lib/studioLanguages';
+import { languages, targets, validLanguageCode } from '@/lib/studioLanguages';
 import IOSDialog from '@/components/ui/ios-dialog';
 import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
 import { ActionFeedback } from './BookStage';
@@ -22,7 +22,9 @@ import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
 import { ProjectLaunchDialog } from './ProjectLaunchDialog';
 import { RecipeEditor } from './RecipeSettings';
 import { ProjectOrderEditor } from './ProjectOrderEditor';
-import { ProjectTabs } from './ProjectRunHistory';
+import { ProjectTabs, ProjectRunHistory } from './ProjectRunHistory';
+import { ProjectGlossary } from './ProjectGlossary';
+import { StudioLanguagePicker, useStudioLanguageCatalog, useStudioLanguageName } from './StudioLanguages';
 import { queueBooks, queueInProgress, projectLanguages, type QueueProgress, type StageProgress, type ProjectOperation } from './projectQueue';
 import { StudioDraftLeaveGuard, withStudioDraftGuard } from './StudioDraftActions';
 import { bookPath, bookRunPath, bookTranslationPath, projectPath, processingLabel, seriesPath } from './projectLinks';
@@ -93,7 +95,7 @@ export function ProjectNameForm({ ownerId, project, refresh, close, onCreated }:
 
 type Props = {
   data: WorkspaceData; project: WorkspaceProject; refresh: () => Promise<void>;
-  section?: string; children?: ReactNode;
+  section?: string;
 };
 
 export function projectTargetLanguage(books: WorkspaceBook[]) {
@@ -114,10 +116,12 @@ function StageLabel({ book, lang, stage, state, waiting }: {
     {label}{count}</Link> : <span>{label}{count}</span>;
 }
 
-export default function ProjectWorkspace({ data, project, refresh, section = '', children }: Props) {
+export default function ProjectWorkspace({ data, project, refresh, section = '' }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();
+  const catalog = useStudioLanguageCatalog();
+  const languageName = useStudioLanguageName();
   const members = queueBooks(data.books, project.id);
   const archivedBooks = queueBooks(data.books, project.id, true);
   const languageOptions = projectLanguages(members.length ? members : archivedBooks);
@@ -134,16 +138,16 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
     return () => { active = false; clearTimeout(timer); };
   }, [pendingImport,refresh]);
   const requestedLang = search.get('lang')?.toUpperCase() ?? '';
-  const lang = languageOptions.includes(requestedLang) ? requestedLang : languageOptions[0] || 'EN';
+  const lang = validLanguageCode(requestedLang) ? requestedLang : languageOptions[0] || 'EN';
+  const automaticLanguage = Object.hasOwn(languages, lang);
+  const knownLanguage = automaticLanguage || catalog?.languages.some(item => item.code === lang.toLowerCase());
   const [showArchive, setShowArchive] = useState(false);
   const [orderMode, setOrderMode] = useState(false);
   const [recipeOpen, setRecipeOpen] = useState(false);
-  const [recipeReady, setRecipeReady] = useState(false);
+  const [glossaryDirty, setGlossaryDirty] = useState(false);
   const [chosenSource, setChosenSource] = useState('');
   const sources = [...new Set(members.map(book => (book.sourceLanguage || 'RU').toUpperCase()))].filter(source => targets[source]?.includes(lang));
   const recipeSource = sources.includes(chosenSource) ? chosenSource : sources[0];
-  const editingRecipe = !section && recipeOpen && !!recipeSource && !project.archived;
-  const recipeBlocksLaunch = editingRecipe && !recipeReady;
   const [form, setForm] = useState<''|'rename'|'archive'|'adding'|'new-destination'>('');
   const [moving, setMoving] = useState('');
   const [destination, setDestination] = useState('');
@@ -164,7 +168,7 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
   const action = useBookAction();
   const access = useLaunchAccess(data.role !== 'admin');
   const supportsQueue = project.orderRevision !== undefined;
-  const progress = useBookData<{books:QueueProgress[]}>(supportsQueue && members.length && access.allowed
+  const progress = useBookData<{books:QueueProgress[]}>(supportsQueue && members.length && access.allowed && automaticLanguage
     ? '/api/studio/project-progress?' + new URLSearchParams({projectId:project.id,lang}) : null, version, queueInProgress);
   const entries = progress?.data?.books ?? [];
   const statusByBook = new Map(entries.map(row => [row.bookId,row]));
@@ -173,7 +177,7 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
   const otherProjects = projects.filter(p => p.id !== project.id && !p.archived);
   const outside = data.books.filter(book => !book.projectArchived && otherProjects.some(p => p.id === book.projectId));
   const shown = showArchive ? archivedBooks : members;
-  const readyToLaunch = supportsQueue && access.allowed && members.length > 0 && !project.archived;
+  const readyToLaunch = supportsQueue && access.allowed && !!recipeSource && members.length > 0 && !project.archived;
   const selected = data.books.find(book => book.id === moving);
   const failures = new Set<string>();
   for (const row of entries) {
@@ -186,6 +190,7 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
     withStudioDraftGuard(() => {
       const params = new URLSearchParams(search.toString());
       params.set('lang',next);
+      params.delete('group');
       setAccepted('');
       router.replace(pathname + '?' + params,{scroll:false});
     });
@@ -238,36 +243,42 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
       onClick:() => project.archived ? changeArchive() : setForm('archive'),disabled:isBusy}] : []),
   ];
   return <>
-    <StudioHeaderTools>
-      {!!languageOptions.length && <IOSSettingsRow label="Язык перевода" value={lang} onChange={setLanguage}
-        compactLabels={{label:'',value:lang}} disabled={isBusy}
-        options={languageOptions.map(id => ({id,label:languages[id] || id}))}/>}
-      {readyToLaunch && <Button size="sm" disabled={isBusy || recipeBlocksLaunch || !progress?.data}
-        onClick={() => setLaunch('translate')}><Play aria-hidden/>Перевести проект</Button>}
-    </StudioHeaderTools>
     <StudioEntityMenu inHeader label="Действия с проектом" actions={projectActions}/>
+    <div className="studio-project-context" role="group" aria-label="Язык и действия перевода">
+      <StudioLanguagePicker ownerId={data.userId} value={lang} supported={members.length || archivedBooks.length ? languageOptions : Object.keys(languages)} allowManualGlossary
+        canManage={access.allowed} preferVisibleDefault={!requestedLang} onChange={setLanguage} disabled={isBusy} className="min-w-0 rounded-lg border border-[var(--app-border)]"/>
+      {readyToLaunch && <div className="flex flex-wrap items-center gap-2">
+        {recipeSource && <Button variant="outline" disabled={isBusy || glossaryDirty} aria-haspopup="dialog" onClick={() => setRecipeOpen(true)}>
+          <SlidersHorizontal aria-hidden/>Параметры перевода</Button>}
+        <Button disabled={isBusy || glossaryDirty || !recipeSource || !progress?.data}
+          onClick={() => setLaunch('translate')}><Play aria-hidden/>Перевести проект</Button>
+      </div>}
+    </div>
     <ProjectTabs projectId={project.id} active={section}/>
-    <div className="space-y-4">
+    <div className="pt-stack">
+      {access.allowed && !knownLanguage && <p className="pt-muted" role="status">{catalog ? 'Этот язык отсутствует в вашем каталоге. Выберите или добавьте язык.' : 'Для этого языка нужен ваш личный каталог.'}</p>}
+      {knownLanguage && (!automaticLanguage || (members.length > 0 && !recipeSource)) && <p className="pt-callout">Для этого языка можно вести глоссарий вручную. Автоматический перевод пока недоступен.</p>}
       {project.archived && <p className="pt-callout">Проект в архиве. Книги и результаты доступны для просмотра.
         <Button size="sm" variant="ghost" disabled={action.busy} onClick={changeArchive}>Восстановить проект</Button></p>}
-      {(section === 'glossary' && readyToLaunch) && <Button variant="outline" disabled={isBusy || recipeBlocksLaunch || !progress?.data}
+      {(section === 'glossary' && readyToLaunch) && <Button variant="outline" disabled={isBusy || glossaryDirty || !recipeSource || !progress?.data}
         onClick={() => setLaunch('glossary')}><BookOpen aria-hidden/>Собрать глоссарий</Button>}
       {progress?.error && <div className="pt-callout flex flex-wrap items-center gap-2" role="alert">{progress.error}
         <RefreshButton size="sm" pending={progress.refreshing} onClick={() => refreshProgress(v => v+1)}/></div>}
       {accepted && <p role="status">Запуск принят. <Link className="underline" href={projectPath(project.id)+'/runs?'+new URLSearchParams({lang,group:accepted})}>Открыть запуски проекта</Link></p>}
       <ActionFeedback pending={orderMode ? undefined : action.pending} notice={action.notice} error={orderMode ? undefined : action.error}/>
-      {recipeBlocksLaunch && <p className="pt-muted text-sm">Запуск доступен после загрузки и сохранения параметров проекта.</p>}
-      {children}
+      {glossaryDirty && <p className="pt-muted text-sm">Перед запуском сохраните или сбросьте изменения глоссария.</p>}
+      {section === 'glossary' && (knownLanguage || !access.allowed) && <ProjectGlossary key={lang} projectId={project.id} lang={lang} admin={data.role === 'admin'} onDirty={setGlossaryDirty}/>}
+      {section === 'runs' && knownLanguage && <ProjectRunHistory key={lang} projectId={project.id} lang={lang} archived={project.archived} admin={data.role === 'admin'}/>}
       {!section && <>
         {!access.allowed && !project.archived && <LaunchAccessNotice access={access}/>}
-        {!project.archived && !orderMode && <div className="flex flex-wrap gap-2">
-          <Button variant="outline" asChild><Link href={projectPath(project.id)+'/upload'}><Upload/>Загрузить EPUB</Link></Button>
-          {!!outside.length && <Button variant="outline" disabled={action.busy} onClick={() => setForm('adding')}><FolderInput/>Добавить из проекта</Button>}
-        </div>}
         <Card className="min-w-0 gap-0">
           <div className="flex flex-wrap items-center justify-between gap-2 p-4">
             <h2 className="text-lg font-semibold">{showArchive ? 'Архив книг' : 'Очередь книг'}</h2>
-            {!orderMode && <div className="flex flex-wrap items-center gap-2">
+            {!orderMode && <div role="group" aria-label="Действия со списком книг" className="flex flex-wrap items-center gap-2">
+              {!project.archived && !showArchive && <>
+                <Button variant="outline" size="sm" asChild><Link href={projectPath(project.id)+'/upload?'+new URLSearchParams({lang})}><Upload/>Загрузить EPUB</Link></Button>
+                {!!outside.length && <Button size="sm" variant="outline" disabled={action.busy} onClick={() => setForm('adding')}><FolderInput/>Добавить из проекта</Button>}
+              </>}
               {!showArchive && !project.archived && supportsQueue && members.length > 1 &&
                 <Button variant="outline" size="sm" disabled={action.busy} onClick={() => {setOrderMode(true);setMoving('');}}>
                   <ListOrdered/>Изменить порядок</Button>}
@@ -285,7 +296,7 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
                 <tbody>{shown.map((book,index) => {
                   const state = statusByBook.get(book.id);
                   return <tr key={book.id} className="border-t align-middle">
-                    <td><Link className="block break-words font-medium hover:underline" href={bookTranslationPath(book.id,lang)}>{!showArchive && (index+1)+'. '}{book.title}</Link>
+                    <td><Link className="block break-words font-medium hover:underline" href={targets[(book.sourceLanguage || 'RU').toUpperCase()]?.includes(lang) ? bookTranslationPath(book.id,lang) : bookPath(book.id)}>{!showArchive && (index+1)+'. '}{book.title}</Link>
                       <small className="pt-muted">{book.processingStatus && book.processingStatus !== 'ready' ? processingLabel[book.processingStatus] || book.processingStatus : book.author}</small></td>
                     {!showArchive && <><td><StageLabel book={book} lang={lang} stage="glossary" state={state?.glossary}
                       waiting={state?.glossary.waitingForBookId ? 'Ждёт глоссарий «' + (bookNames.get(state.glossary.waitingForBookId) || 'предыдущая книга') + '»' : undefined}/></td>
@@ -295,22 +306,9 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
                   </tr>;
                 })}</tbody>
               </table>
-              {supportsQueue && access.allowed && !progress && !showArchive && <div className="p-3"><PendingText>Загружаем этапы перевода…</PendingText></div>}
+              {supportsQueue && access.allowed && automaticLanguage && !progress && !showArchive && <div className="p-3"><PendingText>Загружаем этапы перевода…</PendingText></div>}
             </div>}
         </Card>
-        {!project.archived && supportsQueue && recipeSource && access.allowed && <div className="grid gap-3">
-          <Button variant="outline" className="justify-self-start" aria-expanded={recipeOpen}
-            onClick={() => recipeOpen ? withStudioDraftGuard(() => setRecipeOpen(false)) : setRecipeOpen(true)}>
-            {recipeOpen ? 'Закрыть параметры проекта' : 'Параметры перевода проекта'}
-          </Button>
-          {recipeOpen && <>
-            {sources.length > 1 && <IOSSettingsRow label="Исходный язык рецепта" value={recipeSource}
-              options={sources.map(id => ({id,label:languages[id] || id}))}
-              onChange={id => withStudioDraftGuard(() => setChosenSource(id))}/>}
-            <RecipeEditor key={project.id+recipeSource+lang} ownerId={data.userId} admin={data.role==='admin'}
-              locator={{scope:'project',scopeId:project.id,sourceLang:recipeSource,targetLang:lang}} onReadyToRun={setRecipeReady}/>
-          </>}
-        </div>}
         {!project.archived && access.allowed && [...failures].map(groupId => <Button key={groupId} asChild variant="outline">
           <Link className="h-auto whitespace-normal text-left" href={projectPath(project.id)+'/runs?'+new URLSearchParams({lang,group:groupId})}>
             Открыть прерванный запуск · {members.filter(b => {
@@ -322,6 +320,19 @@ export default function ProjectWorkspace({ data, project, refresh, section = '',
             <Link key={id} className="flex items-center gap-2 py-2 underline" href={seriesPath(id)}><Layers3 size={16}/>{data.series.find(s => s.id === id)?.name || 'Открыть серию'}</Link>)}</details>}
       </>}
     </div>
+    {recipeOpen && recipeSource && !project.archived && <IOSDialog open labelledBy={dialogTitle} mobileLayout="sheet"
+      className="grid max-h-[85dvh] gap-4 overflow-y-auto p-5 sm:max-w-xl sm:pb-5"
+      onOpenChange={open => { if (!open) withStudioDraftGuard(() => setRecipeOpen(false)); }}>
+      <div className="flex items-center justify-between gap-3">
+        <h2 id={dialogTitle} className="text-xl font-semibold">Параметры перевода проекта</h2>
+        <Button size="icon-sm" variant="ghost" aria-label="Закрыть параметры перевода" onClick={() => withStudioDraftGuard(() => setRecipeOpen(false))}><X aria-hidden/></Button>
+      </div>
+      {sources.length > 1 && <IOSSettingsRow label="Исходный язык рецепта" value={recipeSource}
+        options={sources.map(id => ({id,label:languageName(id)}))}
+        onChange={id => withStudioDraftGuard(() => setChosenSource(id))}/>}
+      <RecipeEditor key={project.id+recipeSource+lang} inDialog ownerId={data.userId} admin={data.role==='admin'}
+        locator={{scope:'project',scopeId:project.id,sourceLang:recipeSource,targetLang:lang}}/>
+    </IOSDialog>}
     {launch && <ProjectLaunchDialog key={project.id+lang+launch} projectId={project.id} books={members} progress={entries}
       operation={launch} lang={lang} onClose={() => setLaunch(null)} onAccepted={onAccepted}/>}
     {form === 'archive' && <IOSAlertDialog open title="Архивировать проект?" description="Проект будет скрыт из основного списка. Книги, глоссарии и результаты останутся в архиве."

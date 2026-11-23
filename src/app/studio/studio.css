@@ -48,6 +48,21 @@
   }
 }
 
+.studio-project-context {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  margin-block: 16px;
+}
+.studio-project-context + .studio-sections {
+  margin-block-end: clamp(16px, 2vw, 24px);
+}
+@media (width < 40rem) {
+  .studio-project-context > :first-child { width: 100%; }
+}
+
 .studio-sections {
   min-width: 0;
   container: studio-section-nav / inline-size;

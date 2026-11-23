@@ -14,6 +14,7 @@ import { listPersonalPrompts, readLegacyPrompts, type LegacyPrompt, type Persona
 import { templateLink, workspaceBase } from '@/lib/translationWorkspacePath';
 import { AccountRecipes } from './RecipeSettings';
 import { AuthorGrants } from './AuthorGrants';
+import { LanguageSettings } from './StudioLanguages';
 
 import { PromptEditor, labels, templateLabel } from './PromptEditor';
 
@@ -21,14 +22,17 @@ type Group = keyof typeof labels;
 const groups = Object.keys(labels) as Group[];
 const settings = workspaceBase + '/settings';
 
-export default function WorkspaceSettings({ name, ownerId }: { name?: string; ownerId: string }) {
-  const access = useSearchParams().get('section') === 'access' && !name;
+export default function WorkspaceSettings({ name, ownerId, admin = true }: { name?: string; ownerId: string; admin?: boolean }) {
+  const section = useSearchParams().get('section');
+  const access = admin && section === 'access' && !name;
+  const languageSection = !admin || (section === 'languages' && !name);
   return <div className="pt-stack">
-    {!name && <nav className="pt-sections flex-wrap" aria-label="Разделы настроек">
-      <Button variant="ghost" asChild><Link aria-current={!access ? 'page' : undefined} href={settings}>Рецепты и шаблоны</Link></Button>
+    {!name && admin && <nav className="pt-sections flex-wrap" aria-label="Разделы настроек">
+      <Button variant="ghost" asChild><Link aria-current={!access && !languageSection ? 'page' : undefined} href={settings}>Рецепты и шаблоны</Link></Button>
+      <Button variant="ghost" asChild><Link aria-current={languageSection ? 'page' : undefined} href={settings + '?section=languages'}>Языки</Link></Button>
       <Button variant="ghost" asChild><Link aria-current={access ? 'page' : undefined} href={settings + '?section=access'}>Доступ авторов</Link></Button>
     </nav>}
-    {access ? <AuthorGrants key={ownerId} ownerId={ownerId}/> : <PromptSettings name={name} ownerId={ownerId}/>}
+    {languageSection ? <LanguageSettings key={ownerId} ownerId={ownerId}/> : access ? <AuthorGrants key={ownerId} ownerId={ownerId}/> : <PromptSettings name={name} ownerId={ownerId}/>}
   </div>;
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { GlossarySources } from './GlossarySources';
 import IOSDialog from '@/components/ui/ios-dialog';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,26 @@ function Summary({ items }: { items: Result[] }) {
     const count = items.filter(item => item.status === key).length;
     return count ? <li key={key}>{label} · {count}</li> : null;
   })}</ul>;
+}
+
+export function ProjectTermUsage({ projectId, revision, lang, entry, onClose }: {
+  projectId: string; revision: string; lang: string; entry: Entry; onClose: () => void;
+}) {
+  const title = useId();
+  const [reload, setReload] = useState(0);
+  const query = new URLSearchParams({projectId, revision, lang, kind:entry.kind, source:entry.source});
+  const result = useBookData<{bookId: string | null; updatedAt: string | null}>('/api/studio/project-glossary?' + query,reload);
+  const context = result?.data;
+  if (context?.bookId && context.updatedAt) return <GlossaryTermUsage bookId={context.bookId} updatedAt={context.updatedAt}
+    entry={entry} lang={lang} onClose={onClose}/>;
+  return <IOSDialog open labelledBy={title} onOpenChange={open => { if (!open) onClose(); }} className="space-y-3 p-5">
+    <h2 id={title}>Употребления · {entry.source}</h2>
+    {!result && <PendingText>Ищем сохранённый перевод термина…</PendingText>}
+    {result?.error && <div role="alert">{result.error}{' '}
+      <RefreshButton pending={result.refreshing} onClick={() => setReload(n => n + 1)}/></div>}
+    {context && <p>Этот вариант сохранился в истории проекта. Для поиска употреблений нужен такой же вариант в текущем словаре книги.</p>}
+    <Button variant="outline" onClick={onClose}>Закрыть</Button>
+  </IOSDialog>;
 }
 
 export function GlossaryTermUsage({ bookId, lang, entry, updatedAt, onClose }: {
