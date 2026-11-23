@@ -70,7 +70,7 @@ function ProjectDocumentPanel({ projectId, lang, onDirty }: Omit<Props, 'admin'>
         </div>
       </div>
       {current.books.length ? <details className="rounded-md border border-[var(--app-border)] px-3 py-2 text-sm">
-        <summary className="cursor-pointer font-medium">Учтено книг: {included} из {current.books.length}{current.books.some(book => book.coverage === 'unknown') ? ' · есть книги без подтверждённого источника' : ''}</summary>
+        <summary className="cursor-pointer font-medium">Учтено книг: {included} из {current.books.length}{unknown > 0 && <> · вклад не подтверждён для {unknown}</>}</summary>
         <ul className="mt-2 divide-y divide-[var(--app-border)]">
           {current.books.map(book => <li key={book.bookId} className="flex flex-wrap items-baseline justify-between gap-2 py-2">
             {book.runId ? <Link className="underline" href={bookRunPath(book.bookId,lang,book.runId)}>{book.title || 'Без названия'}</Link> :

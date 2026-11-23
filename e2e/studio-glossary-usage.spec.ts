@@ -4,7 +4,6 @@ test('project glossary previews only, defaults manual edits off and retries the 
   const project = '10000000-0000-4000-8000-000000000001';
   const book = '20000000-0000-4000-8000-000000000001';
   const block = '30000000-0000-4000-8000-000000000001';
-  const lang = 'EN';
   const version = '2026-11-22T12:00:00Z';
   const docs = { named_entities: [{entity:'Двор', preferred_target:'Courtyard'}] };
   const cases = [
