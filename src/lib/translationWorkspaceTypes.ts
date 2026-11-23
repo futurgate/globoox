@@ -8,6 +8,7 @@ export interface WorkspaceBook {
   volumeNumber: number | null
   projectId?: string | null
   projectArchived?: boolean
+  projectPosition?: number
 }
 
 export interface WorkspaceSeries {
@@ -21,6 +22,8 @@ export interface WorkspaceSeries {
 export interface WorkspaceProject {
   id: string
   name: string
+  archived?: boolean
+  orderRevision?: number
   sourceBookId?: string | null
   sourceSeriesId?: string | null
 }

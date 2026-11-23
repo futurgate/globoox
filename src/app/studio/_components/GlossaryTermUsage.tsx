@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { GlossarySources } from './GlossarySources';
 import IOSDialog from '@/components/ui/ios-dialog';
 import { Button } from '@/components/ui/button';
 import { bookEndpoint, bookPost, useBookAction, useBookData } from './bookRequests';
@@ -96,7 +97,8 @@ export function GlossaryTermUsage({ bookId, lang, entry, updatedAt, onClose }: {
       <Button size="sm" variant="ghost" onClick={onClose}>Закрыть</Button>
     </header>
     <div className="space-y-4 overflow-auto p-4">
-      {loading && <PendingText>Ищем в книгах проекта…</PendingText>}
+      <GlossarySources bookId={bookId} lang={lang} entry={{source,kind}}/>
+    {loading && <PendingText>Ищем в книгах проекта…</PendingText>}
       {problem && <p role="alert">{problem} <Button variant="ghost" onClick={() => { setLoading(true); setProblem(''); setVersion(v => v + 1); }}>Повторить поиск</Button></p>}
       {last && <p className="pt-muted">Найдено абзацев в готовом переводе · {last.total}</p>}
       {matches.map(item => <label key={item.blockId} className="flex items-start gap-3 border-t border-[var(--app-border)] pt-3">

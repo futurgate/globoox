@@ -17,8 +17,8 @@ type RunState = {
 const activeRun = (run: RunState) => run.status === 'queued' || run.status === 'running';
 const statusNames = { queued:'В очереди', running:'Выполняется', done:'Перевод завершён', stopped:'Остановлен', error:'Ошибка' };
 
-export function BookFlow({ bookId, lang, settingsReady, editionsUrl }: {
-  bookId: string; lang: string; settingsReady: boolean; editionsUrl: string;
+export function BookFlow({ bookId, lang, settingsReady, editionsUrl, legacyOnly = false }: {
+  bookId: string; lang: string; settingsReady: boolean; editionsUrl: string; legacyOnly?: boolean;
 }) {
   const action = useBookAction();
   const [refresh, setRefresh] = useState(0);
@@ -27,7 +27,7 @@ export function BookFlow({ bookId, lang, settingsReady, editionsUrl }: {
   const history = useBookData<{ runs: StudioRun[] }>(runsEndpoint(bookId, lang), action.version + refresh);
   const latest = history?.data?.runs[0];
   // A later manual stage supersedes the previously completed book flow.
-  const runId = accepted?.runId || (latest?.operation === 'book' ? latest.id : undefined);
+  const runId = accepted?.runId || (latest?.operation === 'book' && !latest.isProjectRun ? latest.id : undefined);
   const url = bookEndpoint(bookId, 'run', lang);
   const current = useBookData<RunState>(runId ? url + '&runId=' + encodeURIComponent(runId) : null, action.version + refresh, activeRun);
   const run = current?.data ?? accepted;
@@ -49,6 +49,7 @@ export function BookFlow({ bookId, lang, settingsReady, editionsUrl }: {
     requestId.current = '';
   }
 
+  if (legacyOnly && (!runId || run?.status === 'done')) return null;
   return <Card className="gap-3 p-5">
     <h2>Перевод книги</h2>
     <p className="pt-muted">Сервер подготовит глоссарий и переведёт текст с сохранёнными параметрами. Запуск расходует токены. Вкладку можно закрыть.</p>

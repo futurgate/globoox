@@ -2,7 +2,7 @@ import { forwardWorkspaceRequest, workspaceRoute, WorkspaceError } from '../../t
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
-const historyReads = new Set(['project-runs', 'run-timeline', 'run-artifact'])
+const historyReads = new Set(['project-runs', 'workspace-runs', 'run-timeline', 'run-artifact', 'project-progress', 'glossary-sources'])
 
 export async function GET(request: Request, { params }: { params: Promise<{ historyAction: string }> }) {
   const { historyAction } = await params

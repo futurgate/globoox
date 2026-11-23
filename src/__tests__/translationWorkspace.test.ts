@@ -183,6 +183,35 @@ describe('live translation workspace boundaries', () => {
     expect(projectRpc).toHaveBeenCalledWith('studio_rename_project', { p_project_id: item, p_name: 'Новое имя' })
   })
 
+  it('keeps an archived project and its active book readable without archiving the book', async () => {
+    Object.assign(tables.studio_projects[0], { archived_at: '2026-11-23', order_revision: 4 })
+    Object.assign(tables.studio_project_books[0], { position: 3 })
+    const data = await (await catalog(get())).json()
+    expect(data.projects[0]).toMatchObject({ id: item, archived: true, orderRevision: 4 })
+    expect(data.books[0]).toMatchObject({ projectId: item, projectArchived: false, projectPosition: 3 })
+  })
+
+  it('archives and restores the project, and saves order only against an observed revision', async () => {
+    const write = (body: unknown, account = owner) => {
+      const req = post(body)
+      req.headers.set('X-Workspace-Account', account)
+      return renameProject(req, { params: Promise.resolve({ projectId: item }) })
+    }
+    expect((await write({ action: 'archive' }, foreign)).status).toBe(409)
+    expect((await write({ action: 'reorder', bookIds: [book, book], expectedRevision: 1 })).status).toBe(400)
+    expect(projectRpc).not.toHaveBeenCalled()
+    for (const action of ['archive','restore']) {
+      expect((await write({ action })).status).toBe(200)
+      expect(projectRpc).toHaveBeenLastCalledWith('studio_archive_project', { p_project_id: item, p_archived: action === 'archive' })
+    }
+    const order = { action: 'reorder', bookIds: [book], expectedRevision: 1 }
+    projectRpc.mockResolvedValueOnce({ data: 2, error: null })
+    expect(await (await write(order)).json()).toEqual({ id: item, orderRevision: 2 })
+    expect(projectRpc).toHaveBeenLastCalledWith('studio_reorder_project', { p_project_id: item, p_book_ids: [book], p_expected_revision: 1 })
+    projectRpc.mockResolvedValueOnce({ data: null, error: { code: '40001' } })
+    expect((await write(order)).status).toBe(409)
+  })
+
   it('uses scoped RPCs for moves, archive and restore and rejects stale account mutations', async () => {
     const write = (body: unknown, account: string) => {
       const req = post(body)

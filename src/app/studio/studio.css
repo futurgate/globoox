@@ -99,3 +99,15 @@
     font-weight: 600;
   }
 }
+
+@media (width < 48rem) {
+  .studio-shell .pt-detail-header:has(#studio-page-actions button) > div:last-child {
+    flex-wrap: wrap;
+  }
+  .studio-shell .pt-detail-header:has(#studio-page-actions button) > div:last-child > div:first-child {
+    flex-basis: 100%;
+  }
+  .studio-shell .pt-detail-header #studio-page-actions {
+    flex-wrap: wrap;
+  }
+}

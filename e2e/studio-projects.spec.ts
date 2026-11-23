@@ -32,6 +32,7 @@ test('a project owns its book list; moving a volume preserves its series and sta
   await serve(page, data);
   await page.goto(collection);
   await page.getByRole('link', { name: /Хроники Севера.*1 книга/ }).click();
+  await page.getByText('Прежние серии проекта').click();
   await expect(page.getByRole('link', { name: 'Северная трилогия', exact: true })).toHaveAttribute('href', '/studio/series/s');
   await page.getByRole('button', { name: 'Действия с книгой «Первый снег»' }).click();
   await page.getByRole('button', { name: 'Переместить', exact: true }).click();
@@ -41,16 +42,17 @@ test('a project owns its book list; moving a volume preserves its series and sta
   await expect(page.getByText('В проекте пока нет книг.')).toBeVisible();
   await page.goto(collection + '/short');
   await page.getByRole('link', { name: /Первый снег/ }).click();
-  await expect(page).toHaveURL(origin + '/studio/books/first');
+  await expect(page).toHaveURL(origin + '/studio/books/first/translations/EN');
   await expect(page.getByRole('navigation', { name: 'На уровень выше' }).getByRole('link', { name: 'Сборник' })).toBeVisible();
   await page.goBack();
   await page.getByRole('button', { name: 'Действия с книгой «Первый снег»' }).click();
   await page.getByRole('button', { name: 'В архив', exact: true }).click();
   await expect(page.getByRole('link', { name: /Первый снег/ })).toHaveCount(0);
-  await page.getByRole('button', { name: 'Архив проекта' }).click();
+  await page.getByRole('button', { name: 'Архив книг' }).click();
   await page.getByRole('button', { name: 'Действия с книгой «Первый снег»' }).click();
   await page.getByRole('button', { name: 'Восстановить' }).click();
-  await page.getByRole('button', { name: 'К книгам' }).click();
+  await page.getByRole('button', { name: 'К очереди' }).click();
+  await page.getByText('Прежние серии проекта').click();
   await page.getByRole('link', { name: 'Северная трилогия', exact: true }).click();
   await expect(page).toHaveURL(origin + '/studio/series/s');
   await expect(page.getByRole('link', { name: /Первый снег/ })).toBeVisible();
@@ -147,77 +149,62 @@ test('a ZIP creates one project and keeps the separate series overview reachable
   await page.getByRole('button', { name: 'Загрузить', exact: true }).click();
   await page.getByRole('link', { name: 'Открыть проект' }).click();
   await expect(page).toHaveURL(collection + '/cycle');
-  await expect(page.getByRole('link', { name: /Том первый/ })).toHaveAttribute('href', '/studio/books/cycle-one');
+  await expect(page.getByRole('link', { name: /Том первый/ })).toHaveAttribute('href', '/studio/books/cycle-one/translations/EN');
+  await page.getByText('Прежние серии проекта').click();
   await expect(page.getByRole('link', { name: 'Новый цикл', exact: true })).toHaveAttribute('href', '/studio/series/cycle-series');
 });
 
-test('a standalone book becomes the next volume after the confirmed predecessor, in its current project', async ({ page }) => {
+test('the project order is the launch order; deselected predecessors only prepare a glossary', async ({ page }) => {
   const data = catalog();
-  data.role = 'author';
-  data.series[0].ownerVerified = false;
-  data.series.push({ id: 'foreign', name: 'Чужая серия', ownerVerified: false, genre: null, direction: null });
-  data.books.push({ ...data.books[0], id: 'new-volume', title: 'Второй снег', projectId: 'short', seriesId: null, volumeNumber: null });
-  await serve(page, data);
-  let writes = 0;
-  await page.route(workspace + '/projects/books/new-volume', route => {
-    writes++;
-    expect(route.request().headers()['x-workspace-account']).toBe('owner');
-    expect(route.request().postDataJSON()).toEqual({ action: 'append-to-series', seriesId: 's', previousBookId: 'first' });
-    Object.assign(data.books[1], { seriesId: 's', volumeNumber: 2 });
-    return route.fulfill({ json: { ok: true, volumeNumber: 2 } });
+  data.projects![0].orderRevision = 4;
+  Object.assign(data.books[0], { processingStatus:'ready', projectPosition:1 });
+  data.books.push({ ...data.books[0], id:'second', title:'Второй снег', projectPosition:2 });
+  await serve(page,data);
+  let submitted = 0;
+  const idle = {status:'idle',runId:null,done:null,total:null};
+  await page.route('**/api/studio/project-progress?**',route => route.fulfill({json:{
+    books:data.books.map(book => ({bookId:book.id,glossary:idle,translate:idle})),
+  }}));
+  await page.route('**/api/studio/project-run',route => {
+    submitted++;
+    const {requestId,...body} = route.request().postDataJSON();
+    expect(requestId).toMatch(/^[a-f0-9-]{36}$/);
+    expect(body).toEqual({projectId:'north',lang:'EN',operation:'translate',bookIds:['second'],order:['first','second']});
+    return route.fulfill({json:{groupId:'group',projectId:'north',lang:'EN',runs:[]}});
   });
-  await page.goto(collection + '/short');
-  await page.getByRole('button', { name: 'Действия с книгой «Второй снег»' }).click();
-  await page.getByRole('button', { name: 'Добавить в серию' }).click();
-  const confirm = page.getByRole('button', { name: 'Подтвердить добавление тома' });
-  await expect(confirm).toBeDisabled();
-  await page.getByRole('button', { name: /Серия для нового тома/ }).click();
-  await expect(page.getByRole('option', { name: 'Чужая серия' })).toHaveCount(0);
-  await page.getByRole('option', { name: 'Северная трилогия' }).click();
-  await expect(page.getByText(/Предыдущий том: 1 · Первый снег/)).toBeVisible();
-  expect(writes).toBe(0);
-  await confirm.click();
-  await expect(page.getByRole('link', { name: /Второй снег.*том 2/ })).toHaveAttribute('href', '/studio/books/new-volume');
-  await expect(page.getByRole('button', { name: 'Добавить в серию' })).toHaveCount(0);
-  expect(data.books[1].projectId).toBe('short');
-  expect(writes).toBe(1);
+  await page.goto(collection + '/north');
+  await page.getByRole('button',{name:'Действия с книгой «Первый снег»'}).click();
+  await expect(page.getByRole('button',{name:'Начать серию'})).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button',{name:'Перевести проект'}).click();
+  await page.getByRole('checkbox',{name:/Первый снег/}).uncheck();
+  await expect(page.getByText('Только глоссарий для следующих книг')).toBeVisible();
+  expect(submitted).toBe(0);
+  await page.getByRole('button',{name:'Подтвердить запуск'}).click();
+  await expect(page.getByText(/Запуск принят/)).toBeVisible();
+  expect(submitted).toBe(1);
 });
 
-test('two standalone books in different projects can start a series without launching a translation', async ({ page }) => {
+test('the keyboard grip saves order with the revision that was shown', async ({ page }) => {
   const data = catalog();
-  data.series = [];
-  data.role = 'author';
-  data.projects![0].sourceSeriesId = null;
-  Object.assign(data.books[0], { seriesId: null, volumeNumber: null });
-  data.books.push({ ...data.books[0], id: 'second', title: 'Второй снег', projectId: 'short' });
-  await serve(page, data);
-  let writes = 0;
-  await page.route(workspace + '/projects/books/second', route => {
-    writes++;
-    const { requestId, ...body } = route.request().postDataJSON();
-    expect(requestId).toMatch(/^[a-f0-9-]{36}$/);
-    expect(body).toEqual({ action: 'start-series', firstBookId: 'first', name: 'Новая серия', genre: 'litrpg' });
-    data.series.push({ id: 'two-volumes', ownerVerified: true, name: body.name, genre: body.genre, direction: null });
-    Object.assign(data.books[0], { seriesId: 'two-volumes', volumeNumber: 1 });
-    Object.assign(data.books[1], { seriesId: 'two-volumes', volumeNumber: 2 });
-    return route.fulfill({ json: { ok: true, seriesId: 'two-volumes', volumeNumber: 2 } });
+  data.projects![0].orderRevision = 2;
+  Object.assign(data.books[0], { projectPosition:1 });
+  data.books.push({ ...data.books[0], id:'second', title:'Второй снег', projectPosition:2 });
+  await serve(page,data);
+  await page.route('**/api/studio/project-progress?**',route => route.fulfill({json:{books:[]}}));
+  await page.route(workspace+'/projects/north',route => {
+    expect(route.request().postDataJSON()).toEqual({action:'reorder',bookIds:['second','first'],expectedRevision:2});
+    data.books[0].projectPosition = 2;
+    data.books[1].projectPosition = 1;
+    data.projects![0].orderRevision = 3;
+    return route.fulfill({json:{id:'north',orderRevision:3}});
   });
-  await page.goto(collection + '/short');
-  await page.getByRole('button', { name: 'Действия с книгой «Второй снег»' }).click();
-  await page.getByRole('button', { name: 'Начать серию' }).click();
-  await page.getByLabel('Название новой серии').fill('Новая серия');
-  const confirm = page.getByRole('button', { name: 'Создать серию из двух книг' });
-  await expect(confirm).toBeDisabled();
-  await page.getByRole('button', { name: /Первый том/ }).click();
-  await expect(page.getByRole('option', { name: /Второй снег/ })).toHaveCount(0);
-  await page.getByRole('option', { name: /Первый снег/ }).click();
-  await expect(page.getByText(/Том 1 · Первый снег. Том 2 · Второй снег/)).toBeVisible();
-  expect(writes).toBe(0);
-  await confirm.click();
-  await expect(page.getByRole('link', { name: /Второй снег.*том 2/ })).toBeVisible();
-  await page.getByRole('link', { name: 'Новая серия', exact: true }).click();
-  await expect(page.getByRole('link', { name: /Первый снег/ })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Второй снег/ })).toBeVisible();
-  expect(data.books.map(book => book.projectId)).toEqual(['north', 'short']);
-  expect(writes).toBe(1);
+  await page.goto(collection+'/north');
+  await page.getByRole('button',{name:'Изменить порядок'}).click();
+  await page.getByRole('button',{name:'Переместить «Второй снег», позиция 2'}).press('ArrowUp');
+  await page.getByRole('button',{name:'Выйти из режима'}).click();
+  await page.getByRole('button',{name:'Продолжить редактирование'}).click();
+  await page.getByRole('button',{name:'Сохранить порядок'}).click();
+  await expect(page.getByText('Порядок книг сохранён.')).toBeVisible();
+  await expect(page.getByRole('link',{name:'1. Второй снег'})).toBeVisible();
 });

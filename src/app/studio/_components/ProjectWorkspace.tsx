@@ -2,20 +2,30 @@
 
 import { studioFetch } from '@/lib/studioFetch';
 
-import { useRef, useState } from 'react';
+import { useEffect, useId, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, Upload } from 'lucide-react';
-import { StudioEntityMenu } from './StudioEntityMenu';
-import { PendingText } from './RequestFeedback';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Archive, BookOpen, ChevronRight, FolderInput, Layers3, ListOrdered, Play, Upload } from 'lucide-react';
+import { StudioEntityMenu, StudioHeaderTools } from './StudioEntityMenu';
+import { PendingText, RefreshButton } from './RequestFeedback';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
 import type { WorkspaceBook, WorkspaceData, WorkspaceProject } from '@/lib/translationWorkspaceTypes';
-import { useBookAction } from './bookRequests';
-import { seriesGenres } from './seriesGenres';
-import { bookPath, projectPath, processingLabel, seriesPath } from './projectLinks';
+import { useBookAction, useBookData } from './bookRequests';
+import { languages, targets } from '@/lib/studioLanguages';
+import IOSDialog from '@/components/ui/ios-dialog';
+import IOSAlertDialog from '@/components/ui/ios-alert-dialog';
+import { ActionFeedback } from './BookStage';
+import { LaunchAccessNotice, useLaunchAccess } from './LaunchAccess';
+import { ProjectLaunchDialog } from './ProjectLaunchDialog';
+import { RecipeEditor } from './RecipeSettings';
+import { ProjectOrderEditor } from './ProjectOrderEditor';
+import { ProjectTabs } from './ProjectRunHistory';
+import { queueBooks, queueInProgress, projectLanguages, type QueueProgress, type StageProgress, type ProjectOperation } from './projectQueue';
+import { StudioDraftLeaveGuard, withStudioDraftGuard } from './StudioDraftActions';
+import { bookPath, bookRunPath, bookTranslationPath, projectPath, processingLabel, seriesPath } from './projectLinks';
 
 class ProjectWriteError extends Error {
   constructor(readonly status: number, message: string) { super(message); }
@@ -45,14 +55,16 @@ export function BookRow({ book, context }: { book: WorkspaceBook; context?: stri
   );
 }
 
-export function ProjectNameForm({ ownerId, project, refresh, close }: {
-  ownerId: string; project?: WorkspaceProject; refresh: () => Promise<void>; close: () => void;
+export function ProjectNameForm({ ownerId, project, refresh, close, onCreated }: {
+  ownerId: string; project?: WorkspaceProject; refresh: () => Promise<void>; close: () => void; onCreated?: (id: string) => void;
 }) {
   const [name, setName] = useState(project?.name ?? '');
   const [requestId] = useState(() => crypto.randomUUID());
   const action = useBookAction();
   const router = useRouter();
+  const dirty = name !== (project?.name ?? '');
   return <Card className="p-4">
+    <StudioDraftLeaveGuard dirty={dirty} busy={action.busy}/>
     <form className="space-y-3" onSubmit={event => {
       event.preventDefault();
       if (!name.trim()) return;
@@ -62,7 +74,8 @@ export function ProjectNameForm({ ownerId, project, refresh, close }: {
         await refresh();
         if (signal.aborted) return;
         close();
-        if (!project) router.push(projectPath(saved.id));
+        if (onCreated) onCreated(saved.id);
+        else if (!project) router.push(projectPath(saved.id));
       });
     }}>
       <label className="block space-y-1 text-sm font-medium">Название проекта
@@ -72,202 +85,268 @@ export function ProjectNameForm({ ownerId, project, refresh, close }: {
       {action.error && <p role="alert">{action.error}</p>}
       <div className="flex gap-2">
         <Button type="submit" disabled={action.busy || !name.trim()}>{project ? 'Сохранить' : 'Создать проект'}</Button>
-        <Button type="button" variant="ghost" disabled={action.busy} onClick={close}>Отмена</Button>
+        <Button type="button" variant="ghost" disabled={action.busy} onClick={() => withStudioDraftGuard(close)}>Отмена</Button>
       </div>
     </form>
   </Card>;
 }
 
-type SeriesChoice = { id: string; label: string; previous: WorkspaceBook | null };
+type Props = {
+  data: WorkspaceData; project: WorkspaceProject; refresh: () => Promise<void>;
+  section?: string; children?: ReactNode;
+};
 
-function appendChoices(data: WorkspaceData): SeriesChoice[] {
-  // A migrated, owner-scoped project also identifies an owned series on installations
-  // where series metadata isn't readable by the signed-in account.
-  const names = new Map<string, string>();
-  for (const project of data.projects ?? []) {
-    if (project.sourceSeriesId) names.set(project.sourceSeriesId, project.name);
-  }
-  for (const series of data.series) {
-    if (series.ownerVerified || names.has(series.id)) names.set(series.id, series.name || names.get(series.id) || 'Серия без названия');
-  }
-  const last = new Map<string, WorkspaceBook>();
-  for (const book of data.books) {
-    if (!book.seriesId || !names.has(book.seriesId)) continue;
-    const old = last.get(book.seriesId);
-    if (!old || (book.volumeNumber ?? 0) > (old.volumeNumber ?? 0)) last.set(book.seriesId, book);
-  }
-  return [...names].map(([id, label]) => ({ id, label, previous: last.get(id) ?? null })).sort((a, b) => a.label.localeCompare(b.label, 'ru'));
+export function projectTargetLanguage(books: WorkspaceBook[]) {
+  return projectLanguages(books)[0] || 'EN';
 }
 
-function SeriesMembershipForm({ book, data, choices, candidates, refresh, action, close }: {
-  book: WorkspaceBook; data: WorkspaceData; choices: SeriesChoice[]; candidates: WorkspaceBook[];
-  refresh: () => Promise<void>; action: ReturnType<typeof useBookAction>; close: () => void;
+function StageLabel({ book, lang, stage, state, waiting }: {
+  book: WorkspaceBook; lang: string; stage: 'glossary'|'translate'; state?: StageProgress; waiting?: string;
 }) {
-  const [seriesId, setSeriesId] = useState(choices.length ? '' : 'new');
-  const [firstId, setFirstId] = useState('');
-  const [name, setName] = useState('');
-  const [genre, setGenre] = useState('litrpg');
-  const request = useRef({ key: '', id: '' });
-  const creating = seriesId === 'new';
-  const firstBook = candidates.find(item => item.id === firstId);
-  const selected = choices.find(choice => choice.id === seriesId);
-  const canSave = creating ? Boolean(name.trim() && firstBook) : Boolean(selected);
-  const projects = new Map(data.projects?.map(project => [project.id, project.name]));
-  const save = () => {
-    if (!canSave) return;
+  if (!state) return <span className="pt-muted" aria-label="Нет данных">—</span>;
+  const names = {
+    idle:'Не начат', queued:waiting || 'В очереди', running:stage === 'glossary' ? 'Собирается' : 'Переводится',
+    done:'Готов', error:'Ошибка', stopped:'Остановлен',
+  };
+  const count = state.total != null && state.done != null && state.total > 0 ? ' · ' + state.done + ' из ' + state.total + ' гл.' : '';
+  const label = state.orderChanged && state.status === 'done' ? 'Изменился порядок книг' : names[state.status];
+  return state.runId ? <Link className="underline decoration-dotted underline-offset-4" href={bookRunPath(book.id,lang,state.runId)}>
+    {label}{count}</Link> : <span>{label}{count}</span>;
+}
+
+export default function ProjectWorkspace({ data, project, refresh, section = '', children }: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const search = useSearchParams();
+  const members = queueBooks(data.books, project.id);
+  const archivedBooks = queueBooks(data.books, project.id, true);
+  const languageOptions = projectLanguages(members.length ? members : archivedBooks);
+  const pendingImport = members.some(book => book.processingStatus === 'pending' || book.processingStatus === 'processing');
+  useEffect(() => {
+    if (!pendingImport) return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    const update = async () => {
+      try { if (document.visibilityState === 'visible') await refresh(); }
+      finally { if (active) timer = setTimeout(update, 5500); }
+    };
+    timer = setTimeout(update, 5500);
+    return () => { active = false; clearTimeout(timer); };
+  }, [pendingImport,refresh]);
+  const requestedLang = search.get('lang')?.toUpperCase() ?? '';
+  const lang = languageOptions.includes(requestedLang) ? requestedLang : languageOptions[0] || 'EN';
+  const [showArchive, setShowArchive] = useState(false);
+  const [orderMode, setOrderMode] = useState(false);
+  const [recipeOpen, setRecipeOpen] = useState(false);
+  const [recipeReady, setRecipeReady] = useState(false);
+  const [chosenSource, setChosenSource] = useState('');
+  const sources = [...new Set(members.map(book => (book.sourceLanguage || 'RU').toUpperCase()))].filter(source => targets[source]?.includes(lang));
+  const recipeSource = sources.includes(chosenSource) ? chosenSource : sources[0];
+  const editingRecipe = !section && recipeOpen && !!recipeSource && !project.archived;
+  const recipeBlocksLaunch = editingRecipe && !recipeReady;
+  const [form, setForm] = useState<''|'rename'|'archive'|'adding'|'new-destination'>('');
+  const [moving, setMoving] = useState('');
+  const [destination, setDestination] = useState('');
+  const [incoming, setIncoming] = useState('');
+  const [launch, setLaunch] = useState<ProjectOperation | null>(null);
+  const [previousSection, setPreviousSection] = useState(section);
+  if (previousSection !== section) {
+    setPreviousSection(section);
+    setRecipeOpen(false);
+    setOrderMode(false);
+    setForm('');
+    setMoving('');
+    setLaunch(null);
+  }
+  const [version, refreshProgress] = useState(0);
+  const [accepted, setAccepted] = useState('');
+  const dialogTitle = useId();
+  const action = useBookAction();
+  const access = useLaunchAccess(data.role !== 'admin');
+  const supportsQueue = project.orderRevision !== undefined;
+  const progress = useBookData<{books:QueueProgress[]}>(supportsQueue && members.length && access.allowed
+    ? '/api/studio/project-progress?' + new URLSearchParams({projectId:project.id,lang}) : null, version, queueInProgress);
+  const entries = progress?.data?.books ?? [];
+  const statusByBook = new Map(entries.map(row => [row.bookId,row]));
+  const projects = data.projects ?? [];
+  const bookNames = new Map(data.books.map(book => [book.id,book.title]));
+  const otherProjects = projects.filter(p => p.id !== project.id && !p.archived);
+  const outside = data.books.filter(book => !book.projectArchived && otherProjects.some(p => p.id === book.projectId));
+  const shown = showArchive ? archivedBooks : members;
+  const readyToLaunch = supportsQueue && access.allowed && members.length > 0 && !project.archived;
+  const selected = data.books.find(book => book.id === moving);
+  const failures = new Set<string>();
+  for (const row of entries) {
+    for (const stage of [row.glossary, row.translate]) {
+      if (stage.groupId && (stage.status === 'error' || stage.status === 'stopped')) failures.add(stage.groupId);
+    }
+  }
+  function setLanguage(next: string) {
+    if (next === lang) return;
+    withStudioDraftGuard(() => {
+      const params = new URLSearchParams(search.toString());
+      params.set('lang',next);
+      setAccepted('');
+      router.replace(pathname + '?' + params,{scroll:false});
+    });
+  }
+  function changeBook(bookId: string, operation: 'move'|'archive'|'restore', target?: string) {
     void action.run(async signal => {
-      let body;
-      if (creating) {
-        const key = JSON.stringify([book.id, firstId, name.trim(), genre]);
-        if (request.current.key !== key) request.current = { key, id: crypto.randomUUID() };
-        body = { action: 'start-series', firstBookId: firstId, name: name.trim(), genre, requestId: request.current.id };
-      } else if (selected) {
-        body = { action: 'append-to-series', seriesId: selected.id, previousBookId: selected.previous?.id ?? null };
-      } else return;
-      let result;
+      await projectWrite('/books/' + encodeURIComponent(bookId),'PATCH',data.userId,{action:operation,...(target && {projectId:target})},signal);
+      await refresh(); if (signal.aborted) return;
+      setMoving(''); setForm(''); setIncoming(''); setDestination(''); refreshProgress(v => v+1);
+      if (operation === 'move') return 'Книга перемещена в проект «' + (projects.find(p => p.id === target)?.name || project.name) + '».';
+      return operation === 'archive' ? 'Книга перемещена в архив проекта.' : 'Книга восстановлена.';
+    });
+  }
+  function changeArchive() {
+    const archived = Boolean(project.archived);
+    void action.run(async signal => {
+      await projectWrite('/' + encodeURIComponent(project.id),'PATCH',data.userId,{action:archived ? 'restore' : 'archive'},signal);
+      await refresh(); if (signal.aborted) return;
+      setForm('');
+      return archived ? 'Проект восстановлен.' : 'Проект перемещён в архив.';
+    }, archived ? 'Восстанавливаем проект…' : 'Архивируем проект…');
+  }
+  function saveOrder(bookIds: string[], expectedRevision: number) {
+    void action.run(async signal => {
       try {
-        result = await projectWrite('/books/' + encodeURIComponent(book.id), 'PATCH', data.userId, body, signal);
+        await projectWrite('/' + encodeURIComponent(project.id),'PATCH',data.userId,{action:'reorder',bookIds,expectedRevision},signal);
       } catch (error) {
-        if (error instanceof ProjectWriteError && error.status === 409) {
-          await refresh();
-          if (!signal.aborted) { setSeriesId(choices.length ? '' : 'new'); setFirstId(''); }
-        }
+        if (error instanceof ProjectWriteError && error.status === 409) await refresh();
         throw error;
       }
-      await refresh();
-      if (signal.aborted) return;
-      close();
-      return creating ? 'Серия «' + name.trim() + '» создана.' : 'Книга добавлена в серию «' + selected?.label + '», том ' + result.volumeNumber + '.';
-    });
-  };
-  return <div className="space-y-3 p-4 pt-0">
-    {choices.length > 0 && <IOSSettingsRow label="Серия для нового тома" value={seriesId} disabled={action.busy} onChange={setSeriesId}
-      options={[{ id: '', label: 'Выберите серию' }, ...choices.map(choice => ({ id: choice.id, label: choice.label })),
-        ...(candidates.length ? [{ id: 'new', label: 'Начать новую серию' }] : [])]}/>}
-    {creating ? <>
-      <label className="block space-y-1 text-sm font-medium">Название новой серии
-        <Input maxLength={200} value={name} onChange={event => setName(event.target.value)} disabled={action.busy}/>
-      </label>
-      <IOSSettingsRow label="Жанр серии" value={genre} options={seriesGenres} onChange={setGenre} disabled={action.busy}/>
-      <IOSSettingsRow label="Первый том" value={firstId} disabled={action.busy} onChange={setFirstId}
-        options={[{ id: '', label: 'Выберите книгу' }, ...candidates.map(item => ({
-          id: item.id, label: [item.title, projects.get(item.projectId || '')].filter(Boolean).join(' · '),
-        }))]}/>
-      {firstBook && <p className="text-sm pt-muted">Том 1 · {firstBook.title}. Том 2 · {book.title}. Книги останутся в своих проектах.</p>}
-    </> : selected && <p className="text-sm pt-muted">{selected.previous
-      ? 'Предыдущий том: ' + (selected.previous.volumeNumber ?? '—') + ' · ' + selected.previous.title + '. При запуске серии его словарь перейдёт новому тому.'
-      : 'Книга станет первым томом серии.'}</p>}
-    <Button size="sm" disabled={action.busy || !canSave} onClick={save}>{creating ? 'Создать серию из двух книг' : 'Подтвердить добавление тома'}</Button>
-  </div>;
-}
-
-type Props = { data: WorkspaceData; project: WorkspaceProject; refresh: () => Promise<void> };
-
-export default function ProjectWorkspace({ data, project, refresh }: Props) {
-  const [renaming, setRenaming] = useState(false);
-  const [archived, setArchived] = useState(false);
-  const [adding, setAdding] = useState(false);
-  const [incoming, setIncoming] = useState('');
-  const [movingBookId, setMovingBookId] = useState('');
-  const [destination, setDestination] = useState('');
-  const [appendBookId, setAppendBookId] = useState('');
-  const action = useBookAction();
-  const projects = data.projects ?? [];
-  const otherProjects = projects.filter(p => p.id !== project.id);
-  const members = data.books.filter(book => book.projectId === project.id);
-  const visible = members.filter(book => Boolean(book.projectArchived) === archived);
-  const outside = data.books.filter(book => book.projectId && book.projectId !== project.id && !book.projectArchived);
-  const incomingBook = outside.find(book => book.id === incoming);
-  const canMove = otherProjects.some(p => p.id === destination);
-  const projectById = new Map(projects.map(p => [p.id, p.name]));
-  const seriesById = new Map(data.series.map(s => [s.id, s.name || 'Серия']));
-  const choices = appendChoices(data);
-  const standalone = data.books.filter(book => book.projectId && !book.seriesId && !book.projectArchived);
-  const relatedSeries = new Set(members.filter(book => !book.projectArchived && book.seriesId).map(book => book.seriesId!));
-  const sorted = [...visible].sort((a, b) =>
-    (a.seriesId ?? '').localeCompare(b.seriesId ?? '') ||
-    (a.volumeNumber ?? Infinity) - (b.volumeNumber ?? Infinity) ||
-    a.title.localeCompare(b.title, 'ru'));
-
-  const changeBook = (book: WorkspaceBook, operation: 'move' | 'archive' | 'restore', target?: string) => {
-    if (operation === 'move' && !target) return;
-    void action.run(async signal => {
-      await projectWrite('/books/' + encodeURIComponent(book.id), 'PATCH', data.userId, { action: operation, ...(target && { projectId: target }) }, signal);
-      await refresh();
-      if (signal.aborted) return;
-      setMovingBookId(''); setDestination(''); setAppendBookId(''); setIncoming(''); setAdding(false);
-      if (operation === 'archive') return 'Книга перемещена в архив проекта.';
-      if (operation === 'restore') return 'Книга восстановлена.';
-      return 'Книга перемещена в проект «' + projectById.get(target!) + '».';
-    });
-  };
-  function bookActions(book: WorkspaceBook) {
-    if (archived) return [{ label: 'Восстановить', disabled: action.busy, onClick: () => changeBook(book, 'restore') }];
-    const actions = [];
-    if (!book.seriesId && (choices.length > 0 || standalone.length > 1)) {
-      actions.push({ label: choices.length ? 'Добавить в серию' : 'Начать серию', onClick: () => {
-        setAppendBookId(book.id); setMovingBookId(''); setAdding(false);
-      } });
-    }
-    if (otherProjects.length) {
-      actions.push({ label: 'Переместить', onClick: () => {
-        setMovingBookId(book.id); setDestination(''); setAppendBookId(''); setAdding(false);
-      } });
-    }
-    actions.push({ label: 'В архив', onClick: () => changeBook(book, 'archive') });
-    return actions.map(item => ({ ...item, disabled: action.busy }));
+      await refresh(); if (signal.aborted) return;
+      setOrderMode(false); refreshProgress(v => v+1);
+      return 'Порядок книг сохранён.';
+    },'Сохраняем порядок книг…');
   }
-  return <div className="space-y-4">
-    <div className="flex flex-wrap gap-2">
-      <Button asChild><Link href={projectPath(project.id) + '/upload'}><Upload />Загрузить EPUB</Link></Button>
-      {outside.length > 0 && <Button variant="outline" disabled={action.busy} onClick={() => { setAdding(!adding); setMovingBookId(''); setAppendBookId(''); }}><FolderInput />Добавить из проекта</Button>}
-      <StudioEntityMenu inHeader label="Действия с проектом" actions={[
-        { label: 'Переименовать', onClick: () => setRenaming(true), disabled: renaming || action.busy },
-      ]}/>
-    </div>
-    {renaming && <ProjectNameForm ownerId={data.userId} project={project} refresh={refresh} close={() => setRenaming(false)} />}
-    {adding && outside.length > 0 && <Card className="space-y-3 p-4">
-      <IOSSettingsRow label="Книга из другого проекта" value={incoming} disabled={action.busy}
-        options={[{ id: '', label: 'Выберите книгу' }, ...outside.map(b => ({ id: b.id, label: b.title + ' · ' + (projectById.get(b.projectId!) || 'Проект') }))]}
-        onChange={setIncoming}/>
-      {incomingBook?.seriesId && <p className="text-sm pt-muted">Книга останется в серии «{seriesById.get(incomingBook.seriesId) || 'Без названия'}».</p>}
-      <div className="flex gap-2"><Button disabled={!incomingBook || action.busy} onClick={() => incomingBook && changeBook(incomingBook, 'move', project.id)}>Переместить в этот проект</Button>
-        <Button variant="ghost" disabled={action.busy} onClick={() => setAdding(false)}>Отмена</Button></div>
-    </Card>}
-    {action.busy && <PendingText>Сохраняем изменения проекта…</PendingText>}
-    {action.error && <p role="alert">{action.error}</p>}
-    {action.notice && <p role="status">{action.notice}</p>}
-    <Card className="gap-0 overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-2 p-4">
-        <h2 className="text-lg font-semibold">{archived ? 'Архив проекта' : 'Книги проекта'}</h2>
-        {(archived || members.some(b => b.projectArchived)) && <Button variant="outline" size="sm" onClick={() => { setArchived(!archived); setMovingBookId(''); setAppendBookId(''); }}>
-          {archived ? <BookOpen /> : <Archive />}{archived ? 'К книгам' : 'Архив проекта'}
-        </Button>}
-      </div>
-      {sorted.length === 0 && <p className="px-4 pb-4 text-sm pt-muted">{archived ? 'В архиве пока нет книг.' : 'В проекте пока нет книг.'}</p>}
-      {sorted.map(book => <div key={book.id} className="border-t border-[var(--app-border)]">
-        <div className="flex items-center gap-x-2">
-          <BookRow book={book} context={book.seriesId ? [seriesById.get(book.seriesId) || 'Серия', book.volumeNumber != null && 'том ' + book.volumeNumber].filter(Boolean).join(' · ') : undefined} />
-          <div className="shrink-0 pe-2">
-            <StudioEntityMenu label={'Действия с книгой «' + (book.title || 'Без названия') + '»'} actions={bookActions(book)}/>
-          </div>
-        </div>
-        {appendBookId === book.id && !book.seriesId && !archived && <SeriesMembershipForm key={book.id} book={book} data={data} choices={choices}
-          candidates={standalone.filter(item => item.id !== book.id)} refresh={refresh} action={action} close={() => setAppendBookId('')} />}
-        {movingBookId === book.id && <div className="space-y-2 p-4 pt-0">
-          <IOSSettingsRow label="Проект назначения" value={destination} disabled={action.busy} onChange={setDestination}
-            options={[{ id: '', label: 'Выберите проект' }, ...otherProjects.map(p => ({ id: p.id, label: p.name }))]}/>
-          {book.seriesId && <p className="text-sm pt-muted">После переноса книга останется в своей серии.</p>}
-          <Button size="sm" disabled={action.busy || !canMove} onClick={() => changeBook(book, 'move', destination)}>Подтвердить перенос</Button>
+  function archiveMenu(book: WorkspaceBook) {
+    return <StudioEntityMenu label={'Действия с книгой «' + book.title + '»'}
+      actions={showArchive ? [{label:'Восстановить',onClick:() => changeBook(book.id,'restore'),disabled:action.busy}] : [
+        {label:'Переместить',onClick:() => {setMoving(book.id);setDestination('');},disabled:action.busy},
+        {label:'В архив',onClick:() => changeBook(book.id,'archive'),disabled:action.busy},
+      ]}/>;
+  }
+  function onAccepted(groupId: string) {
+    setAccepted(groupId); setLaunch(null); refreshProgress(v => v+1);
+  }
+  const isBusy = action.busy || orderMode;
+  const projectActions = [
+    ...(!project.archived ? [{label:'Переименовать',onClick:() => setForm('rename'),disabled:isBusy}] : []),
+    ...(supportsQueue ? [{label:project.archived ? 'Восстановить проект' : 'Архивировать проект',
+      onClick:() => project.archived ? changeArchive() : setForm('archive'),disabled:isBusy}] : []),
+  ];
+  return <>
+    <StudioHeaderTools>
+      {!!languageOptions.length && <IOSSettingsRow label="Язык перевода" value={lang} onChange={setLanguage}
+        compactLabels={{label:'',value:lang}} disabled={isBusy}
+        options={languageOptions.map(id => ({id,label:languages[id] || id}))}/>}
+      {readyToLaunch && <Button size="sm" disabled={isBusy || recipeBlocksLaunch || !progress?.data}
+        onClick={() => setLaunch('translate')}><Play aria-hidden/>Перевести проект</Button>}
+    </StudioHeaderTools>
+    <StudioEntityMenu inHeader label="Действия с проектом" actions={projectActions}/>
+    <ProjectTabs projectId={project.id} active={section}/>
+    <div className="space-y-4">
+      {project.archived && <p className="pt-callout">Проект в архиве. Книги и результаты доступны для просмотра.
+        <Button size="sm" variant="ghost" disabled={action.busy} onClick={changeArchive}>Восстановить проект</Button></p>}
+      {(section === 'glossary' && readyToLaunch) && <Button variant="outline" disabled={isBusy || recipeBlocksLaunch || !progress?.data}
+        onClick={() => setLaunch('glossary')}><BookOpen aria-hidden/>Собрать глоссарий</Button>}
+      {progress?.error && <div className="pt-callout flex flex-wrap items-center gap-2" role="alert">{progress.error}
+        <RefreshButton size="sm" pending={progress.refreshing} onClick={() => refreshProgress(v => v+1)}/></div>}
+      {accepted && <p role="status">Запуск принят. <Link className="underline" href={projectPath(project.id)+'/runs?'+new URLSearchParams({lang,group:accepted})}>Открыть запуски проекта</Link></p>}
+      <ActionFeedback pending={orderMode ? undefined : action.pending} notice={action.notice} error={orderMode ? undefined : action.error}/>
+      {recipeBlocksLaunch && <p className="pt-muted text-sm">Запуск доступен после загрузки и сохранения параметров проекта.</p>}
+      {children}
+      {!section && <>
+        {!access.allowed && !project.archived && <LaunchAccessNotice access={access}/>}
+        {!project.archived && !orderMode && <div className="flex flex-wrap gap-2">
+          <Button variant="outline" asChild><Link href={projectPath(project.id)+'/upload'}><Upload/>Загрузить EPUB</Link></Button>
+          {!!outside.length && <Button variant="outline" disabled={action.busy} onClick={() => setForm('adding')}><FolderInput/>Добавить из проекта</Button>}
         </div>}
-      </div>)}
-    </Card>
-    {relatedSeries.size > 0 && <Card className="gap-0 p-4">
-      <h2 className="mb-2 text-lg font-semibold">Перевод серий</h2>
-      <p className="mb-2 text-sm pt-muted">Общий запуск и порядок глоссариев относятся ко всем томам серии, включая тома в других проектах.</p>
-      {[...relatedSeries].map(id => <Link key={id} className="flex items-center gap-2 py-2 hover:underline" href={seriesPath(id)}>
-        <Layers3 size={18} aria-hidden />{seriesById.get(id) || 'Серия'}<ChevronRight size={16} aria-hidden />
-      </Link>)}
-    </Card>}
-  </div>;
+        <Card className="min-w-0 gap-0">
+          <div className="flex flex-wrap items-center justify-between gap-2 p-4">
+            <h2 className="text-lg font-semibold">{showArchive ? 'Архив книг' : 'Очередь книг'}</h2>
+            {!orderMode && <div className="flex flex-wrap items-center gap-2">
+              {!showArchive && !project.archived && supportsQueue && members.length > 1 &&
+                <Button variant="outline" size="sm" disabled={action.busy} onClick={() => {setOrderMode(true);setMoving('');}}>
+                  <ListOrdered/>Изменить порядок</Button>}
+              {(showArchive || !!archivedBooks.length) && <Button size="sm" variant="ghost" onClick={() => setShowArchive(!showArchive)}>
+                {showArchive ? <BookOpen/> : <Archive/>}{showArchive ? 'К очереди' : 'Архив книг'}</Button>}
+            </div>}
+          </div>
+          {orderMode ? <ProjectOrderEditor books={members} revision={project.orderRevision!} busy={action.busy} error={action.error}
+            onClose={() => setOrderMode(false)} onSave={saveOrder}/> : !shown.length ?
+            <p className="px-4 pb-4 pt-muted">{showArchive ? 'В архиве пока нет книг.' : 'В проекте пока нет книг.'}</p> :
+            <div className="overflow-x-auto">
+              <table className="w-full text-start text-sm [&_td]:px-2 [&_td]:py-3 [&_th]:px-2 [&_th]:py-2">
+                <caption className="sr-only">{showArchive ? 'Архив книг' : 'Очередь книг проекта и состояния перевода'}</caption>
+                <thead><tr className="text-left pt-muted"><th scope="col">Книга</th>{!showArchive && <><th scope="col">Глоссарий</th><th scope="col">Перевод</th></>}<th scope="col"><span className="sr-only">Действия</span></th></tr></thead>
+                <tbody>{shown.map((book,index) => {
+                  const state = statusByBook.get(book.id);
+                  return <tr key={book.id} className="border-t align-middle">
+                    <td><Link className="block break-words font-medium hover:underline" href={bookTranslationPath(book.id,lang)}>{!showArchive && (index+1)+'. '}{book.title}</Link>
+                      <small className="pt-muted">{book.processingStatus && book.processingStatus !== 'ready' ? processingLabel[book.processingStatus] || book.processingStatus : book.author}</small></td>
+                    {!showArchive && <><td><StageLabel book={book} lang={lang} stage="glossary" state={state?.glossary}
+                      waiting={state?.glossary.waitingForBookId ? 'Ждёт глоссарий «' + (bookNames.get(state.glossary.waitingForBookId) || 'предыдущая книга') + '»' : undefined}/></td>
+                      <td><StageLabel book={book} lang={lang} stage="translate" state={state?.translate}
+                      waiting={state?.translate.waitingForBookId ? 'Ждёт глоссарий книги' : undefined}/></td></>}
+                    <td>{!project.archived && archiveMenu(book)}</td>
+                  </tr>;
+                })}</tbody>
+              </table>
+              {supportsQueue && access.allowed && !progress && !showArchive && <div className="p-3"><PendingText>Загружаем этапы перевода…</PendingText></div>}
+            </div>}
+        </Card>
+        {!project.archived && supportsQueue && recipeSource && access.allowed && <div className="grid gap-3">
+          <Button variant="outline" className="justify-self-start" aria-expanded={recipeOpen}
+            onClick={() => recipeOpen ? withStudioDraftGuard(() => setRecipeOpen(false)) : setRecipeOpen(true)}>
+            {recipeOpen ? 'Закрыть параметры проекта' : 'Параметры перевода проекта'}
+          </Button>
+          {recipeOpen && <>
+            {sources.length > 1 && <IOSSettingsRow label="Исходный язык рецепта" value={recipeSource}
+              options={sources.map(id => ({id,label:languages[id] || id}))}
+              onChange={id => withStudioDraftGuard(() => setChosenSource(id))}/>}
+            <RecipeEditor key={project.id+recipeSource+lang} ownerId={data.userId} admin={data.role==='admin'}
+              locator={{scope:'project',scopeId:project.id,sourceLang:recipeSource,targetLang:lang}} onReadyToRun={setRecipeReady}/>
+          </>}
+        </div>}
+        {!project.archived && access.allowed && [...failures].map(groupId => <Button key={groupId} asChild variant="outline">
+          <Link className="h-auto whitespace-normal text-left" href={projectPath(project.id)+'/runs?'+new URLSearchParams({lang,group:groupId})}>
+            Открыть прерванный запуск · {members.filter(b => {
+              const p = statusByBook.get(b.id); return p?.glossary.groupId === groupId || p?.translate.groupId === groupId;
+            }).map(b => b.title).join(', ')}
+          </Link></Button>)}
+        {members.some(book => book.seriesId) &&
+          <details><summary>Прежние серии проекта</summary>{[...new Set(members.flatMap(b => b.seriesId ? [b.seriesId] : []))].map(id =>
+            <Link key={id} className="flex items-center gap-2 py-2 underline" href={seriesPath(id)}><Layers3 size={16}/>{data.series.find(s => s.id === id)?.name || 'Открыть серию'}</Link>)}</details>}
+      </>}
+    </div>
+    {launch && <ProjectLaunchDialog key={project.id+lang+launch} projectId={project.id} books={members} progress={entries}
+      operation={launch} lang={lang} onClose={() => setLaunch(null)} onAccepted={onAccepted}/>}
+    {form === 'archive' && <IOSAlertDialog open title="Архивировать проект?" description="Проект будет скрыт из основного списка. Книги, глоссарии и результаты останутся в архиве."
+      confirmLabel="Архивировать" cancelLabel="Отмена" showCancel onOpenChange={open => {if (!open) setForm('');}} onConfirm={() => {setForm('');changeArchive();}}/>}
+    {(form === 'rename' || form === 'new-destination') && <IOSDialog open labelledBy={dialogTitle} onOpenChange={open => {if (!open) withStudioDraftGuard(() => setForm(''));}}>
+      <h2 className="px-4 pt-4 font-semibold" id={dialogTitle}>{form === 'rename' ? 'Переименовать проект' : 'Создать проект'}</h2>
+      <ProjectNameForm ownerId={data.userId} project={form === 'rename' ? project : undefined} refresh={refresh}
+        onCreated={form === 'new-destination' ? setDestination : undefined} close={() => setForm('')}/>
+    </IOSDialog>}
+    {form === 'adding' && <IOSDialog open labelledBy={dialogTitle} className="grid gap-4 p-5 sm:pb-5" onOpenChange={open => {if (!open && !action.busy) setForm('');}}>
+      <h2 className="font-semibold" id={dialogTitle}>Добавить книгу</h2>
+      <IOSSettingsRow label="Книга из другого проекта" value={incoming} disabled={action.busy} onChange={setIncoming}
+        options={[{id:'',label:'Выберите книгу'},...outside.map(b => ({id:b.id,label:b.title+' · '+otherProjects.find(p=>p.id===b.projectId)?.name}))]}/>
+      <ActionFeedback pending={action.pending} error={action.error}/>
+      <div className="flex flex-wrap gap-2"><Button disabled={!incoming || action.busy} onClick={() => changeBook(incoming,'move',project.id)}>Переместить в этот проект</Button>
+        <Button variant="outline" disabled={action.busy} onClick={() => setForm('')}>Отмена</Button></div>
+    </IOSDialog>}
+    {selected && form !== 'new-destination' && <IOSDialog open labelledBy={dialogTitle} className="grid gap-4 p-5 sm:pb-5" onOpenChange={open => {if (!open && !action.busy) setMoving('');}}>
+      <h2 className="font-semibold" id={dialogTitle}>Переместить «{selected.title}»</h2>
+      <IOSSettingsRow label="Проект назначения" value={destination} disabled={action.busy} onChange={id => {
+        if (id === 'new') setForm('new-destination'); else setDestination(id);
+      }} options={[{id:'',label:'Выберите проект'},...otherProjects.map(p => ({id:p.id,label:p.name})),{id:'new',label:'Создать проект…'}]}/>
+      <ActionFeedback pending={action.pending} error={action.error}/>
+      <div className="flex gap-2"><Button disabled={!destination || action.busy} onClick={() => changeBook(selected.id,'move',destination)}>Подтвердить перенос</Button>
+        <Button variant="outline" disabled={action.busy} onClick={() => setMoving('')}>Отмена</Button></div>
+    </IOSDialog>}
+  </>;
 }
