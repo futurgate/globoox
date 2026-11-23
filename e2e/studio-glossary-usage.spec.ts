@@ -4,7 +4,6 @@ test('project glossary previews only, defaults manual edits off and retries the 
   const project = '10000000-0000-4000-8000-000000000001';
   const book = '20000000-0000-4000-8000-000000000001';
   const block = '30000000-0000-4000-8000-000000000001';
-  const lang = 'EN';
   const version = '2026-11-22T12:00:00Z';
   const docs = { named_entities: [{entity:'Двор', preferred_target:'Courtyard'}] };
   const cases = [
@@ -18,8 +17,10 @@ test('project glossary previews only, defaults manual edits off and retries the 
     if (path === '/api/translation-workspace') return route.fulfill({json:{userId:'owner',role:'author',projects:[{id:project,name:'Серия'}],series:[],
       books:[{id:book,title:'Второй том',projectId:project,sourceLanguage:'RU',volumeNumber:2,processingStatus:'ready'}]}});
     if (path.endsWith('/translation-access')) return route.fulfill({json:{canStartTranslation:true}});
-    if (path.endsWith('/glossaries')) return route.fulfill({json:{versions:[{bookId:book,lang,state:'done'}]}});
-    if (path.endsWith('/generate-glossary')) return route.fulfill({json:{state:'done',updatedAt:version,glossary:docs}});
+    if (path.endsWith('/project-glossary')) return route.fulfill({json:new URL(req.url()).searchParams.has('source') ?
+      {bookId:book,updatedAt:version} : {revision:'project-revision',archived:false,glossary:docs,
+        books:[{bookId:book,title:'Второй том',coverage:'included',runId:null}]}});
+    if (path.endsWith('/languages')) return route.fulfill({json:{languages:[]}});
     if (path.endsWith('/glossary-usages')) return route.fulfill({json:{total:2,nextOffset:null,updatedAt:version,previousTarget:'Court',items:cases}});
     if (path.endsWith('/glossary-retranslate') && req.method() === 'GET') return route.fulfill({json:{runs:[]}});
     if (path.endsWith('/glossary-retranslate') && req.method() === 'POST') {

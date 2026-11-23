@@ -15,6 +15,7 @@ import { omitEmptyValues, recipeEndpoint, recipeGenres, recipeUnits, recipeSourc
 import { bookGet, useBookData } from './bookRequests';
 
 interface EditorProps {
+  inDialog?: boolean;
   locator: RecipeLocator;
   ownerId: string;
   admin: boolean;
@@ -54,7 +55,7 @@ export function ModelChoice({ label, value, inherited, inheritedLabel = 'По р
     options={[{ id: '', label: inherited ? inheritedLabel + ' · ' + inherited : inheritedLabel }, ...ids.map(id => ({ id, label: id }))]} />;
 }
 
-export function RecipeEditor({ locator, ownerId, admin, models, variants, onPromptSaved, onResolved, onReadyToRun }: EditorProps) {
+export function RecipeEditor({ inDialog, locator, ownerId, admin, models, variants, onPromptSaved, onResolved, onReadyToRun }: EditorProps) {
   const url = recipeEndpoint(locator);
   const [reload, setReload] = useState(0);
   const [settings, setSettings] = useState<RecipeSettings | null>(null);
@@ -132,8 +133,9 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onProm
     onReadyToRun?.(Boolean(settings && !changed && !working && !conflict && !error));
     return () => onReadyToRun?.(false);
   }, [onReadyToRun, settings, changed, working, conflict, error]);
-  return <Card className="p-5 gap-3">
-    <h3>{title}</h3>
+  const Container = inDialog ? 'div' : Card;
+  return <Container className={inDialog ? 'grid gap-3' : 'p-5 gap-3'}>
+    {!inDialog && <h3>{title}</h3>}
     {error && <p role="alert" className="pt-callout">{error}</p>}
     {!settings && !error && <p role="status">Загружаем параметры…</p>}
     {((!settings && error) || conflict) && <Button className="self-start" variant="outline" onClick={() => setReload(n => n + 1)}>Загрузить сохранённые параметры</Button>}
@@ -180,14 +182,14 @@ export function RecipeEditor({ locator, ownerId, admin, models, variants, onProm
         }}>Вернуть значения проекта</Button>}
       {!changed && settings.genreSource === 'suggestion' && !settings.revision &&
         <Button variant="outline" disabled={working || conflict} onClick={() => { if (locator.scope === 'book' && !genre) setGenre(settings.genre); else void save(); }}>Принять предложенный жанр</Button>}
-      <StudioDraftActions dirty={Boolean(changed)} busy={working} disabled={conflict}
+      <StudioDraftActions inDialog={inDialog} dirty={Boolean(changed)} busy={working} disabled={conflict}
         saveLabel="Сохранить параметры" onSave={() => void save()} onReset={() => {
           setValues(settings.values); setGenre(storedGenre(settings)); setError(''); setNotice('');
           if (conflict) setReload(n => n + 1);
         }}/>
       {notice && <span role="status" className="pt-muted">{notice}</span>}
     </>}
-  </Card>;
+  </Container>;
 }
 
 interface CatalogRecipe { id: string; name: string; genre: string; sourceLang: string; targetLang: string }

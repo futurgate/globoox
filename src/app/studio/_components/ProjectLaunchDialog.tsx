@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import IOSDialog from '@/components/ui/ios-dialog';
 import type { WorkspaceBook } from '@/lib/translationWorkspaceTypes';
 import { recipeEndpoint, recipeGenres, type RecipeSettings } from '@/lib/studioRecipe';
-import { languages } from '@/lib/studioLanguages';
+import { useStudioLanguageName } from './StudioLanguages';
 import { ActionFeedback } from './BookStage';
 import { bookPost, useBookAction, useBookData } from './bookRequests';
 import { runScope, stageInProgress, type ProjectOperation, type QueueProgress } from './projectQueue';
@@ -35,6 +35,7 @@ export function ProjectLaunchDialog({ projectId, books, progress, lang, operatio
   const [selected, setSelected] = useState(() => new Set(bookId ? [bookId] : ordered.map(book => book.id)));
   const request = useRef({ key: '', requestId: '' });
   const title = useId();
+  const languageName = useStudioLanguageName();
   const action = useBookAction();
   const { scope, reason } = runScope(ordered, selected, lang);
   const changed = ordered.length !== books.length || ordered.some((book,index) => book.id !== books[index].id);
@@ -63,7 +64,7 @@ export function ProjectLaunchDialog({ projectId, books, progress, lang, operatio
   return <IOSDialog open onOpenChange={open => { if (!open && !action.busy) onClose(); }} labelledBy={title}
     closeOnOverlay={!action.busy} className="flex max-h-[85dvh] flex-col gap-4 overflow-y-auto p-5 sm:max-w-xl sm:pb-5">
     <h2 id={title} className="text-xl font-semibold">{glossaryOnly ? 'Собрать глоссарий' : bookId ? 'Перевести книгу' : 'Перевести проект'}</h2>
-    <p>Язык перевода · {languages[lang] || lang}</p>
+    <p>Язык перевода · {languageName(lang)}</p>
     <fieldset className="min-w-0" disabled={action.busy}><legend className="mb-2 font-medium">
       {bookId ? 'Книги в запуске' : glossaryOnly ? 'Для каких книг подготовить глоссарий?' : 'Какие книги перевести?'}
     </legend>

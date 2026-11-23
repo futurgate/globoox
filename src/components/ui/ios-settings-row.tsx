@@ -22,6 +22,8 @@ import { cn } from '@/lib/utils';
 export interface IOSSettingsRowOption {
   id: string;
   label: string;
+  description?: string;
+  disabled?: boolean;
   onEdit?: () => void;
 }
 
@@ -70,8 +72,8 @@ export default function IOSSettingsRow({
     const menu = menuRef.current;
     if (!menu || !isOpen || !isPositioned) return;
     const selected =
-      menu.querySelector<HTMLButtonElement>('[aria-selected="true"], [aria-checked="true"]') ??
-      menu.querySelector('button');
+      menu.querySelector<HTMLButtonElement>('button:not(:disabled)[aria-selected="true"], button:not(:disabled)[aria-checked="true"]') ??
+      menu.querySelector<HTMLButtonElement>('button:not(:disabled)');
     selected?.focus({ preventScroll: true });
     selected?.scrollIntoView({ block: 'nearest' });
   }, [isOpen, isPositioned]);
@@ -82,7 +84,7 @@ export default function IOSSettingsRow({
   }
 
   function navigate(event: KeyboardEvent<HTMLDivElement>) {
-    const choices = Array.from(event.currentTarget.querySelectorAll('button'));
+    const choices = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('button:not(:disabled)'));
     const index = choices.indexOf(document.activeElement as HTMLButtonElement);
     switch (event.key) {
       case 'Escape':
@@ -205,19 +207,20 @@ export default function IOSSettingsRow({
                     key={opt.id}
                     type="button"
                     role={hasActions ? 'menuitemradio' : 'option'}
+                    disabled={opt.disabled}
                     aria-selected={hasActions ? undefined : value === opt.id}
                     aria-checked={hasActions ? value === opt.id : undefined}
                     tabIndex={-1}
                     className={cn(
                       uiDropdownItemButton,
-                      'min-h-11 gap-2 break-words focus-visible:bg-[var(--fill-tertiary)] focus-visible:outline-offset-[-3px]',
+                      'min-h-11 gap-2 break-words disabled:cursor-not-allowed disabled:text-[var(--app-text-muted)] focus-visible:bg-[var(--fill-tertiary)] focus-visible:outline-offset-[-3px]',
                     )}
                     onClick={() => {
                       close();
                       onChange(opt.id);
                     }}
                   >
-                    <span className="min-w-0">{opt.label}</span>
+                    <span className="min-w-0">{opt.label}{opt.description && <small className="block font-normal text-[var(--app-text-muted)]">{opt.description}</small>}</span>
                     {value === opt.id && (
                       <IOSIcon
                         icon={Check}
