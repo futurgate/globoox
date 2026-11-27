@@ -3197,6 +3197,10 @@ export type SeriesVolumeWarnings = {
   splitRetries: number
   flaggedBlocks: number
   llmCalls: number
+  // M2.9a — post-translation check counters (optional: absent until the backend migration ships).
+  translationFlagged?: number
+  typoFixed?: number
+  redoApplied?: number
 }
 
 export type SeriesLiveness = 'moving' | 'waiting_quota' | 'stalled' | null
