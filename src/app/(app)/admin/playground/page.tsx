@@ -13,14 +13,13 @@ import {
   Trash2,
   Maximize2,
   Sparkles,
-  Copy,
-  Check,
   GitCompare,
   Info,
   BookOpen,
   Upload as UploadIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
 import PageHeader from '@/components/ui/PageHeader';
 import IOSDialog from '@/components/ui/ios-dialog';
 import UploadBookModal from '@/components/UploadBookModal';
@@ -486,7 +485,7 @@ export default function TranslationPlaygroundPage() {
     setFlowLoadingPrompts(true);
     setPromptError(null);
     try {
-      const res = await fetchFictionFlowPrompts(targetLanguage, flowStages.glossary.enabled);
+      const res = await fetchFictionFlowPrompts(targetLanguage, sourceLanguage, flowStages.glossary.enabled);
       setFlowPrompts({
         glossary: res.glossary,
         translate: res.translate,
@@ -793,7 +792,7 @@ export default function TranslationPlaygroundPage() {
               </button>
             </div>
           </div>
-          <textarea
+          <CopyableTextarea aria-label="Source text" copyLanguage="en"
             value={sourceText}
             onChange={(e) => setSourceText(e.target.value)}
             rows={5}
@@ -948,7 +947,7 @@ export default function TranslationPlaygroundPage() {
                 <Maximize2 className="h-3.5 w-3.5" /> View
               </button>
             </div>
-            <textarea
+            <CopyableTextarea aria-label="Draft translation" copyLanguage="en"
               value={draftText}
               onChange={(e) => setDraftText(e.target.value)}
               rows={5}
@@ -967,7 +966,7 @@ export default function TranslationPlaygroundPage() {
             <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
               Existing glossary JSON (from earlier chapters — {'{}'} for the first)
             </label>
-            <textarea
+            <CopyableTextarea aria-label="Existing glossary JSON" copyLanguage="en"
               value={existingGlossary}
               onChange={(e) => setExistingGlossary(e.target.value)}
               rows={3}
@@ -984,7 +983,7 @@ export default function TranslationPlaygroundPage() {
               <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
                 Glossary block (optional)
               </label>
-              <textarea
+              <CopyableTextarea aria-label="Glossary block" copyLanguage="en"
                 value={glossary}
                 onChange={(e) => setGlossary(e.target.value)}
                 rows={2}
@@ -997,7 +996,7 @@ export default function TranslationPlaygroundPage() {
                 <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
                   Preceding context (optional)
                 </label>
-                <textarea
+                <CopyableTextarea aria-label="Preceding context" copyLanguage="en"
                   value={precedingContext}
                   onChange={(e) => setPrecedingContext(e.target.value)}
                   rows={2}
@@ -1009,7 +1008,7 @@ export default function TranslationPlaygroundPage() {
                 <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
                   Following context (optional)
                 </label>
-                <textarea
+                <CopyableTextarea aria-label="Following context" copyLanguage="en"
                   value={followingContext}
                   onChange={(e) => setFollowingContext(e.target.value)}
                   rows={2}
@@ -1313,7 +1312,7 @@ export default function TranslationPlaygroundPage() {
                         <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
                           Seed glossary JSON (from earlier chapters — {'{}'} for the first)
                         </label>
-                        <textarea
+                        <CopyableTextarea aria-label="Seed glossary JSON" copyLanguage="en"
                           value={flowExistingGlossary}
                           onChange={(e) => setFlowExistingGlossary(e.target.value)}
                           rows={2}
@@ -1323,7 +1322,7 @@ export default function TranslationPlaygroundPage() {
                       </div>
                     )}
 
-                    <textarea
+                    <CopyableTextarea aria-label={s.label} copyLanguage="en"
                       value={value}
                       onChange={(e) => updateFlowPrompt(s.key, e.target.value)}
                       rows={value.trim() ? 8 : 3}
@@ -1434,7 +1433,7 @@ export default function TranslationPlaygroundPage() {
                     </button>
                   )}
                 </div>
-                <textarea
+                <CopyableTextarea aria-label={v.label} copyLanguage="en"
                   value={v.template}
                   onChange={(e) => updateVariant(idx, { template: e.target.value })}
                   rows={v.template.trim() ? 8 : 3}
@@ -1481,7 +1480,7 @@ export default function TranslationPlaygroundPage() {
                 <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-[var(--app-text-muted)]">
                   Reference translation (optional — anchors the judge)
                 </label>
-                <textarea
+                <CopyableTextarea aria-label="Reference translation" copyLanguage="en"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
                   rows={2}
@@ -1635,24 +1634,6 @@ function TextViewerModal({
   viewer: { title: string; content: string } | null;
   onClose: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!copied) return;
-    const t = setTimeout(() => setCopied(false), 1500);
-    return () => clearTimeout(t);
-  }, [copied]);
-
-  const copy = async () => {
-    if (!viewer) return;
-    try {
-      await navigator.clipboard.writeText(viewer.content);
-      setCopied(true);
-    } catch {
-      // Clipboard blocked (insecure context / permissions) — ignore silently.
-    }
-  };
-
   return (
     <IOSDialog
       open={!!viewer}
@@ -1663,15 +1644,7 @@ function TextViewerModal({
         <div className="flex items-center justify-between gap-3 border-b border-[var(--separator-opaque)] px-5 py-3">
           <h2 className="truncate text-sm font-semibold">{viewer?.title}</h2>
           <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={copy}
-              title="Copy to clipboard"
-              className="inline-flex items-center gap-1 rounded-[var(--radius)] px-2 py-1 text-xs text-[var(--app-text-muted)] hover:bg-[var(--app-surface-bg)] hover:text-[var(--app-accent)]"
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? 'Copied' : 'Copy'}
-            </button>
+            <CopyTextButton text={viewer?.content ?? ''} subject={viewer?.title ?? 'Text'} language="en"/>
             <button
               type="button"
               onClick={onClose}
@@ -1861,39 +1834,6 @@ function InlineDiff({ before, after }: { before: string; after: string }) {
         );
       })}
     </p>
-  );
-}
-
-/** Small one-click copy-to-clipboard button with a transient "Copied" state. */
-function CopyButton({
-  text,
-  label = 'Copy',
-  title,
-}: {
-  text: string;
-  label?: string;
-  title?: string;
-}) {
-  const [copied, setCopied] = useState(false);
-  const onCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard unavailable (insecure context / denied) — no-op */
-    }
-  };
-  return (
-    <button
-      type="button"
-      onClick={onCopy}
-      title={title ?? label}
-      className="inline-flex items-center gap-1 hover:text-[var(--app-accent)]"
-    >
-      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-      {copied ? 'Copied' : label}
-    </button>
   );
 }
 
@@ -2214,10 +2154,9 @@ function FlowResultCard({
               </button>
             )}
             {revBlocks.length > 0 && (
-              <CopyButton
+              <CopyTextButton
                 text={buildChangeLog(r.model, revBlocks)}
-                label="Copy change log"
-                title="Copy the per-block draft → final change log"
+                subject="Change log" language="en"
               />
             )}
           </div>

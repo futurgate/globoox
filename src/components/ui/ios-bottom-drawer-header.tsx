@@ -11,6 +11,7 @@ interface IOSBottomDrawerHeaderProps {
   leading?: React.ReactNode;
   trailing?: React.ReactNode;
   onClose: () => void;
+  closeLabel?: string;
   className?: string;
 }
 
@@ -20,6 +21,7 @@ export default function IOSBottomDrawerHeader({
   leading,
   trailing,
   onClose,
+  closeLabel = 'Close',
   className,
 }: IOSBottomDrawerHeaderProps) {
   return (
@@ -47,7 +49,7 @@ export default function IOSBottomDrawerHeader({
           type="button"
           onClick={onClose}
           className={`${uiIconCircleButton} relative z-30 shrink-0 before:absolute before:bottom-[-8px] before:left-[-8px] before:right-[-20px] before:top-[-20px] before:content-['']`}
-          aria-label="Close"
+          aria-label={closeLabel}
         >
           <IOSIcon icon={X} strokeWidth={2.1} />
         </button>

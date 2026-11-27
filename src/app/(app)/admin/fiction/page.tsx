@@ -1,13 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy, Library } from 'lucide-react';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
+import { useRouter } from 'next/navigation';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Library } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { downloadCsv } from '@/app/prototype/_components/downloads';
+import { readerCheckJournalRows } from '@/lib/readerCheckJournalCsv';
 import {
   fetchBooks,
   startFictionTranslation,
@@ -39,7 +43,6 @@ import {
   type FictionStopStage,
   type BookStagePrompt,
   type ApiBook,
-  type ReaderCheckVariant,
   type ReaderCheckProgressEvent,
   type ReaderCheckJournalItem,
   type ReaderCheckCostRun,
@@ -236,7 +239,6 @@ export default function AdminFictionPage() {
   type ScopeEntry = { index: number; title: string | null; entriesIn: number; entriesOut: number; names: string[]; terms: string[] };
   const [scopeLog, setScopeLog] = useState<ScopeEntry[]>([]);
   const [scopeOpen, setScopeOpen] = useState(false);
-  const [scopeCopied, setScopeCopied] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
   const [overwriteTranslation, setOverwriteTranslation] = useState(false);
   const [runRevisionAfter, setRunRevisionAfter] = useState(false);
@@ -281,6 +283,9 @@ export default function AdminFictionPage() {
   // Optional: seed a fresh glossary build from another book's finished glossary
   // (same language) so a later book in a series inherits its names/terms/voice.
   const [seedFromBookId, setSeedFromBookId] = useState('');
+  // Optional hand-provided glossary JSON to seed a FRESH build (alternative to
+  // seedFromBookId). Applied only to a from-scratch build on the backend.
+  const [seedJson, setSeedJson] = useState('');
   // Reuse another book's finished glossary verbatim (copy, no LLM rebuild).
   const [glossaryCopying, setGlossaryCopying] = useState(false);
   // Paste a glossary JSON by hand (no LLM generation).
@@ -289,8 +294,6 @@ export default function AdminFictionPage() {
   const [pasteSaving, setPasteSaving] = useState(false);
 
   // Reader-check QA pass (runs on an already-translated book; no re-translation).
-  // Only the general reader prompt is used from this page (calques removed).
-  const readerVariant: ReaderCheckVariant = 'reader';
   const [readerModel, setReaderModel] = useState('');
   const [readerRestart, setReaderRestart] = useState(false);
   const [readerRunning, setReaderRunning] = useState(false);
@@ -490,15 +493,6 @@ export default function AdminFictionPage() {
       })
       .join('\n\n');
   }, [scopeLog]);
-
-  const copyScopeLog = useCallback(async () => {
-    if (!scopeLogText) return;
-    try {
-      await navigator.clipboard.writeText(scopeLogText);
-      setScopeCopied(true);
-      setTimeout(() => setScopeCopied(false), 1500);
-    } catch { /* clipboard blocked — ignore */ }
-  }, [scopeLogText]);
 
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
@@ -776,7 +770,7 @@ export default function AdminFictionPage() {
     };
 
     try {
-      await startReaderCheck(bookId, lang, readerVariant, onEvent, { model: readerModel || undefined, restart: readerRestart, signal: controller.signal });
+      await startReaderCheck(bookId, lang, onEvent, { model: readerModel || undefined, restart: readerRestart, signal: controller.signal });
       await loadReaderProgress();
       if (sawBookDone) {
         // Clean finish: swap the live journal for the persisted one (real row ids,
@@ -803,7 +797,7 @@ export default function AdminFictionPage() {
       readerAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, readerRunning, readerVariant, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
+  }, [bookId, lang, readerRunning, readerModel, readerRestart, loadReaderProgress, loadReaderJournal, loadFictionCosts]);
 
   // Load the per-run reader-check cost history (spend per run + dynamics).
   const loadReaderCostRuns = useCallback(async () => {
@@ -832,21 +826,7 @@ export default function AdminFictionPage() {
     }
     if (!items || items.length === 0) { setReaderError('No journal to export yet.'); return; }
 
-    const esc = (v: unknown) => `"${(v == null ? '' : String(v)).replace(/"/g, '""')}"`;
-    const header = ['Chapter #', 'Chapter', 'Variant', 'Severity', 'Outcome', 'Reason', 'Quote', 'Problem', 'Before', 'After', 'Change', 'Match', 'Score'];
-    const rows = items.map((it) => [
-      it.chapterNumber ?? '', it.chapterTitle ?? '', it.variant, it.severity, it.outcome, it.rejectReason ?? '',
-      it.quote, it.problem, it.before ?? '', it.after ?? '', it.changeNote ?? '', it.matchType ?? '', it.matchScore ?? '',
-    ]);
-    // Prepend a BOM so Excel reads the Cyrillic/UTF-8 correctly.
-    const csv = '﻿' + [header, ...rows].map((r) => r.map(esc).join(',')).join('\r\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `reader-check-${bookId}-${lang}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`reader-check-${bookId}-${lang}.csv`, readerCheckJournalRows(items));
   }, [bookId, lang, readerJournal]);
 
   // Approve (apply) or reject one proposed correction. Approve writes the (possibly
@@ -1012,7 +992,6 @@ export default function AdminFictionPage() {
     setDone(0);
     setCurrent(null);
     setScopeLog([]);
-    setScopeCopied(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -1251,9 +1230,12 @@ export default function AdminFictionPage() {
     };
 
     try {
+      const seedJsonTrimmed = seedJson.trim();
       await startGlossaryGeneration(bookId, lang, onEvent, {
         restart: rebuildGlossary,
-        seedFromBookId: seedFromBookId || undefined,
+        // JSON seed takes precedence over the book seed (backend rejects both).
+        seedGlossary: seedJsonTrimmed || undefined,
+        seedFromBookId: seedJsonTrimmed ? undefined : (seedFromBookId || undefined),
         model: glossaryModel || undefined,
         signal: controller.signal,
       });
@@ -1274,7 +1256,7 @@ export default function AdminFictionPage() {
       glossaryAbortRef.current = null;
       void loadFictionCosts();
     }
-  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, glossaryModel, loadGlossary, loadFictionCosts]);
+  }, [bookId, lang, glossaryRunning, rebuildGlossary, seedFromBookId, seedJson, glossaryModel, loadGlossary, loadFictionCosts]);
 
   // Reuse an existing glossary from another book verbatim — no generation.
   const handleCopyGlossary = useCallback(async () => {
@@ -1602,10 +1584,7 @@ export default function AdminFictionPage() {
                 {scopeOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
                 Glossary sent per chapter ({scopeLog.length} chapters)
               </button>
-              <Button variant="outline" size="sm" onClick={copyScopeLog}>
-                {scopeCopied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
-                {scopeCopied ? 'Copied' : 'Copy log'}
-              </Button>
+              <CopyTextButton text={scopeLogText} language="en" subject="Glossary scope log"/>
             </div>
             <p className="mt-1 text-[var(--app-text-muted)]">
               Which glossary entries were sent to each chapter. Use it to check a declined form still pulls its entry
@@ -1643,7 +1622,7 @@ export default function AdminFictionPage() {
               Edit the prompt for each stage of the selected book&apos;s direction. <strong>Save</strong> stores a
               server-side override that the next <em>real</em> run uses (for cached stages — translate/revision —
               re-run with <em>Overwrite</em> to regenerate). <strong>Reset to shipped</strong> removes the override.
-              All editable prompts across directions are also on{' '}
+              Changes here update the shared default. For your own translations use the <Link className="text-[var(--app-accent)] underline" href={workspaceBase + '/settings'}>translation studio</Link>. All shared prompts are on{' '}
               <Link href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</Link>.
             </p>
           </div>
@@ -1695,7 +1674,7 @@ export default function AdminFictionPage() {
                     </label>
                   </div>
                   <p className="text-xs text-[var(--app-text-muted)]">{meta.hint}</p>
-                  <textarea
+                  <CopyableTextarea aria-label={meta.label} copyLanguage="en"
                     value={draft}
                     onChange={(e) => setPromptDrafts((prev) => ({ ...prev, [p.name]: e.target.value }))}
                     spellCheck={false}
@@ -1832,7 +1811,7 @@ export default function AdminFictionPage() {
             <span>Use another book</span>
             <select
               value={seedFromBookId}
-              disabled={glossaryRunning || glossaryCopying}
+              disabled={glossaryRunning || glossaryCopying || !!seedJson.trim()}
               onChange={(e) => setSeedFromBookId(e.target.value)}
               className="rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] px-2 py-1 text-sm"
             >
@@ -1870,6 +1849,32 @@ export default function AdminFictionPage() {
           </p>
         </div>
 
+        {/* Alternative seed: a hand-provided glossary JSON. Feeds the Generate/
+            Rebuild button as a fresh-build seed (not saved verbatim — use "Paste
+            glossary JSON" below for that). Overrides "Use another book". */}
+        <div className="space-y-1">
+          <label className="block text-sm">
+            Seed from JSON
+            <span className="ml-1 text-xs text-[var(--app-text-muted)]">
+              (optional; fresh build only — alternative to “Use another book”)
+            </span>
+          </label>
+          <textarea
+            value={seedJson}
+            disabled={glossaryRunning}
+            onChange={(e) => setSeedJson(e.target.value)}
+            rows={4}
+            placeholder={'{ "terminology": [ … ], "named_entities": [ … ] }'}
+            className="w-full rounded-md border border-[var(--app-border)] bg-[var(--app-surface)] p-2 font-mono text-xs outline-none focus:border-[var(--app-accent)]"
+          />
+          {seedJson.trim() && (
+            <p className="text-xs text-[var(--app-text-muted)]">
+              <strong>Generate / Rebuild</strong> will start from this JSON (overrides “Use another book”).
+              Check <strong>Rebuild from scratch</strong> above if a glossary already exists.
+            </p>
+          )}
+        </div>
+
         {/* Paste a glossary JSON by hand — no LLM. Shape must match BookGlossary
             (terminology / named_entities / prose_style_profile / …) and carry at
             least one usable term or named entity. Saved verbatim, marked done. */}
@@ -1885,7 +1890,7 @@ export default function AdminFictionPage() {
           </Button>
           {pasteOpen && (
             <div className="space-y-2">
-              <textarea
+              <CopyableTextarea aria-label="Glossary JSON" copyLanguage="en"
                 value={pasteJson}
                 onChange={(e) => setPasteJson(e.target.value)}
                 disabled={pasteSaving}
@@ -2110,7 +2115,7 @@ export default function AdminFictionPage() {
         )}
       </div>
 
-      {/* ── Reader-check QA pass (calques / reader) ── */}
+      {/* ── Reader-check QA pass ── */}
       <div className="mt-6 space-y-4 rounded-[var(--radius)] border border-[var(--separator-opaque)] p-4">
         <div>
           <h2 className="flex items-center gap-2 text-sm font-semibold">
@@ -2579,7 +2584,7 @@ function ReaderFixEditor({
       {item.before != null && (
         <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{item.before}</p>
       )}
-      <textarea
+      <CopyableTextarea aria-label="Suggested text" copyLanguage="en"
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={Math.min(8, Math.max(2, text.split('\n').length))}
@@ -3008,7 +3013,7 @@ function RevisionDiffEntryRow({
         </div>
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
-          <textarea
+          <CopyableTextarea aria-label="Revised text" copyLanguage="en"
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={Math.min(10, Math.max(2, text.split('\n').length))}

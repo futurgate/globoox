@@ -220,6 +220,7 @@ const GET_CACHE_TTL_MS = 2000
 const inflightGetRequests = new Map<string, Promise<unknown>>()
 const recentGetResponses = new Map<string, { expiresAt: number; value: unknown }>()
 const inflightChromeTranslationRequests = new Map<string, Promise<unknown>>()
+let browserTokenGeneration = 0
 let browserTokenCache: { token: string | null; expiresAt: number } | null = null
 const ACCESS_TOKEN_STORAGE_KEY = 'globoox:access_token'
 let lastBooksAuthWarnAt = 0
@@ -272,69 +273,116 @@ function buildGetCacheKey(path: string, options?: RequestInit): string | null {
   return `${path}::${body}`
 }
 
-function findAccessTokenDeep(value: unknown): string | null {
+function readerSessionStorageKey() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  return url ? 'sb-' + new URL(url).hostname.split('.')[0] + '-auth-token' : null
+}
+
+interface StoredReaderSession { access_token: string; refresh_token?: string }
+
+function findStoredReaderSession(value: unknown): StoredReaderSession | null {
   if (!value) return null
   if (typeof value === 'string') {
-    try {
-      return findAccessTokenDeep(JSON.parse(value))
-    } catch {
-      return null
-    }
+    try { return findStoredReaderSession(JSON.parse(value)) } catch { return null }
   }
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      const token = findAccessTokenDeep(item)
-      if (token) return token
-    }
-    return null
+  if (typeof value !== 'object') return null
+  const item = value as Record<string, unknown>
+  if (typeof item.access_token === 'string' && item.access_token) {
+    return { access_token: item.access_token, refresh_token: typeof item.refresh_token === 'string' ? item.refresh_token : undefined }
   }
-  if (typeof value === 'object') {
-    const obj = value as Record<string, unknown>
-    const direct = obj.access_token
-    if (typeof direct === 'string' && direct.length > 0) return direct
-    for (const nested of Object.values(obj)) {
-      const token = findAccessTokenDeep(nested)
-      if (token) return token
-    }
+  for (const nested of Object.values(item)) {
+    const session = findStoredReaderSession(nested)
+    if (session) return session
   }
   return null
 }
 
-async function getBrowserAccessToken(): Promise<string | null> {
+export function clearBrowserAccessTokenCache() {
+  browserTokenGeneration++
+  browserTokenCache = null
+}
+
+export function forgetLegacyBrowserSession() {
+  clearBrowserAccessTokenCache()
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+    const key = readerSessionStorageKey()
+    if (key) window.localStorage.removeItem(key)
+  } catch {
+    // Storage can be disabled even when the signed-in cookie was available.
+  }
+}
+
+export function getStoredReaderAccessToken(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const key = readerSessionStorageKey()
+    return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) ||
+      (key && findStoredReaderSession(window.localStorage.getItem(key))?.access_token) || null
+  } catch {
+    return null
+  }
+}
+
+/** Check only for this project's cookie (including SSR chunks). The server validates it. */
+export function hasReaderSessionCookie(): boolean {
+  const key = readerSessionStorageKey()
+  return Boolean(key && typeof document !== 'undefined' && document.cookie.split(';').some(cookie => {
+    const name = cookie.trimStart().split('=', 1)[0]
+    return name === key || (name.startsWith(key + '.') && /^\d+$/.test(name.slice(key.length + 1)))
+  }))
+}
+
+export async function getBrowserAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   const now = Date.now()
   if (browserTokenCache && browserTokenCache.expiresAt > now) return browserTokenCache.token
 
+  const generation = browserTokenGeneration
   let token: string | null = null
   try {
-    token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-    if (token) {
-      browserTokenCache = { token, expiresAt: now + 3000 }
-      return token
-    }
-
     const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { session } } = await createClient().auth.getSession()
     token = session?.access_token ?? null
-
-    // Fallback for environments where session storage shape differs.
-    if (!token) {
-      for (let i = 0; i < window.localStorage.length; i += 1) {
-        const key = window.localStorage.key(i)
-        if (!key || !key.includes('auth-token')) continue
-        const raw = window.localStorage.getItem(key)
-        if (!raw) continue
-        token = findAccessTokenDeep(raw)
-        if (token) break
-      }
-    }
   } catch {
-    token = null
+    // A legacy reader session can exist without a Supabase browser session.
   }
-
+  if (!token) token = getStoredReaderAccessToken()
+  if (generation !== browserTokenGeneration) return getBrowserAccessToken()
   browserTokenCache = { token, expiresAt: now + 3000 }
   return token
+}
+
+/** An older reader stored a refreshable Supabase session on this origin in localStorage.
+ * Only claim that session when its access token is the credential Studio just tried. */
+export async function renewLegacyReaderSession(rejectedToken: string | null, signal: AbortSignal): Promise<string | null> {
+  const key = readerSessionStorageKey()
+  if (!key || !rejectedToken) return null
+  let raw: string | null
+  try { raw = window.localStorage.getItem(key) } catch { return null }
+  const stored = findStoredReaderSession(raw)
+  if (!stored?.refresh_token || stored.access_token !== rejectedToken) return null
+
+  const { createClient } = await import('@/lib/supabase/client')
+  const auth = createClient().auth
+  const current = await auth.getSession()
+  signal.throwIfAborted()
+  if (current.data.session) return current.data.session.access_token
+  const standalone = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+  if (window.localStorage.getItem(key) !== raw || (standalone && standalone !== rejectedToken)) return null
+
+  // GoTrue rotates the old credential and @supabase/ssr writes the current host's cookie.
+  const renewed = await auth.refreshSession({ refresh_token: stored.refresh_token })
+  if (renewed.error && (renewed.error.status === 0 || (renewed.error.status ?? 0) >= 500)) {
+    throw new Error('Сервис входа временно недоступен.')
+  }
+  const session = renewed.data.session
+  if (!session) return null
+  if (window.localStorage.getItem(key) === raw) window.localStorage.removeItem(key)
+  if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) === rejectedToken) window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+  clearBrowserAccessTokenCache()
+  return session.access_token
 }
 
 /** Retains HTTP status without changing existing Error/message consumers. */
@@ -709,7 +757,7 @@ export async function startGlossaryGeneration(
   bookId: string,
   lang: string,
   onEvent: (ev: GlossaryProgressEvent) => void,
-  opts: { restart?: boolean; seedFromBookId?: string; model?: string; signal?: AbortSignal } = {},
+  opts: { restart?: boolean; seedFromBookId?: string; seedGlossary?: string; model?: string; signal?: AbortSignal } = {},
 ): Promise<void> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = await getBrowserAccessToken()
@@ -723,6 +771,8 @@ export async function startGlossaryGeneration(
       restart: opts.restart === true,
       // Seed a fresh build from another book's glossary (series continuity).
       ...(opts.seedFromBookId ? { seedFromBookId: opts.seedFromBookId } : {}),
+      // Seed a fresh build from hand-provided glossary JSON (exclusive of seedFromBookId).
+      ...(opts.seedGlossary ? { seedGlossary: opts.seedGlossary } : {}),
       // Optional per-stage model override (else the prod default).
       ...(opts.model ? { model: opts.model } : {}),
     }),
@@ -1124,8 +1174,6 @@ export async function getRevisionCostRuns(bookId: string, lang: string): Promise
 
 // ── Reader-check QA pass (admin) ────────────────────────────────────────────────
 
-export type ReaderCheckVariant = 'reader' | 'calques'
-
 export type ReaderCheckProgressEvent = {
   type: 'book_start' | 'chapter_start' | 'chapter_done' | 'chapter_error' | 'book_done' | 'item' | 'anchored' | 'error'
   // Transient key tying an 'anchored' preview to its final 'item' (live stream only).
@@ -1223,7 +1271,6 @@ export type ReaderCheckApplyResult = {
 export async function startReaderCheck(
   bookId: string,
   lang: string,
-  variant: ReaderCheckVariant,
   onEvent: (ev: ReaderCheckProgressEvent) => void,
   opts: { model?: string; restart?: boolean; signal?: AbortSignal } = {},
 ): Promise<void> {
@@ -1236,7 +1283,6 @@ export async function startReaderCheck(
     headers,
     body: JSON.stringify({
       lang: lang.toUpperCase(),
-      variant,
       ...(opts.model ? { model: opts.model } : {}),
       ...(opts.restart ? { restart: true } : {}),
     }),
@@ -2080,10 +2126,10 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
 }
 
 /** Process an already-uploaded EPUB file */
-export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string): Promise<ProcessBookResponse> {
+export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string, studioOptions?: { projectId?: string; studio?: boolean }): Promise<ProcessBookResponse> {
   return request<ProcessBookResponse>('/api/books/process', {
     method: 'POST',
-    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}) }),
+    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}), ...(studioOptions?.studio && { studio: true }), ...(studioOptions?.projectId && { project_id: studioOptions.projectId }) }),
     signal,
   })
 }
@@ -2440,7 +2486,7 @@ export interface QaReportV2 {
   previousRun?: { runId: string; generatedAt: string; errors: number; review: number }
   chapters: QaChapterSummary[]
   issues: QaIssue[]
-  epub: { blocking: string[]; warnings: string[] }
+  epub: { status?: 'checked' | 'unavailable'; blocking: string[]; warnings: string[] }
 }
 
 export interface QaRunSummaryRow {
@@ -2858,7 +2904,11 @@ export async function runFictionFlowPlaygroundStream(
 
 export interface FictionFlowPrompts {
   lang: string
+  sourceLang: string
   useGlossary: boolean
+  /** False when the (sourceLang → lang) direction has no built-in prompt set. */
+  supported: boolean
+  supportedDirections: string[]
   glossary: string
   translate: string
   revision: string
@@ -2866,9 +2916,17 @@ export interface FictionFlowPrompts {
   correction: string
 }
 
-/** Fetch all three production fiction-flow prompt templates to seed the editors. */
-export function fetchFictionFlowPrompts(lang: string, useGlossary = true): Promise<FictionFlowPrompts> {
-  const q = new URLSearchParams({ lang, glossary: useGlossary ? '1' : '0' })
+/**
+ * Seed the flow editors from the EXACT production prompts for a (sourceLang → lang)
+ * direction — the same files + DB overrides the live pipeline runs from. Read-only:
+ * editing a seeded prompt in the playground never writes back to prod.
+ */
+export function fetchFictionFlowPrompts(
+  lang: string,
+  sourceLang: string,
+  useGlossary = true,
+): Promise<FictionFlowPrompts> {
+  const q = new URLSearchParams({ lang, sourceLang, glossary: useGlossary ? '1' : '0' })
   return request<FictionFlowPrompts>(`/api/admin/fiction-flow-prompts?${q.toString()}`)
 }
 

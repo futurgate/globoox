@@ -9,6 +9,7 @@ interface UseAdaptiveDropdownOptions {
   menuRef: RefObject<HTMLElement | null>;
   menuWidth: number;
   menuHeight: number;
+  measureMenu?: boolean;
   gap?: number;
   margin?: number;
 }
@@ -20,6 +21,7 @@ export function useAdaptiveDropdown({
   menuRef,
   menuWidth,
   menuHeight,
+  measureMenu = false,
   gap = 8,
   margin = 8,
 }: UseAdaptiveDropdownOptions) {
@@ -40,17 +42,20 @@ export function useAdaptiveDropdown({
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
 
-      const preferredLeft = triggerRect.right - menuWidth;
-      const left = Math.max(margin, Math.min(preferredLeft, viewportWidth - menuWidth - margin));
+      const menuRect = measureMenu ? menuRef.current?.getBoundingClientRect() : undefined;
+      const width = menuRect?.width || menuWidth;
+      const height = menuRect?.height || menuHeight;
+      const preferredLeft = triggerRect.right - width;
+      const left = Math.max(margin, Math.min(preferredLeft, viewportWidth - width - margin));
 
       const spaceBelow = viewportHeight - triggerRect.bottom;
-      const openUp = spaceBelow < menuHeight + gap + margin;
+      const openUp = spaceBelow < height + gap + margin;
       const top = openUp
-        ? Math.max(margin, triggerRect.top - menuHeight - gap)
-        : Math.min(viewportHeight - menuHeight - margin, triggerRect.bottom + gap);
+        ? Math.max(margin, triggerRect.top - height - gap)
+        : Math.min(viewportHeight - height - margin, triggerRect.bottom + gap);
 
       const triggerCenterX = triggerRect.left + triggerRect.width / 2;
-      const originXPercent = ((triggerCenterX - left) / menuWidth) * 100;
+      const originXPercent = ((triggerCenterX - left) / width) * 100;
       const clampedOriginX = Math.max(0, Math.min(100, originXPercent));
       const originY = openUp ? '100%' : '0%';
 
@@ -62,14 +67,17 @@ export function useAdaptiveDropdown({
     };
 
     updateMenuPosition();
+    const observer = measureMenu ? new ResizeObserver(updateMenuPosition) : null;
+    if (menuRef.current) observer?.observe(menuRef.current);
     window.addEventListener('resize', updateMenuPosition);
     window.addEventListener('scroll', updateMenuPosition, true);
 
     return () => {
+      observer?.disconnect();
       window.removeEventListener('resize', updateMenuPosition);
       window.removeEventListener('scroll', updateMenuPosition, true);
     };
-  }, [isOpen, triggerRef, menuWidth, menuHeight, gap, margin]);
+  }, [isOpen, triggerRef, menuRef, menuWidth, menuHeight, measureMenu, gap, margin]);
 
   useEffect(() => {
     if (!isOpen) return;

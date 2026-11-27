@@ -1,0 +1,356 @@
+.adm {
+  color: var(--app-text);
+  max-width: 1060px;
+  width: 100%;
+  min-width: 0;
+}
+.adm p {
+  line-height: 1.55;
+  color: var(--app-text-muted);
+  font-size: 15px;
+  margin: 0.45rem 0 0.85rem;
+}
+.adm h2,
+.adm h3 {
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.022em;
+  color: var(--app-text);
+}
+.adm h2 {
+  font-size: clamp(19px, 2.1vw, 25px);
+  font-weight: 680;
+}
+.adm h3 {
+  font-size: 17px;
+  margin: 20px 0 9px;
+  font-weight: 640;
+}
+.adm small {
+  display: block;
+  color: var(--app-text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.adm-stack {
+  display: grid;
+  gap: 17px;
+}
+.adm-card {
+  padding: clamp(17px, 2.5vw, 28px);
+  min-width: 0;
+}
+.adm-section-title,
+.adm-hero,
+.adm-library-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.adm-section-title {
+  margin-bottom: 17px;
+}
+.adm-section-title h2 + p {
+  margin-bottom: 0;
+}
+.adm-section-title > svg {
+  color: var(--app-accent);
+}
+.adm-segment,
+.adm-filter,
+.adm-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.adm-actions {
+  margin-top: 16px;
+}
+.adm-segment,
+.adm-filter {
+  gap: 4px;
+}
+.adm-filter {
+  margin: 14px 0 1px;
+}
+.adm-search {
+  flex: 1;
+  max-width: 440px;
+}
+.adm-list:empty {
+  display: none;
+}
+.adm-list {
+  margin-top: 8px;
+}
+.adm-history {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+.adm-bookrow,
+.adm-history,
+.adm-choice {
+  gap: 14px;
+  border-bottom: 1px solid var(--app-border);
+}
+.adm-bookrow:last-child,
+.adm-history:last-child,
+.adm-choice:last-child {
+  border-bottom: 0;
+}
+.adm-bookinfo,
+.adm-choice > span,
+.adm-history > button:first-child {
+  flex: 1;
+}
+.adm-bookrow strong {
+  font-size: 17px;
+  font-weight: 660;
+}
+.adm-bookmark {
+  display: grid;
+  place-items: center;
+  border-radius: 5px 8px 8px 5px;
+  border-left: 3px solid #2d4842;
+  width: 43px;
+  height: 53px;
+  color: #e7ece3;
+  background: #506b61;
+  flex-shrink: 0;
+}
+.adm-bookmark.mist {
+  background: #99664e;
+  border-color: #714936;
+  color: #f9eee6;
+}
+.adm-bookmark.coast {
+  background: #637888;
+  border-color: #415969;
+  color: #eef3fa;
+}
+.adm-bookinfo > small,
+.adm-choice small,
+.adm-history small {
+  margin-top: 5px;
+}
+.adm-choice > svg:first-child,
+.adm-history svg {
+  color: var(--app-accent);
+}
+.adm-history > button:first-child {
+  gap: 12px;
+  justify-content: flex-start;
+}
+.adm-status.done {
+  background: color-mix(
+    in srgb,
+    var(--system-green) 19%,
+    var(--app-surface-bg)
+  );
+  color: var(--app-text);
+}
+.adm-status.paused {
+  background: color-mix(
+    in srgb,
+    var(--system-yellow) 34%,
+    var(--app-surface-bg)
+  );
+  color: var(--app-text);
+}
+.adm-status.running {
+  background: color-mix(in srgb, var(--app-accent) 14%, var(--app-surface-bg));
+  color: var(--app-text);
+}
+.adm-no-results {
+  display: none;
+}
+.adm-list:empty + .adm-no-results {
+  display: block;
+}
+.adm-hero h2 {
+  margin: 0.65rem 0;
+}
+.adm-field {
+  display: grid;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 14px 0;
+  color: var(--app-text);
+}
+.adm-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--app-border);
+}
+.adm-toggle input {
+  height: 20px;
+  width: 20px;
+  flex-shrink: 0;
+}
+.adm-toggle small {
+  margin-top: 3px;
+}
+.adm-inset,
+.adm-warning {
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--fill-tertiary);
+  margin-top: 15px;
+}
+.adm-warning {
+  background: color-mix(
+    in srgb,
+    var(--system-yellow) 28%,
+    var(--app-surface-bg)
+  );
+  color: var(--app-text);
+}
+.adm-meter {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 14px 0;
+}
+.adm-meter progress {
+  width: 100%;
+  height: 12px;
+}
+.adm-meter small {
+  white-space: nowrap;
+}
+.adm-big {
+  font-size: 34px;
+  letter-spacing: -0.045em;
+}
+.adm-big span {
+  font-size: 19px;
+  color: var(--app-text-muted);
+  letter-spacing: normal;
+  font-weight: 500;
+}
+.adm-foot {
+  border-top: 1px solid var(--app-border);
+  padding-top: 13px;
+  margin-top: 17px;
+}
+.adm-terms {
+  margin: 10px 0;
+  border-radius: 8px;
+  background: var(--fill-tertiary);
+  padding: 0 13px;
+  max-height: 320px;
+  overflow: auto;
+}
+.adm-terms > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--app-border);
+  overflow-wrap: anywhere;
+}
+.adm-terms > div:last-child {
+  border: 0;
+}
+.adm-review {
+  display: grid;
+  grid-template-columns: minmax(155px, 30%) 1fr;
+  gap: 22px;
+}
+.adm-fragments {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+}
+.adm-fragments button {
+  display: grid;
+  justify-content: start;
+  text-align: left;
+  padding: 12px 14px;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid var(--app-border);
+}
+.adm-fragments button[aria-pressed='true'] {
+  background: var(--fill-secondary);
+  border-left-color: var(--app-accent);
+}
+.adm-detail {
+  padding: 4px 0;
+}
+.adm-detail > div {
+  margin-top: 14px;
+}
+.adm-detail p {
+  margin: 0.3rem 0;
+  color: var(--app-text);
+}
+.adm-table {
+  overflow-x: auto;
+}
+.adm table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+.adm :is(td, th) {
+  padding: 11px 8px;
+  border-bottom: 1px solid var(--app-border);
+}
+.adm td:not(:first-child),
+.adm th:not(:first-child) {
+  text-align: right;
+}
+.adm-total {
+  font-size: 25px;
+  white-space: nowrap;
+}
+.adm-file-state {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--fill-secondary);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+@media (max-width: 680px) {
+  .adm-section-title,
+  .adm-library-tools,
+  .adm-hero {
+    flex-wrap: wrap;
+  }
+  .adm-review {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .adm-fragments {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  .adm-fragments button {
+    min-width: 130px;
+  }
+  .adm-bookrow,
+  .adm-history {
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .adm-bookinfo {
+    min-width: 115px;
+  }
+  .adm-search {
+    max-width: 100%;
+    min-width: 200px;
+  }
+  .adm-table td,
+  .adm-table th {
+    padding: 9px 4px;
+  }
+}

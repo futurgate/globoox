@@ -1,9 +1,15 @@
 import { withSentryConfig } from '@sentry/nextjs';
+import { workspaceBase } from './src/lib/translationWorkspacePath';
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async redirects() {
     return [
+      {
+        source: '/prototype/to-be/:path*',
+        destination: workspaceBase + '/:path*',
+        permanent: false,
+      },
       {
         source: '/library',
         destination: '/my-books',

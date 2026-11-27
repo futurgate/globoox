@@ -1,0 +1,22 @@
+.space { height: 64px; }
+.bar {
+  position: fixed;
+  z-index: 18;
+  inset-inline: var(--studio-sidebar-width, 0px) 0;
+  bottom: var(--studio-keyboard-inset, 0px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px clamp(20px, 4.2vw, 70px) max(12px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--app-border);
+  background: var(--app-surface-bg);
+  color: var(--app-text);
+}
+.status { margin-inline-end: auto; font-size: 0.875rem; }
+@media (max-width: 760px) {
+  .space { height: 108px; }
+  .bar { padding: 9px 16px max(9px, env(safe-area-inset-bottom)); }
+  .status { flex: 1 0 100%; }
+}

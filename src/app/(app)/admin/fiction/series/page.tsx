@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check, Wand2, Download, Copy, ScrollText } from 'lucide-react';
+import { Loader2, ShieldAlert, Upload, RefreshCw, Library, ChevronLeft, FlaskConical, Play, RotateCcw, Activity, AlertTriangle, BellRing, Check, Wand2, Download, ScrollText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CopyTextButton } from '@/components/ui/copy-text';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -117,7 +118,6 @@ function VolumeRow({
   const [glossaryData, setGlossaryData] = useState<GlossaryStatus | null>(null);
   const [glossaryLoading, setGlossaryLoading] = useState(false);
   const [glossaryErr, setGlossaryErr] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [downloadingVol, setDownloadingVol] = useState(false);
   const hasGlossary = gloss.length > 0;
   const glossaryJson = glossaryData?.glossary ? JSON.stringify(glossaryData.glossary, null, 2) : '';
@@ -135,15 +135,6 @@ function VolumeRow({
     } finally {
       setGlossaryLoading(false);
     }
-  };
-
-  const copyGlossary = async () => {
-    if (!glossaryJson) return;
-    try {
-      await navigator.clipboard.writeText(glossaryJson);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch { /* clipboard denied */ }
   };
 
   const downloadVol = async () => {
@@ -240,10 +231,7 @@ function VolumeRow({
                   {glossaryData?.frozen ? '🔒 frozen · ' : ''}
                   {(glossaryData?.glossary?.named_entities?.length ?? 0)} names · {(glossaryData?.glossary?.terminology?.length ?? 0)} terms
                 </span>
-                <Button variant="ghost" size="sm" onClick={copyGlossary}>
-                  {copied ? <Check className="mr-1 h-3 w-3 text-emerald-600" /> : <Copy className="mr-1 h-3 w-3" />}
-                  {copied ? 'Copied' : 'Copy JSON'}
-                </Button>
+                <CopyTextButton text={glossaryJson} language="en" subject="Glossary JSON"/>
               </div>
               <pre className="max-h-72 overflow-auto rounded bg-[var(--app-surface-bg)] p-2 text-[11px] leading-snug">{glossaryJson}</pre>
             </>
