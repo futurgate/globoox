@@ -90,6 +90,10 @@ function WarningsChip({ w }: { w: NonNullable<SeriesVolume['warnings']> }) {
   if (w.retries) parts.push(`${w.retries} retries`);
   if (w.splitRetries) parts.push(`${w.splitRetries} split`);
   if (w.flaggedBlocks) parts.push(`${w.flaggedBlocks} flagged`);
+  // M2.9a — post-translation check outcomes.
+  if (w.translationFlagged) parts.push(`${w.translationFlagged} check`);
+  if (w.redoApplied) parts.push(`${w.redoApplied} re-translated`);
+  if (w.typoFixed) parts.push(`${w.typoFixed} typo-fixed`);
   if (parts.length === 0) return null;
   return (
     <span className="inline-flex items-center gap-1 text-xs text-amber-600" title="Recovered under load — not failures">
