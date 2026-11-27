@@ -220,6 +220,7 @@ const GET_CACHE_TTL_MS = 2000
 const inflightGetRequests = new Map<string, Promise<unknown>>()
 const recentGetResponses = new Map<string, { expiresAt: number; value: unknown }>()
 const inflightChromeTranslationRequests = new Map<string, Promise<unknown>>()
+let browserTokenGeneration = 0
 let browserTokenCache: { token: string | null; expiresAt: number } | null = null
 const ACCESS_TOKEN_STORAGE_KEY = 'globoox:access_token'
 let lastBooksAuthWarnAt = 0
@@ -272,69 +273,116 @@ function buildGetCacheKey(path: string, options?: RequestInit): string | null {
   return `${path}::${body}`
 }
 
-function findAccessTokenDeep(value: unknown): string | null {
+function readerSessionStorageKey() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  return url ? 'sb-' + new URL(url).hostname.split('.')[0] + '-auth-token' : null
+}
+
+interface StoredReaderSession { access_token: string; refresh_token?: string }
+
+function findStoredReaderSession(value: unknown): StoredReaderSession | null {
   if (!value) return null
   if (typeof value === 'string') {
-    try {
-      return findAccessTokenDeep(JSON.parse(value))
-    } catch {
-      return null
-    }
+    try { return findStoredReaderSession(JSON.parse(value)) } catch { return null }
   }
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      const token = findAccessTokenDeep(item)
-      if (token) return token
-    }
-    return null
+  if (typeof value !== 'object') return null
+  const item = value as Record<string, unknown>
+  if (typeof item.access_token === 'string' && item.access_token) {
+    return { access_token: item.access_token, refresh_token: typeof item.refresh_token === 'string' ? item.refresh_token : undefined }
   }
-  if (typeof value === 'object') {
-    const obj = value as Record<string, unknown>
-    const direct = obj.access_token
-    if (typeof direct === 'string' && direct.length > 0) return direct
-    for (const nested of Object.values(obj)) {
-      const token = findAccessTokenDeep(nested)
-      if (token) return token
-    }
+  for (const nested of Object.values(item)) {
+    const session = findStoredReaderSession(nested)
+    if (session) return session
   }
   return null
 }
 
-async function getBrowserAccessToken(): Promise<string | null> {
+export function clearBrowserAccessTokenCache() {
+  browserTokenGeneration++
+  browserTokenCache = null
+}
+
+export function forgetLegacyBrowserSession() {
+  clearBrowserAccessTokenCache()
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+    const key = readerSessionStorageKey()
+    if (key) window.localStorage.removeItem(key)
+  } catch {
+    // Storage can be disabled even when the signed-in cookie was available.
+  }
+}
+
+export function getStoredReaderAccessToken(): string | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const key = readerSessionStorageKey()
+    return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) ||
+      (key && findStoredReaderSession(window.localStorage.getItem(key))?.access_token) || null
+  } catch {
+    return null
+  }
+}
+
+/** Check only for this project's cookie (including SSR chunks). The server validates it. */
+export function hasReaderSessionCookie(): boolean {
+  const key = readerSessionStorageKey()
+  return Boolean(key && typeof document !== 'undefined' && document.cookie.split(';').some(cookie => {
+    const name = cookie.trimStart().split('=', 1)[0]
+    return name === key || (name.startsWith(key + '.') && /^\d+$/.test(name.slice(key.length + 1)))
+  }))
+}
+
+export async function getBrowserAccessToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   const now = Date.now()
   if (browserTokenCache && browserTokenCache.expiresAt > now) return browserTokenCache.token
 
+  const generation = browserTokenGeneration
   let token: string | null = null
   try {
-    token = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
-    if (token) {
-      browserTokenCache = { token, expiresAt: now + 3000 }
-      return token
-    }
-
     const { createClient } = await import('@/lib/supabase/client')
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { session } } = await createClient().auth.getSession()
     token = session?.access_token ?? null
-
-    // Fallback for environments where session storage shape differs.
-    if (!token) {
-      for (let i = 0; i < window.localStorage.length; i += 1) {
-        const key = window.localStorage.key(i)
-        if (!key || !key.includes('auth-token')) continue
-        const raw = window.localStorage.getItem(key)
-        if (!raw) continue
-        token = findAccessTokenDeep(raw)
-        if (token) break
-      }
-    }
   } catch {
-    token = null
+    // A legacy reader session can exist without a Supabase browser session.
   }
-
+  if (!token) token = getStoredReaderAccessToken()
+  if (generation !== browserTokenGeneration) return getBrowserAccessToken()
   browserTokenCache = { token, expiresAt: now + 3000 }
   return token
+}
+
+/** An older reader stored a refreshable Supabase session on this origin in localStorage.
+ * Only claim that session when its access token is the credential Studio just tried. */
+export async function renewLegacyReaderSession(rejectedToken: string | null, signal: AbortSignal): Promise<string | null> {
+  const key = readerSessionStorageKey()
+  if (!key || !rejectedToken) return null
+  let raw: string | null
+  try { raw = window.localStorage.getItem(key) } catch { return null }
+  const stored = findStoredReaderSession(raw)
+  if (!stored?.refresh_token || stored.access_token !== rejectedToken) return null
+
+  const { createClient } = await import('@/lib/supabase/client')
+  const auth = createClient().auth
+  const current = await auth.getSession()
+  signal.throwIfAborted()
+  if (current.data.session) return current.data.session.access_token
+  const standalone = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+  if (window.localStorage.getItem(key) !== raw || (standalone && standalone !== rejectedToken)) return null
+
+  // GoTrue rotates the old credential and @supabase/ssr writes the current host's cookie.
+  const renewed = await auth.refreshSession({ refresh_token: stored.refresh_token })
+  if (renewed.error && (renewed.error.status === 0 || (renewed.error.status ?? 0) >= 500)) {
+    throw new Error('Сервис входа временно недоступен.')
+  }
+  const session = renewed.data.session
+  if (!session) return null
+  if (window.localStorage.getItem(key) === raw) window.localStorage.removeItem(key)
+  if (window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY) === rejectedToken) window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY)
+  clearBrowserAccessTokenCache()
+  return session.access_token
 }
 
 /** Retains HTTP status without changing existing Error/message consumers. */
@@ -432,6 +480,46 @@ async function request<T>(path: string, options?: RequestInit, capturedShare?: s
  * wrapper because the response is binary. Throws with a readable message when
  * the book is not 100% translated (backend 409) or the request otherwise fails.
  */
+/**
+ * Parse the download filename from Content-Disposition. Prefers the RFC 5987
+ * `filename*=UTF-8''<percent-encoded>` form (carries non-ASCII, e.g. Cyrillic)
+ * over the ASCII `filename="…"` fallback.
+ */
+function filenameFromDisposition(disposition: string, fallback: string): string {
+  const star = disposition.match(/filename\*=UTF-8''([^;]+)/i)
+  if (star?.[1]) {
+    try { return decodeURIComponent(star[1].trim()) } catch { /* fall through */ }
+  }
+  return disposition.match(/filename="?([^";]+)"?/i)?.[1] || fallback
+}
+
+/** Download a ZIP of the whole series' translated EPUBs (admin). */
+export async function downloadSeriesTranslated(seriesId: string, lang: string): Promise<{ skipped: number[] }> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/download-translated?lang=${encodeURIComponent(lang)}`, { headers })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Download failed: ${res.status}`)
+  }
+  const blob = await res.blob()
+  const disposition = res.headers.get('content-disposition') || ''
+  const filename = filenameFromDisposition(disposition, `series-${lang}.zip`)
+  const skippedHeader = res.headers.get('x-skipped-volumes') || ''
+  const skipped = skippedHeader ? skippedHeader.split(',').map(Number).filter((n) => Number.isFinite(n)) : []
+
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+  return { skipped }
+}
+
 export async function downloadTranslatedEpub(bookId: string, lang: string): Promise<void> {
   const path = `/api/books/${bookId}/download-translated?lang=${encodeURIComponent(lang)}`
   const headers = new Headers()
@@ -446,8 +534,7 @@ export async function downloadTranslatedEpub(bookId: string, lang: string): Prom
 
   const blob = await res.blob()
   const disposition = res.headers.get('content-disposition') || ''
-  const match = disposition.match(/filename="?([^"]+)"?/i)
-  const filename = match?.[1] || `book-${lang}.epub`
+  const filename = filenameFromDisposition(disposition, `book-${lang}.epub`)
 
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -2037,10 +2124,10 @@ export async function uploadToStorage(signedUrl: string, file: File, contentType
 }
 
 /** Process an already-uploaded EPUB file */
-export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string): Promise<ProcessBookResponse> {
+export function processBook(filePath: string, fileName: string, fileSize: number, signal?: AbortSignal, retryBookId?: string, studioOptions?: { projectId?: string; studio?: boolean }): Promise<ProcessBookResponse> {
   return request<ProcessBookResponse>('/api/books/process', {
     method: 'POST',
-    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}) }),
+    body: JSON.stringify({ file_path: filePath, file_name: fileName, file_size: fileSize, ...(retryBookId ? { retry_book_id: retryBookId } : {}), ...(studioOptions?.studio && { studio: true }), ...(studioOptions?.projectId && { project_id: studioOptions.projectId }) }),
     signal,
   })
 }
@@ -2397,7 +2484,7 @@ export interface QaReportV2 {
   previousRun?: { runId: string; generatedAt: string; errors: number; review: number }
   chapters: QaChapterSummary[]
   issues: QaIssue[]
-  epub: { blocking: string[]; warnings: string[] }
+  epub: { status?: 'checked' | 'unavailable'; blocking: string[]; warnings: string[] }
 }
 
 export interface QaRunSummaryRow {
@@ -3071,4 +3158,288 @@ export function fetchAuthorSheetRates(
   return request<{ rates: AuthorSheetRate[] }>(
     `/api/admin/cost-runs/author-sheet-rates${qs ? `?${qs}` : ''}`
   )
+}
+
+// ── Book series (admin, full-flow-automatization) ───────────────────────────
+
+export type SeriesListItem = {
+  id: string
+  name: string
+  genre: string | null
+  direction: string | null
+  bookCount: number
+  createdAt: string
+}
+
+export type SeriesVolumeTranslation = {
+  language: string
+  doneChapters: number
+  errorChapters: number
+  totalChapters: number
+  percent: number
+  state: 'complete' | 'partial' | 'pending'
+  updatedAt: string
+}
+
+export type SeriesGlossaryStatus = {
+  language: string
+  status: 'pending' | 'building' | 'done' | 'error'
+  chaptersDone: number
+  chaptersTotal: number
+  frozen: boolean
+  updatedAt?: string
+}
+
+export type SeriesVolumeWarnings = {
+  retries: number
+  splitRetries: number
+  flaggedBlocks: number
+  llmCalls: number
+}
+
+export type SeriesLiveness = 'moving' | 'waiting_quota' | 'stalled' | null
+
+export type SeriesVolume = {
+  bookId: string
+  title: string
+  author: string | null
+  volumeNumber: number | null
+  processingStatus: 'pending' | 'processing' | 'ready' | 'error'
+  sourceLanguage: string | null
+  totalChapters: number
+  translations: SeriesVolumeTranslation[]
+  // Present once the orchestrator (M1.3) + observability (M1.6) backends ship.
+  glossary?: SeriesGlossaryStatus[]
+  warnings?: SeriesVolumeWarnings
+  liveness?: SeriesLiveness
+  lastProgressAt?: string | null
+}
+
+export type SeriesRecipe = {
+  id: string
+  name: string
+  genre: string
+  direction: string
+  model: string
+  units: 'us' | 'metric' | 'keep'
+  seedGlossary: string
+  prompts: { step0: string; translate: string }
+}
+
+export type SeriesGate = { waiting: number; rate429: number; pausedBuckets: number }
+
+export type SeriesDetail = {
+  id: string
+  name: string
+  genre: string | null
+  direction: string | null
+  createdAt: string
+  recipe: SeriesRecipe | null
+  gate?: SeriesGate
+  volumes: SeriesVolume[]
+}
+
+export type SeriesUploadResult = {
+  seriesId: string
+  name: string
+  genre: string | null
+  books: Array<{ bookId: string; jobId: string | null; volumeNumber: number; fileName: string }>
+  failures: Array<{ fileName: string; error: string }>
+}
+
+/** List all book series (admin). */
+export async function listSeries(): Promise<SeriesListItem[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load series: ${res.status}`)
+  }
+  const data = (await res.json()) as { series?: SeriesListItem[] }
+  return data.series ?? []
+}
+
+/** One series with volumes + per-volume translation progress (admin). */
+export async function getSeries(seriesId: string): Promise<SeriesDetail> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load series: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesDetail>
+}
+
+export type SeriesRunResult = {
+  seriesId: string
+  recipe: string
+  lang: string
+  glossaryModel: string
+  translateModel: string
+  totalVolumes: number
+  volumesNotReady: number[]
+  enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number }
+}
+
+export type SeriesRunOpts = { lang?: string; model?: string; glossaryModel?: string; translateModel?: string; fresh?: boolean }
+
+/** Start the full-flow for a series (admin): enqueues step 0 for volume 1. */
+export async function runSeries(seriesId: string, opts: SeriesRunOpts = {}): Promise<SeriesRunResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/run`, {
+    method: 'POST', headers, body: JSON.stringify(opts),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to start series: ${res.status}`)
+  }
+  return res.json() as Promise<SeriesRunResult>
+}
+
+/** Re-enqueue a stuck/stopped step for one volume (admin). */
+export async function restartSeriesStep(
+  seriesId: string, bookId: string, step: 'step0' | 'translate', opts: SeriesRunOpts = {},
+): Promise<{ seriesId: string; enqueued: { jobId: string; step: string; bookId: string; volumeNumber: number; lang: string } }> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/restart`, {
+    method: 'POST', headers, body: JSON.stringify({ bookId, step, ...opts }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to restart step: ${res.status}`)
+  }
+  return res.json()
+}
+
+/**
+ * Upload a ZIP archive of EPUB volumes as a new series (admin).
+ *
+ * Uploads the ZIP directly to Supabase Storage via a signed URL (bypassing the
+ * serverless request-body cap — a series ZIP can be tens of MB), then calls
+ * POST /api/series/process with just the storage path.
+ */
+export async function uploadSeriesZip(
+  file: File,
+  opts: { name?: string; genre?: string } = {},
+  signal?: AbortSignal
+): Promise<SeriesUploadResult> {
+  const slug = (file.name.replace(/\.zip$/i, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'series').slice(0, 60)
+  const uniqueSuffix = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`
+  const zipPath = `series-${slug}-${uniqueSuffix}.zip`
+
+  const { signedUrl } = await getSignedUploadUrl('books', zipPath, signal)
+  await uploadToStorage(signedUrl, file, 'application/zip', signal)
+
+  return request<SeriesUploadResult>('/api/series/process', {
+    method: 'POST',
+    body: JSON.stringify({ zip_path: zipPath, file_name: file.name, name: opts.name, genre: opts.genre }),
+    signal,
+  })
+}
+
+// ── Attention queue (admin, M1.6b) ──────────────────────────────────────────
+
+export type AttentionItem = {
+  id: string
+  bookId: string
+  bookTitle: string
+  seriesId: string | null
+  seriesName: string | null
+  language: string
+  blockId: string | null
+  step: string | null
+  kind: string | null
+  reason: string
+  createdAt: string
+}
+
+/** List open attention-queue items (admin). */
+export async function listAttention(limit = 100): Promise<AttentionItem[]> {
+  const headers = new Headers()
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/attention?limit=${limit}`, { headers, cache: 'no-store' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to load attention queue: ${res.status}`)
+  }
+  const data = (await res.json()) as { items?: AttentionItem[] }
+  return data.items ?? []
+}
+
+/** Resolve one attention item (admin). */
+export async function resolveAttentionItem(id: string): Promise<void> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/admin/attention/resolve`, {
+    method: 'POST', headers, body: JSON.stringify({ id }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Failed to resolve item: ${res.status}`)
+  }
+}
+
+// ── Smart series glossary (admin, M1.7) ─────────────────────────────────────
+
+export type GlossaryEdit = {
+  kind: 'named_entity' | 'terminology'
+  source: string
+  target: string
+  forms?: string[]
+  note?: string
+}
+
+export type GlossaryEditVolumeResult = {
+  bookId: string
+  volumeNumber: number | null
+  title: string
+  updated?: boolean
+  affectedBlocks?: number
+  redone?: number
+  applied?: number
+  unchanged?: number
+  failed?: number
+  skipped?: string
+}
+
+export type GlossaryEditResult = {
+  seriesId: string
+  lang: string
+  edits: number
+  reason: string
+  capped: boolean
+  volumes: GlossaryEditVolumeResult[]
+}
+
+/**
+ * Edit series glossary entries and re-translate the affected paragraphs across
+ * every volume (admin). One edit = re-translate just the paragraphs with that
+ * term; several edits apply together.
+ */
+export async function editSeriesGlossary(
+  seriesId: string,
+  edits: GlossaryEdit[],
+  opts: { lang?: string; model?: string } = {},
+): Promise<GlossaryEditResult> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getBrowserAccessToken()
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+  const res = await fetch(`${API_URL}/api/series/${seriesId}/glossary-edit`, {
+    method: 'POST', headers, body: JSON.stringify({ edits, ...opts }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({} as { message?: string }))
+    throw new Error(body.message || `Glossary edit failed: ${res.status}`)
+  }
+  return res.json() as Promise<GlossaryEditResult>
 }

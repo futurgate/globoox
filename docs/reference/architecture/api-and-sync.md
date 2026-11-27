@@ -54,7 +54,7 @@ The shared proxy:
 
 Route handlers live under `src/app/(app)/api/**/route.ts`. Session refresh is handled separately by `src/proxy.ts` and `src/lib/supabase/middleware.ts`; API routes are excluded from that matcher because `_proxy.ts` reads the session itself.
 
-The exact public `/my-books` shell (including its trailing slash) uses `getSession()` only to renew an expiring session. Its returned identity is never trusted for authorization or private server rendering. The cookie adapter updates both the downstream request and the response; changed cookies carry `Cache-Control: private, no-store`. Other matched pages retain `getUser()`. Bookshelf v2 requests use `_catalogProxy.ts` with an explicit expected scope; the backend verifies the bearer independently on every request.
+The public shells at `/my-books` (including its trailing slash) and `/studio` (including its child routes) use `getSession()` to renew expiring sessions. Workspace data endpoints verify the user with `getUser()` and scope each request to that account. The cookie adapter updates both the downstream request and the response; changed cookies carry `Cache-Control: private, no-store`. Other matched pages retain `getUser()`. Bookshelf v2 requests use `_catalogProxy.ts` with an explicit expected scope; the backend verifies the bearer independently on every request.
 
 See [ADR-0001](../../decisions/ADR-0001-api-proxy-boundary.md).
 
