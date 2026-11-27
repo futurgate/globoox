@@ -1,0 +1,48 @@
+{
+  "mainSwitcher": "RU→FR with hash; Open App preserved",
+  "cookies": [
+    {
+      "width": 1440,
+      "overflow": 0,
+      "copyLines": [
+        {
+          "text": "Cookies sur Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies : usage et statistiques.",
+          "lines": 0.9996684350132625
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": 0,
+      "copyLines": [
+        {
+          "text": "Cookies sur Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies : usage et statistiques.",
+          "lines": 0.9996684350132625
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "overflow": 0,
+      "copyLines": [
+        {
+          "text": "Cookies sur Globoox",
+          "lines": 1
+        },
+        {
+          "text": "Cookies : usage et statistiques.",
+          "lines": 0.9996684350132625
+        }
+      ]
+    }
+  ],
+  "motion": "all seven dots change position"
+}

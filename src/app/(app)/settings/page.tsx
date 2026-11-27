@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, HelpCircle, LogOut, Loader2, FlaskConical, Crown } from 'lucide-react';
+import { User, HelpCircle, LogOut, Loader2, FlaskConical, Crown, BookOpenText, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { uiMenuItemButton } from '@/components/ui/button-styles';
@@ -16,11 +16,29 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useSubscription } from '@/lib/hooks/useSubscription';
 import { getSubscriptionView } from '@/lib/subscription';
-import { getBillingPortal, getTranslationUsage, type TranslationLimitResponse } from '@/lib/api';
+import { forgetLegacyBrowserSession, getBillingPortal, getTranslationUsage, type TranslationLimitResponse } from '@/lib/api';
 import { trackUpgradeClicked } from '@/lib/posthog';
 import { useAppTheme } from '@/lib/hooks/useAppTheme';
 import { APP_THEME_MODE_OPTIONS, APP_THEME_PALETTE_OPTIONS } from '@/lib/theme-options';
 import IOSSettingsRow from '@/components/ui/ios-settings-row';
+import { useLaunchAccess } from '@/app/studio/_components/LaunchAccess';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
+
+function StudioLink() {
+    const { allowed } = useLaunchAccess();
+    if (!allowed) return null;
+    return (
+        <>
+            <Separator />
+            <Button variant="ghost" asChild className={`${uiMenuItemButton} h-12 rounded-t-none px-6`}>
+                <Link href={workspaceBase} prefetch={false}>
+                    <span className="flex items-center gap-3"><BookOpenText aria-hidden="true" className="size-5" />Translation Studio</span>
+                    <ChevronRight aria-hidden="true" className="size-4 text-[var(--app-text-muted)]" />
+                </Link>
+            </Button>
+        </>
+    );
+}
 
 export default function SettingsPage() {
     const router = useRouter();
@@ -76,6 +94,7 @@ export default function SettingsPage() {
         if (!supabaseRef.current) return;
         setSigningOut(true);
         await supabaseRef.current.auth.signOut();
+        forgetLegacyBrowserSession();
         router.push('/auth');
     };
 
@@ -131,6 +150,7 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
                             </CardContent>
+                            <StudioLink key={user.id} />
                         </Card>
 
                         {/* Subscription */}

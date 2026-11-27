@@ -2,13 +2,21 @@ import { describe, expect, it } from 'vitest';
 import { isLandingConsentPath } from '@/lib/landingConsentPath';
 
 describe('landing consent route boundary', () => {
-  it.each(['/authors', '/authors/', '/authors/hero-archive', '/authors/hero-archive/', '/publishers', '/publishers/'])(
+  it.each([
+    '/authors', '/authors/', '/authors/hero-archive', '/authors/hero-archive/',
+    '/fr/authors', '/fr/authors/', '/en/authors', '/en/authors/', '/publishers', '/publishers/',
+  ])(
     'requires consent on public business landings: %s', (pathname) => {
       expect(isLandingConsentPath(pathname)).toBe(true);
     },
   );
 
-  it.each(['/authors-other', '/publishers-other', '/authors/private', '/publishers/private', '/ru/authors'])(
+  it.each([
+    '/authors-other', '/publishers-other', '/authors/private', '/publishers/private', '/ru/authors',
+    '/es/authors', '/de/authors', '/fr/authors-other', '/fr/authors/private',
+    '/fr/authors/hero-archive', '/fr/publishers', '/authors/fr',
+    '/en/authors-other', '/en/authors/private', '/en/authors/hero-archive', '/en/publishers', '/authors/en',
+  ])(
     'keeps business landing matching exact: %s', (pathname) => {
       expect(isLandingConsentPath(pathname)).toBe(false);
     },

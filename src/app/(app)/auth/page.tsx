@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
@@ -12,6 +12,8 @@ import { Separator } from '@/components/ui/separator';
 import { createClient } from '@/lib/supabase/client';
 import { trackUserLoggedIn } from '@/lib/posthog';
 import { safeLocalReturnPath } from '@/lib/authNavigation';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
+import { getBrowserAccessToken, renewLegacyReaderSession } from '@/lib/api';
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 export default function AuthPage() {
@@ -42,6 +44,37 @@ function AuthForm() {
   );
   const [message, setMessage] = useState<string | null>(null);
   const nextUrl = safeLocalReturnPath(searchParams.get('next'));
+  const returnPath = nextUrl.split(/[?#]/, 1)[0];
+  const resumeStudio = (returnPath === workspaceBase || returnPath.startsWith(workspaceBase + '/')) &&
+    !searchParams.has('error') && !searchParams.has('reauth');
+  const [checkingSession, setCheckingSession] = useState(resumeStudio);
+
+  useEffect(() => {
+    if (!resumeStudio) return;
+    const controller = new AbortController();
+    async function resume() {
+      const auth = getSupabase().auth;
+      const { data } = await auth.getSession();
+      if (controller.signal.aborted) return;
+      let signedIn = Boolean(data.session);
+      if (!signedIn) {
+        const token = await getBrowserAccessToken();
+        if (token && !controller.signal.aborted) {
+          // Reader versions predating SSR can have a valid session only in local storage.
+          const verified = await auth.getUser(token);
+          signedIn = Boolean(verified.data.user);
+          if (!signedIn && !controller.signal.aborted && [401, 403].includes(verified.error?.status ?? 0)) {
+            signedIn = Boolean(await renewLegacyReaderSession(token, controller.signal));
+          }
+        }
+      }
+      if (controller.signal.aborted) return;
+      if (signedIn) window.location.replace(nextUrl);
+      else setCheckingSession(false);
+    }
+    void resume().catch(() => { if (!controller.signal.aborted) setCheckingSession(false); });
+    return () => controller.abort();
+  }, [resumeStudio, nextUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,6 +113,10 @@ function AuthForm() {
       trackUserLoggedIn('google');
     }
   };
+
+  if (resumeStudio && checkingSession) {
+    return <main className="mx-auto max-w-md p-8" role="status">Проверяем ваш сеанс…</main>;
+  }
 
   return (
     <div className="min-h-screen bg-[var(--app-shell-bg)] text-[var(--app-text)]">

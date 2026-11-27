@@ -1,0 +1,25 @@
+.ed-actions,
+.ed-choices {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ed-choices legend,
+.ed-conflict legend {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.ed-conflict {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.ed-conflict label,
+.ed-choices label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}

@@ -1,13 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Copy } from 'lucide-react';
+import { workspaceBase } from '@/lib/translationWorkspacePath';
+import { useRouter } from 'next/navigation';
+import { Loader2, ShieldAlert, Play, Download, BookOpen, RefreshCw, ScrollText, ChevronDown, ChevronRight, Wand2, GitCompare, Coins, FileText, RotateCcw, Save, Square, Check, CheckCheck, X, Library } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CopyableTextarea, CopyTextButton } from '@/components/ui/copy-text';
 import { Badge } from '@/components/ui/badge';
 import PageHeader from '@/components/ui/PageHeader';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { downloadCsv } from '@/app/prototype/_components/downloads';
+import { readerCheckJournalRows } from '@/lib/readerCheckJournalCsv';
 import {
   fetchBooks,
   startFictionTranslation,
@@ -59,8 +63,8 @@ import {
 const inputCls =
   'w-full rounded-[var(--radius)] border border-[var(--separator-opaque)] bg-[var(--app-surface-bg)] px-3 py-2 text-sm outline-none focus:border-[var(--app-accent)]';
 
-// v1 fiction pipeline supports EN/FR targets (Russian source).
-const FICTION_LANGS = ['EN', 'FR'] as const;
+// Fiction pipeline targets. EN/FR from a Russian source; RU from an English source.
+const FICTION_LANGS = ['EN', 'FR', 'RU'] as const;
 type FictionLang = (typeof FICTION_LANGS)[number];
 
 // Static fallback shown until GET /api/admin/models resolves (or if it fails) —
@@ -236,7 +240,6 @@ export default function AdminFictionPage() {
   type ScopeEntry = { index: number; title: string | null; entriesIn: number; entriesOut: number; names: string[]; terms: string[] };
   const [scopeLog, setScopeLog] = useState<ScopeEntry[]>([]);
   const [scopeOpen, setScopeOpen] = useState(false);
-  const [scopeCopied, setScopeCopied] = useState(false);
   const [useGlossaryForTranslate, setUseGlossaryForTranslate] = useState(false);
   const [overwriteTranslation, setOverwriteTranslation] = useState(false);
   const [runRevisionAfter, setRunRevisionAfter] = useState(false);
@@ -493,15 +496,6 @@ export default function AdminFictionPage() {
       })
       .join('\n\n');
   }, [scopeLog]);
-
-  const copyScopeLog = useCallback(async () => {
-    if (!scopeLogText) return;
-    try {
-      await navigator.clipboard.writeText(scopeLogText);
-      setScopeCopied(true);
-      setTimeout(() => setScopeCopied(false), 1500);
-    } catch { /* clipboard blocked — ignore */ }
-  }, [scopeLogText]);
 
   const loadProgress = useCallback(async () => {
     if (!bookId) return;
@@ -835,21 +829,7 @@ export default function AdminFictionPage() {
     }
     if (!items || items.length === 0) { setReaderError('No journal to export yet.'); return; }
 
-    const esc = (v: unknown) => `"${(v == null ? '' : String(v)).replace(/"/g, '""')}"`;
-    const header = ['Chapter #', 'Chapter', 'Variant', 'Severity', 'Outcome', 'Reason', 'Quote', 'Problem', 'Before', 'After', 'Change', 'Match', 'Score'];
-    const rows = items.map((it) => [
-      it.chapterNumber ?? '', it.chapterTitle ?? '', it.variant, it.severity, it.outcome, it.rejectReason ?? '',
-      it.quote, it.problem, it.before ?? '', it.after ?? '', it.changeNote ?? '', it.matchType ?? '', it.matchScore ?? '',
-    ]);
-    // Prepend a BOM so Excel reads the Cyrillic/UTF-8 correctly.
-    const csv = '﻿' + [header, ...rows].map((r) => r.map(esc).join(',')).join('\r\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `reader-check-${bookId}-${lang}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadCsv(`reader-check-${bookId}-${lang}.csv`, readerCheckJournalRows(items));
   }, [bookId, lang, readerJournal]);
 
   // Approve (apply) or reject one proposed correction. Approve writes the (possibly
@@ -1015,7 +995,6 @@ export default function AdminFictionPage() {
     setDone(0);
     setCurrent(null);
     setScopeLog([]);
-    setScopeCopied(false);
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -1404,16 +1383,24 @@ export default function AdminFictionPage() {
     <div className="mx-auto w-full max-w-3xl px-4 pt-[calc(1rem+env(safe-area-inset-top)+76px)] pb-24">
       <div className="flex items-start justify-between gap-3">
         <PageHeader title="Fiction Translation" />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={!bookId || refreshing}
-          title="Pull the latest status for every stage (translation, glossary, revision)"
-        >
-          <RefreshCw className={`mr-2 h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link href="/admin/fiction/series">
+            <Button variant="outline" size="sm" title="Upload a series ZIP and watch per-volume progress">
+              <Library className="mr-2 h-3.5 w-3.5" />
+              Series
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={!bookId || refreshing}
+            title="Pull the latest status for every stage (translation, glossary, revision)"
+          >
+            <RefreshCw className={`mr-2 h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       <p className="mb-5 text-sm text-[var(--app-text-muted)]">
@@ -1600,10 +1587,7 @@ export default function AdminFictionPage() {
                 {scopeOpen ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
                 Glossary sent per chapter ({scopeLog.length} chapters)
               </button>
-              <Button variant="outline" size="sm" onClick={copyScopeLog}>
-                {scopeCopied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
-                {scopeCopied ? 'Copied' : 'Copy log'}
-              </Button>
+              <CopyTextButton text={scopeLogText} language="en" subject="Glossary scope log"/>
             </div>
             <p className="mt-1 text-[var(--app-text-muted)]">
               Which glossary entries were sent to each chapter. Use it to check a declined form still pulls its entry
@@ -1641,7 +1625,7 @@ export default function AdminFictionPage() {
               Edit the prompt for each stage of the selected book&apos;s direction. <strong>Save</strong> stores a
               server-side override that the next <em>real</em> run uses (for cached stages — translate/revision —
               re-run with <em>Overwrite</em> to regenerate). <strong>Reset to shipped</strong> removes the override.
-              All editable prompts across directions are also on{' '}
+              Changes here update the shared default. For your own translations use the <Link className="text-[var(--app-accent)] underline" href={workspaceBase + '/settings'}>translation studio</Link>. All shared prompts are on{' '}
               <Link href="/admin/prompts" className="text-[var(--app-accent)] underline">Server prompts</Link>.
             </p>
           </div>
@@ -1693,7 +1677,7 @@ export default function AdminFictionPage() {
                     </label>
                   </div>
                   <p className="text-xs text-[var(--app-text-muted)]">{meta.hint}</p>
-                  <textarea
+                  <CopyableTextarea aria-label={meta.label} copyLanguage="en"
                     value={draft}
                     onChange={(e) => setPromptDrafts((prev) => ({ ...prev, [p.name]: e.target.value }))}
                     spellCheck={false}
@@ -1909,7 +1893,7 @@ export default function AdminFictionPage() {
           </Button>
           {pasteOpen && (
             <div className="space-y-2">
-              <textarea
+              <CopyableTextarea aria-label="Glossary JSON" copyLanguage="en"
                 value={pasteJson}
                 onChange={(e) => setPasteJson(e.target.value)}
                 disabled={pasteSaving}
@@ -2603,7 +2587,7 @@ function ReaderFixEditor({
       {item.before != null && (
         <p className="text-red-600 dark:text-red-400"><span className="select-none">− </span>{item.before}</p>
       )}
-      <textarea
+      <CopyableTextarea aria-label="Suggested text" copyLanguage="en"
         value={text}
         onChange={(e) => setText(e.target.value)}
         rows={Math.min(8, Math.max(2, text.split('\n').length))}
@@ -3032,7 +3016,7 @@ function RevisionDiffEntryRow({
         </div>
         <div>
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--app-accent)]">Revised (after)</div>
-          <textarea
+          <CopyableTextarea aria-label="Revised text" copyLanguage="en"
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={Math.min(10, Math.max(2, text.split('\n').length))}

@@ -1,0 +1,528 @@
+{
+  "cause": "backdrop-filter on the centered header shell established a containing block for a fixed menu using viewport coordinates",
+  "fix": "render the desktop dropdown as a header child outside the blurred shell; retain shared hook, inherited theme and mobile behavior",
+  "before": [
+    {
+      "path": "/authors",
+      "trigger": {
+        "x": 1439.4375,
+        "y": 22,
+        "right": 1551,
+        "bottom": 62,
+        "width": 111.5625,
+        "height": 40
+      },
+      "menu": {
+        "x": 1691.3643798828125,
+        "y": 85,
+        "right": 1910.8843994140625,
+        "bottom": 185.1437530517578,
+        "width": 219.52001953125,
+        "height": 100.14375305175781
+      },
+      "rightDelta": 359.8843994140625,
+      "gap": 23
+    },
+    {
+      "path": "/ru",
+      "trigger": {
+        "x": 1141.625,
+        "y": 22.1875,
+        "right": 1253.1875,
+        "bottom": 62.1875,
+        "width": 111.5625,
+        "height": 40
+      },
+      "menu": {
+        "x": 1393.5518798828125,
+        "y": 85.1875,
+        "right": 1613.0718994140625,
+        "bottom": 234.9131317138672,
+        "width": 219.52001953125,
+        "height": 149.7256317138672
+      },
+      "rightDelta": 359.8843994140625,
+      "gap": 23
+    }
+  ],
+  "after": {
+    "passed": true,
+    "desktop": [
+      {
+        "path": "/authors",
+        "width": 1280,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1119.4375,
+          "y": 22,
+          "right": 1231,
+          "bottom": 62,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1007,
+          "y": 72,
+          "right": 1231,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/authors",
+        "width": 1440,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1199.4375,
+          "y": 22,
+          "right": 1311,
+          "bottom": 62,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1087,
+          "y": 72,
+          "right": 1311,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/authors",
+        "width": 1920,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1439.4375,
+          "y": 22,
+          "right": 1551,
+          "bottom": 62,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1327,
+          "y": 72,
+          "right": 1551,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/authors",
+        "width": 2560,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1759.4375,
+          "y": 22,
+          "right": 1871,
+          "bottom": 62,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1647,
+          "y": 72,
+          "right": 1871,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/authors",
+        "width": 1920,
+        "scrollY": 600,
+        "trigger": {
+          "x": 1439.4375,
+          "y": 22,
+          "right": 1551,
+          "bottom": 62,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1327,
+          "y": 72,
+          "right": 1551,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr/authors",
+        "width": 1280,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1120.15625,
+          "y": 22,
+          "right": 1231,
+          "bottom": 62,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1007,
+          "y": 72,
+          "right": 1231,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr/authors",
+        "width": 1440,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1200.15625,
+          "y": 22,
+          "right": 1311,
+          "bottom": 62,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1087,
+          "y": 72,
+          "right": 1311,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr/authors",
+        "width": 1920,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1440.15625,
+          "y": 22,
+          "right": 1551,
+          "bottom": 62,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1327,
+          "y": 72,
+          "right": 1551,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr/authors",
+        "width": 2560,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1760.15625,
+          "y": 22,
+          "right": 1871,
+          "bottom": 62,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1647,
+          "y": 72,
+          "right": 1871,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr/authors",
+        "width": 1920,
+        "scrollY": 600,
+        "trigger": {
+          "x": 1440.15625,
+          "y": 22,
+          "right": 1551,
+          "bottom": 62,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1327,
+          "y": 72,
+          "right": 1551,
+          "bottom": 174.1875,
+          "width": 224,
+          "height": 102.1875
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/ru",
+        "width": 1280,
+        "scrollY": 0,
+        "trigger": {
+          "x": 821.625,
+          "y": 22.1875,
+          "right": 933.1875,
+          "bottom": 62.1875,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 709.1875,
+          "y": 72.1875,
+          "right": 933.1875,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/ru",
+        "width": 1440,
+        "scrollY": 0,
+        "trigger": {
+          "x": 901.625,
+          "y": 22.1875,
+          "right": 1013.1875,
+          "bottom": 62.1875,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 789.1875,
+          "y": 72.1875,
+          "right": 1013.1875,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/ru",
+        "width": 1920,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1141.625,
+          "y": 22.1875,
+          "right": 1253.1875,
+          "bottom": 62.1875,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1029.1875,
+          "y": 72.1875,
+          "right": 1253.1875,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/ru",
+        "width": 2560,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1461.625,
+          "y": 22.1875,
+          "right": 1573.1875,
+          "bottom": 62.1875,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1349.1875,
+          "y": 72.1875,
+          "right": 1573.1875,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/ru",
+        "width": 1920,
+        "scrollY": 600,
+        "trigger": {
+          "x": 1141.625,
+          "y": 22.1875,
+          "right": 1253.1875,
+          "bottom": 62.1875,
+          "width": 111.5625,
+          "height": 40
+        },
+        "menu": {
+          "x": 1029.1875,
+          "y": 72.1875,
+          "right": 1253.1875,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr",
+        "width": 1280,
+        "scrollY": 0,
+        "trigger": {
+          "x": 834.78125,
+          "y": 22.1875,
+          "right": 945.625,
+          "bottom": 62.1875,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 721.625,
+          "y": 72.1875,
+          "right": 945.625,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr",
+        "width": 1440,
+        "scrollY": 0,
+        "trigger": {
+          "x": 914.78125,
+          "y": 22.1875,
+          "right": 1025.625,
+          "bottom": 62.1875,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 801.625,
+          "y": 72.1875,
+          "right": 1025.625,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr",
+        "width": 1920,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1154.78125,
+          "y": 22.1875,
+          "right": 1265.625,
+          "bottom": 62.1875,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1041.625,
+          "y": 72.1875,
+          "right": 1265.625,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr",
+        "width": 2560,
+        "scrollY": 0,
+        "trigger": {
+          "x": 1474.78125,
+          "y": 22.1875,
+          "right": 1585.625,
+          "bottom": 62.1875,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1361.625,
+          "y": 72.1875,
+          "right": 1585.625,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      },
+      {
+        "path": "/fr",
+        "width": 1920,
+        "scrollY": 600,
+        "trigger": {
+          "x": 1154.78125,
+          "y": 22.1875,
+          "right": 1265.625,
+          "bottom": 62.1875,
+          "width": 110.84375,
+          "height": 40
+        },
+        "menu": {
+          "x": 1041.625,
+          "y": 72.1875,
+          "right": 1265.625,
+          "bottom": 224.96875,
+          "width": 224,
+          "height": 152.78125
+        },
+        "rightDelta": 0,
+        "gap": 10
+      }
+    ],
+    "mobile": {
+      "x": 29,
+      "y": 444,
+      "width": 332,
+      "height": 99.78125
+    },
+    "interaction": "Escape, outside click, scroll, live resize and RU/FR hash-preserving switch passed",
+    "errors": []
+  },
+  "visualReview": [
+    "after-authors.png at1920px",
+    "after-ru.png at1920px",
+    "after-mobile.png at390px"
+  ],
+  "screenshots": "/tmp/globoox-language-menu-20261113",
+  "lint": "No new diagnostics with the pre-existing react-hooks/set-state-in-effect rule disabled for this focused check; source lint configuration unchanged."
+}

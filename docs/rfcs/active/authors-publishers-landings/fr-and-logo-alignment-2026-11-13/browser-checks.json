@@ -1,0 +1,42 @@
+{
+  "layouts": [
+    {
+      "width": 1440,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 1024,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 768,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 390,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    },
+    {
+      "width": 320,
+      "overflow": 0,
+      "broken": [],
+      "outside": []
+    }
+  ],
+  "interactions": [
+    "Three native email CTAs: recipient and French subjects",
+    "RU → FR → RU with hash and locale cookie, 1440px",
+    "RU → FR → RU with hash and locale cookie, 390px",
+    "Russian authors latest copy and original publishers preserved"
+  ],
+  "errors": [],
+  "passed": true
+}
